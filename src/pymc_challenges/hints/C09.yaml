@@ -1,0 +1,262 @@
+title: "Job training: can observational data stand in for an experiment?"
+tasks:
+  task0:
+    title: Look at the experiment
+    hints:
+      - |
+        Before choosing a likelihood, ask what values `re78` can take and how often. How many
+        men earned *exactly* zero? What does the largest value look like next to the median?
+        Then check that randomisation did its job: compare covariate means between the arms.
+      - |
+        `nsw.groupby("treat").re78.agg(...)` with a lambda for the share of zeros gives the
+        summary; `nsw.groupby("treat")[covariates].mean().T` is the balance table. A histogram
+        with `histtype="step"` per arm (clip the x axis - one man earned $60,000) shows the
+        spike at zero and the long right tail.
+
+  task1:
+    title: The experimental benchmark
+    hints:
+      - |
+        A Normal likelihood will happily estimate two means. Ask its posterior predictive two
+        questions: what share of replicated men earn exactly zero, and what share earn a
+        negative amount? Then think of earnings as two outcomes - *does he work at all*, and
+        *how much if he does* - and look for a distribution built that way. The quantity the
+        ministry cares about is mean earnings **including** the zeros.
+      - |
+        `pm.HurdleGamma("re78", psi=..., alpha=..., beta=..., observed=...)` is a point mass at
+        zero with probability `1 - psi` and a Gamma otherwise (`pm.HurdleLogNormal` also
+        exists). Give `psi` and the Gamma mean an `arm` dimension and index them with the
+        treatment indicator. With shape `alpha` and mean `mu`, the rate is `beta = alpha / mu`.
+
+        Mean earnings in an arm are `psi * mu`; wrap the difference between arms in a
+        `pm.Deterministic("ate", ...)`. Work in $1000s so that priors are easy to state: a
+        full-time minimum-wage job paid about $5,500 in 1978.
+
+        For the PPC, `az.extract(idata, group="posterior_predictive", var_names="re78",
+        num_samples=200)` gives replicated datasets; compare `np.mean(rep == 0)` and
+        `np.mean(rep < 0)` with the data.
+      - |
+        ```python
+        t = nsw.treat.values
+        y = nsw.re78.values / 1000
+        with pm.Model(coords={"arm": ["control", "treated"]}) as hurdle_model:
+            psi = pm.Beta("psi", ___, ___, dims="arm")
+            mu_pos = pm.Gamma("mu_pos", mu=___, sigma=___, dims="arm")
+            shape = pm.Gamma("shape", mu=1.5, sigma=1)
+            mean = pm.Deterministic("mean", ___, dims="arm")        # zeros included
+            pm.Deterministic("ate", mean[1] - mean[0])
+            pm.HurdleGamma("re78", psi=psi[t], alpha=shape, beta=___, observed=y)
+            idata = pm.sample(random_seed=RANDOM_SEED)
+            pm.sample_posterior_predictive(idata, extend_inferencedata=True, random_seed=RANDOM_SEED)
+
+        ate = idata.posterior["ate"]
+        float((ate > 1).mean())          # P(ATE > $1,000)
+        ```
+    checks:
+      ate:
+        what: posterior mean of the experimental ATE in DOLLARS, roughly 1,800 (did you convert from $1000s?)
+        range: [1300, 2300]
+      p_ate_gt_1000:
+        what: posterior probability that the experimental ATE exceeds $1,000, roughly 0.85-0.9
+        range: [0.75, 0.96]
+
+  task2:
+    title: The ministry's dataset and the naive comparison
+    hints:
+      - |
+        Stack the NSW **treated** rows on top of the CPS rows - the experimental controls are
+        not available to the ministry. A raw difference in means compares two groups; before
+        believing it, ask whether the groups were comparable *before* the programme. A
+        difference in means is hard to judge across variables with different units - divide by
+        a standard deviation.
+      - |
+        `pd.concat([nsw[nsw.treat == 1], cps], ignore_index=True)`. The standardised mean
+        difference is `(mean_treated - mean_control) / sqrt((var_treated + var_control) / 2)`;
+        values beyond about 0.1 are usually flagged. Compute it for treated vs experimental
+        controls and treated vs CPS and put the two columns side by side.
+
+        For the recording issue: look at `cps.re78.max()` and how many men sit exactly on it.
+      - |
+        ```python
+        treated = nsw[nsw.treat == 1]
+        obs = pd.concat([treated, cps], ignore_index=True)
+        naive = obs.re78[obs.treat == 1].mean() - ___
+
+        def smd(a, b):
+            return (a.mean() - b.mean()) / np.sqrt(___)
+
+        balance = pd.DataFrame({
+            "SMD vs NSW controls": [smd(treated[c], nsw[nsw.treat == 0][c]) for c in covariates],
+            "SMD vs CPS": [smd(treated[c], ___) for c in covariates],
+        }, index=covariates)
+        ```
+    checks:
+      naive_diff:
+        what: mean re78 of participants minus mean re78 of CPS men, in dollars - about -8,500
+        range: [-8600, -8400]
+      smd_black:
+        what: standardised mean difference of `black`, participants vs CPS, about 2.4
+        range: [2.2, 2.7]
+
+  task3:
+    title: DAG, generative model, pm.observe and pm.do
+    hints:
+      - |
+        Which variables were fixed *before* anyone was assigned to training, and could affect
+        both selection into the programme and later earnings? Those are the back-door paths
+        you need to block. Which assumption can you never check from these data alone?
+
+        For the model: write down how the data *could have been generated* - first who gets
+        treated, then what they earn - without telling PyMC what was observed. Conditioning and
+        intervening are then operations **on that model**, not new models.
+      - |
+        Build the model with `treat = pm.Bernoulli("treat", logit_p=...)` and the earnings
+        likelihood depending on `treat`, neither with `observed=`. Then
+
+        - `pm.observe(model, {"treat": t, "re78": y})` returns a new model with those variables
+          observed - sample it as usual;
+        - `pm.do(model, {"treat": np.ones(n, dtype=int)})` returns a new model in which `treat`
+          is a constant. `pm.sample_posterior_predictive(idata, var_names=[...])` inside it
+          pushes the fitted posterior through the intervened graph.
+
+        For the ATT you only need potential outcomes for the 185 participants. If the model is
+        built by a function of a data frame, you can build it again on just those rows and
+        apply `pm.do` there. Put `E[re78 | treat, X] = psi * mu` in a `pm.Deterministic` and
+        average `do(1) - do(0)` over participants *within each posterior draw*.
+
+        With 16,177 rows, do not store that deterministic while sampling:
+        `pm.sample(var_names=[...parameter names...])` keeps only what you list.
+        `nuts_sampler="nutpie"` helps.
+      - |
+        ```python
+        def generative(df, names):
+            X = features(df, names).values                 # your scaled design matrix
+            with pm.Model(coords={"obs": df.index.values, "cov": names}) as gen:
+                g0 = pm.Normal("g0", 0, 3); g = pm.Normal("g", 0, 2, dims="cov")
+                treat = pm.Bernoulli("treat", logit_p=___, dims="obs")
+                # hurdle part: P(re78 > 0)
+                psi = pm.math.sigmoid(a_z + tau_z * treat + pm.math.dot(X, b_z))
+                # level part: mean of positive earnings
+                mu = pm.math.exp(___)
+                pm.Deterministic("expected", psi * mu, dims="obs")
+                pm.HurdleGamma("re78", psi=psi, alpha=shape, beta=shape / mu, dims="obs")
+            return gen
+
+        with pm.observe(generative(obs, names), {"treat": ___, "re78": ___}):
+            idata = pm.sample(var_names=PARAMETERS, nuts_sampler="nutpie", random_seed=RANDOM_SEED)
+
+        def expected_under(value):
+            with pm.do(generative(treated, names), {"treat": np.full(len(treated), value)}):
+                pp = pm.sample_posterior_predictive(idata, var_names=["expected"])
+            return pp.posterior_predictive["expected"]
+
+        att = (expected_under(1) - expected_under(0)).mean("obs")     # dims: chain, draw
+        ```
+    checks:
+      att_full:
+        what: posterior mean ATT in dollars from outcome regression on ALL CPS men - far above the naive -8,500 but well short of the benchmark (somewhere between about -1,000 and +1,300 depending on your functional form)
+        range: [-1200, 1400]
+
+  task4:
+    title: Overlap, propensity scores and trimming
+    hints:
+      - |
+        For a typical participant - young, Black, unmarried, no earnings in 1975 - how many CPS
+        men are there like him? If the answer is "a handful out of sixteen thousand", who is
+        determining the regression coefficients that produce his counterfactual?
+
+        And a check you can run without any experiment: does the fitted outcome model predict
+        the 1978 earnings of the CPS men who *most resemble* participants?
+      - |
+        The propensity score is `P(treat = 1 | X)`. If your generative model has a treatment
+        equation you have already estimated it: push the posterior of its coefficients through
+        `scipy.special.expit` in NumPy (a few hundred draws are plenty) and average. Plot it on
+        the **logit** scale with a log count axis - on the raw scale the CPS is one spike at 0.
+
+        A standard fix is to restrict the comparison group to the region of common support:
+        drop CPS men whose propensity is below a threshold (0.05, say). Keeping *all*
+        participants keeps the estimand equal to the ATT for the 185 men. Refit the same
+        generative model on the trimmed data. Richer functional forms (age squared, indicators
+        for zero earnings in 1974/75) help both the propensity and the outcome model.
+      - |
+        ```python
+        post = az.extract(idata, var_names=["g0", "g"], num_samples=400)
+        logit = post["g0"].values[None, :] + X @ post["g"].transpose("cov", "sample").values
+        obs["ps"] = expit(logit).mean(axis=1)
+
+        share_below = np.mean(obs.ps[obs.treat == 0] < 0.01)
+
+        lookalikes = obs[(obs.ps >= 0.05) & (obs.treat == 0)]
+        # model-predicted mean under do(treat=0) for these rows vs lookalikes.re78.mean()
+
+        trim_df = obs[(obs.ps >= ___) | (obs.treat == 1)]
+        trim_idata = fit(trim_df, names)
+        att_trim = att(trim_idata, names)
+        ```
+    checks:
+      cps_share_below_1pct:
+        what: share of CPS men whose estimated propensity score is below 0.01 - about nine in ten
+        range: [0.85, 0.95]
+      att_trimmed:
+        what: posterior mean ATT in dollars after restricting to common support - positive, of the order of 1,000 to 1,700
+        range: [400, 2400]
+
+  task5:
+    title: Sensitivity to thresholds and adjustment sets
+    hints:
+      - |
+        Two kinds of choice went into your estimate: *who is in the comparison group* and
+        *what you adjust for*. Vary each separately and see which one moves the answer by
+        more than its posterior standard deviation.
+      - |
+        Loop over `(threshold, covariate list)` pairs, refit the same generative model and
+        recompute the ATT - the trimmed fits take seconds. Collect mean, sd, a 94% interval and
+        `P(ATT > 1)` in a DataFrame and draw it as a horizontal `errorbar` plot with the
+        benchmark on top. Remember to remove the matching zero-earnings indicators when you
+        drop `re74` / `re75`.
+      - |
+        ```python
+        specs = {
+            "ps >= 0.01": (0.01, FLEX),
+            "ps >= 0.10": (0.10, FLEX),
+            "no re74": (0.05, [c for c in FLEX if c not in ("re74", "u74")]),
+            "no earnings": (0.05, [c for c in FLEX if c not in (___)]),
+        }
+        out = {}
+        for label, (thr, names) in specs.items():
+            df = obs[(obs.ps >= thr) | (obs.treat == 1)]
+            out[label] = att(fit(df, names), names)
+        ```
+    checks:
+      att_no_earnings:
+        what: posterior mean ATT in dollars on the trimmed sample when neither re74 nor re75 (nor their zero indicators) is adjusted for - clearly lower than with them
+        range: [-1300, 900]
+
+  task6:
+    title: What do you tell the ministry?
+    hints:
+      - |
+        A posterior probability answers "how sure are we that the effect clears the bar
+        **if the model's assumptions hold**". Which assumptions differ between the experiment
+        and the observational analyses, and which of them are reflected in the width of the
+        posterior?
+      - |
+        `(att > 1).mean()` on each posterior (in $1000s) gives the probabilities. For the note,
+        separate *statistical* uncertainty (in the posterior) from *specification* uncertainty
+        (the spread across Task 5's rows) and *identification* uncertainty (unmeasured
+        confounding, different data sources - in no posterior at all). Without an experiment,
+        the things you can show are: overlap, balance after trimming, predictive checks on
+        look-alike controls, stability across reasonable specifications, and placebo outcomes
+        (e.g. "effect" of training on 1975 earnings should be zero).
+      - |
+        ```python
+        table = pd.DataFrame({
+            "experiment": [float((ate_exp > 1).mean())],
+            "full CPS": [float((att_full > 1).mean())],
+            "trimmed": [float((___ > 1).mean())],
+        }, index=["P(effect > $1,000)"])
+        ```
+    checks:
+      p_observational:
+        what: P(ATT > $1,000) from the trimmed observational analysis - around a coin flip to two in three, lower than the experiment's ~0.88
+        range: [0.3, 0.85]

@@ -1,0 +1,289 @@
+title: "Premier League: team strengths, a title race and a fight with the bookmaker"
+tasks:
+  task0:
+    title: Look at the data
+    hints:
+      - |
+        Home advantage shows up twice: in goals (`FTHG` against `FTAG`) and in results (`FTR`).
+        For the Poisson question, remember the one property that defines a Poisson: what is the
+        relationship between its mean and its variance?
+      - |
+        `epl25.FTR.value_counts(normalize=True)` gives the result shares.
+        `scipy.stats.poisson.pmf(np.arange(8), mean)` gives the Poisson probabilities to draw on
+        top of the observed shares `epl25.FTHG.value_counts(normalize=True)`.
+
+        Think before you judge the variance: all 380 matches do not share one scoring rate.
+        A mixture of Poissons with different rates has a variance *above* its mean. So mild
+        overdispersion in the pooled goals is not evidence against a Poisson model with team effects.
+    checks:
+      home_goals_mean:
+        what: mean home goals per match in 2024/25, about 1.51
+        range: [1.505, 1.52]
+      away_goals_mean:
+        what: mean away goals per match in 2024/25, about 1.42
+        range: [1.41, 1.43]
+
+  task1:
+    title: The textbook model and what is wrong with it
+    hints:
+      - |
+        Compare the rows of `az.summary`. Some parameters mix badly, at least one mixes well. What
+        distinguishes them? Then a thought experiment: add 5 to every attack rating and subtract 5
+        from the intercept. What happens to every `lambda` in the model - and so to the likelihood?
+      - |
+        The likelihood only ever sees `intercept + attack[i] - defence[j]`. Shifting all attacks by
+        `c` and the intercept by `-c` leaves it unchanged; so does shifting all attacks *and* all
+        defences by `c`. Along those two directions only the `Normal(0, 3)` prior holds the
+        posterior in place: a long flat ridge that NUTS has to crawl along.
+
+        Demonstrate it with the posterior draws (`naive_idata.posterior` is an xarray Dataset):
+        a scatter of one team's attack rating against another's, or of the intercept against
+        `attack.mean("team") - defence.mean("team")`. Then compare the posterior sd of a single
+        rating with the sd of a *difference* between two ratings. Differences, the home advantage
+        and `intercept + mean(attack) - mean(defence)` are what the data identify.
+
+        Teams: `pd.Categorical(df.HomeTeam, categories=teams).codes` gives integer indices that
+        are consistent between the home and away columns.
+      - |
+        ```python
+        teams = np.sort(epl25.HomeTeam.unique())
+        home_idx = pd.Categorical(epl25.HomeTeam, categories=teams).codes
+        away_idx = pd.Categorical(epl25.AwayTeam, categories=teams).codes
+
+        with pm.Model(coords={"team": teams}) as naive_model:
+            intercept = pm.Normal("intercept", 0, 3)
+            home = pm.Normal("home", 0, 3)
+            attack = pm.Normal("attack", 0, 3, dims="team")
+            defence = pm.Normal("defence", 0, 3, dims="team")
+            pm.Poisson("home_goals", pm.math.exp(intercept + home + attack[___] - defence[___]), observed=___)
+            pm.Poisson("away_goals", pm.math.exp(___), observed=___)
+            naive_idata = pm.sample(random_seed=RANDOM_SEED)
+
+        post = naive_idata.posterior
+        diff = post["attack"].sel(team="Liverpool") - post["attack"].sel(team="Southampton")
+        print(post["attack"].sel(team="Liverpool").std(), diff.std())
+        ```
+    checks:
+      sd_attack_difference:
+        what: posterior sd of attack[Liverpool] - attack[Southampton] in the NAIVE model, about 0.22 (far smaller than the sd of either rating on its own)
+        range: [0.17, 0.3]
+
+  task2:
+    title: An identified, hierarchical model
+    hints:
+      - |
+        Two flat directions need two constraints. What is the most natural reference point for
+        "attack strength" - a particular team, or the average team? And who should decide how
+        different the teams of a league are: you, with a fixed prior sd, or the 380 matches?
+      - |
+        `pm.ZeroSumNormal("attack", sigma=sigma_att, dims="team")` is a Normal constrained to sum
+        to zero over `team`. One for attack and one for defence removes both flat directions; the
+        intercept becomes the log scoring rate of an average away side. Putting a prior on
+        `sigma_att` and `sigma_def` (e.g. `HalfNormal`) makes the model hierarchical.
+
+        Prior scales live on the log-rate: `exp(0.5)` is already 1.65x. For the prior predictive
+        check look at simulated *goals per team per match* (`idata.prior_predictive["home_goals"]`):
+        how often does a side score 8 or more?
+
+        You will refit this model on another season and predict unseen fixtures, so wrap it in a
+        function, register the team indices with `pm.Data(..., dims="match")` and give the
+        likelihoods `shape=mu.shape`. For the comparison with Task 1, the `ess_bulk` column of
+        `az.summary` for both fits says it all.
+      - |
+        ```python
+        def build_model(df, teams):
+            coords = {"team": teams, "match": df.index.values}
+            with pm.Model(coords=coords) as model:
+                home_idx = pm.Data("home_idx", pd.Categorical(df.HomeTeam, categories=teams).codes, dims="match")
+                away_idx = pm.Data("away_idx", ___, dims="match")
+                intercept = pm.Normal("intercept", 0, ___)
+                home = pm.Normal("home", 0, ___)
+                sigma_att = pm.HalfNormal("sigma_att", ___)
+                sigma_def = pm.HalfNormal("sigma_def", ___)
+                attack = pm.ZeroSumNormal("attack", sigma=___, dims="team")
+                defence = pm.ZeroSumNormal("defence", sigma=___, dims="team")
+                mu_home = pm.Deterministic("mu_home", pm.math.exp(___), dims="match")
+                mu_away = pm.Deterministic("mu_away", pm.math.exp(___), dims="match")
+                pm.Poisson("home_goals", mu_home, observed=df.FTHG.values, dims="match", shape=mu_home.shape)
+                pm.Poisson("away_goals", mu_away, observed=df.FTAG.values, dims="match", shape=mu_away.shape)
+            return model
+        ```
+        Raw attack rating to compare with: `np.log(goals_for / goals_for.mean())` from `league_table`.
+    checks:
+      home:
+        what: posterior mean of the home advantage on the LOG scale for 2024/25, about 0.06 (small that season)
+        range: [0.02, 0.11]
+      sigma_att:
+        what: posterior mean of the sd of attack ratings across teams (log scale), about 0.25
+        range: [0.19, 0.32]
+      sigma_def:
+        what: posterior mean of the sd of defence ratings across teams (log scale), about 0.22
+        range: [0.16, 0.29]
+
+  task3:
+    title: Posterior predictive checks on results
+    hints:
+      - |
+        One posterior predictive draw is a complete replicated season: 380 home scores and 380 away
+        scores. Any statistic you can compute for the real season you can compute for each
+        replicated one. Where does the real value sit among the replicated ones?
+      - |
+        `pm.sample_posterior_predictive(idata, extend_inferencedata=True)`, then
+        `az.extract(idata, group="posterior_predictive", var_names=["home_goals", "away_goals"])`
+        gives arrays of shape `(match, sample)`. The share of draws in replicated season `s` is
+        `(hg[:, s] == ag[:, s]).mean()` - vectorise with `.mean(axis=0)`.
+
+        `az.plot_ppc_rootogram` checks the two goal distributions the model was fitted to; the
+        draws and scorelines need the *joint* behaviour of home and away goals, so compute those
+        by hand. Summarise each check as observed value, replicated mean and a tail probability
+        `P(rep >= obs)`. Candidates for the third statistic: share of 0-0, variance of total goals,
+        correlation of home and away goals, the biggest winning margin of the season.
+      - |
+        ```python
+        pp = az.extract(idata25, group="posterior_predictive", var_names=["home_goals", "away_goals"])
+        hg, ag = pp["home_goals"].values, pp["away_goals"].values          # (match, sample)
+
+        draws_rep = (___).mean(axis=0)                                     # one number per replicated season
+        draws_obs = (epl25.FTHG == epl25.FTAG).mean()
+        print(draws_obs, draws_rep.mean(), (draws_rep >= draws_obs).mean())
+
+        share_1_1 = ((hg == 1) & (ag == 1)).mean(axis=0)                   # repeat for each scoreline
+        ```
+    checks:
+      draw_share_replicated:
+        what: mean share of drawn matches over REPLICATED 2024/25 seasons, about 0.23 (the observed share was 0.245)
+        range: [0.22, 0.241]
+
+  task4:
+    title: Forecast the run-in
+    hints:
+      - |
+        A forecast of the final table needs two kinds of uncertainty: you do not know the team
+        strengths exactly, and even if you did, football is random. Which PyMC function gives you
+        both at once for matches the model has not seen? Each draw it returns is one possible
+        future - finish the season in each.
+      - |
+        Build the model on `played` (all 20 teams of 2025/26 as coords), sample, then
+        `pm.set_data({"home_idx": ..., "away_idx": ...}, coords={"match": remaining.index.values})`
+        and `pm.sample_posterior_predictive(idata, predictions=True,
+        var_names=["home_goals", "away_goals", "mu_home", "mu_away"])`. Keep the rates - Task 5 can
+        use them. `az.extract(forecast, group="predictions")` gives `(match, sample)` arrays.
+
+        Look at ESS and `r_hat` of `sigma_att` and `sigma_def` before you move on. Fewer matches
+        mean the sigmas are less well determined, and that is when the funnel of E02 shows up. The
+        non-centred form of a zero-sum effect is `sigma * pm.ZeroSumNormal("z", sigma=1, dims="team")`
+        wrapped in a `pm.Deterministic`.
+
+        For the tables: start from `league_table(played)` (points, gd, gf per team), loop over the
+        120 fixtures and add points and goals for all draws at once with NumPy. Rank within each
+        draw by points, then goal difference, then goals scored; a double `argsort` along the
+        team axis turns a sort key into ranks. `P(title)` is `(rank == 1).mean(axis=1)`.
+      - |
+        ```python
+        pts = np.repeat(start.pts.values[:, None], n_draws, axis=1).astype(float)   # (team, sample)
+        for k in range(len(remaining)):
+            h_k, a_k = home_codes[k], away_codes[k]
+            pts[h_k] += np.select([hg[k] > ag[k], hg[k] == ag[k]], [3, 1], 0)
+            pts[a_k] += ___
+            # same idea for goal difference and goals scored
+        key = pts * 1e6 + (gd + 500) * 1e3 + gf
+        rank = (-key).argsort(axis=0).argsort(axis=0) + 1                          # 1 = champions
+        p_title = (rank == 1).mean(axis=1)
+        p_relegation = (___).mean(axis=1)
+        ```
+    checks:
+      p_title_arsenal:
+        what: probability on 13 February 2026 that Arsenal win the league (a probability between 0 and 1; about 0.7 - clear favourites, far from certain)
+        range: [0.6, 0.82]
+      p_relegation_west_ham:
+        what: probability on 13 February 2026 that West Ham finish in the bottom three, about 0.6
+        range: [0.48, 0.72]
+      expected_points_arsenal:
+        what: Arsenal's expected FINAL points total (57 already won plus the simulated run-in), about 79
+        range: [77, 81]
+
+  task5:
+    title: Scoring against the bookmaker
+    hints:
+      - |
+        Decimal odds of 2.5 mean the bookmaker pays as if the probability were 1/2.5. Add up the
+        three implied probabilities of a match - why is the sum above one, and who keeps the
+        difference? And for the "how sure are you" part: both forecasters are scored on the *same*
+        120 matches, so what is the right way to compare them?
+      - |
+        Bookmaker: `q = 1 / odds`, overround `q.sum(axis=1) - 1`, then divide each row by its sum
+        (proportional normalisation; fancier methods exist, the differences are small).
+
+        Model: P(H), P(D), P(A) can be counted from the simulated scores of Task 4, or computed
+        with less Monte Carlo noise from the rate draws: for each draw the score matrix is the
+        outer product of two Poisson pmfs; average over draws, then sum below / on / above the
+        diagonal.
+
+        Reference: the H/D/A frequencies in `played`, the same three numbers for every match.
+
+        Uncertainty: compute per-match score *differences* between two forecasters; their mean
+        divided by `std / sqrt(N)` tells you how many standard errors apart they are.
+      - |
+        ```python
+        g = np.arange(13)
+        pmf_h = stats.poisson.pmf(g[None, :, None], mu_home[:, None, :])     # (match, goals, sample)
+        pmf_a = stats.poisson.pmf(g[None, :, None], mu_away[:, None, :])
+        score = np.einsum("mis,mjs->mij", pmf_h, pmf_a) / mu_home.shape[1]   # (match, home goals, away goals)
+        p_home = np.tril(score, -1).sum((1, 2))
+        p_draw = ___
+        p_away = ___
+
+        q = 1 / remaining[["B365H", "B365D", "B365A"]].values
+        p_book = q / ___
+
+        outcome = remaining.FTR.map({"H": 0, "D": 1, "A": 2}).values
+        log_score = -np.log(p[np.arange(len(outcome)), outcome]).mean()
+        ```
+    checks:
+      overround:
+        what: mean Bet365 overround on the held-out matches as a fraction (sum of inverse odds minus 1), about 0.055
+        range: [0.05, 0.06]
+      log_score_bookmaker:
+        what: mean log score (negative log probability of the observed result, natural log) of the normalised Bet365 probabilities on the 120 held-out matches, about 1.035
+        range: [1.02, 1.05]
+      log_score_model:
+        what: mean log score of your model on the same matches, about 1.05 - a little above (worse than) the bookmaker's and below log(3) = 1.0986
+        range: [1.035, 1.075]
+
+  task6:
+    title: Would you bet on it?
+    hints:
+      - |
+        A bet at decimal odds `o` on an event you believe has probability `p` has expected profit
+        `p * o - 1` per unit staked. How many such "value bets" does your model find? Is that
+        number plausible for one of the most liquid betting markets in the world? Then plot model
+        probability against market probability and ask which of the two is bolder.
+      - |
+        Profit per bet: `odds - 1` if the outcome happened, `-1` if not. ROI is total profit over
+        total stakes. For the interval, bootstrap over *matches* (resample the 120 rows with
+        replacement), not over individual bets - bets on the same match are dependent.
+
+        For the diagnosis: scatter `p_model` against `p_bookmaker`. A cloud flatter than the
+        diagonal means the model is less opinionated than the market (shrinkage!). For the mixture,
+        evaluate the held-out log score of `w * p_model + (1 - w) * p_bookmaker` on a grid of `w`.
+        A best `w` near zero says the model adds nothing the market does not know already. (This
+        `w` is tuned on the test matches, so it is a diagnostic, not a strategy.)
+      - |
+        ```python
+        odds = remaining[["B365H", "B365D", "B365A"]].values
+        value = p_model * odds - 1 > 0                                   # (match, outcome) bets placed
+        profit = np.where(onehot == 1, ___, ___) * value
+
+        boot = []
+        for _ in range(5000):
+            i = rng.integers(0, len(remaining), len(remaining))
+            boot.append(profit[i].sum() / value[i].sum())
+
+        weights = np.linspace(0, 1, 41)
+        blend = [log_score(w * p_model + (1 - w) * p_bookmaker) for w in weights]
+        best_w = weights[np.argmin(blend)]
+        ```
+    checks:
+      best_blend_weight:
+        what: weight on the model in the model/market mixture with the best held-out log score - small (about 0.1), the market dominates
+        range: [0.0, 0.4]

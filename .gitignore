@@ -1,0 +1,22 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Challenge progress (hints used / checks passed)
+.progress/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Session notes
+.remember/
+
+# Durable scratch space for work in progress (survives session restarts)
+.scratch/

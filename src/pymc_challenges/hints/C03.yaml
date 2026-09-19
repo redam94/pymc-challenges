@@ -1,0 +1,360 @@
+title: "Bike sharing: demand forecasts that admit what they do not know"
+tasks:
+  task0:
+    title: Decode, split, look
+    hints:
+      - |
+        Normalising was a division, so decoding is a multiplication - the constants are in the
+        table above the data. For the weekday coding, do not guess: pandas can tell you the name
+        of the day for every date (`.dt.day_name()`); cross-tabulate that against `weekday`.
+      - |
+        `df.assign(temp_c=df.temp * 41, ...)` keeps everything in one tidy frame; wrap it in a
+        function, because in Task 7 you will need to build the same columns for days that are not
+        in the file. `pd.Categorical.from_codes(codes, categories)` turns integer codes into
+        labels.
+
+        For the plots: colour the time series by weather situation, colour the temperature scatter
+        by year, and use box plots for the categorical variables. Look for (1) the shape of the
+        temperature relationship at the hot end, (2) the vertical gap between the years,
+        (3) how much scatter is left at a given temperature, (4) isolated days far below the rest.
+        `temp` and `atemp` have a correlation of 0.99: pick one.
+    checks:
+      mean_temp_c:
+        what: mean temperature over all 731 days in degrees Celsius, about 20.3 (temp * 41)
+        range: [20.0, 20.6]
+      max_wind_kmh:
+        what: highest daily wind speed in km/h, about 34 (windspeed * 67)
+        range: [33.5, 34.5]
+
+  task1:
+    title: The textbook model for counts
+    hints:
+      - |
+        Two separate questions. (1) Did the *sampler* work? That is what r_hat, ESS and
+        divergences answer. (2) Does the *model* describe the data? Only a predictive check
+        answers that. A Poisson distribution has a single parameter. Once the mean is fixed, what
+        else is fixed with it - and how wide is a Poisson distribution with a mean of 4,500?
+      - |
+        Standardise the three predictors (with the training mean and sd) so that one prior fits all
+        coefficients: on the log scale, a coefficient of 0.5 means "one standard deviation of
+        temperature multiplies demand by e^0.5 = 1.65". Put the intercept prior where the brief
+        puts typical demand: `Normal(log(4000), 1)`. Then
+        `pm.sample_prior_predictive` and look at quantiles of the simulated counts - try
+        `Normal(0, 10)` on the intercept as well to see what "vague" means after `exp`.
+
+        For the check, take the posterior predictive draws of `cnt`, compute the 5% and 95%
+        quantiles **per day** over chains and draws, and count how many observed days fall in
+        between. Plot that band against the date. `az.plot_ppc_pit` is the graphical version: if
+        the predictive distributions were right, the PIT values would be uniform and the
+        delta-ECDF curve would hug zero (ArviZ prints the p-value of a uniformity test on the
+        plot). `az.plot_ppc_rootogram` is made for *small* counts; with counts in the thousands
+        it is slow and unreadable.
+      - |
+        ```python
+        Z = (train[cols] - train[cols].mean()) / train[cols].std()
+        with pm.Model(coords={"predictor": cols}) as poisson_model:
+            intercept = pm.Normal("intercept", ___, ___)
+            beta = pm.Normal("beta", 0, ___, dims="predictor")
+            mu = pm.math.exp(intercept + pm.math.dot(Z.values, beta))
+            pm.Poisson("cnt", mu, observed=train.cnt.values)
+            prior = pm.sample_prior_predictive(1000, random_seed=RANDOM_SEED)
+            idata = pm.sample(random_seed=RANDOM_SEED)
+            pm.sample_posterior_predictive(idata, extend_inferencedata=True, random_seed=RANDOM_SEED)
+
+        pp = idata.posterior_predictive["cnt"]
+        q = pp.quantile([0.05, 0.95], dim=("chain", "draw"))
+        inside = (train.cnt.values >= q.isel(quantile=0).values) & (___)
+        coverage90 = inside.mean()
+        ```
+    checks:
+      coverage90:
+        what: share of training days inside the Poisson model's central 90% predictive interval - about 0.05, nowhere near 0.9
+        range: [0.0, 0.15]
+
+  task2:
+    title: Fix what Task 1 revealed
+    hints:
+      - |
+        The Poisson likelihood assumes variance = mean. Compare the two in the data *given the
+        model*: for each day, how large is `(observed - predicted)**2` relative to `predicted`?
+        If the assumption held, that ratio would average about 1. Which count distribution has a
+        second parameter that lets the variance exceed the mean?
+      - |
+        The Pearson dispersion statistic is `sum((y - mu)**2 / mu) / (n - number of parameters)`;
+        use the posterior mean prediction as `mu`. It should be about 1 for a Poisson model.
+
+        The negative binomial has variance `mu + mu**2 / alpha`. For counts in the thousands the
+        second term dominates, so `1 / sqrt(alpha)` is, to a good approximation, the day-to-day
+        **coefficient of variation** that is left once the predictors are accounted for - a
+        number the operations team can understand ("demand is unpredictable to within about
+        +-x% even if we know the weather"). You can put the prior on that quantity directly and
+        derive `alpha` from it. `pm.NegativeBinomial("cnt", mu=mu, alpha=alpha, observed=...)`.
+
+        Then look at what happened to the posterior sd of the coefficients. The Poisson model
+        treated every one of 3 million rentals as an independent piece of evidence.
+      - |
+        ```python
+        mu_hat = poisson_idata.posterior_predictive["cnt"].mean(("chain", "draw")).values
+        dispersion = np.sum((y - mu_hat) ** 2 / mu_hat) / (len(y) - 4)
+
+        with pm.Model(coords=coords) as negbin_model:
+            intercept = ...   # as before
+            beta = ...        # as before
+            cv = pm.HalfNormal("cv", ___)
+            alpha = pm.Deterministic("alpha", ___)
+            mu = pm.math.exp(intercept + pm.math.dot(Z.values, beta))
+            pm.NegativeBinomial("cnt", mu=mu, alpha=alpha, observed=train.cnt.values)
+        ```
+    checks:
+      dispersion:
+        what: Pearson dispersion statistic sum((y - mu)^2 / mu) / (n - p) of the POISSON model from Task 1 - about 500, where 1 would be fine
+        range: [420, 580]
+      coverage90:
+        what: share of training days inside the repaired model's 90% predictive interval, close to 0.9
+        range: [0.86, 0.96]
+      alpha:
+        what: posterior mean of the negative-binomial alpha (variance = mu + mu^2 / alpha) with the three linear weather predictors, about 7
+        range: [6.0, 8.2]
+
+  task3:
+    title: Too hot to cycle
+    hints:
+      - |
+        Plot `log(observed / predicted)` against temperature and average it in bins. If the
+        linear term were adequate, the binned means would hover around zero everywhere. For the
+        fix you need a function of temperature that is flexible but smooth, and that you can
+        evaluate again for *new* temperatures when you forecast.
+      - |
+        A regression spline turns one column into a handful of smooth basis columns; the model
+        stays linear in the coefficients. With patsy:
+        `dmatrix("cr(temp_c, df=6, constraints='center') - 1", train)` gives a natural cubic
+        spline basis, centred so that it does not compete with the intercept. To evaluate the
+        *same* basis (same knots) on new data use
+        `build_design_matrices([basis.design_info], new_df)`. Alternative: `pm.gp.HSGP` with an
+        `ExpQuad` covariance on standardised temperature.
+
+        The temperature effect is `f = B_grid @ w` on the log scale, so `exp(f)` is a multiplier
+        on expected demand. Compute it for every posterior draw on a grid of temperatures; then
+        the location of the maximum and the ratio `exp(f(35) - max f)` are just functions of each
+        draw, and you get their posterior for free.
+
+        Register every input with `pm.Data` now (and give the likelihood `shape=mu.shape`):
+        you will need to swap in new days in Task 6.
+      - |
+        ```python
+        from patsy import dmatrix, build_design_matrices
+        basis = dmatrix("cr(temp_c, df=6, constraints='center') - 1", train)
+        B = np.asarray(basis)
+
+        with pm.Model(coords={"knot": np.arange(B.shape[1]), "day": train.dteday.values}) as m:
+            B_ = pm.Data("B", B, dims=("day", "knot"))
+            w = pm.Normal("w_temp", 0, 1, dims="knot")
+            eta = intercept + pm.math.dot(B_, w) + ___          # humidity and wind as before
+            ...
+
+        grid = pd.DataFrame({"temp_c": np.linspace(train.temp_c.min(), train.temp_c.max(), 200)})
+        B_grid = np.asarray(build_design_matrices([basis.design_info], grid)[0])
+        w_draws = az.extract(idata, var_names="w_temp").transpose("sample", "knot").values
+        f = w_draws @ B_grid.T                                   # (draws, grid)
+        peak = grid.temp_c.values[f.argmax(axis=1)]
+        drop35 = 100 * (1 - np.exp(f[:, ___] - f.max(axis=1)))
+        ```
+    checks:
+      peak_temp_c:
+        what: posterior mean of the temperature (deg C) at which expected demand peaks, about 26
+        range: [24.5, 28.5]
+      drop_at_35_pct:
+        what: posterior mean of how far (in %) expected demand at 35 C lies below the peak, roughly a third
+        range: [20.0, 50.0]
+
+  task4:
+    title: Calendar, weather situation, growth - and a scoreboard
+    hints:
+      - |
+        With dummy variables, one level disappears into the intercept and every other effect is
+        "relative to Sunday". Is there a parameterisation in which seven weekday effects are
+        deviations from the *average* day? And think about `workingday`: can you compute it
+        exactly from `weekday` and `holiday`? What does a model do with a predictor that is a
+        deterministic function of others?
+      - |
+        `pm.ZeroSumNormal("weekday_eff", sigma, dims="weekday")` is a vector of effects
+        constrained to sum to zero; index it with the integer weekday code:
+        `weekday_eff[weekday_idx]`. Same for the three weather situations. A contrast such as
+        wet-vs-clear is `exp(eff[wet] - eff[clear]) - 1`, computed draw by draw.
+
+        For growth, the file offers `yr`. Centre it (-0.5 / +0.5) so that the intercept remains
+        the average day. `exp(growth) - 1` is the relative change.
+
+        LOO: `pm.compute_log_likelihood(idata)` inside each model, then
+        `az.loo(idata, pointwise=True)` once per model and `az.compare({name: loo, ...})` -
+        `az.compare` accepts the precomputed results. A difference matters when `elpd_diff` is
+        several times its `dse`. The Poisson row will look absurd, and will come with Pareto-k
+        warnings; both are information, not bugs.
+      - |
+        ```python
+        coords = {..., "weekday": ["Sun", ...], "weather": ["clear", "mist", "wet"]}
+        weekday_eff = pm.ZeroSumNormal("weekday_eff", ___, dims="weekday")
+        weather_eff = pm.ZeroSumNormal("weather_eff", ___, dims="weather")
+        b_holiday = pm.Normal("b_holiday", 0, 0.5)
+        growth = pm.Normal("growth", 0, 1)
+        eta = eta + weekday_eff[weekday_idx] + weather_eff[___] + b_holiday * holiday + growth * (yr - 0.5)
+
+        post = az.extract(idata)
+        wet_vs_clear = 100 * (np.exp(post["weather_eff"].sel(weather="wet") - ___) - 1)
+
+        loos = {name: az.loo(idata, pointwise=True) for name, idata in models.items()}
+        az.compare(loos)
+        ```
+    checks:
+      wet_vs_clear_pct:
+        what: posterior mean change in demand on a wet day relative to a clear day, in percent (negative, roughly minus 45)
+        range: [-55.0, -38.0]
+      growth_pct:
+        what: posterior mean growth in demand from 2011 to 2012 at equal weather and calendar, in percent (roughly +50)
+        range: [46.0, 60.0]
+
+  task5:
+    title: The days the model cannot believe
+    hints:
+      - |
+        `az.loo(..., pointwise=True)` returns more than a total: `elpd_i` (one value per day - very
+        negative means "the model found this day almost impossible") and `pareto_k` (how much the
+        posterior would move if that day were removed). Put both next to the dates. Then ask of
+        each suspicious day: is this *demand* the model failed to predict, or was the system (or
+        a sensor) not operating normally?
+      - |
+        Attach `loo.elpd_i.values` and `loo.pareto_k.values` to the training frame and sort. The
+        worst day had 22 rentals. Look at the date and at what happened on the US east coast that
+        day; the day after is affected as well. A humidity of exactly 0% on a rainy day is a
+        different kind of anomaly.
+
+        Options: (a) drop the day(s) and state that forecasts are conditional on the system
+        operating; (b) give the day its own indicator (equivalent for prediction); (c) keep it
+        and let the dispersion parameter absorb it. To see what (c) costs, compare `cv` / `alpha`
+        and the average width of the 90% predictive interval with and without. One dispersion
+        parameter serves all days - a single "impossible" day can only be accommodated by making
+        *every* day noisier.
+      - |
+        ```python
+        loo = az.loo(idata, pointwise=True)
+        pointwise = train[["dteday", "cnt", "weather", "hum_pct"]].assign(
+            elpd=loo.elpd_i.values, pareto_k=loo.pareto_k.values)
+        pointwise.nsmallest(6, "elpd")
+
+        drop = pd.to_datetime([___])
+        train_clean = train[~train.dteday.isin(drop)].copy()
+        train_clean["hum_pct"] = train_clean.hum_pct.where(train_clean.hum_pct > 0).interpolate()
+        # refit the same model on train_clean, compare alpha and interval widths
+        ```
+    checks:
+      cnt_worst_day:
+        what: number of rentals on the day with the lowest pointwise elpd (an almost empty system)
+        range: [22, 22]
+      k_worst_day:
+        what: Pareto-k of that day, beyond the 0.7 reliability threshold
+        range: [0.7, 3.0]
+
+  task6:
+    title: Open the hold-out
+    hints:
+      - |
+        A term that says "2012 is x% above 2011" describes the past well. What level does it
+        predict for the *end* of 2012 - and for 2013? If the system grew steadily, where within
+        each year would a constant-per-year model be too high, and where too low? You can check
+        that on the training residuals without touching the hold-out.
+      - |
+        Forecasting: inputs registered with `pm.Data`, likelihood with `shape=mu.shape`; then
+        `pm.set_data({...}, coords={"day": test.dteday.values})` and
+        `pm.sample_posterior_predictive(idata, predictions=True)` -> `pred.predictions["cnt"]`.
+        Build the spline basis for the test days with `build_design_matrices` and standardise
+        with the *training* means.
+
+        Coverage: per-day quantiles over chain and draw, as in Task 1. Mean error: predictive
+        median minus actual.
+
+        Diagnosis: average `log(observed / predicted)` by month on the training data. A
+        saw-tooth (negative early in each year, positive late) means growth happened *within*
+        the years. Replace the year step by a linear term in continuous time (years since the
+        start, centred); `exp(growth) - 1` is then the annual growth rate. Compare the two with
+        `az.compare` - both are fitted to the same days, so the comparison is fair.
+
+        Then list the hold-out days outside the 90% band and look at their dates.
+      - |
+        ```python
+        def forecast(model, idata, new):
+            with model:
+                pm.set_data(features(new), coords={"day": new.dteday.values})
+                pred = pm.sample_posterior_predictive(idata, predictions=True, random_seed=RANDOM_SEED)
+            return pred.predictions["cnt"]
+
+        pp = forecast(model, idata, test)
+        q = pp.quantile([0.05, 0.25, 0.5, 0.75, 0.95], dim=("chain", "draw")).values
+        y = test.cnt.values
+        coverage90 = np.mean((y >= q[0]) & (y <= q[4]))
+        mean_error = np.mean(q[2] - y)
+
+        # trend in continuous time instead of a year step
+        t = (df.dteday - pd.Timestamp("2011-01-01")).dt.days / 365.25 - 1.0
+        eta = ___ + growth * t
+        ```
+    checks:
+      coverage90_first:
+        what: hold-out coverage of the 90% interval for the model with a step between years - far too low (about 0.65)
+        range: [0.5, 0.78]
+      coverage90_final:
+        what: hold-out coverage of the 90% interval after fixing the growth term (about 0.8; the misses are holiday periods)
+        range: [0.72, 0.93]
+      growth_pct_per_year:
+        what: annual growth rate in percent implied by a linear trend in log demand (roughly 60)
+        range: [52.0, 66.0]
+
+  task7:
+    title: How much capacity?
+    hints:
+      - |
+        "Cover demand with probability 95%" is a statement about tomorrow's *count*, not about
+        the model's uncertainty in the expected count. Which distribution describes tomorrow's
+        count? For part 2: if you are one unit short it costs you 4; if you have one unit too many
+        it costs 0.5. At the optimum the expected cost of adding one more unit equals the
+        expected saving.
+      - |
+        Build a small data frame for the three scenario days with exactly the columns your
+        feature function needs (weekday code from the date - careful, pandas counts from Monday,
+        the file from Sunday; weather code from the label; time index from the date), then use
+        the Task 6 forecasting function. Capacity for 95% = the 0.95 quantile of the predictive
+        draws for that day. For comparison compute `mu` from the posterior draws of the
+        parameters and take *its* 0.95 quantile: that ignores the negative-binomial scatter.
+
+        Expected cost of capacity `c`: `mean(4 * max(d - c, 0) + 0.5 * max(c - d, 0))` over
+        predictive draws `d`. Evaluate on a grid of `c` and take the minimum. This is the
+        newsvendor problem: the optimum is the quantile `cost_short / (cost_short + cost_idle)`.
+        Invert that formula to find the cost ratio that justifies a 95% rule.
+      - |
+        ```python
+        new = scenarios.assign(
+            dteday=scenarios.date,
+            weekday=(scenarios.date.dt.dayofweek + 1) % 7,
+            weathersit=[WEATHER.index(w) + 1 for w in scenarios.weather],
+            holiday=0, yr=1,
+            t=(scenarios.date - pd.Timestamp("2011-01-01")).dt.days / 365.25,
+        )
+        pp = forecast(final_model, final_idata, new)
+        d = pp.stack(sample=("chain", "draw")).transpose("sample", "day").values   # (draws, 3)
+        capacity95 = np.quantile(d, ___, axis=0)
+
+        grid = np.arange(0, 12001, 10)
+        short = np.clip(d[:, 0][None, :] - grid[:, None], 0, None)
+        idle = np.clip(___, 0, None)
+        cost = (COST_LOST_RENTAL * short + COST_IDLE * idle).mean(axis=1)
+        best = grid[cost.argmin()]
+        ```
+    checks:
+      capacity95_friday:
+        what: 95% predictive quantile of rentals for the mild clear Friday, about 7,900 (must include the negative-binomial scatter, not just the uncertainty in mu)
+        range: [7250, 8500]
+      optimal_capacity_friday:
+        what: cost-minimising capacity for the mild clear Friday with costs 4 and 0.5, about 7,300
+        range: [6800, 7900]
+      optimal_quantile:
+        what: quantile of the predictive distribution at the cost-minimising capacity, 4 / 4.5 = 0.89
+        range: [0.87, 0.91]

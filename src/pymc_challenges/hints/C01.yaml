@@ -1,0 +1,190 @@
+title: "Golf putting: when physics beats curve fitting"
+tasks:
+  task1:
+    title: Logistic regression baseline
+    hints:
+      - |
+        You have *counts* of successes out of `n` attempts at each distance, not individual putts.
+        Which likelihood is that? And before sampling anything: if you draw `a` and `b` from your
+        priors and plot the implied curves over 0-20 feet, do they look like things a golfer could do?
+      - |
+        Use `pm.Binomial("y", n=..., logit_p=a + b * x, observed=...)` - the `logit_p` argument
+        saves you from writing the inverse-logit yourself and is numerically safer.
+
+        For the prior predictive check, `pm.sample_prior_predictive(200)` returns a DataTree with a
+        `prior` group. `az.extract(idata, group="prior", var_names=["a", "b"])` gives you flat draws
+        you can broadcast against a grid of distances in plain NumPy.
+
+        On the prior scale: distance spans ~20 feet, so a slope of 0.5 per foot is already a
+        10-unit swing in log-odds. Priors much wider than that produce step functions.
+      - |
+        ```python
+        with pm.Model() as logit_model:
+            a = pm.Normal("a", 0, ___)
+            b = pm.Normal("b", 0, ___)
+            pm.Binomial("y", n=golf.n.values, logit_p=___, observed=golf.y.values)
+            prior = pm.sample_prior_predictive(200, random_seed=RANDOM_SEED)
+            idata = pm.sample(random_seed=RANDOM_SEED)
+
+        post = az.extract(idata, var_names=["a", "b"])          # dims: (sample,)
+        logit = post["a"].values[:, None] + post["b"].values[:, None] * x_grid
+        curves = 1 / (1 + np.exp(-logit))                       # (draws, grid)
+        lo, hi = np.quantile(curves, [0.03, 0.97], axis=0)
+        ```
+    checks:
+      a:
+        what: posterior mean of the intercept, roughly 2.2 on the logit scale
+        range: [2.05, 2.4]
+      b:
+        what: posterior mean of the slope, roughly -0.26 per foot
+        range: [-0.28, -0.23]
+
+  task2:
+    title: A mechanistic angle model
+    hints:
+      - |
+        Draw it. The ball starts `x` feet from the hole. For its centre to pass over the hole, how
+        far off-line can it be when it gets there - in terms of the hole radius `R` and ball radius
+        `r`? That gives you a right-angled triangle, and the triangle gives you a threshold angle.
+      - |
+        The threshold angle is `theta_0 = arcsin((R - r) / x)`. If the angular error is
+        `Normal(0, sigma)`, the putt drops when `|theta| < theta_0`, so
+
+        `p = 2 * Phi(theta_0 / sigma) - 1`
+
+        The standard normal CDF `Phi` is `pm.math.invprobit` in PyMC; `pm.math.arcsin` exists too.
+        `sigma` is in radians and must be positive - think about how many degrees a professional
+        could plausibly be off by when choosing the prior scale. Wrap the conversion to degrees in
+        a `pm.Deterministic` so it shows up in `az.summary`.
+      - |
+        ```python
+        with pm.Model() as angle_model:
+            sigma_angle = pm.HalfNormal("sigma_angle", ___)          # radians
+            pm.Deterministic("sigma_angle_deg", sigma_angle * 180 / np.pi)
+            theta_0 = pm.math.arcsin((HOLE_RADIUS - BALL_RADIUS) / golf.x.values)
+            p = 2 * pm.math.invprobit(___) - 1
+            pm.Binomial("y", n=golf.n.values, p=p, observed=golf.y.values)
+            idata = pm.sample(random_seed=RANDOM_SEED)
+        ```
+        For plotting, re-implement `p(x)` with NumPy and `scipy.stats.norm.cdf` and evaluate it for
+        every posterior draw of `sigma_angle` on a grid.
+    checks:
+      sigma_angle_deg:
+        what: posterior mean of the angular error in DEGREES, about 1.5 (did you convert from radians?)
+        range: [1.45, 1.61]
+
+  task3:
+    title: LOO comparison
+    hints:
+      - |
+        LOO needs the pointwise log-likelihood of each observation under each posterior draw.
+        `pm.sample` does not store it by default. How do you get it after the fact?
+      - |
+        `pm.compute_log_likelihood(idata)` inside the model context adds a `log_likelihood` group
+        in place. Then `az.compare({"name": idata, ...})` returns a DataFrame ranked by `elpd`.
+
+        Read the warnings: Pareto-k above 0.7 means the importance-sampling approximation behind
+        PSIS-LOO is unreliable for that observation. Ask yourself what "leaving one observation
+        out" means when one observation is 1,400 putts.
+      - |
+        ```python
+        with logit_model:
+            pm.___(logit_idata)          # adds the log_likelihood group in place
+        with angle_model:
+            pm.___(angle_idata)
+        az.compare({"logistic": ___, "angle": ___})
+        az.loo(angle_idata)     # prints the Pareto-k table for one model
+        ```
+
+  task4:
+    title: New data breaks the model
+    hints:
+      - |
+        Refit without changing anything, then look at *where* the misfit is rather than how big it
+        is. Is the sign of the residual random, or does it depend on distance? Note also what
+        happened to the estimate of sigma compared with Task 2.
+      - |
+        Residual = observed rate - posterior mean of `p` at each observed distance. You will see
+        the model is too optimistic for long putts. Angle is not the only way to miss: think about
+        what else has to be right for a 50-foot putt to drop.
+      - |
+        ```python
+        sigma = az.extract(idata_new, var_names="sigma_angle").values        # (draws,)
+        p_hat = p_angle_numpy(golf_new.x.values, sigma[:, None]).mean(axis=___)   # average over draws
+        plt.plot(golf_new.x, ___ - p_hat, "o-")                                   # observed rate minus fitted
+        plt.axhline(0)
+        ```
+        The missing mechanism is **distance control**: hit it too softly and it stops short, too
+        hard and it hops over the hole.
+
+  task5:
+    title: Distance control and a sampler that will not mix
+    hints:
+      - |
+        Part 1: the golfer *intends* the ball to travel `x + 1` feet. If the error is proportional
+        to that intended distance, what is the distribution of the distance actually travelled?
+        The putt drops if that lands in an interval - which one?
+
+        Part 2: when the chains disagree, do not reach for `target_accept`. Look at the `n` column.
+        How precisely does a Binomial with n = 50,000 claim to know each success rate? Can *any*
+        smooth two-parameter curve pass through 31 points that precisely?
+      - |
+        Distance travelled is `(x + 1) * (1 + eps)` with `eps ~ Normal(0, sigma_distance)`, and it
+        must land in `[x, x + 3]`:
+
+        `p_distance = Phi(2 / ((x + 1) * sigma_d)) - Phi(-1 / ((x + 1) * sigma_d))`
+
+        and `p = p_angle * p_distance`.
+
+        The Binomial version is multimodal because the model is slightly wrong and the data are
+        abundant enough to punish that brutally. The honest fix is to add a term for model error:
+        let the *observed rate* `y / n` be Normal around `p` with variance equal to the binomial
+        sampling variance `p (1 - p) / n` **plus** an extra `sigma_y ** 2`.
+      - |
+        ```python
+        with pm.Model() as final_model:
+            sigma_angle = pm.HalfNormal("sigma_angle", 0.1)
+            sigma_distance = pm.HalfNormal("sigma_distance", ___)
+            sigma_y = pm.HalfNormal("sigma_y", ___)          # on the probability scale: small!
+            scale = (x + 1) * sigma_distance
+            p_dist = pm.math.invprobit(2 / scale) - pm.math.invprobit(___)
+            p = p_angle * p_dist
+            pm.Normal("rate", mu=p,
+                      sigma=pm.math.sqrt(p * (1 - p) / n + sigma_y**2),
+                      observed=y / n)
+        ```
+    checks:
+      sigma_angle_deg:
+        what: posterior mean of angular error in degrees in the FINAL model, about 1.0
+        range: [0.95, 1.1]
+      sigma_distance:
+        what: posterior mean of the proportional distance error in the FINAL model, about 0.08
+        range: [0.07, 0.09]
+
+  task6:
+    title: Answer the business question
+    hints:
+      - |
+        `x50` is a deterministic function of the parameters, so every posterior draw of the
+        parameters gives you one draw of `x50`. There is no closed form - but you do not need one.
+      - |
+        Evaluate `p(x)` on a fine grid of distances for every posterior draw (a `(draws, grid)`
+        array via broadcasting), then for each row find the first grid point where `p < 0.5`.
+        `np.argmax(condition, axis=1)` returns the index of the first `True` per row.
+
+        The what-if is the same trick: compute `p(30)` per draw with `sigma_distance` and again
+        with `0.8 * sigma_distance`, and summarise the difference.
+      - |
+        ```python
+        post = az.extract(final_idata, var_names=["sigma_angle", "sigma_distance"])
+        sa = post["sigma_angle"].values[:, None]
+        sd = post["sigma_distance"].values[:, None]
+        grid = np.linspace(1, 40, 4000)
+        p = ___                                                       # (draws, grid), by broadcasting
+        x50 = grid[np.argmax(___, axis=1)]                            # first grid point where ... per draw
+        np.quantile(x50, [0.03, 0.97])
+        ```
+    checks:
+      x50:
+        what: posterior mean distance (feet) at which p = 0.5 under the final model, about 8
+        range: [7.8, 8.25]

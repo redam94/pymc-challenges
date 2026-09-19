@@ -1,0 +1,271 @@
+title: "Galaxies: how many clusters, and who belongs where?"
+tasks:
+  task0:
+    title: Look at the data
+    hints:
+      - |
+        With 82 points you can afford to draw every one of them. A rug (one tick per galaxy)
+        under a fine histogram shows both the humps and the empty stretches. The gaps between
+        neighbouring sorted velocities are one `np.diff` away.
+      - |
+        `np.diff(v)` on the sorted velocities, put into a DataFrame with the two neighbours and
+        sorted descending, gives the voids in order of size. Then summarise each visually
+        separate group: how many galaxies, mean, standard deviation. Compare the standard
+        deviations - you will need that observation in Task 5.
+
+  task1:
+    title: The textbook mixture
+    hints:
+      - |
+        Do not stop at "r_hat is bad". `r_hat` compares chains *with each other*. Look at each
+        chain on its own: the trace of the means, and the posterior mean of every component
+        *per chain*. What is component 0 in chain 0? What is it in chain 2?
+      - |
+        `pm.NormalMixture("velocity", w=w, mu=mu, sigma=sigma, observed=v)` with
+        `w = pm.Dirichlet("w", np.ones(3))` and `mu = pm.Normal("mu", 20, 10, shape=3)` is the
+        whole model. For the per-chain view: `idata.posterior["mu"].mean("draw")` is a
+        (chain, component) table, and `az.plot_trace(idata, var_names=["mu"])` shows it.
+
+        The likelihood is unchanged if you swap the names of two components, and so is the
+        prior. So the posterior has 3! = 6 identical copies of every mode. Which quantities in
+        the model do not care about the names?
+      - |
+        ```python
+        K = 3
+        with pm.Model(coords={"component": range(K)}) as naive_model:
+            mu = pm.Normal("mu", ___, ___, dims="component")
+            sigma = pm.HalfNormal("sigma", ___)
+            w = pm.Dirichlet("w", np.ones(K), dims="component")
+            pm.NormalMixture("velocity", w=w, mu=mu, sigma=sigma, observed=v)
+            naive_idata = pm.sample(random_seed=RANDOM_SEED)
+
+        az.summary(naive_idata)
+        naive_idata.posterior["mu"].mean("draw").to_pandas()     # rows: chains, columns: components
+        float(az.rhat(naive_idata.posterior["mu"]).max())
+        ```
+    checks:
+      max_rhat:
+        what: largest r_hat among the three component means of the NAIVE model - it is supposed to be terrible (well above 1.1)
+        range: [1.2, 20]
+
+  task2:
+    title: Fix the model
+    hints:
+      - |
+        The six copies of the posterior differ only in which component carries which name. Can
+        you add a constraint that exactly one of the six copies satisfies? And for part 2: if
+        every chain sits in a different copy, what operation on a single posterior draw maps
+        all the copies onto the same one?
+      - |
+        Constrain the means to be increasing: `pm.Normal("mu", 20, 10, dims="component",
+        transform=pm.distributions.transforms.ordered)`. The transform works with the first mean
+        and the *log of the gaps* between neighbours, and the default starting point has all
+        means equal - gaps of zero. `model.initial_point()` and `model.point_logps()` show the
+        `-inf`. Give strictly increasing starting values through
+        `pm.sample(initvals={"mu": ...})`; spreading them over the range of the data is a good
+        default. (Prefer this to `initval=` on the variable: `pm.compute_log_likelihood`, which
+        you need in Task 4, rejects models with non-default initial values.)
+
+        Part 2: sort the means within every draw (`np.sort(..., axis=-1)`), wrap the result back
+        into a DataArray with `(chain, draw, component)` dims and call `az.rhat` on it.
+      - |
+        ```python
+        ordered = pm.distributions.transforms.ordered
+        with pm.Model(coords={"component": range(K)}) as ordered_model:
+            mu = pm.Normal("mu", 20, 10, dims="component", transform=ordered)
+            sigma = pm.HalfNormal("sigma", 3)
+            w = pm.Dirichlet("w", np.ones(K), dims="component")
+            pm.NormalMixture("velocity", w=w, mu=mu, sigma=sigma, observed=v)
+            ordered_idata = pm.sample(initvals={"mu": np.linspace(___, ___, K)}, random_seed=RANDOM_SEED)
+
+        naive_mu = naive_idata.posterior["mu"]
+        relabelled = naive_mu.copy(data=np.sort(naive_mu.values, axis=___))
+        az.rhat(relabelled)
+        ```
+    checks:
+      mu_main:
+        what: posterior mean of the mean of the big middle cluster, about 21.4 (thousand km/s)
+        range: [21.0, 21.8]
+      w_main:
+        what: posterior mean of the weight of the middle cluster, about 0.86
+        range: [0.8, 0.9]
+      sigma:
+        what: posterior mean of the shared standard deviation, about 2.1 (thousand km/s)
+        range: [1.9, 2.4]
+
+  task3:
+    title: Membership probabilities, two ways
+    hints:
+      - |
+        Suppose somebody hands you the true weights, means and standard deviation. What is the
+        probability that a galaxy at 16,084 km/s came from the middle cluster? That is one line
+        of Bayes' rule. Now you do not have the true parameters - you have 4,000 plausible sets.
+      - |
+        For one posterior draw, the "responsibility" of component k for galaxy i is
+        `w_k * N(v_i | mu_k, sigma)` divided by the sum of that over k. Compute it for every
+        draw by broadcasting to an array of shape `(draws, galaxies, components)` - do it on the
+        log scale and subtract the row maximum before exponentiating - and average over draws.
+
+        The explicit version: `z = pm.Categorical("z", p=w, dims="galaxy")` and
+        `pm.Normal("velocity", mu[z], sigma, observed=v)`. PyMC assigns NUTS to the continuous
+        parameters and a Metropolis-within-Gibbs step to `z` automatically (nutpie cannot do
+        this, so it falls back to the PyMC sampler). Membership probabilities are then just the
+        frequencies of `z == k` per galaxy. Compare `az.ess` of the shared parameters and the
+        wall-clock time.
+      - |
+        ```python
+        post = az.extract(ordered_idata, var_names=["mu", "sigma", "w"])
+        mu = post["mu"].values.T[:, None, :]            # (draws, 1, K)
+        w = post["w"].values.T[:, None, :]
+        sigma = post["sigma"].values[:, None, None]
+        log_r = np.log(w) + stats.norm.logpdf(v[None, :, None], mu, sigma)    # (draws, N, K)
+        log_r -= log_r.max(axis=-1, keepdims=True)
+        r = np.exp(log_r); r /= r.sum(axis=-1, keepdims=True)
+        membership = r.mean(axis=___)                   # (N, K)
+
+        with pm.Model(coords={"component": range(K), "galaxy": range(N)}) as explicit_model:
+            ...                                          # same priors, ordered means
+            z = pm.Categorical("z", p=___, dims="galaxy")
+            pm.Normal("velocity", mu[___], sigma, observed=v, dims="galaxy")
+        ```
+    checks:
+      p_main_16084:
+        what: P(galaxy at 16.084 belongs to the middle cluster) under the shared-sd K=3 model, about 0.95
+        range: [0.88, 0.99]
+      p_main_26995:
+        what: P(galaxy at 26.995 belongs to the middle cluster) under the shared-sd K=3 model, about 0.9
+        range: [0.8, 0.96]
+
+  task4:
+    title: How many clusters?
+    hints:
+      - |
+        Three different tools answer three different questions. LOO: does an extra component
+        improve prediction of a held-out galaxy? PPC: can the model reproduce the features the
+        astronomers care about (a far group, empty stretches)? Posterior weights: is the extra
+        component actually being used? Expect them to agree about K = 2 and to shrug about the rest.
+      - |
+        Wrap the model in a function of K (ordered means, `initvals` spread over the data range,
+        `pm.compute_log_likelihood` at the end) and loop. `az.compare({"K=2": idata2, ...})`
+        ranks them; read `elpd_diff` against `dse`, and the warning column. With N = 82 a
+        difference of 1-2 standard errors is not a finding.
+
+        Overfitted mixtures are hard to sample: when a component is not needed, the posterior
+        has to decide whether to give it no weight, merge it with a neighbour or park it in a
+        gap, and those are separate modes. A raised `target_accept` helps a little; mediocre
+        `r_hat` for the larger K is itself a sign of redundant components.
+
+        PPC: the mixture density for a draw is `sum_k w_k N(x | mu_k, sigma)` on a grid - plot
+        its mean and a band over the histogram. For a test statistic use
+        `pm.sample_posterior_predictive` and count, per replicated survey, the galaxies above
+        30 (observed: 3).
+      - |
+        ```python
+        def fit_mixture(K):
+            with pm.Model(coords={"component": range(K), "galaxy": range(N)}) as model:
+                mu = pm.Normal("mu", 20, 10, dims="component", transform=ordered)
+                sigma = pm.HalfNormal("sigma", 3)
+                w = pm.Dirichlet("w", ___, dims="component")
+                pm.NormalMixture("velocity", w=w, mu=mu, sigma=sigma, observed=v, dims="galaxy")
+                idata = pm.sample(initvals={"mu": ___},      # K ordered, well-separated starting means
+                                  target_accept=0.95, random_seed=RANDOM_SEED)
+                pm.compute_log_likelihood(idata)
+            return model, idata
+
+        fits = {f"K={k}": fit_mixture(k) for k in range(2, 7)}
+        az.compare({name: idata for name, (_, idata) in fits.items()})
+        az.loo(___).elpd - az.loo(___).elpd
+        ```
+    checks:
+      elpd_gain_3_vs_2:
+        what: elpd_loo of K=3 minus elpd_loo of K=2 (shared sd), clearly positive - roughly 15-25
+        range: [8, 30]
+      sigma_k6:
+        what: posterior mean of the shared sd in the K=6 model, about 1 - half of what it is for K=3
+        range: [0.7, 1.5]
+
+  task5:
+    title: Unequal spreads and heavy tails
+    hints:
+      - |
+        Go back to your Task 0 table: the near group has a standard deviation several times
+        smaller than the main body. A shared sigma has to compromise. What could a K = 6 model
+        with a small shared sigma be doing that a K = 3 model with three sigmas does directly?
+        And for the heavy-tailed version: if a component is allowed stragglers far from its
+        centre, are three galaxies at 32-34 still a "cluster"?
+      - |
+        Give `sigma` a `dims="component"` and an informative prior on the scale astronomers
+        expect, e.g. `pm.LogNormal("sigma", 0, 0.5)` - median 1 (thousand km/s), 95% within
+        roughly 0.4-2.7. A very wide prior on the spreads invites a degenerate solution in which
+        one component becomes a flat background; bad starting values (all means inside the main
+        body) invite another in which the chains disagree. Start the means spread over the data
+        range.
+
+        Heavy tails: `pm.Mixture("velocity", w=w, comp_dists=pm.StudentT.dist(nu=4, mu=mu,
+        sigma=sigma, shape=K), observed=v)`. If `r_hat` complains here, look at the trace of `mu`
+        chain by chain: this is no longer label switching (the means are ordered) but two
+        different *explanations* of the data.
+      - |
+        ```python
+        with pm.Model(coords={"component": range(3), "galaxy": range(N)}) as unequal_model:
+            mu = pm.Normal("mu", 20, 10, dims="component", transform=ordered)
+            sigma = pm.LogNormal("sigma", ___, ___, dims="component")
+            w = pm.Dirichlet("w", np.ones(3), dims="component")
+            pm.NormalMixture("velocity", w=w, mu=mu, sigma=sigma, observed=v, dims="galaxy")
+            # heavy tails instead:
+            # pm.Mixture("velocity", w=w, observed=v, dims="galaxy",
+            #            comp_dists=pm.StudentT.dist(nu=4, mu=mu, sigma=sigma, shape=3))
+            idata = pm.sample(initvals={"mu": np.linspace(v.min(), v.max(), 3)},
+                              target_accept=0.95, random_seed=RANDOM_SEED)
+            pm.compute_log_likelihood(idata)
+        ```
+        In the responsibilities, `sigma` now has a component axis: `post["sigma"].values.T[:, None, :]`.
+    checks:
+      sigma_near:
+        what: posterior mean of the sd of the NEAR cluster (around 9.7) in the unequal-sd Gaussian model, about 0.6
+        range: [0.45, 0.9]
+      sigma_main:
+        what: posterior mean of the sd of the MAIN cluster in the unequal-sd Gaussian model, about 2.2
+        range: [1.9, 2.5]
+
+  task6:
+    title: Co-clustering and the void
+    hints:
+      - |
+        Both deliverables are functions of the parameters, so both have a posterior - no new
+        model is needed. For co-clustering: given the parameters, are the assignments of two
+        different galaxies dependent? For the void: what is the probability that one new galaxy
+        lands in the interval, and what does that imply for 82 of them?
+      - |
+        Co-clustering: given theta the assignments are independent, so
+        `P(z_i = z_j | theta) = sum_k r_ik * r_jk` with the responsibilities of Task 3; average
+        over draws. `np.einsum("sik,sjk->ij", r, r) / n_draws` does all pairs at once.
+
+        Void: the predictive mass of `[lo, hi]` for one draw is
+        `sum_k w_k * (Phi((hi - mu_k) / sigma_k) - Phi((lo - mu_k) / sigma_k))`. The expected
+        count in a survey of N galaxies is `N * mass`; the probability that the interval is empty
+        is `(1 - mass) ** N`. Compute these **per draw** and then average - `(1 - mean) ** N` is
+        not the same thing. For the smooth alternative, a single Normal with the sample mean and
+        sd is enough.
+      - |
+        ```python
+        r = responsibilities(final_idata)                       # (draws, N, K)
+        cc = np.einsum("sik,sjk->ij", r, r) / r.shape[0]        # (N, N)
+        i, j = np.argmin(np.abs(v - 16.084)), np.argmin(np.abs(v - 18.419))
+        cc[i, j]
+
+        post = az.extract(final_idata, var_names=["mu", "sigma", "w"])
+        mu, sigma, w = post["mu"].values.T, post["sigma"].values.T, post["w"].values.T   # (draws, K)
+        mass = (w * (stats.norm.cdf((VOID[1] - mu) / sigma) - stats.norm.cdf(___))).sum(axis=1)
+        N * mass.mean(), ((1 - mass) ** N).mean()
+        ```
+    checks:
+      coclust_16084_18419:
+        what: P(galaxies at 16.084 and 18.419 are in the same cluster) under the K=3 unequal-sd model - essentially 1
+        range: [0.95, 1.0]
+      void_expected:
+        what: expected number of galaxies inside the void (27.5-31.5) in a new survey of 82 under the K=3 unequal-sd model - about 0.8 with an informative prior on the sds, up to about 1.6 with a vague one
+        range: [0.3, 1.8]
+      p_void_empty:
+        what: posterior predictive probability that a new survey of 82 finds the void empty, K=3 unequal-sd model - about 0.5 (0.3 with a vague prior on the sds)
+        range: [0.25, 0.75]

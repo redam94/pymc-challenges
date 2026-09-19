@@ -1,0 +1,318 @@
+title: "Mauna Loa CO2: a forecast that knows what it does not know"
+tasks:
+  task0:
+    title: Decompose it by eye
+    hints:
+      - |
+        NOAA marks missing values with negative numbers (`-1`, `-9.99`, `-0.99`, sometimes
+        `-99.99`). CO2 concentrations, day counts and standard deviations cannot be negative, so
+        one comparison per column tells you where the codes are.
+
+        For the seasonal profile you need to remove the trend *without a model*. What is the
+        average of any 12 consecutive months of a purely seasonal signal?
+      - |
+        A centred 12-month moving average contains (almost) no seasonal signal, so
+        `ppm - rolling mean` is "seasonal + irregular". Average it by calendar month with
+        `groupby(co2.month)` to get the profile; repeat on the 1960s and the 2010s separately to
+        see whether the cycle has changed.
+
+        For growth rates, annual means remove the seasonal cycle: `groupby("year").mean().diff()`
+        is ppm per year, and you can average that by decade.
+      - |
+        ```python
+        print((co2.drop(columns="t") < 0).sum())
+
+        detrended = co2.ppm - co2.ppm.rolling(12, center=True).mean()
+        profile = detrended.groupby(co2.month).mean()
+        peak_month = profile.___()                       # index of the maximum
+        seasonal_range = profile.max() - profile.___()
+
+        annual = co2.groupby("year").ppm.mean()
+        growth = annual.diff()
+        growth.groupby((growth.index // 10) * 10).___()
+        ```
+    checks:
+      peak_month:
+        what: calendar month (1-12) in which the average seasonal profile peaks
+        range: [5, 5]
+      seasonal_range:
+        what: peak-to-trough range of the average seasonal profile, a little over 6 ppm
+        range: [5.6, 7.2]
+
+  task1:
+    title: Hold out ten years and set the bar
+    hints:
+      - |
+        Both baselines are a few lines of NumPy - no model. The only fiddly part is the indexing:
+        test month number `i` (0-based) should copy training month `-12 + i % 12`, and it lies
+        `i // 12 + 1` years after that source month.
+      - |
+        Seasonal naive: `last_year[np.arange(N_TEST) % 12]` where `last_year` is the final 12
+        training values.
+
+        Drift: the mean of the last 12 training values minus the mean of the 12 values ending ten
+        years earlier (`[-132:-120]`), divided by 10. It should come out a little above 2 ppm/yr.
+        Add `drift * years_ahead` to the seasonal-naive forecast.
+      - |
+        ```python
+        y_train, y_test = train.ppm.to_numpy(), test.ppm.to_numpy()
+        last_year = y_train[-12:]
+        naive = last_year[np.arange(N_TEST) % 12]
+        drift = (y_train[-12:].mean() - y_train[___:___].mean()) / 10
+        years_ahead = np.arange(N_TEST) // 12 + 1
+        naive_drift = naive + ___
+        rmse = lambda f: np.sqrt(np.mean((y_test - f) ** 2))
+        ```
+    checks:
+      rmse_naive:
+        what: hold-out RMSE (ppm) of the seasonal-naive forecast, about 15.5
+        range: [15.0, 16.0]
+      rmse_drift:
+        what: hold-out RMSE (ppm) of seasonal naive with drift, about 2.1
+        range: [1.9, 2.25]
+
+  task2:
+    title: The obvious GP
+    hints:
+      - |
+        Set the model up exactly as in E05: inputs in a `pm.Data` container, an HSGP prior, a
+        Normal likelihood with `shape=f.shape`. Two things differ. You will predict *outside* the
+        training range, so the boundary `L` must enclose the forecast dates too. And the series
+        does not hover around zero - what does a zero-mean GP do with the mean of `y`, and where
+        does that leave you far from the data?
+      - |
+        Centre CO2 on the training mean and measure time in years from a convenient origin. Give
+        `pm.gp.hsgp_approx.approx_hsgp_hyperparams` the x-range you will **predict** on (up to
+        2060) and the lengthscale range of your prior; it returns `m` and `c`, and
+        `L = c * half-range`. Pass `L=[...]` explicitly to `pm.gp.HSGP` - if you pass `c`, `L` is
+        derived from the training inputs only. The data determine the function tightly, so
+        `parametrization="centered"` samples better (E05, section 6).
+
+        Sample inside `with freeze_dims_and_data(model):`, then predict with the original model:
+        `pm.set_data({"X": new_x})` and
+        `pm.sample_posterior_predictive(idata, var_names=["y", "f"], predictions=True)`.
+
+        Coverage: for each test month take the 5% and 95% quantiles of the predictive draws and
+        count how often the observation falls between them.
+
+        For the "why": write down the GP prior at a time point 100 years away from all data. Does
+        it depend on the data? On the hyperparameters?
+      - |
+        ```python
+        m, c = pm.gp.hsgp_approx.approx_hsgp_hyperparams(
+            x_range=[train.t.min() - T0, 2060 - T0], lengthscale_range=[___, ___], cov_func="matern52")
+        L = c * (2060 - train.t.min()) / 2
+
+        with pm.Model() as gp_model:
+            X = pm.Data("X", (train.t.to_numpy() - T0)[:, None])
+            ell = pm.InverseGamma("ell", ___, ___)
+            eta = pm.HalfNormal("eta", ___)            # the rise is ~100 ppm
+            sigma = pm.HalfNormal("sigma", ___)
+            gp = pm.gp.HSGP(m=[m], L=[L], parametrization="centered",
+                            cov_func=eta**2 * pm.gp.cov.Matern52(1, ls=ell))
+            f = gp.prior("f", X=X)
+            pm.Normal("y", f, sigma, observed=train.ppm.to_numpy() - PPM_MEAN, shape=f.shape)
+
+        with freeze_dims_and_data(gp_model):
+            gp_idata = pm.sample(random_seed=RANDOM_SEED)
+
+        with gp_model:
+            pm.set_data({"X": (t_new - T0)[:, None]})
+            pred = pm.sample_posterior_predictive(gp_idata, var_names=["y", "f"], predictions=True)
+        draws = pred.predictions["y"].stack(sample=("chain", "draw")).to_numpy() + PPM_MEAN
+        lo, hi = np.quantile(draws, [0.05, 0.95], axis=___)
+        ```
+    checks:
+      sigma:
+        what: posterior mean of the noise sd in ppm - about 2, far more than measurement error. What is it absorbing?
+        range: [1.9, 2.4]
+      rmse:
+        what: hold-out RMSE (ppm) of the GP-only forecast mean; it should be WORSE than the drift baseline
+        range: [2.3, 25]
+
+  task3:
+    title: A structural model, first attempt
+    hints:
+      - |
+        "Additive" means `mu = trend + slow departures + seasonal + irregular`, each its own
+        block of code. Decide for each block: what is the simplest form that can do this one
+        job, and does it extrapolate the way I want? A polynomial extrapolates upwards; a
+        zero-mean GP extrapolates to zero, which is exactly right for a *departure from* something.
+
+        When the fit goes wrong (it will), ask: if `long` gave 1 ppm of smooth signal to
+        `irregular`, or to the quadratic, would the likelihood notice?
+      - |
+        One workable set of blocks: a quadratic in scaled time; an HSGP with an `ExpQuad` kernel
+        for slow departures; an HSGP with a `Matern52` kernel for irregular variation; Fourier
+        terms `sin(2*pi*k*t)`, `cos(2*pi*k*t)` for `k = 1..4` with coefficients that may drift
+        linearly in time (that is what `pm.gp.HSGPPeriodic` builds internally, minus a constant
+        column that would clash with your intercept); Normal noise.
+
+        Each HSGP needs its own `m` and `L` covering every date you will ever predict (2041).
+        Short lengthscales need many basis functions: check how much prior variance your `m`
+        keeps at the shortest lengthscale you consider, as in E05 section 6.
+
+        Generic priors: the same `InverseGamma` lengthscale prior (say 90% in 1-50 years) and the
+        same `HalfNormal` amplitude prior for both GPs. Then look at `az.summary` (r_hat, ESS),
+        count divergences, and scatter-plot pairs of hyperparameters with the divergent draws
+        highlighted (`idata.sample_stats["diverging"]`).
+      - |
+        ```python
+        with pm.Model() as model:
+            X = pm.Data("X", (df.t.to_numpy() - T0)[:, None])
+            x = X[:, 0]
+            xs = x / 30
+            b = pm.Normal("b", 0, [___, ___, ___], shape=3)
+            quadratic = b[0] + b[1] * xs + b[2] * xs**2
+
+            ell_long = pm.InverseGamma("ell_long", ___);  eta_long = pm.HalfNormal("eta_long", ___)
+            ell_irr = pm.InverseGamma("ell_irr", ___);    eta_irr = pm.HalfNormal("eta_irr", ___)
+            long = pm.gp.HSGP(m=[___], L=[___], cov_func=eta_long**2 * pm.gp.cov.ExpQuad(1, ls=ell_long)).prior("long", X=X)
+            irregular = pm.gp.HSGP(m=[___], L=[___], cov_func=eta_irr**2 * pm.gp.cov.Matern52(1, ls=ell_irr)).prior("irregular", X=X)
+            trend = pm.Deterministic("trend", quadratic + long)
+
+            k = np.arange(1, 5)
+            angle = 2 * np.pi * x[:, None] * k[None, :]
+            fourier = pt.concatenate([pt.sin(angle), pt.cos(angle)], axis=1)
+            beta_seas = pm.Normal("beta_seas", 0, ___, shape=8)
+            beta_drift = pm.Normal("beta_drift", 0, ___, shape=8)
+            seasonal = pm.Deterministic("seasonal", fourier @ beta_seas + xs * (fourier @ beta_drift))
+
+            sigma = pm.HalfNormal("sigma", ___)
+            mu = trend + seasonal + irregular
+            pm.Normal("y", mu, sigma, observed=df.ppm.to_numpy() - PPM_MEAN, shape=mu.shape)
+
+        with freeze_dims_and_data(model):
+            idata = pm.sample(random_seed=RANDOM_SEED)
+        div = idata.sample_stats["diverging"].stack(sample=("chain", "draw")).to_numpy()
+        ```
+
+  task4:
+    title: Tame it with priors
+    hints:
+      - |
+        Two different things are wrong and both are about priors. (1) Two components are allowed
+        the same lengthscales, so they are interchangeable. (2) A `HalfNormal` amplitude prior puts
+        its mode at "this component does not exist" - and when a component is switched off, what
+        constrains its coefficients? Do you actually believe the slow departures might be exactly
+        zero?
+      - |
+        Give each GP a territory in *years*: the irregular component gets lengthscales of one to a
+        few years (El Niño, eruptions); the long one gets "decades" - clearly longer than that, but
+        clearly shorter than the ~60-year record, beyond which it is just another polynomial. Narrow
+        priors are fine when you can argue for them: `pz.maxent(pz.InverseGamma(), 1, 5, 0.9)`, or
+        a `pm.Gamma("ell_long", mu=25, sigma=5)`.
+
+        For the long amplitude use a prior with **no mass at zero**, e.g.
+        `pm.Gamma("eta_long", mu=1.5, sigma=0.5)`: a boundary-avoiding prior closes the funnel.
+        A `target_accept` of 0.9-0.95 mops up the remaining few divergences.
+
+        For the seasonal range: the `seasonal` Deterministic has one value per training month and
+        draw; pick the 12 rows of one year and take `max - min` per draw.
+      - |
+        ```python
+        ell_long = pm.Gamma("ell_long", mu=___, sigma=___)       # decades
+        eta_long = pm.Gamma("eta_long", mu=___, sigma=___)       # ppm, away from zero
+        irr = pz.maxent(pz.InverseGamma(), lower=___, upper=___, mass=0.9, plot=False)
+        ell_irr = pm.InverseGamma("ell_irr", alpha=float(irr.alpha), beta=float(irr.beta))
+        eta_irr = pm.HalfNormal("eta_irr", ___)
+
+        with freeze_dims_and_data(model):
+            idata = pm.sample(target_accept=0.95, random_seed=RANDOM_SEED)
+
+        seas = idata.posterior["seasonal"].stack(sample=("chain", "draw")).to_numpy()   # (months, draws)
+        rows = (train.year == 1960).to_numpy()
+        range_1960 = seas[rows].max(axis=0) - seas[rows].___(axis=0)
+        ```
+    checks:
+      sigma:
+        what: posterior mean noise sd of a monthly mean, about 0.3 ppm
+        range: [0.25, 0.33]
+      ell_irr:
+        what: posterior mean lengthscale of the irregular component, about 1.5 years
+        range: [1.0, 2.3]
+
+  task5:
+    title: Hold-out evaluation
+    hints:
+      - |
+        You already wrote everything you need in Task 2: predict at the test dates, summarise
+        the predictive draws. The new part is judgement. Plot the forecast *errors* against time
+        before you interpret a coverage number - do they look like 120 independent coin flips?
+      - |
+        `pm.set_data` with the test dates, `pm.sample_posterior_predictive(..., var_names=["y"],
+        predictions=True)`. RMSE uses the predictive mean; coverage uses the quantiles of the
+        predictive draws of `y` (which include the noise) - not of `mu` or `trend`.
+
+        Compute the lag-1 autocorrelation of the errors (`np.corrcoef(e[:-1], e[1:])`). With
+        strongly autocorrelated errors, the effective number of independent checks of your
+        interval is far below 120.
+      - |
+        ```python
+        with structural_model:
+            pm.set_data({"X": (test.t.to_numpy() - T0)[:, None]})
+            pred = pm.sample_posterior_predictive(idata, var_names=["y"], predictions=True)
+        draws = pred.predictions["y"].stack(sample=("chain", "draw")).to_numpy() + PPM_MEAN  # (months, draws)
+        obs = test.ppm.to_numpy()
+        rmse = np.sqrt(np.mean((obs - draws.mean(axis=1)) ** 2))
+        lo, hi = np.quantile(draws, [___, ___], axis=1)
+        coverage90 = np.mean((obs >= lo) & (obs <= ___))
+        ```
+    checks:
+      rmse:
+        what: hold-out RMSE (ppm) of the structural model - it should clearly beat the drift baseline (2.06)
+        range: [0.35, 1.5]
+      coverage90:
+        what: share of held-out months inside the central 90% predictive interval
+        range: [0.88, 1.0]
+
+  task6:
+    title: Answer the analyst
+    hints:
+      - |
+        "The first month above 450 ppm" is a property of one possible future. You have thousands
+        of possible futures: each posterior predictive draw of `y` over the coming months is one.
+        Compute the answer in each and look at the distribution. Why would doing this with the
+        smooth `trend` instead of `y` give the wrong answer?
+      - |
+        Rebuild the model on all of `co2` and sample. Build a grid of future mid-month dates with
+        the same convention as the data (`year + (month - 0.5) / 12`), e.g. from
+        `pd.period_range`, out to 2040. Predict `y` and `trend` on observed + future dates in one
+        call.
+
+        First exceedance per draw: `(y_future > 450).argmax(axis=...)` gives the index of the
+        first `True`; check with `.any()` that every draw crosses before the grid ends.
+
+        Growth rates: the `trend` draws at two dates ten years apart, differenced and divided by
+        the time between them - one number per draw, then summarise. Do the same for January 1960
+        to January 1970, and take the ratio draw by draw.
+      - |
+        ```python
+        last = pd.Period(year=int(co2.year.iloc[-1]), month=int(co2.month.iloc[-1]), freq="M")
+        future = pd.period_range(last + 1, "2040-12", freq="M")
+        t_future = (future.year + (future.month - 0.5) / 12).to_numpy()
+        t_all = np.concatenate([co2.t.to_numpy(), t_future])
+
+        with final_model:
+            pm.set_data({"X": (t_all - T0)[:, None]})
+            pred = pm.sample_posterior_predictive(final_idata, var_names=["y", "trend"], predictions=True)
+        y = pred.predictions["y"].stack(sample=("chain", "draw")).to_numpy() + PPM_MEAN      # (dates, draws)
+        y_future = y[len(co2):]
+        first_idx = (y_future > THRESHOLD).___(axis=0)
+        first_t = t_future[first_idx]
+        np.median(first_t), pd.Series(future[first_idx].year).value_counts(normalize=True).sort_index().cumsum()
+
+        trend = pred.predictions["trend"].stack(sample=("chain", "draw")).to_numpy()
+        i_last = len(co2) - 1
+        growth_recent = (trend[i_last] - trend[i_last - 120]) / (co2.t.iloc[i_last] - co2.t.iloc[___])
+        ```
+    checks:
+      first_exceed_median:
+        what: median (over predictive draws) of the decimal date of the first month above 450 ppm, about 2033.3
+        range: [2032.2, 2034.4]
+      growth_1960s:
+        what: posterior mean growth rate of the trend, Jan 1960 - Jan 1970, about 0.9 ppm/yr
+        range: [0.8, 1.05]
+      growth_recent:
+        what: posterior mean growth rate of the trend over the last ten years of data, about 2.5 ppm/yr
+        range: [2.35, 2.7]

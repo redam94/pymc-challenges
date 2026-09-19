@@ -1,0 +1,294 @@
+title: "Customer churn: most of your customers have not left yet"
+tasks:
+  task0:
+    title: Frame churn as a time-to-event problem
+    hints:
+      - |
+        Look at the rows where `TotalCharges` is blank. What else do they have in common? Then ask
+        what a customer who has been observed for zero months can tell a survival model.
+
+        For the framing, think of E06: a patient who was alive when last seen is not a missing
+        value and not a death. Who plays that role here, and what is their "follow-up time"?
+      - |
+        `pd.to_numeric(..., errors="coerce")` turns the blanks into NaN so you can inspect them.
+        A row censored at `t = 0` contributes `log S(0) = 0` to the likelihood - decide accordingly.
+
+        Event = `Churn == "Yes"`, time = `tenure`; customers with `Churn == "No"` are
+        right-censored at their current tenure.
+
+        Kaplan-Meier: at each distinct event time `t_j`, multiply survival by
+        `1 - d_j / n_j`, where `d_j` is the number of churns at `t_j` and `n_j` the number of
+        customers with `tenure >= t_j` (churned or not). Compute it per contract type, plot with
+        `ax.step(..., where="post")`, and also count how many customers are still at risk late on.
+      - |
+        ```python
+        def kaplan_meier(time, event):
+            t_event = np.unique(time[event])
+            at_risk = np.array([(time >= t).sum() for t in t_event])
+            events = np.array([((time == t) & ___).sum() for t in t_event])
+            return np.r_[0, t_event], np.r_[1, np.cumprod(___)]
+
+        for name, grp in df.groupby("Contract"):
+            ax.step(*kaplan_meier(grp.tenure.values, grp.churned.values), where="post", label=name)
+        ```
+        To read the curve at a given month: `surv[np.searchsorted(knots, t, side="right") - 1]`.
+    checks:
+      censored_share:
+        what: share of customers (after cleaning) who have NOT churned, about 0.73
+        range: [0.72, 0.75]
+      km_m2m_12:
+        what: Kaplan-Meier survival of month-to-month customers at 12 months, about 0.70
+        range: [0.69, 0.72]
+
+  task1:
+    title: Put a number on the colleague's mistake
+    hints:
+      - |
+        Which customers are *not* in the colleague's average, and are their lifetimes longer or
+        shorter than 18 months? "Fit only the churners" is an ordinary, uncensored Weibull fit.
+        The proper version differs by one ingredient from E06.
+      - |
+        Parameterise the Weibull scale as `exp(a)` and keep the shape `k` positive (LogNormal).
+        Naive fit: observed = tenure of churners, no bounds. Proper fit: all customers,
+        `pm.Censored(..., lower=None, upper=upper)` with `upper = tenure` for active customers and
+        `np.inf` for churners.
+
+        Weibull facts: `S(t) = exp(-(t / scale) ** k)`, median `= scale * log(2) ** (1 / k)`.
+        Compute both per posterior draw. Then compare the median with the length of the
+        observation window before you put it on a slide.
+      - |
+        ```python
+        upper = np.where(churned, np.inf, tenure)
+
+        def fit(time, upper):
+            with pm.Model():
+                a = pm.Normal("a", 4.0, 1.5)
+                k = pm.LogNormal("k", 0, ___)
+                pm.Censored("tenure", pm.Weibull.dist(alpha=k, beta=pm.math.exp(a)),
+                            lower=None, upper=___, observed=time)
+                return pm.sample(random_seed=RANDOM_SEED)
+
+        naive = fit(tenure[churned], np.full(churned.sum(), np.inf))
+        proper = fit(tenure, upper)
+        post = az.extract(proper)
+        scale, k = np.exp(post["a"].values), post["k"].values
+        median = scale * np.log(2) ** (1 / k)
+        s24 = np.exp(-(___) ** k)
+        ```
+    checks:
+      naive_median:
+        what: posterior mean of the median lifetime (months) from the churners-only Weibull, about 10
+        range: [9.3, 11.3]
+      naive_s24:
+        what: posterior mean of S(24) from the churners-only Weibull, about 0.25
+        range: [0.22, 0.28]
+      censored_s24:
+        what: posterior mean of S(24) from the censored intercept-only Weibull, about 0.79 (close to Kaplan-Meier)
+        range: [0.77, 0.81]
+
+  task2:
+    title: A censored Weibull regression
+    hints:
+      - |
+        In an AFT model the covariates act on the *log of the time scale*, so a coefficient `b`
+        means "lifetimes are multiplied by exp(b)". With three categorical predictors, ask
+        yourself: if every one of them had a free level per category, could the model tell a
+        shift in one from the opposite shift in another?
+      - |
+        `pd.factorize(df.Contract, sort=True)` gives integer codes plus the labels for `coords`.
+        Give the contract intercept one free level per type (`dims="contract"`) and make the other
+        two factors `pm.ZeroSumNormal(..., dims=...)`: effects relative to the average category,
+        no reference levels to choose, and the intercept stays identified.
+
+        Linear predictor: `mu = a[contract_idx] + b_internet[internet_idx] + b_payment[payment_idx]
+        + b_charges * charges_dev`; likelihood `pm.Censored` around
+        `pm.Weibull.dist(alpha=k, beta=pm.math.exp(mu))` with the same `upper` as in Task 1.
+
+        Prior predictive on the right scale: draw `a` and `k` from the prior and plot
+        `exp(-(t / exp(a)) ** k)` over 0-72 months. Time ratios are `exp` of differences of
+        posterior draws, e.g. `a[Two year] - a[Month-to-month]`.
+      - |
+        ```python
+        contract_idx, contracts = pd.factorize(df.Contract, sort=True)
+        charges_dev = (df.MonthlyCharges - df.groupby("InternetService").MonthlyCharges.transform("mean")) / 20
+        coords = {"contract": contracts, "internet": internets, "payment": payments, "customer": df.customerID}
+
+        with pm.Model(coords=coords) as shared_model:
+            a = pm.Normal("a", 4.0, 1.5, dims="contract")
+            b_internet = pm.ZeroSumNormal("b_internet", 1.0, dims=___)
+            b_payment = pm.ZeroSumNormal("b_payment", 1.0, dims=___)
+            b_charges = pm.Normal("b_charges", 0, 0.5)
+            k = pm.LogNormal("k", 0, 0.75)
+            mu = a[contract_idx] + ___
+            pm.Censored("tenure", pm.Weibull.dist(alpha=k, beta=pm.math.exp(mu)),
+                        lower=None, upper=upper, observed=tenure, dims="customer")
+
+        post = shared_idata.posterior
+        ratio = np.exp(post["a"].sel(contract="Two year") - post["a"].sel(contract=___))
+        ```
+    checks:
+      k_shared:
+        what: posterior mean of the single Weibull shape, about 0.86 (a hazard that falls with tenure)
+        range: [0.80, 0.92]
+      time_ratio_two_year:
+        what: posterior mean time ratio of two-year vs month-to-month contracts in the SHARED-shape model - implausibly large, about 30
+        range: [20, 45]
+
+  task3:
+    title: Design a check the model can fail
+    hints:
+      - |
+        The observed `tenure` of an active customer is not a lifetime, it is "time on the books so
+        far". What would a histogram of replicated lifetimes be compared with? Which model-free
+        estimate from Task 0 *does* respect censoring - and what is the model's counterpart of it
+        for a whole group of customers with different covariates?
+      - |
+        Kaplan-Meier estimates the survival function of the customer *mix* within a contract type.
+        The model's counterpart: compute `S_i(t)` for every customer in the group from their own
+        linear predictor, and **average over customers** - separately for each posterior draw, so
+        you get a band. (The curve of an "average customer" is not the same thing.)
+
+        Broadcasting does the work: `post["a"].values[contract_idx[rows]]` has shape
+        `(customers, draws)`. A few hundred draws from `az.extract(idata, num_samples=...)` and a
+        grid of 30-40 months are plenty. Give each contract type its own panel and y-range, or the
+        two-year curve will hide at the top of the plot.
+      - |
+        ```python
+        def customer_survival(idata, rows, t, n_draws=400):
+            post = az.extract(idata, num_samples=n_draws, random_seed=RANDOM_SEED)
+            mu = (post["a"].values[contract_idx[rows]] + post["b_internet"].values[internet_idx[rows]]
+                  + ___ + charges_dev[rows, None] * post["b_charges"].values)      # (customers, draws)
+            return np.exp(-((t / np.exp(mu)) ** post["k"].values))
+
+        rows = np.flatnonzero(df.Contract == "One year")
+        curves = np.stack([customer_survival(shared_idata, rows, t).mean(axis=___) for t in grid], axis=1)
+        lo, hi = np.quantile(curves, [0.03, 0.97], axis=0)       # band over draws
+        # overlay ax.step(*kaplan_meier(...)) for the same customers
+        ```
+    checks:
+      s12_one_year:
+        what: shared-shape model, 12-month survival averaged over one-year-contract customers, about 0.96 (Kaplan-Meier says 0.99)
+        range: [0.95, 0.97]
+
+  task4:
+    title: Diagnose, fix, compare
+    hints:
+      - |
+        Go back to your Kaplan-Meier figure. For which customers does the risk of leaving fall as
+        tenure grows, and for which does it rise? Now look at the Weibull hazard,
+        `h(t) ~ t ** (k - 1)`: what does a single `k` force all customers to share? Which group
+        has most of the events, and therefore decides `k`?
+      - |
+        AFT covariates can only stretch the time axis; they cannot turn a falling hazard into a
+        rising one. Let the shape vary by contract: `k = pm.LogNormal("k", 0, 0.75, dims="contract")`
+        and use `k[contract_idx]` in the likelihood. Nothing else changes.
+
+        Second family: `pm.LogNormal.dist(mu=mu, sigma=sigma[contract_idx])` inside the same
+        `pm.Censored`; its survival function is `scipy.stats.norm.sf((log(t) - mu) / sigma)`.
+
+        LOO: `pm.compute_log_likelihood(idata)` inside each model context, then
+        `az.compare({...})`; `az.loo(idata).elpd` gives a single model's value. A censored row's
+        pointwise log-likelihood is simply `log S(t_i)`, so nothing special is needed. LOO rewards
+        the density at the observed event times, and most events are early month-to-month churn -
+        keep that in mind when LOO and your calibration plot disagree.
+
+        Memory, if you are on a laptop: with 7032 customers and 4000 draws each pointwise
+        log-likelihood is 225 MB, and `az.loo(..., pointwise=True)` keeps an equally large
+        weight matrix on its result. Three models held that way cost almost 3 GB. Compute
+        `loo = az.loo(idata, pointwise=True)` once per model, then `loo.log_weights = None` and
+        `del idata["log_likelihood"]`, and give `az.compare` the dict of LOO results.
+      - |
+        ```python
+        with pm.Model(coords=coords) as group_model:
+            ...                                                   # as in Task 2
+            k = pm.LogNormal("k", 0, 0.75, dims=___)
+            pm.Censored("tenure", pm.Weibull.dist(alpha=k[___], beta=pm.math.exp(mu)),
+                        lower=None, upper=upper, observed=tenure, dims="customer")
+            group_idata = pm.sample(random_seed=RANDOM_SEED)
+            pm.compute_log_likelihood(group_idata)
+
+        az.compare({"shared": shared_idata, "by contract": group_idata, "log-normal": lognormal_idata})
+        elpd_gain = az.loo(group_idata).elpd - az.loo(shared_idata).elpd
+        ```
+    checks:
+      k_month_to_month:
+        what: posterior mean Weibull shape for month-to-month customers, about 0.8 (falling hazard)
+        range: [0.76, 0.86]
+      k_one_year:
+        what: posterior mean Weibull shape for one-year contracts, about 1.9 (rising hazard)
+        range: [1.6, 2.3]
+      elpd_gain:
+        what: elpd_loo of the Weibull with contract-specific shapes minus that of the shared-shape Weibull, roughly +90
+        range: [50, 140]
+
+  task5:
+    title: Conditional churn risk for active customers
+    hints:
+      - |
+        A customer with 40 months of tenure is not a new customer. Write
+        `P(T <= t + 6 | T > t)` using nothing but the survival function. When would the answer not
+        depend on `t` at all?
+      - |
+        `P(churn within 6 months | active at t) = 1 - S(t + 6) / S(t)`, evaluated per customer at
+        *their own* current tenure and per posterior draw - both survival terms from the same
+        draw, so the uncertainty in the ratio is right. Only `Churn == "No"` customers.
+
+        The shape parameter decides whether this risk falls (`k < 1`) or rises (`k > 1`) with
+        tenure - compare the shared-shape and the fixed model for contract customers.
+
+        Model-free counterpart for a contract type: `1 - KM(t + 6) / KM(t)`. Compare it with the
+        same ratio computed from the group-averaged model survival curves of Task 3, at several
+        `t`. This is calibration on the scale the decision will use.
+      - |
+        ```python
+        active = np.flatnonzero(~churned)
+        s_now = customer_survival(idata, active, tenure[active][:, None], n_draws=1000)     # (customers, draws)
+        s_later = customer_survival(idata, active, tenure[active][:, None] + 6, n_draws=1000)
+        p6 = 1 - ___ / ___
+        pd.Series(p6.mean(axis=1)).groupby(df.Contract.values[active]).mean()
+
+        km_cond = 1 - km_at(grp.tenure, grp.churned, t0 + 6) / km_at(grp.tenure, grp.churned, t0)
+        ```
+    checks:
+      p6_month_to_month:
+        what: average over ACTIVE month-to-month customers of the posterior mean 6-month churn probability, about 0.12
+        range: [0.10, 0.135]
+      p6_one_year:
+        what: the same for active one-year-contract customers, about 0.02-0.03 (contract-specific shape model)
+        range: [0.017, 0.033]
+
+  task6:
+    title: Who gets the offer?
+    hints:
+      - |
+        What does the company gain if the offer goes to a customer who would have stayed anyway?
+        And to one who leaves regardless? Write the expected net value of one offer as a function
+        of that customer's churn probability and monthly charges. Which customers can never be
+        worth it, whatever their risk?
+      - |
+        `net_i = OFFER_EFFECT * p6_i * VALUE_MONTHS * MonthlyCharges_i - OFFER_COST`, computed per
+        posterior draw, so each customer has a posterior of net value. Rank by its mean; report an
+        interval and `P(net > 0)` per customer. A risk-neutral rule targets everyone with positive
+        posterior mean.
+
+        Total profit of a list is the sum over its customers *within each draw* (the customers
+        share parameters, so their uncertainties are correlated - do not add up intervals).
+        A cumulative-profit curve over the ranked list shows the optimum and what over-targeting
+        costs. For robustness, recompute the list with the runner-up model's `p6`.
+      - |
+        ```python
+        charges = df.MonthlyCharges.values[active][:, None]
+        value = OFFER_EFFECT * p6 * VALUE_MONTHS * charges - ___          # (customers, draws)
+        order = np.argsort(-value.mean(axis=1))
+        target = value.mean(axis=1) > 0
+        profit = value[target].sum(axis=___)                               # one total per draw
+        np.quantile(profit, [0.03, 0.97])
+        cumulative = value[order].cumsum(axis=0)                           # profit of targeting the top n
+        ```
+    checks:
+      n_target:
+        what: number of active customers whose posterior mean net value is positive - a few hundred, not thousands
+        range: [230, 600]
+      profit:
+        what: posterior mean total net value (dollars) of targeting exactly those customers, roughly 5,000
+        range: [3500, 7500]

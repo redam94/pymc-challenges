@@ -1,0 +1,247 @@
+title: "Who draws the whistle? An item-response model of NBA foul calls"
+tasks:
+  task0:
+    title: Define the outcome, look at raw rates
+    hints:
+      - |
+        `decision` crosses two things: *was a whistle blown* and *was that correct*. Which of
+        the two produces free throws? Then, before trusting any rate, ask how many plays it is
+        based on - what is the raw rate of a player with one play?
+      - |
+        "A foul was called" is `decision in {CC, IC}`; "a foul occurred" would be `{CC, INC}`.
+        `fouls.groupby("disadvantaged").foul_called.agg(plays="size", raw_rate="mean")` gives
+        the table. Plot `raw_rate` against `plays` on a log x axis; adding the binomial 95%
+        range around the league-wide rate (`scipy.stats.binom.interval`) turns it into a funnel
+        plot that shows how much of the spread is pure noise.
+      - |
+        ```python
+        fouls["foul_called"] = fouls.decision.isin([___, ___]).astype(int)
+        drawn = fouls.groupby("disadvantaged").foul_called.agg(plays="size", raw_rate="mean")
+        drawn.sort_values(["raw_rate", "plays"], ascending=False).head(10)
+        (drawn.plays <= 5).sum()
+        ```
+    checks:
+      call_rate:
+        what: overall share of reviewed plays on which a foul was CALLED (correctly or not), about 0.23
+        range: [0.228, 0.238]
+      players_with_5_or_fewer:
+        what: number of players with at most 5 plays as the disadvantaged player, a bit over 200
+        range: [205, 222]
+
+  task1:
+    title: A colleague's Rasch model and what is wrong with it
+    hints:
+      - |
+        Look at `r_hat` and ESS for `mu`, `mu_theta` and `mu_b`, not just at the player
+        effects. Then think about the likelihood: it only ever sees `mu + theta_i - b_j`. What
+        happens to that sum if you add 1 to every `theta` and subtract 1 from `mu`?
+      - |
+        Use `pd.factorize(column, sort=True)` to get an integer index array and the labels for
+        `coords`; index the parameter vectors with those arrays (`theta[d_idx]`). Sample with
+        `nuts_sampler="nutpie"`.
+
+        Scatter the draws of `mu_theta` against `mu_b` coloured by chain: each chain sits on a
+        different piece of a long ridge. Only one linear combination of the three location
+        parameters enters the likelihood for an *average* matchup. Build it from
+        `idata.posterior` (xarray arithmetic keeps the chain/draw dims) and pass
+        `combo.to_dataset()` to `az.summary` to get its own `r_hat`.
+      - |
+        ```python
+        d_idx, d_names = pd.factorize(fouls.disadvantaged, sort=True)
+        c_idx, c_names = pd.factorize(fouls.committing, sort=True)
+        coords = {"disadvantaged": d_names, "committing": c_names}
+        with pm.Model(coords=coords) as colleague_model:
+            ...
+            theta = pm.Normal("theta", mu_theta, sigma_theta, dims="disadvantaged")
+            b = pm.Normal("b", mu_b, sigma_b, dims="committing")
+            pm.Bernoulli("foul_called", logit_p=mu + theta[d_idx] - b[c_idx], observed=y)
+            idata = pm.sample(nuts_sampler="nutpie", random_seed=RANDOM_SEED)
+
+        post = idata.posterior
+        combo = (post["mu"] ___ post["mu_theta"] ___ post["mu_b"]).rename("combo")
+        az.summary(combo.to_dataset())
+        ```
+    checks:
+      identified_combination:
+        what: posterior mean of mu + mu_theta - mu_b, the log-odds of a call for an average player against an average opponent, about -1.14
+        range: [-1.25, -1.05]
+
+  task2:
+    title: Identification and centred vs non-centred
+    hints:
+      - |
+        Three location parameters, one degree of freedom in the data: you must remove two.
+        What is the least arbitrary way to do that, given that you care about players
+        *relative to each other*?
+
+        For the geometry: a player with 600 plays has a posterior dominated by his likelihood;
+        a player with one play has a posterior that is essentially his prior
+        `Normal(0, sigma)`. What does the joint posterior of (effect, log sigma) look like in
+        the second case? Count how many players are of each kind.
+      - |
+        Identification: either fix the population means at zero
+        (`theta ~ Normal(0, sigma_theta)`) or use `pm.ZeroSumNormal("theta", sigma, dims=...)`.
+
+        Non-centred: `z ~ Normal(0, 1)` and `theta = pm.Deterministic("theta", sigma * z)`.
+        Build the model in a function with a `centred` flag, fit both with nutpie and compare
+        `idata.sample_stats["diverging"].sum()` and the `ess_bulk` column of
+        `az.summary(idata, var_names=["mu", "sigma_theta", "sigma_b"])`.
+
+        To *see* the geometry, scatter `log(sigma_theta)` against the effect of a one-play
+        player and against that of the busiest player, in whichever coordinates the sampler
+        actually works in (`theta` for centred, `z_theta` for non-centred).
+      - |
+        ```python
+        def rasch(centred):
+            with pm.Model(coords=coords) as model:
+                mu = pm.Normal("mu", -1, 1)
+                sigma_theta = pm.HalfNormal("sigma_theta", ___)
+                sigma_b = pm.HalfNormal("sigma_b", ___)
+                if centred:
+                    theta = pm.Normal("theta", 0, sigma_theta, dims="disadvantaged")
+                    b = ___
+                else:
+                    z_theta = pm.Normal("z_theta", 0, 1, dims="disadvantaged")
+                    theta = pm.Deterministic("theta", ___, dims="disadvantaged")
+                    ...
+                pm.Bernoulli("foul_called", logit_p=mu + theta[d_idx] - b[c_idx], observed=y)
+            return model
+        ```
+    checks:
+      mu:
+        what: posterior mean of the intercept (log-odds of a call, average player vs average opponent), about -1.14
+        range: [-1.25, -1.05]
+      sigma_theta:
+        what: posterior mean sd of foul-drawing skill across players, about 0.30 on the logit scale
+        range: [0.25, 0.35]
+      sigma_b:
+        what: posterior mean sd of the committing-player effect across players, about 0.41
+        range: [0.35, 0.47]
+
+  task3:
+    title: Position as a group-level predictor
+    hints:
+      - |
+        A group-level predictor changes what a player is shrunk *towards*: not the league
+        average, but the average of players like him. You now have a new location invariance
+        (position means vs the intercept) - deal with it the same way as before.
+
+        When you interpret `b` by position, remember how a play gets into this dataset: the
+        league reviews contact. What kind of contact involves centres on almost every
+        possession?
+      - |
+        Each player has exactly one position in the file, so build a player-level position
+        index: `fouls.groupby("disadvantaged").disadvantaged_position.first().reindex(d_names)`
+        and turn it into codes with `pd.Categorical(..., categories=POSITIONS).codes`.
+
+        `pos_theta = pm.ZeroSumNormal("pos_theta", sigma, dims="position")` gives seven position
+        means that sum to zero, so `mu` stays identified. Then
+        `theta = pos_theta[d_pos_idx] + sigma_theta * z_theta` (non-centred), and likewise for
+        `b`. The guard-centre contrast is `post["pos_theta"].sel(position="G") -
+        post["pos_theta"].sel(position="C")`.
+      - |
+        ```python
+        with pm.Model(coords={**coords, "position": POSITIONS}) as position_model:
+            mu = pm.Normal("mu", -1, 1)
+            pos_theta = pm.ZeroSumNormal("pos_theta", ___, dims="position")
+            pos_b = pm.ZeroSumNormal("pos_b", ___, dims="position")
+            z_theta = pm.Normal("z_theta", 0, 1, dims="disadvantaged")
+            theta = pm.Deterministic("theta", pos_theta[___] + sigma_theta * z_theta, dims="disadvantaged")
+            ...
+            pm.Bernoulli("foul_called", logit_p=mu + theta[d_idx] - b[c_idx], observed=y)
+        ```
+    checks:
+      guard_minus_centre_theta:
+        what: posterior mean of pos_theta[G] - pos_theta[C] on the logit scale - the sign may surprise you; about -0.17
+        range: [-0.32, -0.04]
+      sigma_b:
+        what: posterior mean of the within-position sd of the committing-player effect, about 0.28 (down from 0.41)
+        range: [0.23, 0.34]
+
+  task4:
+    title: Posterior predictive check by position pair
+    hints:
+      - |
+        A PPC is only as sharp as the statistic. The overall call rate will be reproduced by
+        almost any model with an intercept. Pick a statistic that the model's *structure*
+        could get wrong: here, the call rate within each of the 49 position pairings.
+      - |
+        You do not need `pm.sample_posterior_predictive` for 47,000 plays times 4,000 draws.
+        Take a few hundred draws with `az.extract(idata, var_names=["mu", "theta", "b"],
+        num_samples=200)`, compute `p = expit(mu + theta[d_idx] - b[c_idx])` as a
+        `(plays, draws)` array in NumPy, simulate `rng.random(p.shape) < p`, and aggregate by
+        pair with `np.bincount(pair_idx, weights=...)`. Compare the observed rate in each pair
+        with the 94% interval of the replicated rates; with 49 intervals expect about three
+        misses by chance.
+      - |
+        ```python
+        pair_idx, pair_names = pd.factorize(
+            fouls.disadvantaged_position + " vs " + fouls.committing_position, sort=True)
+        pair_n = np.bincount(pair_idx)
+        pair_obs = np.bincount(pair_idx, weights=y) / pair_n
+
+        draws = az.extract(idata, var_names=["mu", "theta", "b"], num_samples=200)
+        theta = draws["theta"].transpose("disadvantaged", "sample").values
+        b = draws["b"].transpose("committing", "sample").values
+        p = expit(draws["mu"].values[None, :] + theta[d_idx] - ___)
+        y_rep = rng.random(p.shape) < p
+        rep = np.stack([np.bincount(pair_idx, weights=y_rep[:, k]) for k in range(200)], axis=1) / pair_n[:, None]
+        lo, hi = np.quantile(rep, [0.03, 0.97], axis=1)
+        ```
+
+  task5:
+    title: Shrinkage - raw ranking vs posterior ranking
+    hints:
+      - |
+        To compare with a raw rate you need the model's answer on the probability scale, for a
+        *standardised* opponent. What value of `b` represents "an average defender"?
+      - |
+        `expit(mu + theta_i)` per posterior draw, averaged over draws, is player i's call rate
+        against a defender with `b = 0`. Scatter it against the raw rate with marker size or
+        colour showing the number of plays: low-n players collapse onto their position mean,
+        high-n players stay near the diagonal (shifted by their opponents' quality).
+      - |
+        ```python
+        theta_draws = az.extract(idata, var_names="theta").transpose("sample", "disadvantaged").values
+        mu_draws = az.extract(idata, var_names="mu").values
+        model_rate = expit(___).mean(0)        # against an average defender: which terms remain?
+        post_top = pd.Series(theta_draws.mean(0), index=d_names).sort_values(ascending=False).head(10)
+        drawn.plays[___].min()
+        ```
+    checks:
+      min_plays_in_posterior_top10:
+        what: number of plays of the least-observed player among the top ten by posterior mean theta - dozens, not one or two
+        range: [12, 120]
+
+  task6:
+    title: Rank uncertainty and a specific matchup
+    hints:
+      - |
+        A rank is a function of *all* the thetas at once, so compute it **within each posterior
+        draw** and then summarise across draws. "Probability of being in the top ten" is then
+        just a mean of an indicator.
+      - |
+        With `draws` of shape `(sample, player)`, `(-draws).argsort(axis=1).argsort(axis=1) + 1`
+        gives each player's rank in each draw. `(ranks <= 10).mean(0)` is P(top 10);
+        `np.quantile(ranks, [0.03, 0.97], axis=0)` the rank interval.
+
+        For the matchup, combine the draws of `mu`, `theta[James Harden]` and `b[Rudy Gobert]`
+        and push them through `expit`. For "an average centre" replace Gobert's `b` by the
+        centre position mean.
+      - |
+        ```python
+        ranks = (-theta_draws).argsort(axis=1).argsort(axis=1) + 1
+        p_top10 = pd.Series((ranks <= 10).mean(0), index=d_names).sort_values(ascending=False)
+
+        i = list(d_names).index("James Harden")
+        j = list(c_names).index("Rudy Gobert")
+        p = expit(mu_draws + theta_draws[:, i] - ___)
+        p.mean(), np.quantile(p, [0.03, 0.97])
+        ```
+    checks:
+      max_p_top10:
+        what: the largest posterior probability any player has of being in the top ten foul-drawers - well short of certainty, roughly 0.3-0.6
+        range: [0.2, 0.75]
+      p_harden_vs_gobert:
+        what: posterior mean P(foul called) when Harden is the disadvantaged player and Gobert the committing player, about 0.25
+        range: [0.19, 0.31]

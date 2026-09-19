@@ -1,0 +1,265 @@
+title: "Stochastic volatility: a Value-at-Risk number you can defend"
+tasks:
+  task0:
+    title: What do returns look like?
+    hints:
+      - |
+        A histogram with a Normal curve on top looks fine for almost any return series, because
+        the eye is drawn to the middle. Which plot puts the *tails* on the diagonal? And for the
+        second half: if volatility were constant, would knowing that yesterday's move was large
+        tell you anything about the size of today's?
+      - |
+        Tails: a Normal Q-Q plot (`scipy.stats.probplot(x, dist="norm", plot=ax)`) and the excess
+        kurtosis, `scipy.stats.kurtosis(x)` (Fisher definition: a Normal scores 0, not 3).
+
+        Clustering: the sample autocorrelation of `ret` and of `np.abs(ret)` for lags 1-30. For
+        white noise, about 95% of the bars fall within `±2 / sqrt(T)`.
+      - |
+        ```python
+        def acf(x, max_lag):
+            x = x - x.mean()
+            return np.array([np.dot(x[:-k], x[k:]) for k in range(1, max_lag + 1)]) / ___
+
+        r = train["ret"].values
+        stats.probplot(r, dist="norm", plot=ax1)
+        ax2.bar(lags, acf(r, 30)); ax2.bar(lags, acf(___, 30))
+        ax2.axhspan(-2 / np.sqrt(len(r)), 2 / np.sqrt(len(r)), alpha=0.1)
+        stats.kurtosis(r)
+        ```
+    checks:
+      excess_kurtosis:
+        what: excess (Fisher) kurtosis of the training returns, about 6.7 (a Normal has 0 - did you subtract 3?)
+        range: [6.2, 7.3]
+      acf_abs_lag1:
+        what: lag-1 autocorrelation of the absolute training returns, about 0.25
+        range: [0.22, 0.29]
+
+  task1:
+    title: The desk's model and checks that expose it
+    hints:
+      - |
+        A posterior predictive check compares a *statistic* of the real data with the same
+        statistic computed on each replicated dataset. The model fits mean and variance by
+        construction, so those statistics can never fail. What does a VaR number depend on that
+        the Normal does not get for free? Think tails, think worst day, think time.
+      - |
+        After `pm.sample_posterior_predictive(idata, extend_inferencedata=True)`,
+        `az.extract(idata, group="posterior_predictive", var_names="ret")` gives an array of
+        replicated histories. Apply a function along the date axis to get one value of T per
+        replication; the posterior predictive p-value is `(T_rep >= T_obs).mean()`. Values near
+        0 or 1 mean the model cannot reproduce that feature.
+
+        Good candidates: `scipy.stats.kurtosis`, `np.abs(x).max()`, and the autocorrelation of
+        `np.abs(x)` (one lag, or the mean over the first ten). `az.plot_ppc_tstat(idata,
+        t_stat=...)` accepts `"max"`, a quantile or your own function if you prefer ArviZ's plot.
+      - |
+        ```python
+        with pm.Model(coords={"date": train.index}) as normal_model:
+            mu = pm.Normal("mu", 0, ___)
+            sigma = pm.HalfNormal("sigma", ___)              # percent per day
+            pm.Normal("ret", mu, sigma, observed=r, dims="date")
+            idata = pm.sample(random_seed=RANDOM_SEED)
+            pm.sample_posterior_predictive(idata, extend_inferencedata=True, random_seed=RANDOM_SEED)
+
+        rep = az.extract(idata, group="posterior_predictive", var_names="ret")
+        rep = rep.transpose("sample", "date").values          # (replications, days)
+        t_rep = stats.kurtosis(rep, axis=1)
+        ppp = (t_rep >= ___).mean()
+        ```
+    checks:
+      sigma:
+        what: posterior mean of the constant daily volatility in PERCENT, about 1.83
+        range: [1.74, 1.93]
+      ppp_kurtosis:
+        what: posterior predictive p-value P(T_rep >= T_obs) for excess kurtosis under the Normal model - essentially 0
+        range: [0.0, 0.01]
+
+  task2:
+    title: Fat tails
+    hints:
+      - |
+        Change one thing - the likelihood - and rerun exactly the same checks. Watch for a
+        statistic whose p-value flips from 0 to nearly 1: that is also a failure. Then ask what a
+        *single* scale parameter has to do to cover both October 2008 and a quiet week in 2010.
+      - |
+        `pm.StudentT("ret", nu=nu, mu=mu, sigma=sigma, observed=...)` with a weak prior such as
+        `pm.Gamma("nu", 2, 0.1)`. For nu <= 2 the variance is infinite and for nu <= 4 the
+        kurtosis is, so replicated kurtosis and maxima are wildly skewed - plot them on a log
+        axis. An independent heavy-tailed draw per day still has no memory.
+      - |
+        ```python
+        with pm.Model(coords={"date": train.index}) as student_model:
+            mu = pm.Normal("mu", 0, 0.5)
+            sigma = pm.HalfNormal("sigma", 3)
+            nu = pm.Gamma("nu", ___, ___)
+            pm.StudentT("ret", nu=nu, mu=mu, sigma=sigma, observed=r, dims="date")
+            ...
+        # same T_STATS loop as in Task 1; use ax.set_xscale("log") for kurtosis and max
+        ```
+    checks:
+      nu:
+        what: posterior mean of the degrees of freedom with constant scale, about 2.1 (extremely heavy tails)
+        range: [1.7, 2.7]
+
+  task3:
+    title: Latent log-volatility and a sampler in trouble
+    hints:
+      - |
+        Write the model as in the maths first and read the *whole* diagnostics table. A model can
+        have zero divergences and still be unusable: which single parameter has an ESS in the
+        tens? It is the one that ties 800 latent steps together. You have seen this geometry
+        before, in hierarchical models - what was the cure there, and what is the time-series
+        equivalent of "offset times scale"?
+      - |
+        Centred: `pm.GaussianRandomWalk("log_vol", sigma=vol_of_vol, init_dist=pm.Normal.dist(0, 1),
+        dims="date")`. Given the path, `vol_of_vol` is pinned to the size of its steps, so the
+        sampler can only move it together with all the steps - slowly.
+
+        Non-centred: `z ~ Normal(0, 1)` per day and
+        `log_vol = log_vol_0 + pt.cumsum(vol_of_vol * z)`. This fixes the mixing but may produce
+        divergences, because through the cumulative sum every `z` now influences every later
+        day. Find out *where* they occur (compare `vol_of_vol` for divergent and other draws).
+        If they sit in a region of higher curvature rather than a funnel neck, a smaller step
+        size (`target_accept=0.95`) removes them - verify that they are gone and that the
+        posterior did not move. `nuts_sampler="nutpie"` is fast for models of this size.
+
+        The prior on `vol_of_vol` is on the log scale, i.e. a relative daily change: 0.1 means
+        "about 10% a day". A scale of several units would let volatility explain every return
+        on its own.
+      - |
+        ```python
+        with pm.Model(coords={"date": train.index}) as sv_model:
+            vol_of_vol = pm.HalfNormal("vol_of_vol", ___)
+            nu = pm.Gamma("nu", 2, 0.1)
+            mu = pm.Normal("mu", 0, 0.5)
+            log_vol_0 = pm.Normal("log_vol_0", 0, 1)
+            z = pm.Normal("z", 0, 1, dims="date")
+            log_vol = pm.Deterministic("log_vol", log_vol_0 + pt.cumsum(___), dims="date")
+            pm.StudentT("ret", nu=nu, mu=mu, sigma=pm.math.exp(___), observed=r, dims="date")
+            idata = pm.sample(target_accept=___, random_seed=RANDOM_SEED)
+
+        div = idata.sample_stats["diverging"].values.ravel()
+        vov = idata.posterior["vol_of_vol"].values.ravel()
+        np.median(vov[div]), np.median(vov)
+        az.summary(idata, var_names=["vol_of_vol", "nu", "mu"])
+        ```
+    checks:
+      vol_of_vol:
+        what: posterior mean of the daily innovation sd of log-volatility in the FINAL model, about 0.085
+        range: [0.07, 0.105]
+      nu:
+        what: posterior mean of the Student-t degrees of freedom once volatility moves, in the teens (not 2!)
+        range: [9, 28]
+
+  task4:
+    title: Does the volatility path make sense?
+    hints:
+      - |
+        `log_vol` has a `date` dimension, so the path and its band are one reduction over
+        `("chain", "draw")` away. For the second part: if the replications are generated from
+        the fitted path, which features of the data are they almost guaranteed to reproduce?
+        What should be true of the returns *after dividing by* the fitted volatility?
+      - |
+        `vol = np.exp(idata.posterior["log_vol"])`, then `.mean(("chain", "draw"))` and
+        `.quantile([0.03, 0.97], dim=("chain", "draw"))`. Plot over `np.abs(ret)` bars and add
+        `ax.axvline(pd.Timestamp("2008-09-15"))` for the events.
+
+        The stronger check: standardised residuals `(r - mu) / exp(log_vol)` should be iid
+        Student-t with `nu` degrees of freedom. Look at the ACF of their absolute values, and at
+        the histogram of `scipy.stats.t.cdf(resid, nu)` (the PIT), which should be flat.
+      - |
+        ```python
+        vol = np.exp(sv_idata.posterior["log_vol"])
+        vol_mean = vol.mean(("chain", "draw")).to_series()
+        lo, hi = vol.quantile([0.03, 0.97], dim=("chain", "draw")).values
+        peak_vol, last_vol = vol_mean.max(), vol_mean.iloc[___]
+
+        post = az.extract(sv_idata, var_names=["log_vol", "mu", "nu"], num_samples=500)
+        resid = (r[:, None] - post["mu"].values) / np.exp(post["log_vol"].transpose("date", "sample").values)
+        acf(np.abs(resid.mean(axis=1)), 30)
+        pit = stats.t.cdf(resid, ___).mean(axis=1)
+        ```
+    checks:
+      peak_vol:
+        what: posterior mean of exp(log_vol) on its highest day (October 2008), in percent - about 4.7
+        range: [3.9, 5.8]
+      last_vol:
+        what: posterior mean of exp(log_vol) on the last training day (30 June 2011), in percent - about 0.95
+        range: [0.75, 1.2]
+
+  task5:
+    title: Tomorrow's VaR
+    hints:
+      - |
+        VaR is a quantile of the posterior *predictive* distribution of a return that has not
+        happened yet - not a quantile of a parameter, and not `mu - 2.33 * sigma` at the
+        posterior mean. For your model, tomorrow's volatility is one more step of the same
+        random walk. What do you need, per posterior draw, to take that step?
+      - |
+        Per posterior draw: `log_vol_next = log_vol[last day] + vol_of_vol * Normal(0, 1)`, then
+        `ret_next = mu + exp(log_vol_next) * StudentT(nu)`. Use NumPy on the extracted draws
+        (`rng.standard_normal`, `rng.standard_t`). A 1% quantile from 4000 numbers is noisy, so
+        simulate several futures per draw. The VaR is `np.quantile(ret_next, 0.01)` over
+        everything. Do the same for the Normal model with a new `rng.normal(mu, sigma)` per draw.
+      - |
+        ```python
+        p = az.extract(sv_idata, var_names=["log_vol", "vol_of_vol", "nu", "mu"])
+        log_vol_T = p["log_vol"].isel(date=-1).values                 # (draws,)
+        size = (50, log_vol_T.size)
+        log_vol_next = log_vol_T + p["vol_of_vol"].values * rng.standard_normal(size)
+        ret_next = p["mu"].values + np.exp(___) * rng.standard_t(p["nu"].values, size=size)
+        var_sv = np.quantile(ret_next, ___)
+        ```
+    checks:
+      var_desk:
+        what: 1% quantile of the constant-volatility Normal posterior predictive, in percent - about -4.3
+        range: [-4.6, -4.0]
+      var_sv:
+        what: 1% predictive quantile for 1 July 2011 under the stochastic-volatility model, in percent - about -2.7 (did you add tomorrow's volatility shock and the Student-t noise?)
+        range: [-3.2, -2.2]
+
+  task6:
+    title: Back-test and recommend
+    hints:
+      - |
+        The expensive part of your model is learning the parameters; the part that must change
+        every day is the volatility *state*. If you freeze the parameters at their training
+        posterior, updating the state for one new return is a one-dimensional application of
+        Bayes' rule: prior = yesterday's belief pushed through one random-walk step, likelihood
+        = Student-t density of the new return. How can you do that with samples?
+      - |
+        A bootstrap particle filter. Carry a cloud of log-volatility "particles" (several per
+        retained posterior draw, each row with its own frozen `vol_of_vol`, `nu`, `mu`, started
+        at that draw's last `log_vol`). Every day: (1) add a random-walk step to every particle
+        and simulate a return from each - their 1% quantile is the VaR published the evening
+        before; (2) when the real return arrives, weight particles by
+        `scipy.stats.t.logpdf(r_t, nu, mu, exp(v))` and resample them in proportion to the
+        weights. Nothing from the future is used.
+
+        Then count `ret < VaR` days for each model, look at *when* they happen (clustered
+        exceedances are a failure even if the count is fine), and compare the average VaR.
+        With k exceedances in n days, `Beta(1 + k, 1 + n - k)` is the posterior of the
+        exceedance rate under a flat prior.
+      - |
+        ```python
+        v = np.repeat(log_vol_T[keep][:, None], M, axis=1)               # (draws, particles)
+        for t, r_t in enumerate(r_test):
+            v = v + vol_of_vol[:, None] * rng.standard_normal(v.shape)    # predict
+            r_rep = mu[:, None] + np.exp(v) * rng.standard_t(nu[:, None], size=v.shape)
+            var[t] = np.quantile(r_rep, 0.01)
+            logw = stats.t.logpdf(r_t, nu[:, None], mu[:, None], ___)     # update
+            w = np.exp(logw - logw.max(axis=1, keepdims=True))
+            w /= w.sum(axis=1, keepdims=True)
+            idx = np.stack([rng.choice(M, size=M, p=w_row) for w_row in w])   # resample per row
+            v = np.take_along_axis(v, idx, axis=1)
+
+        exceed = r_test < var
+        stats.beta.ppf([0.03, 0.97], 1 + exceed.sum(), 1 + len(r_test) - exceed.sum())
+        ```
+    checks:
+      exceed_desk:
+        what: number of test days on which the return was below the desk's constant VaR - a handful, all within two weeks
+        range: [3, 5]
+      exceed_sv:
+        what: number of test days below the stochastic-volatility VaR (expected at 1% - about 6; a filter that works lands between 6 and 14)
+        range: [6, 14]

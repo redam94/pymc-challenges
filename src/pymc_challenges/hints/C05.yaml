@@ -1,0 +1,290 @@
+title: "Trolley problems: is a 1-7 rating a number?"
+tasks:
+  task0:
+    title: Look at the outcome
+    hints:
+      - |
+        A Normal distribution has one hump, symmetric thin tails and support on the whole real
+        line. Go through those three properties one at a time with the bar chart of `response`
+        in front of you - overall, and then separately for the most extreme scenario.
+      - |
+        `trolley.response.value_counts(normalize=True).sort_index()` gives the seven shares,
+        `.cumsum()` the cumulative proportions (drop the last one - it is 1 by construction) and
+        `scipy.special.logit` puts them on the log-odds scale. `pd.crosstab(trolley.scenario,
+        trolley.response, normalize="index")` gives the same seven shares per scenario.
+
+        Look at the *spacing* of the cumulative log-odds. If the seven categories were equally
+        spaced slices of a smooth latent distribution, what would that spacing look like?
+
+  task1:
+    title: The team's linear model and a check that exposes it
+    hints:
+      - |
+        Fitting is the easy part. For the check, ask: what can the data do that the model cannot,
+        and what can the model do that the data cannot? The data can only be 1, 2, ..., 7. What
+        does a draw from the model's posterior predictive look like? And is the misfit the same
+        in every scenario, or worst where the mean is closest to an end of the scale?
+      - |
+        Compare **category shares**: for each replicated dataset and each of the six scenarios,
+        the share of ratings equal to 1, 2, ..., 7, shown as intervals on top of the observed
+        bars. The linear model predicts real numbers, so give it its best shot: round to the
+        nearest integer and clip to 1-7 (`np.clip(np.rint(y_rep), 1, 7)`), and report separately
+        how many raw predictions fell below 1 or above 7.
+
+        You do not need `pm.sample_posterior_predictive` on 9,930 rows x 4,000 draws. All rows
+        of one scenario share the same `mu`, so for a few hundred posterior draws
+        (`az.extract(idata, num_samples=400)`) simulate `n_scenario` Normal draws directly with
+        NumPy. Write the plotting part as a function of an array of replicated shares with shape
+        `(replicates, scenarios, categories)` - Task 3 can then reuse it.
+      - |
+        ```python
+        X = np.column_stack([A, I, C, A * I, C * I]).astype(float)
+        with pm.Model(coords={"coef": COEFS}) as linear_model:
+            a = pm.Normal("a", ___, ___)
+            b = pm.Normal("b", 0, ___, dims="coef")
+            sigma = pm.HalfNormal("sigma", ___)
+            pm.Normal("response", a + pm.math.dot(X, b), sigma, observed=trolley.response.values)
+            linear_idata = pm.sample(random_seed=RANDOM_SEED)
+
+        post = az.extract(linear_idata, num_samples=400, random_seed=RANDOM_SEED)
+        mu = post["a"].values[:, None] + post["b"].values.T @ X_scen.T        # (400, 6)
+        raw = [rng.normal(mu[:, [s]], post["sigma"].values[:, None], size=(400, n_s[s]))
+               for s in range(6)]
+        share_impossible = np.mean([___ for r in raw for value in ...])        # below 1 or above 7
+        freq = ...   # (400, 6, 7): np.bincount of the rounded, clipped ratings / n
+        ```
+    checks:
+      sigma:
+        what: posterior mean of the residual standard deviation of the linear model, about 1.8 rating points
+        range: [1.75, 1.88]
+      share_impossible:
+        what: share of posterior predictive draws below 1 or above 7 (a proportion, not a percentage), about 0.12
+        range: [0.1, 0.135]
+
+  task2:
+    title: Ordered logistic, cutpoints only
+    hints:
+      - |
+        The category probabilities of an ordered-logistic model are *differences* of neighbouring
+        cumulative probabilities. What has to be true of the cutpoints for all seven differences
+        to be positive? Now look at where the sampler starts: `model.initial_point()` and
+        `model.point_logps()` tell you the starting values and which term of the log-probability
+        is infinite there.
+      - |
+        Two things are needed and neither is enough alone:
+
+        - `transform=pm.distributions.transforms.ordered` on the cutpoint prior, so the sampler
+          moves in an unconstrained space where every point maps to increasing cutpoints;
+        - a **strictly increasing starting value**. The default start for a vector of
+          `Normal(0, s)` variables is all zeros, and the ordered transform takes `log` of the
+          gaps between neighbours. Pass e.g. `initvals={"cut": np.linspace(-2, 2, 6)}` to
+          `pm.sample`. (Setting `initval=` on the distribution also works for sampling, but then
+          `pm.compute_log_likelihood` refuses the model later - you will want it in Task 5.)
+
+        `pm.OrderedLogistic` expects the outcome coded 0..6 and uses
+        `P(y <= k) = logistic(cut_k - eta)`. With `eta=0` the cutpoints are simply the log-odds of
+        the cumulative proportions - compare with Task 0.
+
+        For the prior: `pm.sample_prior_predictive` ignores transforms, so it will give you
+        *unsorted* cutpoints. The prior you are actually using is the distribution of six sorted
+        Normal draws, which is a one-liner in NumPy.
+      - |
+        ```python
+        ordered = pm.distributions.transforms.ordered
+        y = trolley.response.values - 1
+        with pm.Model(coords={"cutpoint": CUTS}) as cut_model:
+            cut = pm.Normal("cut", 0, ___, dims="cutpoint", transform=ordered)
+            pm.OrderedLogistic("response", eta=0.0, cutpoints=cut, observed=y)
+            cut_idata = pm.sample(initvals={"cut": ___}, random_seed=RANDOM_SEED)
+
+        def ordinal_probs(eta, cut):            # eta (...,), cut (..., 6) -> (..., 7)
+            cdf = expit(cut - np.asarray(eta)[..., None])
+            cdf = np.concatenate([np.zeros_like(cdf[..., :1]), cdf, np.ones_like(cdf[..., :1])], -1)
+            return np.diff(cdf, axis=-1)
+
+        prior_cut = np.sort(rng.normal(0, ___, size=(500, 6)), axis=1)
+        prior_p = ordinal_probs(np.zeros(500), prior_cut)
+        ```
+    checks:
+      cut_first:
+        what: posterior mean of the lowest cutpoint (between responses 1 and 2), the log-odds of P(response <= 1), about -1.9
+        range: [-2.0, -1.84]
+      cut_last:
+        what: posterior mean of the highest cutpoint (between 6 and 7), the log-odds of P(response <= 6), about 1.8
+        range: [1.7, 1.84]
+
+  task3:
+    title: Ordinal regression with predictors
+    hints:
+      - |
+        Where does the linear predictor go, and with which sign? In `pm.OrderedLogistic`,
+        `P(y <= k) = logistic(cut_k - eta)`: a larger `eta` makes every "at most k" *less* likely,
+        i.e. pushes ratings up. And think before you add an intercept to `eta`: what would
+        happen to the posterior if you added 1 to the intercept and to all six cutpoints?
+      - |
+        `eta = pm.math.dot(X, b)` with no intercept - the cutpoints are the intercepts. On the
+        log-odds scale a coefficient of 1 is a big effect, so something like `Normal(0, 0.5)` is
+        a reasonable weakly-informative prior.
+
+        Pass `compute_p=False` to `pm.OrderedLogistic`, otherwise a `(chain, draw, 9930, 7)` array
+        of probabilities is stored in the posterior.
+
+        For the check you need replicated category *counts* per scenario. Compute the seven
+        probabilities per scenario and draw (six distinct `eta` values only - use the six-row
+        design matrix of the scenarios), then `rng.multinomial(n_scenario, p)`.
+      - |
+        ```python
+        with pm.Model(coords={"cutpoint": CUTS, "coef": COEFS}) as ordinal_model:
+            cut = pm.Normal("cut", 0, 1.5, dims="cutpoint", transform=ordered)
+            b = pm.Normal("b", 0, ___, dims="coef")
+            pm.OrderedLogistic("response", eta=___, cutpoints=cut, observed=y, compute_p=False)
+            ordinal_idata = pm.sample(initvals={"cut": CUT_INIT}, random_seed=RANDOM_SEED)
+
+        post = az.extract(ordinal_idata, var_names=["b", "cut"], num_samples=400)
+        eta = post["b"].values.T @ X_scen.T                                # (400, 6)
+        p = ordinal_probs(eta, post["cut"].values.T[:, None, :])           # (400, 6, 7)
+        freq = np.stack([[rng.multinomial(n_s[s], p_d[s]) / n_s[s] for s in range(6)] for p_d in p])
+        ```
+    checks:
+      b_action:
+        what: posterior mean of the action coefficient (positive = more permissible), about -0.47
+        range: [-0.58, -0.36]
+      b_intention:
+        what: posterior mean of the intention coefficient, about -0.29
+        range: [-0.4, -0.18]
+      b_contact:
+        what: posterior mean of the contact coefficient, about -0.34
+        range: [-0.47, -0.21]
+      b_contact_intention:
+        what: posterior mean of the contact x intention interaction, about -1.2 (the largest effect)
+        range: [-1.45, -1.03]
+
+  task4:
+    title: Predictions on the response scale
+    hints:
+      - |
+        A coefficient on the latent scale does not translate into a fixed change in the rating:
+        the same shift in `eta` moves a lot of probability when the cutpoints around it are
+        close together, and little when you are already near 1 or 7. So do not interpret
+        coefficients - compute the seven probabilities for each scenario, for every posterior
+        draw, and summarise whatever you care about from those.
+      - |
+        For each posterior draw and scenario: `eta = b @ x_scenario`, then
+        `P(y <= k) = expit(cut_k - eta)`, pad with 0 and 1 and take `np.diff` to get the seven
+        probabilities. The expected rating is `(p * [1..7]).sum(-1)`, `P(response <= 3)` is
+        `p[..., :3].sum(-1)`. Contrasts between scenarios are differences **per draw**, then
+        summarised - not differences of summaries.
+      - |
+        ```python
+        post = az.extract(ordinal_idata, var_names=["b", "cut"])
+        eta = post["b"].values.T @ X_scen.T                                # (draws, 6)
+        P = ordinal_probs(eta, post["cut"].values.T[:, None, :])           # (draws, 6, 7)
+        mean_rating = (P * np.arange(1, 8)).sum(-1)                        # (draws, 6)
+        p_le3 = P[..., :3].sum(-1)
+        shift = mean_rating[:, ___] - mean_rating[:, ___]                  # per draw
+        shift.mean(), np.quantile(shift, [0.03, 0.97])
+        ```
+    checks:
+      mean_none:
+        what: posterior mean of the expected rating in the 'none' scenario, about 4.8
+        range: [4.7, 4.9]
+      p_le3_contact_intention:
+        what: posterior mean of P(response <= 3) in 'contact+intention', about 0.63 (a probability)
+        range: [0.6, 0.66]
+      shift_mean:
+        what: change in expected rating from 'none' to 'contact+intention', about -1.9 (negative - less permissible)
+        range: [-2.08, -1.77]
+
+  task5:
+    title: Participant and story effects
+    hints:
+      - |
+        The six cutpoints already pin down where the latent scale sits. If all 150 participant
+        intercepts could drift up together while the cutpoints drift up with them, nothing in
+        the likelihood would notice. How can you give each participant an offset while making
+        that joint drift impossible? You met the tool in E02 and C02.
+      - |
+        `u = pm.ZeroSumNormal("u", sigma=sigma_participant, dims="participant")` and the same for
+        `story`, added to `eta` via integer indices from `pd.factorize(..., sort=True)`. With 30
+        ratings per participant the centred form samples well. Keep `compute_p=False`, keep the
+        ordered transform and `initvals`.
+
+        For LOO both models need a `log_likelihood` group: `pm.compute_log_likelihood(idata)`
+        inside the model context (this is the step that fails if you used `initval=` on the
+        cutpoints instead of `initvals=` in `pm.sample`). Then `az.compare({...})`. Divide the
+        elpd difference by the number of ratings to get a per-rating figure you can explain.
+
+        For part 4, think of what a population-level logit model is: an average over people of
+        curves that are steep but shifted relative to each other.
+      - |
+        ```python
+        pid, participants = pd.factorize(sub.id, sort=True)
+        sid, stories = pd.factorize(sub.story, sort=True)
+        coords = {"cutpoint": CUTS, "coef": COEFS, "participant": participants, "story": stories}
+        with pm.Model(coords=coords) as hier_model:
+            cut = pm.Normal("cut", 0, 1.5, dims="cutpoint", transform=ordered)
+            b = pm.Normal("b", 0, 0.5, dims="coef")
+            sigma_participant = pm.HalfNormal("sigma_participant", ___)
+            sigma_story = pm.HalfNormal("sigma_story", ___)
+            u = pm.ZeroSumNormal("u", ___, dims="participant")
+            v = pm.ZeroSumNormal("v", ___, dims="story")
+            eta = pm.math.dot(X_sub, b) + u[___] + v[___]
+            pm.OrderedLogistic("response", eta=eta, cutpoints=cut, observed=y_sub, compute_p=False)
+            hier_idata = pm.sample(initvals={"cut": CUT_INIT}, nuts_sampler="nutpie",
+                                   random_seed=RANDOM_SEED)
+            pm.compute_log_likelihood(hier_idata)
+        az.compare({"population": pop_sub_idata, "hierarchical": hier_idata})
+        ```
+    checks:
+      sigma_participant:
+        what: posterior mean of the between-participant sd on the log-odds scale, about 2.05
+        range: [1.75, 2.4]
+      elpd_diff:
+        what: elpd_loo of the hierarchical model minus the population model on the 150-participant subsample (positive, about 1500)
+        range: [1300, 1750]
+
+  task6:
+    title: Does the metric shortcut change a conclusion?
+    hints:
+      - |
+        Count parameters before you compute anything: six scenario means, and a linear model
+        with an intercept and five coefficients. What does that imply for how well the linear
+        model reproduces the six *mean* ratings - whatever the likelihood? Then ask which
+        quantities depend on more than the mean.
+      - |
+        Linear model: per draw and scenario, `mu` is the expected rating; the rounded predictive
+        distribution is `np.diff(norm.cdf((edges - mu) / sigma))` with
+        `edges = [-inf, 1.5, 2.5, ..., 6.5, inf]`. Ordinal model: the `(draws, 6, 7)`
+        probability array from Task 4. Reduce both to posterior means per scenario, build all
+        15 pairwise differences, and take `abs(linear - ordinal)`.
+
+        Participant part: in the hierarchical model a participant `z` standard deviations from
+        the average has `eta = b @ x + z * sigma_participant` (average story: story effect 0).
+        Convert to an expected rating for 'none' and 'contact+intention' and difference per
+        draw. For the raw-data comparison, group participants by their mean rating on the
+        *other four* scenarios so the grouping does not use the two cells you are comparing.
+      - |
+        ```python
+        edges = np.array([-np.inf, ___, np.inf])        # where does a Normal 'round' to each of 1..7?
+        P_lin = np.diff(stats.norm.cdf((edges - mu_lin[..., None]) / sigma[:, None, None]), axis=-1)
+        p1_lin, p1_ord = P_lin[..., 0].mean(0), P_ord[..., 0].mean(0)       # per scenario
+        pairs = [(i, j) for i in range(6) for j in range(i + 1, 6)]
+        gap_p1 = [abs((p1_lin[j] - p1_lin[i]) - (p1_ord[j] - p1_ord[i])) for i, j in pairs]
+
+        eta_z = b_h @ X_scen[[NONE, CI]].T + ___                                # (draws, 2): shift by a participant z sd's from average
+        m = (ordinal_probs(eta_z, cut_h[:, None, :]) * np.arange(1, 8)).sum(-1)
+        drop = m[:, 1] - m[:, 0]
+        ```
+    checks:
+      max_gap_mean:
+        what: largest absolute disagreement between the two models about a shift in EXPECTED RATING over the 15 pairs, in rating points - tiny, below 0.06
+        range: [0.0, 0.06]
+      max_gap_p1:
+        what: largest absolute disagreement about a shift in P(response = 1), as a proportion, about 0.066
+        range: [0.045, 0.09]
+      drop_typical:
+        what: drop in expected rating none -> contact+intention for a typical participant under the hierarchical ordinal model, about -2.2
+        range: [-2.5, -1.85]
+      drop_lenient:
+        what: the same drop for a participant 2 sd more lenient than average, about -1.0 (much smaller - ceiling)
+        range: [-1.45, -0.65]
