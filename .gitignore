@@ -20,3 +20,9 @@ wheels/
 
 # Durable scratch space for work in progress (survives session restarts)
 .scratch/
+reports/posteriors/
+reports/posteriors.duckdb
+
+# Website build output (tools/build_site.py)
+_site/
+.DS_Store

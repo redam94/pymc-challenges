@@ -1,0 +1,219 @@
+title: "Who needs the second drug? Hidden subgroups with their own regressions"
+tasks:
+  task0:
+    title: Look at the trial
+    hints:
+      - |
+        CD4 counts are positive and a drug is expected to change them by a *percentage*. On which
+        scale does the spread around the diagonal look the same for low and high baseline counts?
+        Then read the eligibility criterion again and sort the data by `cd40`.
+      - |
+        Plot `cd420` against `cd40` per arm on log-log axes with the diagonal drawn in. Look at
+        `trial.sort_values("cd40").head()`: a baseline count of 0 in a trial that required
+        200-500 cells is a coding error, not a patient. For the shape, compute per arm the mean,
+        sd, `scipy.stats.skew` and `scipy.stats.kurtosis` of `log(cd420 / cd40)`, and the share
+        of patients whose count fell by more than 25%.
+
+  task1:
+    title: One regression for everybody
+    hints:
+      - |
+        On the log scale a coefficient is a relative change: what is a plausible effect of a drug
+        on CD4 within 20 weeks - 5%? 50%? 500%? For the check, think about what a clinic worried
+        about deterioration would count, and about a statistic a Normal error distribution is not
+        free to fit.
+      - |
+        Regress `log(cd420)` on centred `log(cd40)`, the treatment indicator and the other
+        baseline covariates standardised (never `cd820`, `offtrt`, `time`, `cid`: they are
+        measured after randomisation). `exp(c) - 1` is the percentage effect.
+
+        For the PPC, `pm.sample_posterior_predictive` gives replicated log counts; subtract
+        `log(cd40)` and compute, per replicated dataset and per arm, the share falling by more
+        than 25% and the skewness. Compare the distribution of each with the observed value.
+      - |
+        ```python
+        with pm.Model(coords={"covariate": list(Z.columns)}) as single:
+            a = pm.Normal("a", ___, 1.0)                     # log CD4 of an average patient
+            b = pm.Normal("b", 0.7, 0.5)                     # elasticity on baseline CD4
+            c = pm.Normal("c", 0.0, ___)                     # treatment effect, log scale
+            g = pm.Normal("g", 0.0, 0.2, dims="covariate")
+            sigma = pm.HalfNormal("sigma", 1.0)
+            pm.Normal("y", a + b * lx + c * t + Z.to_numpy() @ g, sigma, observed=y)
+            idata = pm.sample(random_seed=RANDOM_SEED)
+            pm.sample_posterior_predictive(idata, extend_inferencedata=True)
+
+        rep = az.extract(idata, group="posterior_predictive", var_names="y", num_samples=500)
+        rep = rep.transpose("sample", ...).to_numpy() - log_cd4        # (draws, patients)
+        fall = (rep[:, t == 0] < np.log(0.75)).mean(axis=___)          # one number per replicate
+        ```
+    checks:
+      effect:
+        what: posterior mean of the treatment coefficient on the LOG scale, about 0.20 (i.e. about +22%)
+        range: [0.17, 0.235]
+      sigma:
+        what: posterior mean of the residual sd on the log scale, about 0.33
+        range: [0.31, 0.355]
+
+  task2:
+    title: A Dirichlet-process mixture of regressions
+    hints:
+      - |
+        This is E26's model with a regression inside each component: the component *means* now
+        differ per patient. Before fitting, simulate how many occupied subgroups your prior on the
+        concentration implies for about 1000 patients. After fitting, ask which quantities have a
+        meaning that does not depend on what the components are called. And to judge "subgroups",
+        compare against a single regression that only has heavier tails.
+      - |
+        `pm.StickBreakingWeights("w", alpha=alpha, K=T - 1)` gives T weights (K counts the
+        breaks). Build a `(patients, T)` matrix of means `a + b * lx[:, None] + c * t[:, None] +
+        (Z @ g)[:, None]` with `a, b, c, sigma` of shape T, and pass it to
+        `pm.NormalMixture("y", w=w, mu=mu, sigma=sigma, observed=y)`: that marginalises the
+        memberships. Give the sds a prior with no mass near zero (`pm.InverseGamma`).
+
+        Label-free quantities: the average effect `(w * c).sum()`, the spread of subgroup effects
+        `sqrt(sum w (c - ate)^2)`, `alpha`, and `sample_stats["logp"]`: put them in an
+        `xr.Dataset` and call `az.rhat` / `az.ess`. Check that the last weight is negligible.
+        For the heavy-tail comparison use `pm.StudentT` with a prior on `nu`, and compare the
+        three models with `az.compare`.
+      - |
+        ```python
+        T = 12
+        with pm.Model() as dp:
+            alpha = pm.Gamma("alpha", ___, ___)
+            w = pm.StickBreakingWeights("w", alpha=alpha, K=___)
+            a = pm.Normal("a", 5.8, 1.0, shape=T)
+            b = pm.Normal("b", 0.7, 0.5, shape=T)
+            c = pm.Normal("c", 0.0, 0.5, shape=T)
+            sigma = pm.InverseGamma("sigma", 3.0, 0.5, shape=T)
+            g = pm.Normal("g", 0.0, 0.2, shape=Z.shape[1])
+            mu = ___                                                    # (patients, T)
+            ate = pm.Deterministic("ate", ___)
+            pm.NormalMixture("y", w=w, mu=mu, sigma=sigma, observed=y)
+            idata_dp = pm.sample(random_seed=RANDOM_SEED)
+        ```
+    checks:
+      ate:
+        what: posterior mean of the average treatment effect (sum of w_k c_k) on the LOG scale, about 0.19
+        range: [0.16, 0.22]
+      elpd_gain:
+        what: LOO elpd of the mixture minus that of the Task 1 normal regression, about 60
+        range: [35, 85]
+
+  task3:
+    title: The colleague's responder list
+    hints:
+      - |
+        Write down what her probability conditions on. Which of those quantities does a clinician
+        know on the day they decide the treatment? Then compute her score for the patients in the
+        ZDV arm too - they never received ddI.
+      - |
+        For each posterior draw, the membership probability is proportional to
+        `w_k * Normal(y_i | mu_ik, sigma_k)`; normalise over k (work on the log scale), multiply by
+        `c_k`, sum over k and average over draws. Plot the score against the observed
+        `log(cd420 / cd40)`, colour by arm, and compute the correlation per arm.
+
+        For a *new* patient there is no `y`: the membership probabilities fall back to the prior
+        ones. In this model, what are those, and do they depend on the covariates?
+      - |
+        ```python
+        post = az.extract(idata_dp, var_names=["w", "a", "b", "c", "sigma", "g"], num_samples=500)
+        W, A, B, C, S = (post[v].transpose("sample", ...).to_numpy() for v in ["w", "a", "b", "c", "sigma"])
+        G = post["g"].transpose("sample", ...).to_numpy()
+        MU = A[:, None, :] + B[:, None, :] * lx[None, :, None] + ___ + (G @ Z.to_numpy().T)[:, :, None]
+        log_r = np.log(W)[:, None, :] + stats.norm.logpdf(y[None, :, None], MU, S[:, None, :])
+        resp = np.exp(log_r - log_r.max(-1, keepdims=True))
+        resp /= resp.sum(___, keepdims=True)
+        score = (resp * C[:, None, :]).sum(-1).mean(0)
+        np.corrcoef(score[t == 0], ___)[0, 1]
+        cate_new = (W * C).sum(-1)       # effect for a new patient: does it depend on anything?
+        ```
+    checks:
+      corr_control:
+        what: correlation, in the ZDV arm, between her score and the observed log(cd420 / cd40), about -0.7 (negative!)
+        range: [-0.95, -0.35]
+      corr_treated:
+        what: the same correlation in the ZDV + ddI arm, about +0.5
+        range: [0.2, 0.85]
+
+  task4:
+    title: Let the baseline profile choose the subgroup
+    hints:
+      - |
+        Task 3 showed that a treatment rule needs the *prior* membership to depend on what is
+        known at baseline. How can the stick-breaking fractions become functions of covariates?
+        And when a per-patient quantity is label-free, is it automatically well identified?
+        Finally: how much of a patient's predictive density does the treatment effect move?
+      - |
+        Logistic stick-breaking: `v_ik = sigmoid(g0_k + x_i @ gamma_k)` for k < T, weights
+        `w_ik = v_ik * prod_{l<k} (1 - v_il)`, the last component takes the rest. Build the
+        `(patients, T)` weight matrix with `pt.cumprod` and `pt.concatenate` and pass it to
+        `pm.NormalMixture` as `w`. The CATE of patient i is `(w[i] * c).sum()`: store it as a
+        Deterministic and run `az.rhat` on it - all 1051 values, not only the mean. If some mix
+        poorly, look at *which* patients, and compare the chains' average CATE within bands of
+        baseline CD4. Keep the gate small: every covariate you add is another way to route thin
+        corners of covariate space. For the last component, count per draw how many components
+        carry more than 5% for any patient.
+      - |
+        ```python
+        Xg = (lx / lx.std())[:, None]                     # gate covariates (baseline only!)
+        with pm.Model() as gated:
+            ...                                           # a, b, c, sigma, g as in Task 2, T = 6
+            g0 = pm.Normal("g0", 0.0, 1.5, shape=T - 1)
+            gam = pm.Normal("gamma", 0.0, 1.0, shape=(Xg.shape[1], T - 1))
+            v = pm.math.sigmoid(___)                      # (patients, T - 1)
+            w = pt.concatenate([v, pt.ones((N, 1))], axis=1) * pt.concatenate(
+                [pt.ones((N, 1)), pt.cumprod(___, axis=1)], axis=1)
+            pm.Deterministic("cate", (w * c).sum(-1))
+            pm.NormalMixture("y", w=w, mu=mu, sigma=sigma, observed=y)
+            idata_gated = pm.sample(tune=1000, draws=2000, random_seed=RANDOM_SEED)
+        ```
+    checks:
+      cate_low:
+        what: mean CATE (log scale) over patients in the lowest quartile of baseline CD4 (<= 265 cells), about 0.26
+        range: [0.21, 0.32]
+      cate_high:
+        what: mean CATE (log scale) over patients in the highest quartile of baseline CD4 (>= 424 cells), about 0.16
+        range: [0.12, 0.2]
+
+  task5:
+    title: The clinic's rule
+    hints:
+      - |
+        The rule is a statement about each patient's CATE: P(CATE_i > log 1.15) >= 0.8. When
+        three models give three shares, ask separately *where* they disagree (which CD4 values)
+        and *why* (functional form? number of modifiers?). Randomisation gives you a model-free
+        referee within bands of baseline CD4.
+      - |
+        From `cate` draws of shape (draws, patients): `p = (cate > np.log(1.15)).mean(0)`, the
+        share treated is `(p >= 0.8).mean()`; per chain, do the same on
+        `idata.posterior["cate"].mean("draw")`-style slices. For the interaction regressions add
+        `c_cd4 * lx_std` (and `Z @ c_z`) to the treatment coefficient, store the resulting CATE as
+        a Deterministic, and apply the same rule. The referee: within quartiles of `cd40`
+        (`pd.qcut`), the difference in mean `log(cd420 / cd40)` between the arms, with its
+        standard error.
+      - |
+        ```python
+        p_mix = (cate_draws > np.log(1.15)).mean(0)
+        share_mix = (p_mix >= ___).mean()
+
+        with pm.Model(coords={"covariate": list(Z.columns)}) as interaction:
+            ...                                            # Task 1 model, plus:
+            c_cd4 = pm.Normal("c_cd4", 0.0, 0.2)
+            cate = c + c_cd4 * lx / lx.std()               # + Z @ c_z for the "all" version
+            cate = pm.Deterministic("cate", cate)
+            mu = a + b * lx + ___ * t + Z.to_numpy() @ g
+
+        band = pd.qcut(df.cd40, 4)
+        g = pd.DataFrame({"change": change, "arm": t, "band": band}).groupby(["band", "arm"])["change"]
+        g.mean().unstack()[1] - g.mean().unstack()[0]      # model-free effect per band
+        ```
+    checks:
+      share_mixture:
+        what: share of the 1051 patients the rule puts on ddI under the CD4-gated mixture, about 0.88
+        range: [0.75, 0.97]
+      share_interaction_cd4:
+        what: share under a regression with a treatment x log baseline CD4 interaction, about 0.69
+        range: [0.55, 0.8]
+      share_interaction_all:
+        what: share under a regression with treatment x every baseline covariate, about 0.5
+        range: [0.38, 0.62]

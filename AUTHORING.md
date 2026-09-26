@@ -175,10 +175,11 @@ solution. Every check must be exercised by an `assert h.check(...)` in a solutio
 
 Installed: pymc 6.3.2, arviz 1.3.0, pytensor 3.3, nutpie, pymc-extras 0.15, preliz, patsy,
 scipy, pandas 3, seaborn, h5py, and the JAX stack (jax 0.11, numpyro 0.22, diffrax 0.7,
-equinox 0.13, flowjax 19, optax), and pymc-bart 0.13.
+equinox 0.13, flowjax 19, optax), pymc-bart 0.13, and plotly 7 (added for E16).
 `pytensor.wrap_jax` exists for bringing JAX functions into a graph. **Do not add
 dependencies** without asking. HDF5 datasets (LIGO strain) are opened with
-`h5py.File(data.path(name))`; `data.load` is for tables only.
+`h5py.File(data.path(name))` and the county GeoJSON with `json.load(open(data.path(name)))`;
+`data.load` is for tables only.
 
 Things that changed relative to older tutorials - trust this list over memory, and when in
 doubt run `uv run python -c "..."` to check:
@@ -316,8 +317,225 @@ doubt run `uv run python -c "..."` to check:
     were 346 MB per 1000 draws. The per-period log-likelihood terms are one-step-ahead
     densities, so `az.loo` on them is NOT leave-one-out. A Kalman gradient costs ~2 ms and
     recompiles per model: budget 40-50 s a fit. The data must have a `DatetimeIndex` with a freq.
+  - **Many small fits in one notebook (E17).** `pm.Model(name="x")` prefixes every variable as
+    `"x::mu"` in the posterior - handy to tell 50 fits apart, but remember the prefix in
+    `az.summary(var_names=...)`. `logging.getLogger("pymc").setLevel(logging.WARNING)` silences
+    the per-fit `NUTS[nutpie]: [...]` banner. `pm.Censored(pm.Binomial.dist(...), lower=L,
+    observed=L)` gives the discrete left-censored likelihood P(X <= L) for a "fewer than L+1"
+    cell; pass `lower=-1` (not `None`) elementwise for the uncensored entries.
+  - **Plots beyond matplotlib (E16).** Set `pio.renderers.default = "plotly_mimetype+notebook_connected"`
+    in the first cell: the headless build defaults to `"browser"` (nothing stored), the
+    `"notebook"` renderer embeds 4.8 MB of plotly.js *per figure*, and `notebook_connected`
+    stores ~10 KB plus the data (JupyterLab/VS Code render the mimetype; GitHub shows nothing).
+    A plotly choropleth ignores `fitbounds="locations"` when `scope="usa"` is also set - drop
+    the scope. Maps need no GIS library: a `matplotlib.collections.PolyCollection` of the
+    GeoJSON polygons with `ax.set_aspect(1 / cos(latitude))` is a choropleth. A matplotlib
+    `FuncAnimation(...).to_jshtml()` is ~50 KB per frame at dpi 72 - keep frames near 40 and
+    `plt.close(fig)` before displaying or the static figure appears too. `az.style` uses a
+    constrained layout: `fig.tight_layout()` only warns. Verify interactive output with
+    headless Chrome (`--headless --screenshot=... file://page.html`) since `inspect_nb.py`
+    only dumps PNGs.
+  - **Graphs and areal models (E18).** `pm.ICAR` cannot be forward-sampled
+    (`sample_prior_predictive` raises `NotImplementedError`): draw prior samples from the
+    eigendecomposition of `pinv(Q)`. It applies one global soft sum-to-zero, so on a
+    disconnected graph isolated nodes silently get a flat prior; the BYM2 scaling factor
+    (geometric mean of `diag(pinv(Q))`) is NaN with an isolated node, giving logp = -inf.
+    Connect the graph or scale per component. `pm.CAR` with `alpha ~ Uniform(0, 1)` piles alpha
+    near 1 and the intercept mixes badly. The pymc-examples `scotland_lips_cancer.csv`
+    neighbour lists for Tweeddale and Annandale are swapped. Areal random effects give
+    Pareto k > 0.7 for a third or more of the areas: use exact K-fold via an `obs_idx` subset.
+  - **Precision matrices and covariance structure (E19, E22, E23).** `pm.MvNormal(tau=...)` with a
+    non-positive-definite matrix is a silent -inf. nutpie's `sample_stats["divergence_message"]`
+    says *why* each divergence happened ("Logp function returned error code" = left the
+    support). LKJ(eta=2) in 11 dimensions gives partial correlations a prior sd of 0.40 - a
+    dense-graph prior. Inside a model **`pm.LKJCorr`'s value is the Cholesky factor**, not the
+    correlation matrix (form `L @ L.T`); using it as a matrix gives "All initialization points
+    failed". `pytensor.function` on model RVs draws them at random rather than substituting
+    values - use `model.replace_rvs_by_values` when debugging a logp. `pt.ndtri_exp(log_u)` is a
+    stable inverse normal CDF with gradients (copulas). `StudentT.logcdf` with free nu costs ~4x
+    (incomplete-beta gradients). In factor models the continuous rotation symmetry barely moves
+    r_hat (1.03) while loadings are meaningless: check r_hat of the implied covariance or align
+    draws. **`pm.compute_log_likelihood` on an `MvNormal` gives ONE value per draw**, so `az.loo`
+    sees one observation: compute conditional (leave-one-out) densities from the precision
+    matrix yourself. Dense `MvNormal` fits are not bit-reproducible under nutpie (threaded BLAS).
+  - **Hand-built log-likelihoods for LOO (E20, E21, E23).** For a `pm.Potential` likelihood or a
+    NumPy-computed one: `idata["log_likelihood"] = xr.Dataset({"y": (("chain", "draw", "obs"), ll)})`
+    or `xr.DataTree.from_dict({"posterior": ..., "log_likelihood": ...})`, then `az.loo(...,
+    var_name=...)`. Sum per-node terms into one variable for a joint per-cell LOO.
+    `az.loo(..., pointwise=True)` is needed for `pareto_k`.
+  - **Causal / intervention API (E20).** `pytensor.tensor.slinalg.expm` is deprecated: use
+    `pytensor.tensor.linalg.expm` (exact gradient). `pm.do(model, {"x": v})` on an observed
+    variable needs a replacement of exactly its shape (`np.full(n, v)`).
+  - **Discrete latents, mixtures and label switching (E21, E24, E26, E27, E28).** nutpie's default
+    400 tuning steps were too few for Dirichlet-membership mixtures (chains still climbing:
+    check `sample_stats["logp"]` per chain; `tune=1000`). For label-free r_hat, evaluate the
+    density at grid points as an `xr.Dataset` and pass it to `az.rhat`. Latent-space positions:
+    r_hat on distances or Procrustes-aligned draws. `transform=ordered` on a positive variable
+    chains with log, so the value variable is `x_chain__`. `pmx.marginalize` refuses variables
+    with `initval=` (pass `pm.sample(initvals=...)`) and cannot marginalise through advanced
+    indexing (`z[site_idx]`) - keep a site x visit matrix. `recover` lives in
+    `pymc_extras.marginal`. A marginalised spike-and-slab gives zero divergences yet r_hat
+    1.15-1.5: divergences do not detect poor spike/slab mixing; Rao-Blackwellise inclusion
+    probabilities in NumPy. `pm.StickBreakingWeights(alpha, K)` returns K+1 weights. A sparse
+    Dirichlet (e0 = 0.01) defeats NUTS - log-gamma reparametrised chains can freeze with step
+    size ~1e-5 and *zero* divergences; e0 = 0.05 works. The textbook horseshoe with tau ~
+    HalfCauchy(1) implies ~61 of 64 active coefficients: simulate m_eff first.
+  - **Custom likelihoods (E24, E28).** `pm.CustomDist(..., signature="(),(v),(v)->(v)")` gives a
+    per-row log-likelihood (LOO works); its draws come back as float. `pytensor.scan(...,
+    return_updates=False)` returns outputs only. `pt.i0` exists (with gradient), `pt.i0e` does
+    not. `pm.logsumexp` squeezes its result - use `pt.logsumexp(..., axis=...)`. In an HMM a
+    log-emission of 0 marginalises a missing observation, so ragged tracks can be padded.
+    `sample_prior_predictive` ignores `pm.Potential` terms (warns); simulate in NumPy.
+  - **Mixed models (E25).** With plenty of data per group, zero-mean centred random effects give
+    ESS ~250 for the population means (a ridge); putting the means *inside* the MvNormal
+    (hierarchical centring) gave ~20x the ESS, and non-centred was worst.
+  - **DataTree and misc (E23-E28).** `idata.sample_stats.depth` is DataTree's own `.depth`
+    attribute: use `idata.sample_stats["depth"]`. A DataTree node has no `.stack`
+    (`.to_dataset().stack(...)`). `az.extract(var_names=...)` needs a list, not a tuple.
+    `pm.Model(name=None)` raises; omit it. `pm.sample_posterior_predictive(idata.isel(...),
+    extend_inferencedata=True)` extends the thinned copy - use the return value.
+    `LKJCholeskyCov(compute_corr=True)` summaries warn (NaN r_hat on the constant diagonal).
+    R data without R: `.rda`/`.RData` may be gzip or xz (`\xfd7zXZ`); E23/E24 carry a small
+    XDR reader, and R's integer NA reads as -2147483648.
+  - **Neural networks and approximate inference (E29).** `pmx.fit_pathfinder(initvals=...)` wants
+    untransformed names (a `find_MAP` dict with `x_log__` raises `KeyError`). On a small BNN,
+    mean-field / full-rank ADVI and Pathfinder all collapse to the prior predictive with inflated
+    noise. Diagnose in function space (predictions on a grid), never weights. A NumPy forward
+    pass over prior draws x grid x width explodes (20000 x 200 x 512 = 16 GB): evaluate only
+    where you need it.
+  - **Random partitions and features (E30, E31).** `gammaln(a + n) - gammaln(a + 1)` cancels
+    catastrophically for a >> n: a fake high-logp region (log a ~ 50) with zero divergences and
+    only r_hat to show it - sum `log(a + arange(1, n))` instead. A whole-partition `pm.Potential`
+    has no per-observation terms, so no LOO: use the held-out predictive `logEPPF(full) -
+    logEPPF(train)`, log-mean-exp over draws. An integer parameter (a species-pool size) can be
+    marginalised on a grid with `pt.logsumexp` inside the Potential. `pm.sample(initvals=...)`
+    needs the model-name prefix (`"name::var"`). A stick-breaking IBP with features summed out
+    can collapse to "all features off" from nutpie's default start (no divergences): start at
+    data rows, `compile_kwargs={"jitter_rvs": set()}`. A `CustomDist` with signature
+    `"(k),(k),(k,d)->(d)"` on a 2-D observed failed in logp; a Potential worked. Seed each
+    section's own `default_rng` when the prose quotes numbers.
+  - **Covariate-dependent mixtures (C11).** Logistic stick-breaking gates mix differently from run
+    to run (per-unit CATE max r_hat 1.01-1.09 with the same seed; worse with many gating
+    covariates). A label-invariant quantity can still be poorly identified: report per-chain
+    summaries of the decision quantity. `pm.StudentT` wants `nu`, `mu`, `sigma` as keywords.
+    pandas 4 warns on `.sum(1)`: write `.sum(axis=1)`. Running a solution as a plain script
+    writes `.progress/` unless `PYMC_CHALLENGES_NO_PROGRESS=1`.
+  - **Hand-derived likelihoods for discrete outcomes (E32).** PyMC's NB `logcdf` is `log(betainc)`:
+    in the upper tail it rounds to 0, `pt.ndtri_exp(0)` is +inf and a copula logp returns NaN on
+    a Black-Friday-sized count. Use `F = I_p(alpha, y+1)` AND `1 - F = I_{1-p}(y+1, alpha)` via
+    `pt.betainc` and invert whichever is below 1/2; `pt.log1mexp` for log-differences.
+    `betainc` parameter gradients dominate the cost: get `F(y-1)` from `F(y) - pmf(y)` (two
+    evaluations per row instead of four, 1/3 faster). Unit-test a new logp before sampling:
+    reduces to a known case, sums to one on a grid, matches a simulator of the same story
+    (total-variation distance), finite-difference gradients, finite in the tails. A
+    `CustomDist(random=...)` using scipy makes numba fall back to object mode for posterior
+    predictive (a warning, it works). A generalised control that recovered the truth in
+    simulation split the real-data chains into two modes (ESS 7, zero divergences): print
+    per-chain means.
+  - **MMM and media data (E32-E35).** Conjura: NaN spend is documented as "channel not used",
+    but feeds also stop (a brand's Meta columns all go NaN mid-series; its Google PMax column
+    alternates NaN / spend day to day; UK click columns end early) - check before treating NaN
+    as 0. Some organisations carry near-identical UK and US series (corr > 0.999): de-duplicate
+    donors. In an MMM the baseline level and the media maximum trade off along a ridge (ESS ~100
+    at r_hat 1.03, no divergences). Centred and non-centred hierarchies diverge at opposite ends
+    (small vs large between-market sd); plot divergences against log sd, `target_accept=0.95`.
+    `pm.sample` mutates a `nuts={...}` dict you pass - do not reuse it with `target_accept=`.
+    `az.summary` over several variables sharing a dim can mislabel rows: one variable at a time.
+    `az.extract(var_names=[one])` returns a DataArray (no `["name"]`). `az.rhat(...)` returns a
+    DataTree without `.to_array()`. `nutpie.compile_pymc_model(m).with_data(name=arr)` swaps
+    `pm.Data` without recompiling (69 placebo refits, 5 compilations; mask the likelihood to
+    keep shapes). A random-walk level integrated out as MvNormal (cov `s0^2 + s^2 min(s,t)`)
+    beat the latent version (142 -> 2 divergences, ESS 180 -> 1300).
+  - **MRP (E36).** Group effects as plain `Normal` z plus a separate intercept (and a main
+    effect plus its interaction) gave 28 divergences, 271 with r_hat 1.10 without state
+    predictors; `pm.ZeroSumNormal` (`n_zerosum_axes=2` for interactions) gave 0. Non-centred
+    effects with 4-6 levels and 55k respondents: r_hat up to 1.03 on sd and z, no divergences -
+    judge by r_hat of the poststratified estimates (`az.rhat(xr.Dataset({"x": (("chain",
+    "draw", ...), arr)}))` works on NumPy draws). PSIS-LOO on binomial cells scores cells, not
+    states, and barely penalised dropping state predictors: validate MRP against a held-out
+    benchmark. Diverging map colours: `TwoSlopeNorm(vcenter=0.5)`, not `Normalize(lo, hi)`.
+  - **Extreme values (E37).** `pymc_extras` `GenExtreme` uses Coles' sign (scipy `c = -xi`);
+    its `logcdf` returns -inf ABOVE the upper bound when xi < 0 (should be 0) - `logp` is fine.
+    The GEV support wall causes hundreds of "Logp function returned error code" divergences:
+    sample `sigma = L(mu, xi) + exp(u)` with the prior + Jacobian as a `pm.Potential` (339 -> 0-1).
+    nutpie's `divergence_draw` is an index, not the failing position: read `divergence_message`.
+    `az.loo(pointwise=True)` has `.elpd_i` / `.pareto_k`, so exact refits for flagged points can
+    be spliced in. `fig.add_axes` under the arviz style warns: `plt.figure(layout="none")`.
+  - **Renewal equation / nowcasting (E38).** Given R_t the renewal equation is linear in the
+    infections: `pt.linalg.solve_triangular` replaces `scan` (checked against a loop). A
+    non-centred weekly random walk on log R with strong count data hit tree depth 10; centred
+    `pm.GaussianRandomWalk` + `pm.sample(nuts={"adaptation": "low_rank"}, target_accept=0.9)`
+    gave depth 4 (~40 s). macOS has no `timeout`: `perl -e 'alarm N; exec @ARGV' cmd`.
+  - **Radiocarbon calibration (E39).** NUTS on a continuous calendar date through the
+    interpolated curve gets trapped in its wiggles (r_hat 2.85, ESS 5, zero divergences): sum
+    the date out on a 1-year grid with `pt.logsumexp`. In a sequence model integrate each date
+    over its phase via its precomputed cumulative calibrated likelihood interpolated at the
+    boundaries (23 smooth parameters). Dirichlet-spaced boundaries: tree depth 10 and r_hat 1.25
+    with 0 divergences; `nuts={"adaptation": "low_rank"}` fixed it. A likelihood floored with
+    `log(max(mass, 1e-300))` leaves flat plateaus that strand chains; an outlier mixture removes
+    them. `az.extract` fails if the model has a coordinate named `sample`.
+  - **Poll aggregation (E40).** Two latent terms identified only as a sum (true opinion + shared
+    polling bias, fixed prior scales): rotate the non-centred z's by the angle of the two scales
+    so the data see one and the other is exactly its prior (r_hat 1.05 -> 1.006). Sparse early
+    polls: ~60 divergences at `target_accept` 0.8, 0 at 0.95 at no time cost. A predictive check
+    in poll space cannot see an error shared by all polls - validate against results. Plotly
+    `USA-states` choropleths render blank in headless Chrome from the CDN; inline
+    `plotly.min.js` to check them. The Economist `all_polls.csv` is the 2016 cycle; some of its
+    CSVs use CR-only line endings (`lineterminator="\r"`).
+  - **Distributional regression (E41).** `az.summary(round_to=None)` still rounds to 2
+    significant figures (r_hat 1.010 prints as 1.0): use `round_to=4`. `dist_math.normal_lcdf`
+    evaluates both switch branches; the `erfcx` branch overflows above ~37 and leaks NaN
+    gradients (divergences) - for positive arguments use `log1p(-0.5*erfc(b/sqrt(2)))`.
+    P-splines with thousands of observations: centred RW2 + `nuts={"adaptation": "low_rank"}`
+    gave 0 divergences, non-centred ~100. A t CDF with free df (`betainc` gradients) cost
+    190-450 s per fit; the untruncated Box-Cox t lost < 0.2% mass and fits in 19 s. Timing
+    `nutpie.sample` right after compiling includes numba JIT: time a compiled `dlogp` instead.
+  - **xarray on posteriors (E42-E44; xarray 2026.7).** `DataArray.rank` needs `bottleneck` (not
+    installed): `xr.apply_ufunc(scipy.stats.rankdata, da, input_core_dims=[[d]],
+    output_core_dims=[[d]], kwargs={"axis": -1})`. Two `az.extract` results carry different
+    `(chain, draw)` MultiIndexes on `sample`, so arithmetic/concat between them outer-joins into
+    NaN-padded samples: `.drop_vars(["sample", "chain", "draw"])` first (also before `xr.concat`
+    over draws). An index-less new dim aligns by position with a `sample` MultiIndex of the same
+    length (handy for fresh noise). Grouping keys must be COORDS: `groupby(name=Grouper)` on a
+    data variable raises `KeyError` - `assign_coords` first. `groupby` sorts string labels
+    alphabetically (Fri, Mon...; DJF, JJA, MAM, SON): reorder with `.sel`. `UniqueGrouper(labels=)`
+    fails on object coords containing NaN. A `BinGrouper(labels=...)` dim is named `<coord>_bins`.
+    xarray 2-D `.plot`/FacetGrid refuse string coords: plot integer positions, set tick labels.
+    FacetGrid warns "layout has changed to tight" under the arviz style (harmless); calling
+    `invert_yaxis()` per shared-y panel inverts twice. `coarsen` averages extra coords
+    (string coords raise TypeError; pass `coord_func` or drop them) and labels blocks by their
+    centre, `resample(date="W")` by the closing Sunday. ISO week numbers duplicate across a
+    year boundary and `unstack` refuses them: use `(dayofyear - 1 + jan1.dayofweek) // 7` for a
+    calendar grid. `xr.Coordinates.from_pandas_multiindex(idx, "obs")` + `unstack` puts
+    `sample_posterior_predictive` rows back on a grid. `.polyfit` on a datetime dim gives
+    per-nanosecond slopes: convert to years. pandas 3 string `pd.Index` as a concat dim later
+    clashes with NumPy string labels (`Cannot interpret '<StringDtype...>'`): `dtype=object`.
+    scipy.stats functions on DataArrays return bare ndarrays (wrap in `apply_ufunc`) and are slow
+    inside `apply_ufunc(vectorize=True)` root-finding (`skewnorm.logcdf` 150 s vs 4 s via
+    `special.ndtr - 2*special.owens_t`). `az.rhat(idata.posterior)` is a DataTree:
+    `.to_dataset().to_dataarray().max()`. `model.to_graphviz()` raises ImportError (no graphviz).
+    Quantiles over masked or rolling-edge draws warn "All-NaN slice": filter it.
+  - **Plotting from labelled arrays (E44).** `with plt.rc_context({...}):` around a plot made every
+    LATER figure vanish from the executed notebook: set/restore `plt.rcParams` by hand. `.values`
+    is where names end - `.transpose(<names>)` right before handing an array to plotly/matplotlib
+    (a `go.Heatmap(z=...)` rendered transposed with no error). Drop non-dimension coords along a
+    dim (e.g. `units` on `measurement`) before `rename(measurement="m2")` or
+    `to_dataset(dim=...)`. Vectorised `.sel(species=obs.species)` carries the indexer's other
+    coords (e.g. `sex`) and can clash with the target's dims: drop them. `stack(group=(...))`
+    MultiIndexes are awkward to relabel: drop the index and assign plain labels plus non-index
+    coords. `np.linalg.solve` under `apply_ufunc` with a batched vector RHS (NumPy 2):
+    `lambda A, b: np.linalg.solve(A, b[..., None])[..., 0]`.
+  - **Models from E42/E43.** `pm.SkewNormal` with varying alpha in the direct parameterisation:
+    r_hat 2.4, 0 divergences; parameterise by mean/sd (`delta = a/sqrt(1+a^2)`, `omega =
+    sd/sqrt(1-2 delta^2/pi)`, `xi = mean - omega delta sqrt(2/pi)`): r_hat 1.006. 731 per-day
+    effects next to intercept + trend: ESS ~170 whatever the zero-sum choice (low-rank: 225
+    divergences); centring the day level on intercept + trend fixed it. Daily models with
+    independent days overstate P(any extreme day) and return levels because hot days cluster.
+  - **Checking animations.** Headless Chrome `--screenshot` can hang on a `to_jshtml()` page;
+    decode the base64 frames from the output HTML and look at a few instead; strip every
+    non-base64 character (escaped backslash-newlines) before decoding.
 - Available and worth using where they fit: `pm.ZeroSumNormal`, `pm.Censored`,
   `pm.Truncated`, `pm.CustomDist`, `pm.Mixture`, `pm.NormalMixture`, `pm.OrderedLogistic`,
   `pm.LKJCholeskyCov`, `pm.GaussianRandomWalk`, `pm.AR`, `pm.gp.HSGP`, `pm.gp.HSGPPeriodic`,
-  `pm.ICAR`, `pm.do`, `pm.observe`, `pm.Potential`, `pm.fit` (ADVI), `pm.math.invprobit`,
+  `pm.ICAR`, `pm.CAR`, `pm.StickBreakingWeights`, `pm.MvStudentT`, `pm.do`, `pm.observe`, `pm.Potential`, `pm.fit` (ADVI), `pm.math.invprobit`,
   `pymc_extras.marginalize`, `pymc_extras.fit_laplace`.

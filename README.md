@@ -24,9 +24,9 @@ Using VS Code or another IDE instead? Point it at the interpreter in `.venv`.
 
 ```
 notebooks/
-  examples/      E01-E15  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
-  challenges/    C01-C10  your workspace. Tasks, empty cells, hints on request.
-  solutions/     C01-C10  full reference solutions, executed, with commentary.
+  examples/      E01-E44  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
+  challenges/    C01-C11  your workspace. Tasks, empty cells, hints on request.
+  solutions/     C01-C11  full reference solutions, executed, with commentary.
 ```
 
 1. Work through the **examples** first if you are new to PyMC 6 - the API has moved
@@ -86,6 +86,90 @@ studies (E11 onwards are research-frontier material: expect honest negative resu
 | **E12** | The inference frontier: when plain NUTS is not enough | S&P 500 latent volatility (from C07) | a reference posterior, low-rank and normalizing-flow adapted NUTS, Laplace / ADVI / Pathfinder, Pareto k-hat as a trust diagnostic when you have no reference |
 | **E13** | State-space models: let the Kalman filter integrate out the states | UK road casualties 1969-84 and the 1983 seat-belt law | the Kalman recursion in 10 lines, `pymc_extras.statespace`, 3 sampled parameters instead of 400, decomposition, one-step-ahead checks, a counterfactual with a negative control, missing data and forecasting for free - and an honest speed comparison |
 | **E14** | Simulation-based inference: Bayes without a likelihood | S&P 500 returns; 114 years of Canadian lynx | rejection ABC calibrated against a known posterior, tolerance and summary statistics as the two approximations, `pm.Simulator` + SMC, the g-and-k distribution, Wood's synthetic likelihood, a population model that *cannot* produce the cycle |
+| **E15** | Bayesian additive regression trees | Capital Bikeshare hourly rentals (subsampled); LaLonde job training | the BART prior over functions, `pmb.BART` inside an ordinary PyMC model, PGBART + NUTS and diagnosing in function space, partial dependence / ICE / variable importance, out-of-sample prediction, an honest comparison with a GLM, BART for causal g-computation |
+| **E16** | Showing uncertainty: one posterior, twenty displays | Motorcycle crash test; Minnesota radon with county boundaries; Premier League 2024/25 | epistemic vs predictive bands, fan charts, why a band is not a set of curves, spaghetti, animated hypothetical outcome plots, quantile dotplots, exceedance curves, caterpillars and ridgelines, maps of the mean / the uncertainty / hatching / bivariate and value-suppressing palettes / exceedance / small-multiple and animated draws, icon arrays, rank-probability heatmaps, pairwise matrices, re-simulated seasons, uncertainty in a table, interactive plotly figures with hover |
+| **E17** | Meta-analysis: a database of studies that never shares a patient | `metadat` benchmarks: 13 BCG trials, 16 magnesium trials (ISIS-4), 56 studies in 11 districts | sufficient statistics and why aggregate tables are lossless, two-stage vs one-stage models, forest plots with prediction intervals, tau / I² posteriors, meta-regression, leave-one-out and cumulative meta-analysis, contour-enhanced funnels and a Bayesian Egger model, small-cell suppression as censoring, differential-privacy noise as measurement error (privacy-utility curve), three-level models |
+
+#### Correlation structures and graphs (E18-E23)
+
+The examples above correlate things through space, time or group membership. These six put the
+correlation on a **graph** or a **tree**, learn the graph itself, or model many outcomes jointly:
+
+| | Topic | Real data | Key techniques |
+|---|---|---|---|
+| **E18** | Areal models on a graph: ICAR, proper CAR, BYM2 | Scottish lip cancer 1975-80, 56 district polygons (GeoDa) + WinBUGS neighbour list | contiguity graph from polygons in NumPy, islands and disconnected components, graph Laplacian and the BYM2 scaling factor, `pm.ICAR` / `pm.CAR` / BYM2, Moran's I residual check, exceedance-probability maps, PSIS-LOO vs refit K-fold, spatial confounding |
+| **E19** | Learning a graph: Bayesian Gaussian graphical models | Sachs et al. (2005) T-cell flow cytometry, 11 phosphoproteins + 20-edge consensus network | marginal vs partial correlation, `LKJCholeskyCov` precision and partial-correlation deterministics, why a horseshoe on the precision matrix leaves the positive-definite cone, Bayesian neighbourhood selection (node-wise horseshoe, AND/OR), NumPy graphical lasso + EBIC, precision-recall against the consensus, subsample replication |
+| **E20** | Learning a directed graph: Bayesian causal discovery | Sachs et al. (2005), 7466 cells in 9 intervention conditions | linear-Gaussian SEMs, Markov equivalence seen through LOO and `pm.do`, NOTEARS acyclicity as a `pm.Potential` (and why it is multimodal and scale-dependent), fixed-order horseshoe DAGs, exact BGe + dynamic-programming averaging over all orders, interventions as a per-cell mask - and a wrongly specified intervention |
+| **E21** | Network data as the outcome: latent-space and stochastic block models | Lazega law-firm coworker network (71 lawyers, 2485 dyads) | dyad logistic vs sociality random effects, Hoff latent space + Procrustes, mixed-membership SBM with marginalised roles (degree-corrected or not), co-clustering matrix, network PPCs (degree, transitivity, shared partners, geodesics), dyad-level LOO and held-out AUC |
+| **E22** | Many correlated outcomes: full covariance, factor models, copulas | Ken French 12 and 30 US industry portfolios, daily 2015-2024 | EWMA volatility standardisation, `MvNormal` + `LKJCholeskyCov`, low-rank + diagonal factor models, sign-flip / rotation non-identifiability and what r_hat does (not) see, anchored loadings vs Procrustes alignment, choosing K by held-out density, a Gaussian copula with t margins by hand, `MvStudentT` and tail dependence, VaR and joint-crash backtest |
+| **E23** | Correlation from a tree: phylogenetic regression | Primates301 brain / body / group size + 10kTrees phylogeny | reading an R phylo object without R, covariance from shared branch length, Brownian motion / Pagel's lambda / OU-as-GP regression, the OU ridge and a reparameterisation, conditional LOO from the precision matrix (and two wrong shortcuts), whitening, the tree as a sparse GMRF, imputing missing traits on the tree |
+
+#### More model families (E24-E29)
+
+| | Topic | Real data | Key techniques |
+|---|---|---|---|
+| **E24** | Hidden Markov models | USGS M7+ world earthquake counts 1900-2024; elk GPS tracks (Morales et al. 2004) | forward algorithm in `pytensor.scan` vs `pymc_extras` `DiscreteMarkovChain` + `marginalize`, label switching and ordering, forward-backward and Viterbi per draw, dwell times, pseudo-residuals, integrated LOO and leave-future-out, padded multi-track HMM, covariate-dependent transitions |
+| **E25** | Joint longitudinal-survival models | Mayo Clinic PBC trial: serial bilirubin + survival | mixed model + Weibull hazard sharing LKJ random effects, cumulative hazard by Gauss-Legendre quadrature, baseline / LOCF / two-stage biases, informative dropout, centred vs non-centred vs hierarchically centred, dynamic survival predictions for held-out patients, landmark calibration |
+| **E26** | Bayesian nonparametrics: Dirichlet process mixtures | Enzyme activity of 245 people (Richardson & Green 1997); PBC bilirubin slopes | stick-breaking and the implied prior on the number of clusters, `pm.StickBreakingWeights` + `pm.NormalMixture`, truncation check, label-free diagnostics, co-clustering and Binder / VI point clustering, sensitivity to alpha, sparse finite mixtures (and why a tiny Dirichlet parameter defeats NUTS), a DP random-effects distribution |
+| **E27** | Sparse regression: horseshoe, regularised horseshoe, spike-and-slab | Prostate cancer (ESL split); LARS diabetes, 64 predictors on 120 patients | shrinkage factor kappa, ridge vs Bayesian lasso vs horseshoe, tau0 from a prior guess and the simulated m_eff prior, horseshoe divergences and their fixes, spike-and-slab via `pymc_extras.marginalize` vs exact enumeration, correlated predictors, projection predictive selection and CV lasso in NumPy, held-out elpd |
+| **E28** | Imperfect detection: occupancy, N-mixture, capture-recapture | Swiss breeding-bird survey (crossbill, mallard); snowshoe hare capture histories | latent presence / abundance summed out in `pm.CustomDist` (checked against `pymc_extras.marginalize`), finite-sample occupancy, naive vs corrected trends, visits x prior confounding, N-mixture truncation check, Poisson vs NegBin, data augmentation M0 / Mt / Mh, a non-identifiable heterogeneity model |
+| **E29** | Bayesian neural networks: what the posterior over weights buys you | Motorcycle crash test; concrete compressive strength (Yeh 1998, UCI) | an MLP in PyMC with `dims`, priors over functions and the 1/sqrt(width) GP limit, NUTS vs ADVI / Pathfinder / MAP ensemble / last-layer Laplace on held-out density, function-space r_hat, per-input prior scales (ARD), BNN vs HSGP vs GLM, PIT and coverage, chains stuck in different functional modes |
+
+#### Random partitions and random features (E30-E31)
+
+| | Topic | Real data | Key techniques |
+|---|---|---|---|
+| **E30** | Exchangeable partitions: Pólya urns, the Chinese restaurant process, Pitman-Yor and unseen species | *Moby-Dick* word tokens (Project Gutenberg); Barro Colorado Island 50-ha tree census | urn simulation and de Finetti limits, the EPPF checked by brute force, NUTS on (alpha, d) with no latent assignments, a stable log rising factorial, frequency-of-frequencies and Heaps-curve PPCs, exact held-out predictive from EPPF ratios, new-type predictions vs Good-Toulmin with a coverage study, a negative discount (finite species pool) with the pool size marginalised |
+| **E31** | The Indian buffet process: latent binary features | UCI optdigits handwritten digits (300 training / 200 test digits by other writers) | the IBP as a restaurant, stick-breaking and finite beta-Bernoulli, collapsed Gibbs in NumPy checked by brute-force enumeration, noise level vs alpha as the driver of K+, stuck chains and split-merge, label-free summaries, a truncated PyMC IBP with 2^K enumeration (and a collapse-to-empty trap), held-out half-digit completion vs probabilistic PCA |
+
+#### Media measurement (E32-E35)
+
+One real open dataset (Conjura's multi-brand e-commerce MMM data, CC BY 4.0) and four
+questions a marketing team actually asks. Each ends with displays for people who decide,
+not people who model; the results are also exported for a single plain-language web page.
+
+| | Topic | Real data | Key techniques |
+|---|---|---|---|
+| **E32** | Building a custom likelihood: media spend that chases demand | Conjura MMM data: a UK skincare brand, 884 days of new customers, discounts and Google + Meta spend | the data-generating story before the likelihood, identification strategies compared, a Gaussian copula with a negative-binomial margin derived for a discrete outcome (Park-Gupta endogeneity correction), stable log-space implementation (incomplete-beta tails, `ndtri_exp`, `log1mexp`) as `pm.CustomDist` with `random`, five unit tests for a likelihood, fake-data recovery where the textbook fix fails under persistent shocks and a generalised control fixes it, the generalisation failing on real data (chains in two modes), a time-shift placebo, LOO and PPC, marginal CAC for a +20% budget |
+| **E33** | Hierarchical multi-market MMM and a budget decision under uncertainty | Conjura MMM data: Scandinavian apparel brand, 3 markets x Google/Meta, 81 weeks | Geometric adstock + Hill saturation, priors on cost per incremental customer (Meridian ROI-style), partial pooling across markets (centred vs non-centred), holiday/trend/seasonal baseline, prior predictive in euros, LOO vs no/full pooling, SLSQP budget optimisation evaluated over posterior draws (expected and cautious objectives), prior sensitivity, endogeneity caveat, quantile dotplots, spaghetti curves, probability heatmap, shrinkage display |
+| **E34** | Bayesian synthetic control of a media natural experiment | Conjura MMM data: a brand's US Meta switch-off (Oct 2023) + 21 donor brands | change-point scan for interventions, simplex (Dirichlet) SC, augmented/structural SC (horseshoe + random-walk level integrated out as a GP, CausalImpact-style), own control series, placebos in time/space/outcome, donor-pool sensitivity, cost per lost customer, placebo line-up, an honestly inconclusive answer |
+| **E35** | Halo effects as Bayesian causal mediation: does Meta work through branded search? | Conjura MMM data: one UK clothing brand, weekly new customers, branded-search clicks, Meta/Google spend, UK + US | natural direct/indirect effects, joint mediator + outcome negative binomial model with adstock and saturation, counterfactual propagation from posterior draws (plug-in and Monte Carlo), product-of-coefficients check, "search as control" vs "search left out", replication in a second market, sensitivity analysis for mediator-outcome confounding, Sankey and stacked quantile-bar displays |
+
+#### State of the art, for everyone (E36-E38)
+
+Three model families that practitioners use today, each with a plain-language opening,
+"In plain words" takeaways, and a closing section of uncertainty displays for readers with no
+statistics. Their key results are also exported for a single plain-language web page.
+
+| | Topic | Real data | Key techniques |
+|---|---|---|---|
+| **E36** | Multilevel regression and poststratification (MRP): what every state thinks, from one national survey | 2018 CCES (5,000-person sample + 55,000 held out; abortion-coverage question) + ACS poststratification table + 2016 vote share (Lopez-Martin, Phillips & Gelman case study) | why raw state means and raking fail in small states, binomial-cell multilevel logit with `ZeroSumNormal` effects and interactions, random-walk prior on ordered groups, state-level predictors, per-draw poststratification (states, age within state), validation against a held-out benchmark with coverage, a failure (no state predictors) that LOO barely sees, value-suppressing tile map, animated map of plausible outcomes, "6 people vs the model" dotplots, icon arrays |
+| **E37** | Extreme-event attribution: how much did warming load the dice for the 2021 Pacific Northwest heatwave? | NOAA GHCN-Daily annual maximum temperature at Sea-Tac and Portland; NASA GISTEMP global temperature | block maxima and the GEV (`pymc_extras` `GenExtreme` checked against scipy), a geophysical shape prior, a reparameterisation that removes support-wall divergences, non-stationary GEV on smoothed global temperature, return-level plot / PIT / LOO with exact refits, fitting without, with and selection-corrected for the event, probability ratio with an honest "impossible before" share, intensity change, shared shape across two stations, icon arrays of summers, 30-year-mortgage odds, animated shifting distribution |
+| **E38** | Real-time epidemic tracking: is it growing right now? Nowcasting + a renewal-equation R | German COVID-19 hospitalisation reporting triangle (RKI via the Hospitalization Nowcast Hub), winter 2021/22 | the reporting triangle and real data-as-of-then snapshots, a delay-hazard nowcast (reporting weekday + weekly drift, negative binomial cells), the renewal equation as a triangular solve, a spurious "wave is ending" from truncated data, generation-interval sensitivity (R vs growth rate), a 5-date backtest with coverage and CRPS - and honestly under-covering intervals, traffic-light timeline with "said then vs hindsight" dials, icon array of reports still to come, fog-lifting animation, quantile dotplot of next week |
+
+#### State of the art, for everyone II (E39-E41)
+
+Three more model families in the same format as E36-E38: a plain-language opening, "In plain
+words" takeaways, a closing "Explaining it to everyone" section, and a JSON export of the key
+results for a web page.
+
+| | Topic | Real data | Key techniques |
+|---|---|---|---|
+| **E39** | How old is it? Radiocarbon calibration and Bayesian chronologies | IntCal20 calibration curve; all 49 measurements from the 1988 Shroud of Turin dating (3 labs, shroud + 3 known-age controls, hand-transcribed from Damon et al. 1989); 31 dates from the Sluggan Bog peat core (Bchron) | calibration through a wiggly, uncertain curve, why NUTS on a calendar date fails (r_hat 2.85) and summing the date out on a 1-year grid instead, lab offsets and lab-by-sample heterogeneity anchored by controls, the 1989 chi-square test as a posterior predictive check, an OxCal-style sequence model with Dirichlet-spaced boundaries and a 5% outlier model, low-rank mass matrix, "shadow through the curve" plot, 2,000-year timeline, 20 equally likely dates, contamination icon array, animation of plausible histories |
+| **E40** | Who will win? Dynamic Bayesian poll aggregation and election forecasting | 2016 US presidential polls (HuffPost Pollster via the Economist's us-potus-model), 1976-2016 state results, fundamentals, ACS state demographics | Linzer reverse random walks from a fundamentals prior, correlated state innovations, house/mode/population effects, poll-level + shared polling error with a rotation for the unidentified truth/bias split, electoral-college simulation and tipping points, backtest at 6 dates, coverage and a joint Mahalanobis check, sampling-error-only vs shared-error models (100% vs 88% for Clinton), 100-elections dotplot, animated electoral map, honest needle, plotly hover map |
+| **E41** | Is my child normal? Distributional regression (GAMLSS/LMS) and growth centile charts | Fourth Dutch Growth Study: BMI of 7,294 boys aged 0-21 (`gamlss.data` dbbmi) | constant-spread vs smooth-spread vs skewed vs heavy-tailed models, Bayesian P-splines (centred RW2, low-rank mass matrix) for every distribution parameter, hand-written BCCG (Cole-Green LMS) and Box-Cox t likelihoods checked against scipy/integration/simulation, age-bin ML LMS fit for comparison, centile coverage by age band, worm plots, LOO, uncertainty of the centile lines themselves, blurred growth chart, "of 100 boys" icon array, 20-boys dotplot, animated distribution, plotly hover |
+
+#### Posteriors as labelled arrays: xarray for Bayesian work (E42-E44)
+
+A posterior is a labelled array with named `chain`, `draw` and model dims. These three notebooks
+do all their data and posterior work by name (coords and dims) instead of axis numbers, and use
+that to build derived quantities, bins, time aggregations and some unusual plots.
+
+| | Topic | Real data | Key techniques |
+|---|---|---|---|
+| **E42** | xarray foundations for posteriors: dims, coords, broadcasting and time | Capital Bikeshare hourly rentals 2011-12 (17k hours) | table -> `date x hour` Dataset with non-dimension coords, stack/unstack round trip to model rows, DataTree navigation and thinning, `az.extract`, broadcasting counterfactual grids by name, `apply_ufunc` RNG, "sum the draws, then summarise" with `resample`/`rolling`/`coarsen`/`cumulative`, a posterior over the date of the millionth rental, `BinGrouper` and multi-key groupby calibration, vectorised `.sel` for new-day prediction, `xr.concat` over a model dim; polar clock, calendar PIT heatmap, fan charts |
+| **E43** | Transforming posteriors with coords: dates, exceedances, ranks and anomalies | NOAA GHCN-Daily TMAX, Sea-Tac + Portland 1948-2025 | long -> wide xarray, `align` join pitfalls, `concat` over a named `station` dim, a harmonic basis as a DataArray shared by model and posterior, date posteriors with `idxmax` + `interp` (summer onset and length), exceedance probabilities and return periods on draws, P(warmest year) from ranks inside each draw, groupby anomalies, `BinGrouper` x season, `apply_ufunc(vectorize=True)` root-finding; warming stripes with uncertainty, ridgelines, climate loops |
+| **E44** | Plotting posteriors creatively from labelled arrays | Palmer penguins (raw field records) | multivariate normal with one LKJ covariance per species, `apply_ufunc` for KDEs / Cholesky / `rankdata` / `solve`, `xr.dot` ellipses and correlated draws, pairwise contrast matrices by renaming a dim, `stack`/`sortby`, FacetGrids straight from the posterior, Simpson's paradox in correlations; ridgeline, raincloud, bump chart, parallel coordinates of draws, hypothetical-outcome animation, quantile dotplots, seaborn hand-off via `to_dataframe`, plotly hover heatmap, P(male) for unsexed birds |
 
 ### Data work (D-series)
 
@@ -111,9 +195,41 @@ Most "my model will not sample" problems are data problems. These are the craft 
 | **C08** | Forecasting atmospheric CO2 | NOAA Mauna Loa record | 4 | build an additive GP; work out why a stationary GP cannot forecast a trend; tame non-identified components with priors; date a threshold crossing |
 | **C09** | Does job training work? | LaLonde NSW experiment + CPS | 4 | g-computation with `pm.do`; find out why a confident, clean-sampling estimate is wrong; compare with the experimental benchmark |
 | **C10** | Who draws fouls in the NBA? | Last Two Minute reports 2015-21 | 5 | fit an item-response model with ~1500 player effects; repair a colleague's broken model; measure (not assume) what reparameterising buys; rank with uncertainty |
+| **C11** | Who needs the second drug? | ACTG 175 HIV trial (zidovudine vs zidovudine + didanosine) | 5 | build a Dirichlet-process mixture of regressions; take apart a colleague's convincing "responder" analysis; let covariates choose the subgroups and find out what LOO cannot tell you; turn conditional effects into a treatment rule |
 
 Roughly in order of difficulty, but they are independent - pick what is closest to your work.
 The descriptions are deliberately vague about *what* goes wrong: finding out is the challenge.
+
+## Interactive posterior reports (Lumen + a local LLM)
+
+[`reports/`](reports/README.md) turns the posteriors of E33, E36, E37, E40 and E41 into
+reader-driven reports with [Lumen](https://lumen.holoviz.org/) and a small Gemma 4 model
+running locally in Ollama. It has two apps: a report whose sections have live widgets
+(budget what-ifs, joint probabilities, credible-interval rankings, fan charts) and short
+LLM summaries, and a chat explorer over a DuckDB database of posterior draws.
+
+```bash
+uv sync --extra reports && ollama pull gemma4:e2b-it-qat
+uv run --extra reports python reports/build_warehouse.py
+uv run --extra reports panel serve reports/report_app.py --show
+```
+
+## Website (GitHub Pages)
+
+`tools/build_site.py` renders every example, challenge (with its hint ladder) and solution into a
+static website - narrative, maths, code, figures, tables, animations and plotly figures - plus a
+landing page, a catalogue, a "choosing a model" guide and a challenges overview. Nothing is
+re-executed; the pages come from the outputs stored in the notebooks.
+
+```bash
+uv run python tools/build_site.py      # -> _site/ (~75 MB, a few seconds)
+python -m http.server -d _site         # preview at http://localhost:8000
+```
+
+`.github/workflows/pages.yml` builds and deploys it on every push to `main` that touches the
+notebooks or the site sources (set *Settings -> Pages -> Source* to **GitHub Actions**). Site prose
+lives in `tools/site_content.py`, styles and scripts in `tools/site_assets/`; per-notebook titles,
+data and techniques are read from the curriculum tables above, so keep those up to date.
 
 ## Data
 
