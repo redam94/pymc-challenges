@@ -493,6 +493,15 @@ doubt run `uv run python -c "..."` to check:
     (exact, no time stepping, 4-5 s fits). A no-flux far wall gives a cosh, not exponential, profile.
     Positional error with only upstream (ligand) noise is independent of the receptor Kd - add
     receptor counting noise for Kd to matter. Data transcribed from Julia arrays: keep the CSV in data/.
+  - **PDE-based design (E51).** A 288-cell 2-D heat equation inside PyMC via dense
+    `pt.linalg.solve` samples in ~20 s. Calibration with temperature rises identifies k, h, eta
+    only as ratios (correlations ~0.9); a weakly identified edge coefficient's 89% interval missed
+    the truth (prior median 10 vs true 15). Unconstrained greedy heater placement put point
+    heaters inside the working area (10 C hot spots): restrict candidates. Use common random numbers
+    (fixed sensor noise and scenarios) when comparing sensor layouts, or greedy picks noise. A
+    design that runs a heater at its limit leaves the controller nothing to correct with: cap the
+    nominal powers below the rating. `boxplot(vert=False)` is deprecated in Matplotlib 3.11:
+    `orientation="horizontal"`.
   - **MRP (E36).** Group effects as plain `Normal` z plus a separate intercept (and a main
     effect plus its interaction) gave 28 divergences, 271 with r_hat 1.10 without state
     predictors; `pm.ZeroSumNormal` (`n_zerosum_axes=2` for interactions) gave 0. Non-centred

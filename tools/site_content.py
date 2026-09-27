@@ -26,14 +26,14 @@ SERIES = [
          intro="Most models that refuse to sample are data problems in disguise. These cover the craft "
                "around the model: preparing arrays, treating missingness and measurement error as part "
                "of the model, and carrying an analysis through to a report."),
-    dict(key="science", range="E07–E10, E46–E50", title="Mechanistic and scientific models",
-         ids=_ids("E", 7, 10) + _ids("E", 46, 50),
+    dict(key="science", range="E07–E10, E46–E51", title="Mechanistic and scientific models",
+         ids=_ids("E", 7, 10) + _ids("E", 46, 51),
          intro="When theory supplies the regression function. Earthquakes as a point process in space "
                "and time, the expansion of the universe from supernovae, differential equations with "
                "JAX gradients, a black-hole ringdown in real LIGO strain, chaotic dynamics (fitting, forecasting "
                "and controlling systems that amplify every error, from blowflies to Lorenz's toy atmospheres), "
                "jump-diffusion SDEs for market crashes, and reaction-diffusion PDEs for cell invasion and "
-               "signaling gradients."),
+               "signaling gradients, and designing heaters, insulation and sensors for a heat-equation plate."),
     dict(key="frontier", range="E11–E17", title="At the research frontier", ids=_ids("E", 11, 17),
          intro="Neural networks inside differential equations, inference beyond plain NUTS, state-space "
                "models, likelihood-free inference, BART, the display of uncertainty and privacy-preserving "
@@ -337,6 +337,8 @@ def guide_page(ctx):
          f"{L('E49')}"),
         ("Things spread and react in space", "Reaction-diffusion PDE by the method of lines, or exactly via an eigenbasis",
          f"{L('E50')}"),
+        ("You must decide where to put actuators and sensors", "Design under the posterior: greedy placement, Monte Carlo closed-loop evaluation",
+         f"{L('E51')}"),
     ])
     causal = rows([
         ("What would have happened without the intervention?", "g-computation with <code>pm.do</code>; synthetic control",
