@@ -1,7 +1,8 @@
 # PyMC Challenges
 
 Worked examples and **hard, real-data challenges** for Bayesian modelling with the current
-PyMC stack (**PyMC 6 · ArviZ 1 · PyTensor 3**). Every dataset is real. Every challenge ends
+PyMC stack (**PyMC 6 · ArviZ 1 · PyTensor 3**). Every challenge dataset is real; a few examples
+(E47, E48, E51, and parts of E46 and E50) simulate systems with no public data, and say so. Every challenge ends
 in a decision somebody actually has to make, and in every one the obvious first model
 breaks in a way you have to diagnose.
 
@@ -76,7 +77,7 @@ stored locally in `.progress/` (git-ignored).
 E01-E06 are the foundations the challenges assume. E07 onwards are advanced, self-contained case
 studies (E11 onwards are research-frontier material: expect honest negative results alongside the wins):
 
-| | Topic | Real data | Key techniques |
+| | Topic | Data | Key techniques |
 |---|---|---|---|
 | **E07** | Geo-temporal: induced earthquakes in Oklahoma | USGS catalogue, every M3+ quake 2005-19 | log-Gaussian Cox process, 2-D HSGP, space-time interaction so a hot-spot can move, taming priors behind an exp link, maps, hold-out forecast |
 | **E08** | Physics-based models: weighing the universe | Union2.1, 580 type Ia supernovae | the theory *is* the regression function, a differentiable integral inside the model, a perfect H0-M degeneracy, P(expansion is accelerating) |

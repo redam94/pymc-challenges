@@ -10,7 +10,7 @@ SITE_NAME = "Bayesian Modelling in Practice"
 TAGLINE = ("Worked examples and real-data challenges in Bayesian data analysis with PyMC: "
            "from the first prior predictive check to decisions made under uncertainty.")
 FOOTER = ("Worked examples and challenges in Bayesian data analysis with PyMC 6 · ArviZ 1 · PyTensor 3. "
-          "Every dataset is real and public; sources are cited in each notebook.")
+          "Datasets are real and public, sources cited in each notebook; the few simulated systems say so.")
 
 
 def _ids(prefix, a, b):
@@ -63,6 +63,7 @@ SERIES = [
                "aggregation, binning and unusual plots."),
 ]
 SERIES_BY_KEY = {s["key"]: s for s in SERIES}
+RECENT = ["E51", "E50", "E49", "E48", "E47", "E46", "E45"]          # newest first, shown on the home page
 
 
 def _link(ctx, eid, text=None):
@@ -128,12 +129,13 @@ def home(ctx):
         for name, desc, eid in WORKFLOW_STEPS
     )
     featured = "".join(ctx["card"](ctx["by_id"][i]) for i in ("E10", "E37", "E40", "E16") if i in ctx["by_id"])
+    recent = "".join(ctx["card"](ctx["by_id"][i]) for i in RECENT if i in ctx["by_id"])
     body = f"""
 <section class="hero">
   <p class="eyebrow">A course in applied Bayesian statistics, built from real data</p>
   <h1>Learn Bayesian data analysis the way it is actually done: one real problem at a time.</h1>
-  <p class="lede">{n_ex} worked examples and {n_ch} challenges, each a complete analysis of a public dataset
-  in PyMC. Every page shows the model, the code, the checks that passed and the ones that did not, and
+  <p class="lede">{n_ex} worked examples and {n_ch} challenges, each a complete analysis in PyMC, almost all
+  of public datasets. Every page shows the model, the code, the checks that passed and the ones that did not, and
   what the posterior means for the question that was asked.</p>
   <div class="hero-actions">
     <a class="button" href="{ctx['by_id']['E01'].url}">Start with the workflow</a>
@@ -145,7 +147,7 @@ def home(ctx):
 <section class="facts" aria-label="At a glance">
   <div><strong>{n_ex}</strong><span>worked examples, executed and narrated</span></div>
   <div><strong>{n_ch}</strong><span>challenges with tiered hints and reference solutions</span></div>
-  <div><strong>All</strong><span>datasets real and public, from supernovae to election polls</span></div>
+  <div><strong>Real</strong><span>public datasets, from supernovae to election polls; the few simulated systems are labelled</span></div>
   <div><strong>Every</strong><span>failure kept in: divergent chains, miscalibrated intervals, wrong answers</span></div>
 </section>
 
@@ -210,6 +212,14 @@ def home(ctx):
       <p><a href="challenges.html">The challenges →</a></p>
     </div>
   </div>
+</section>
+
+<section class="essay">
+  <h2 id="recent">Recently added</h2>
+  <p class="narrow">Chaos and how to fit, forecast and control it; regime detection with hidden Markov models;
+  jump-diffusion SDEs for market crashes; reaction-diffusion in cell biology; optimal placement of heaters and
+  sensors for the heat equation; and a flexible response curve for media models, written in JAX.</p>
+  <div class="cards">{recent}</div>
 </section>
 
 <section class="essay">
@@ -411,7 +421,10 @@ def about_page(ctx):
 <section class="essay prose narrow">
   <h2 id="principles">Principles</h2>
   <ul>
-    <li><strong>Real data only.</strong> Every dataset is public, with its source cited where it is loaded.</li>
+    <li><strong>Real data first.</strong> Every dataset is public, with its source cited where it is loaded. A few
+    examples study systems for which no public data exist - chaos control in Lorenz models, the design of a
+    heated plate, a morphogen gradient - and simulate them from published models and parameters; those pages
+    say so in their header.</li>
     <li><strong>Honest results.</strong> Where a model under-covers, fails to mix or gives an inconclusive answer,
     the page says so. Several examples end with a negative result on purpose.</li>
     <li><strong>Current tools.</strong> PyMC 6, ArviZ 1 and PyTensor 3, whose APIs differ from most tutorials
