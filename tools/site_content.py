@@ -26,10 +26,14 @@ SERIES = [
          intro="Most models that refuse to sample are data problems in disguise. These cover the craft "
                "around the model: preparing arrays, treating missingness and measurement error as part "
                "of the model, and carrying an analysis through to a report."),
-    dict(key="science", range="E07–E10", title="Mechanistic and scientific models", ids=_ids("E", 7, 10),
+    dict(key="science", range="E07–E10, E46–E50", title="Mechanistic and scientific models",
+         ids=_ids("E", 7, 10) + _ids("E", 46, 50),
          intro="When theory supplies the regression function. Earthquakes as a point process in space "
                "and time, the expansion of the universe from supernovae, differential equations with "
-               "JAX gradients, and a black-hole ringdown in real LIGO strain."),
+               "JAX gradients, a black-hole ringdown in real LIGO strain, chaotic dynamics (fitting, forecasting "
+               "and controlling systems that amplify every error, from blowflies to Lorenz's toy atmospheres), "
+               "jump-diffusion SDEs for market crashes, and reaction-diffusion PDEs for cell invasion and "
+               "signaling gradients."),
     dict(key="frontier", range="E11–E17", title="At the research frontier", ids=_ids("E", 11, 17),
          intro="Neural networks inside differential equations, inference beyond plain NUTS, state-space "
                "models, likelihood-free inference, BART, the display of uncertainty and privacy-preserving "
@@ -44,10 +48,11 @@ SERIES = [
     dict(key="partitions", range="E30–E31", title="Random partitions and random features", ids=_ids("E", 30, 31),
          intro="Exchangeable partitions and latent binary features: Pólya urns, Pitman–Yor processes and "
                "unseen species, and the Indian buffet process."),
-    dict(key="media", range="E32–E35", title="Media measurement", ids=_ids("E", 32, 35),
-         intro="One open multi-brand e-commerce dataset and four questions a marketing team actually asks: "
+    dict(key="media", range="E32–E35, E45", title="Media measurement", ids=_ids("E", 32, 35) + ["E45"],
+         intro="One open multi-brand e-commerce dataset and five questions a marketing team actually asks: "
                "a custom likelihood for spend that chases demand, a hierarchical marketing-mix model with a "
-               "budget decision, a synthetic control, and causal mediation."),
+               "budget decision, a synthetic control, causal mediation, and which shape of response curve "
+               "the data support (a Weibull transform written in JAX)."),
     dict(key="everyone", range="E36–E41", title="State of the art, explained for everyone", ids=_ids("E", 36, 41),
          intro="Six model families used in practice today, each with a plain-language opening and a closing "
                "section of uncertainty displays for readers with no statistics: MRP, extreme-event attribution, "
@@ -324,6 +329,14 @@ def guide_page(ctx):
         ("Unknown non-linear effects of many inputs", "BART, Bayesian neural networks, GPs", f"{L('E15')}, {L('E29')}, {L('E05')}"),
         ("Many candidate predictors, few matter", "Horseshoe and spike-and-slab priors", f"{L('E27')}"),
         ("No standard likelihood fits the process", "Derive and test your own", f"{L('E32')}"),
+        ("You do not know which shape a response curve has", "A flexible family (Weibull transform) written in JAX",
+         f"{L('E45')}"),
+        ("The dynamics are chaotic", "Latent states with process noise, features not paths, control under the posterior",
+         f"{L('E46')}, {L('E47')}, {L('E48')}"),
+        ("The process jumps as well as diffuses", "Jump-diffusion SDE with the jump count summed out; SV with jumps",
+         f"{L('E49')}"),
+        ("Things spread and react in space", "Reaction-diffusion PDE by the method of lines, or exactly via an eigenbasis",
+         f"{L('E50')}"),
     ])
     causal = rows([
         ("What would have happened without the intervention?", "g-computation with <code>pm.do</code>; synthetic control",

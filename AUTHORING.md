@@ -446,6 +446,53 @@ doubt run `uv run python -c "..."` to check:
     `pm.Data` without recompiling (69 placebo refits, 5 compilations; mask the likelihood to
     keep shapes). A random-walk level integrated out as MvNormal (cov `s0^2 + s^2 min(s,t)`)
     beat the latent version (142 -> 2 divergences, ESS 180 -> 1300).
+  - **Custom JAX transforms in an MMM (E45).** Under nutpie's default Numba backend a
+    `wrap_jax` node runs in Numba *object mode* (a UserWarning per compile; 115 us vs 35 us per
+    logp+grad when the whole model is JAX, `pm.sample(backend="jax")`) - filter the warning and
+    say so. `jnp.where` differentiates both branches: `where(x > 0, exp(k*log(x)), 0)` has a NaN
+    gradient at x = 0 - replace the bad input first (double `where`). `jnp.power` is safe for
+    d/dk at 0 but d/dx is inf for k < 1. `(1 - exp(-c z)) / (1 - exp(-c))` is 0/0 at c = 0 and
+    loses 2% in float32 at c = 1e-6: `expm1` plus a Taylor switch. `pm.sample(idata_kwargs=
+    {"log_likelihood": True})` is deprecated (FutureWarning): call `pm.compute_log_likelihood`.
+    The arviz-variat style uses constrained layout: `fig.tight_layout()` warns, and raises
+    RuntimeError once a colorbar exists. Conjura brand `6b89cf94` (UK apparel) has the same
+    mid-October 2023 Meta cut-off as E34/E35 - one partial week (£549, 2% of normal) moved
+    Meta's average CAC from £56 to £85: curves are learned from spend extremes, check them.
+  - **Chaotic dynamics (E46).** Trajectory matching on the chaotic Ricker map (log r = 3.8, 100
+    steps) under nutpie: every chain frozen in its own likelihood spike (r_hat 15, ESS 4, ~1100
+    divergences) - more tuning cannot help. The **non-centred** state-space model (innovations
+    pushed through `scan`) is just as bad (r_hat inf, 2000 divergences): for chaotic maps sample
+    the states themselves - `pm.Flat` states + the process density as a `pm.Potential`, start at
+    the log-counts, `nuts={"adaptation": "low_rank"}` (2 s, 0 divergences). A `Potential`
+    likelihood has no prior predictive: simulate in NumPy. Marginalising an integer delay with
+    `pt.logsumexp` over per-delay log-likelihoods + a `p_tau` Deterministic works cleanly.
+    Tangent-map Lyapunov exponents: floor the renormalisation norm (`np.maximum(norm, 1e-300)`)
+    or stable grid cells give NaN. A lumped multiplicative noise on the whole population sets a
+    control noise floor at sigma and made the blowfly cycles too long (25 vs 19 steps).
+  - **Chaotic ODEs and regime models (E47, E48).** Lorenz-63 multiple shooting (100 latent
+    states, 5 RK4 steps per interval unrolled in PyTensor): the model-error scale q sits in a
+    funnel (HalfNormal prior: 136 divergences; LogNormal(log 0.05, 0.7): 0, but q ESS ~17,
+    r_hat 1.17 even with tune=2000) while sigma/rho/beta sample well. The exact-Jacobian
+    instantaneous LLE of Lorenz-63 is > 0 at 87% of the attractor (a threshold-0 trigger fires
+    almost always). NHMM on Lorenz-84: emissions on (x, y, z) left chains in different modes
+    (r_hat 1.7) - use jet + log eddy amplitude; order regimes with the `ordered` transform, not a
+    `-inf` Potential (K=4: 1,736 -> 36 divergences); start chains at the best of 10 `find_MAP`
+    runs (`model.compile_logp()` needs only value-var keys). `idata.posterior.stack` fails on a
+    DataTree node: `.to_dataset().stack(...)`.
+  - **Jump diffusions (E49).** Sum the daily jump count out with `logsumexp` (Poisson 0..4, or a
+    Bernoulli for SVJ). SV latent log-vol: centred gave r_hat 1.10 / ESS < 80 for s_h; non-centred
+    via `scan` (stable AR(1), unlike chaotic maps) + `target_accept=0.9`: r_hat <= 1.011. Compare
+    latent-state time-series models with one-step scores from a particle filter, not PSIS-LOO.
+    Vectorised systematic resampling: `searchsorted` on row-offset cumsums - a broadcast
+    comparison (D x N x N per step) turned a 2-minute cell into > 10 minutes.
+  - **Reaction-diffusion PDEs (E50).** Method of lines in `scan`: 480 explicit Euler steps on 38
+    finite volumes sample in ~25 s under nutpie; check D dt/dx^2 <= 1/2 over the prior. Scale the
+    initial profile by the ESTIMATED capacity (count0 / K) inside the model: using the nominal 122
+    moved D by 18% and beta by 15%. Linear PDEs (SDD morphogen, FRAP): diagonalise the fixed discrete
+    Laplacian once with `np.linalg.eigh`, then steady states and c(t) are matrix products in PyTensor
+    (exact, no time stepping, 4-5 s fits). A no-flux far wall gives a cosh, not exponential, profile.
+    Positional error with only upstream (ligand) noise is independent of the receptor Kd - add
+    receptor counting noise for Kd to matter. Data transcribed from Julia arrays: keep the CSV in data/.
   - **MRP (E36).** Group effects as plain `Normal` z plus a separate intercept (and a main
     effect plus its interaction) gave 28 divergences, 271 with r_hat 1.10 without state
     predictors; `pm.ZeroSumNormal` (`n_zerosum_axes=2` for interactions) gave 0. Non-centred

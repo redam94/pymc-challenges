@@ -709,6 +709,31 @@ REGISTRY: dict[str, Dataset] = {
         "R data file (xz-compressed XDR): a data frame `dbbmi` of 7,294 Dutch boys aged 0.03-21.7 years: "
         "age (years) and bmi (body-mass index, kg/m^2). Cross-sectional: one measurement per boy.",
     ),
+    # ---- examples (E50) ---------------------------------------------------
+    "scratch_assay_pc3": Dataset(
+        "scratch_assay_pc3.csv",
+        "https://raw.githubusercontent.com/ProfMJSimpson/NoiseModels/main/PDE_BinomialNoiseModel.jl",
+        "Jin, Shah, Penington, McCue, Chopin & Simpson (2016), Reproducibility of scratch assays is "
+        "affected by the initial degree of confluence: experiments, modelling and model selection, "
+        "Journal of Theoretical Biology 390:136-145; counts as distributed in the code of Simpson, Murphy "
+        "& Maclaren (2024), Modelling count data with partial differential equation models in biology, "
+        "Journal of Theoretical Biology 580:111732. TRANSCRIBED from the arrays in that Julia file (the "
+        "URL is code, not a CSV), so keep the cached file in data/.",
+        "Scratch (wound-healing) assay with PC-3 prostate cancer cells: number of cells in each of 38 "
+        "columns 50 um wide (centres x_um = 25..1875 um) across a 1,900 um field, counted at t_h = 0, 12, "
+        "24, 36 and 48 hours after the scratch. A column fully packed holds about 122 cells (packing "
+        "density 1.7e-3 cells/um^2 x 50 um x 1,430 um).",
+    ),
+    # ---- examples (E46) ---------------------------------------------------
+    "blowfly": Dataset(
+        "gamair_blowfly.rda",
+        "https://raw.githubusercontent.com/cran/gamair/master/data/blowfly.rda",
+        "Nicholson (1954), An outline of the dynamics of animal populations, Australian Journal of "
+        "Zoology 2:9-65; as distributed in the CRAN package gamair (Wood, Generalized Additive Models).",
+        "R data file (bzip2-compressed XDR): a data frame `blowfly` of 180 counts of adult sheep blowflies "
+        "(Lucilia cuprina) in one of Nicholson's laboratory cultures, one count every two days: pop "
+        "(adults; back-calculated from counts of dead flies) and day (an index, 0.5 to 90 in steps of 0.5).",
+    ),
 }
 
 
