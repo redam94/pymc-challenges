@@ -502,6 +502,88 @@ doubt run `uv run python -c "..."` to check:
     design that runs a heater at its limit leaves the controller nothing to correct with: cap the
     nominal powers below the rating. `boxplot(vert=False)` is deprecated in Matplotlib 3.11:
     `orientation="horizontal"`.
+  - **Bulk-surface PDEs (E52).** A 2-D cytosol coupled to a 1-D membrane on a polar
+    finite-volume disk (1,025 unknowns): rotational symmetry makes the operator block-diagonal in
+    angular cosine modes (put sector centres at multiples of the sector angle, or the Nyquist
+    cosine mode vanishes), 33 blocks of 17. Binding/unbinding makes K non-symmetric; scaling the
+    membrane rows by koff/kon symmetrises it, then batched `pt.linalg.eigh` gives exact time
+    courses with gradients (~60 s per NUTS fit; mode vs dense expm error 1e-13). A "membrane
+    only" limit via tiny kon/koff keeps the weighting finite. Membrane-only data still identified
+    D_c here. Arrival-at-the-back metrics depend on the arc chosen: check the prose against the
+    printed numbers (membrane-only diffusion reached 10% of the back half in 165 s, not the
+    30-minute equilibration time). Polar subplots overlap titles under the arviz constrained
+    layout: use `fig.subfigures`.
+  - **Luria-Delbrück likelihood (E53).** The compound-Poisson pmf is a triangular solve
+    `(I - m A) x = p0 e0`; it overflows when p0 is tiny - solve with `exp(shift - a) e0`,
+    `shift = max(a - 600, 0)`. Cost grows as N^2: cap the pmf (200) and treat the rest as a
+    censored "> cap" class. `log1mexp(logsumexp(lp[lo:]))` with `lo` beyond the vector sums
+    nothing, so censored rows silently contribute 0: build the mask over 0..N. Concatenating
+    integer edges with a `logspace` that starts at the last edge makes a zero-width bin.
+  - **Conductance-based neurons (E54).** Trace matching of spikes with NUTS: r_hat 1.55, and
+    the best mode had no spikes (a misplaced spike costs twice a missing one) - fit features. An
+    AR(1) noise likelihood conditioned on the first residual drove rho to 1 (tau 6 vs 17 ms, 28
+    divergences); a stationary AR(1) + a fast second exponential fixed it. Sentinel values in a
+    feature extractor (1e9 for a trough past the record) make likelihood notches and fake modes:
+    simulate past the step. `pm.Simulator(distance="gaussian", epsilon=1)` on standardised
+    features is exactly a Gaussian feature likelihood; Numba works in SMC's forked workers if
+    nothing imported JAX. Numba compiles a second specialisation when a defaulted argument is
+    omitted - it skews timings.
+  - **Chemical master equation (E55).** `pt.linalg.solve(assume_a="tridiagonal")` still takes a
+    dense matrix and has a dense gradient (2.2 ms for 288 systems vs 0.55 ms for
+    `jax.lax.linalg.tridiagonal_solve` via `wrap_jax`); PyTensor's JAX backend cannot convert
+    `LUFactorTridiagonal`. `LKJCholeskyCov(compute_corr=True)` under nutpie's JAX backend panics
+    ("expected chol_stds but found chol_corr"): `compute_corr=False` + `expand_packed_triangular`.
+    Time `pytensor.function(mode="JAX")` with `np.asarray` on outputs (async dispatch looks 50x
+    faster). A three-term recurrence for a minimal (decaying) solution explodes forwards: solve it
+    as a boundary-value problem. Binomial capture thinning in the telegraph model is exactly a
+    rescaled synthesis rate - absolute capture efficiency is never identified from counts.
+  - **Lineage models (E56).** A `scan` Kalman filter over 279 lineages x 68 generations: ~4 ms
+    per gradient, 160 s per fit, no faster under JAX; fixed 8-generation windows as one `MvNormal`
+    with closed-form covariance: ~20 s. `az.loo` with several observed `MvNormal`s raises "several
+    log likelihood arrays": concatenate into one variable in a hand-built DataTree. HalfNormal
+    priors hugging 0 on noise scales froze a chain (1,002 divergences, then PSIS "All tail values
+    are the same"): Gamma(2, 50). Parameters near 1e-3 (growth per minute) gave r_hat 1.6: rescale
+    units (per hour). Dropping outlier cycles (> 4 MAD) selects on the outcome and moves slopes.
+  - **Particle tracks (E57).** The MA(1) displacement covariance (localisation error) is tridiagonal
+    Toeplitz, whose eigenvectors are a fixed discrete sine basis: rotate each track once in NumPy
+    and the likelihood is a plain `Normal` (200 tracks, 400 parameters, 2 s). Model variables used
+    inside a `scan` step must be passed as `non_sequences`, or gradients fail with
+    "'RandomGeneratorVariable' object has no attribute 'shape'". scan/batched-Cholesky models ran
+    2x faster with `compile_kwargs={"backend": "jax", "gradient_backend": "jax"}`. `0**a` has a
+    NaN gradient in a: `exp(a * log(max(x, 1e-300)))`. Hierarchical fBM with free per-track
+    amplitudes biased alpha upward on 30-step Brownian tracks: pool the amplitudes. An HMM with
+    independent emissions cannot separate a bound state's D from localisation error.
+  - **Localisation microscopy (E58).** Batched Fisher matrices via `np.einsum("bpd,bpe,bp->bde")`
+    build a (B, pixels, D, D) temporary (~800 MB for 4,000 patches): use
+    `np.matmul(np.swapaxes(J * w[..., None], 1, 2), J)`. They can be exactly singular: `pinv`, and
+    treat non-positive variance as infinite sd. A Laplace evidence with an emitter whose position no
+    data constrain (masked pixels + flat prior) is +inf: use a proper Gaussian position prior.
+    `pm.sample_smc(cores=2)` peaked at 2.3 GB here - `cores=1` gave 1.3 GB;
+    `compute_convergence_checks=False` silences per-run ESS warnings. On real tissue frames the
+    emitter-count model added faint companions in 51% of detections (13% in simulation): forward
+    model misfit, not molecules - report it.
+  - **Step-detection HMMs (E59).** Scaling the forward pass by the max emission over ALL states
+    overflows when an unreachable state has a large emission (0 * inf = NaN energy): take the max
+    over reachable predecessors and clip. `pm.CustomDist(signature="(n),()->()")` passes batched
+    params to `logp`: `lk.reshape((-1,))[-n:]`. In `xr.Dataset`, a variable named like its own dim
+    becomes a coordinate and `az.loo` fails ("list index out of range"). nutpie's start jitter split
+    lattice-HMM chains into a noise-absorbs-steps mode: `compile_kwargs={"jitter_rvs": set()}` +
+    common `initvals`. Hypoexponential rates without an `ordered` transform: r_hat 1.53, ESS 7.
+  - **Inverse problems / TFM (E60).** `pm.HalfCauchy(..., shape=np.int64(n))` raises "shape must be
+    tuple/int": cast with `int()` or use dims. A stationary Gaussian prior with white noise gives a
+    flat posterior-sd map - it cannot show where the fit is wrong (the error sat at the
+    adhesions). On PIV displacement fields a white-prior marginal likelihood drove the noise to
+    2e-7 nm (PIV already smoothed the field): compare the data's power spectrum with each model's.
+    Dense sufficient statistics (Cholesky of A^T A) let a 1,969-parameter horseshoe sample in ~60 s
+    without touching 8k observations. The L-curve may have no corner; max-curvature then depends
+    on the lambda range scanned. Nonlinear summaries (strain energy, total |t|) can be biased far
+    beyond their posterior width.
+  - **Pattern formation / proofreading (E61).** A batched 4x4 `pt.linalg.cholesky`/`solve_triangular`
+    over ~1,600 wavenumbers was too slow to finish; a rank-2 Woodbury rewrite (2x2 algebra) ran at
+    0.1 ms per gradient. nutpie `adaptation="low_rank"` gave ~150 divergences on a curved posterior;
+    default diagonal + `target_accept=0.95`, `tune=1500` gave 0. Summing out a discrete N while
+    sampling a rate whose meaning depends on N split chains (r_hat 1.44): parameterise by a quantity
+    identified for every N (the local slope). A shell `alarm` that kills memguard orphans its child.
   - **MRP (E36).** Group effects as plain `Normal` z plus a separate intercept (and a main
     effect plus its interaction) gave 28 divergences, 271 with r_hat 1.10 without state
     predictors; `pm.ZeroSumNormal` (`n_zerosum_axes=2` for interactions) gave 0. Non-centred

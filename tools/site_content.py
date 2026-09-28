@@ -34,6 +34,16 @@ SERIES = [
                "and controlling systems that amplify every error, from blowflies to Lorenz's toy atmospheres), "
                "jump-diffusion SDEs for market crashes, and reaction-diffusion PDEs for cell invasion and "
                "signaling gradients, and designing heaters, insulation and sensors for a heat-equation plate."),
+    dict(key="biology", range="E52–E61", title="Cell biology and biophysics", ids=_ids("E", 52, 61),
+         intro="Mechanistic models of living cells, fitted to what biologists measure: signals that travel "
+               "through the membrane and the cytosol, the fluctuation test that showed mutations arise before "
+               "selection, why a neuron fires (conductance models fitted to real patch-clamp recordings), "
+               "transcriptional bursting read from allele-resolved single-cell RNA counts, and how bacteria "
+               "control their size, measured through noisy segmentation, and single molecules tracked in "
+               "living nuclei, and super-resolution (STORM) microscopy: localising, detecting and counting "
+               "single blinking molecules below the diffraction limit, and kinesin's steps counted from "
+               "MINFLUX traces, the forces cells exert on their substrate (traction force microscopy), and "
+               "decisions from dynamics: Turing patterns and kinetic proofreading in T cells. See also E50 (reaction-diffusion in tissues)."),
     dict(key="frontier", range="E11–E17", title="At the research frontier", ids=_ids("E", 11, 17),
          intro="Neural networks inside differential equations, inference beyond plain NUTS, state-space "
                "models, likelihood-free inference, BART, the display of uncertainty and privacy-preserving "
@@ -63,7 +73,7 @@ SERIES = [
                "aggregation, binning and unusual plots."),
 ]
 SERIES_BY_KEY = {s["key"]: s for s in SERIES}
-RECENT = ["E51", "E50", "E49", "E48", "E47", "E46", "E45"]          # newest first, shown on the home page
+RECENT = ["E61", "E60", "E59", "E58", "E57", "E56", "E55"]          # newest first, shown on the home page
 
 
 def _link(ctx, eid, text=None):
@@ -347,6 +357,36 @@ def guide_page(ctx):
          f"{L('E49')}"),
         ("Things spread and react in space", "Reaction-diffusion PDE by the method of lines, or exactly via an eigenbasis",
          f"{L('E50')}"),
+        ("Transport runs in two coupled compartments (surface and bulk)",
+         "Bulk-surface PDE solved exactly per Fourier mode; compare with the 1-D shortcut models",
+         f"{L('E52')}"),
+        ("Counts have a heavy jackpot tail with no closed-form likelihood",
+         "Compound-Poisson pmf by a triangular solve inside PyTensor; censored top class",
+         f"{L('E53')}"),
+        ("A stiff, spiking simulator whose trace likelihood is rugged",
+         "Fit summary features with a simulator likelihood (SMC); check sloppy parameter directions",
+         f"{L('E54')}"),
+        ("Counts come from a stochastic reaction network",
+         "Chemical master equation by finite state projection; ask what snapshots identify",
+         f"{L('E55')}"),
+        ("A predictor is measured with error (regression dilution)",
+         "Errors-in-variables with the noise identified from the data's own correlation structure",
+         f"{L('E56')}"),
+        ("Trajectories blur motion with measurement error",
+         "Exact track likelihood (MA(1) via a sine eigenbasis); state mixtures and switching HMMs",
+         f"{L('E57')}"),
+        ("How many sources are in the data, and where?",
+         "Count as model selection (Laplace / SMC evidence) with a pixelated physical forward model",
+         f"{L('E58')}"),
+        ("Waiting times hide an unknown number of sub-steps",
+         "Hypoexponential dwell models with ordered rates, LOO over the number of steps; lattice HMM for step detection",
+         f"{L('E59')}"),
+        ("An ill-posed inverse problem (deconvolution)",
+         "Regularisation as a prior: marginal likelihood for its strength, GP spectra, sparse horseshoe priors",
+         f"{L('E60')}"),
+        ("A discrete structural parameter (number of steps) is weakly identified",
+         "Marginalise it with logsumexp and parameterise by what the data identify",
+         f"{L('E61')}, {L('E59')}"),
         ("You must decide where to put actuators and sensors", "Design under the posterior: greedy placement, Monte Carlo closed-loop evaluation",
          f"{L('E51')}"),
     ])

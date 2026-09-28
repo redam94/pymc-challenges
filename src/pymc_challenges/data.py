@@ -734,6 +734,175 @@ REGISTRY: dict[str, Dataset] = {
         "(Lucilia cuprina) in one of Nicholson's laboratory cultures, one count every two days: pop "
         "(adults; back-calculated from counts of dead flies) and day (an index, 0.5 to 90 in steps of 0.5).",
     ),
+    # ---- examples (E54) ---------------------------------------------------
+    "allen_sst_464212183": Dataset(
+        "allen_464212183_long_square.npz",
+        "https://api.brain-map.org/api/v2/well_known_file_download/491202878",
+        "Allen Institute for Brain Science (2015), Allen Cell Types Database [dataset], available from "
+        "celltypes.brain-map.org (cell page: celltypes.brain-map.org/experiment/electrophysiology/464212183); "
+        "methods in Gouwens et al. (2019), Classification of electrophysiological and morphological neuron "
+        "types in the mouse visual cortex, Nature Neuroscience 22:1182-1195. Used under the Allen Institute "
+        "Terms of Use (alleninstitute.org/terms-of-use: research / noncommercial use with citation). "
+        "EXTRACTED from the 62 MB NWB file at the URL (sweeps 19-36 and 44-46, the 'Long Square' "
+        "current steps, every 10th sample), so keep the cached file in data/.",
+        "NumPy .npz (open data.path(...) with np.load): whole-cell current-clamp recordings of one "
+        "Sst-IRES-Cre;Ai14 aspiny interneuron in mouse primary visual cortex (specimen 464212183, male, "
+        "P53). v_mv: 21 sweeps x 26,000 samples of membrane potential (mV, float32) at fs_hz = 20 kHz "
+        "(downsampled from 200 kHz), a 1.3 s window with the 1 s square current step from t_on_s = 0.1 "
+        "to t_off_s = 1.1 s; amp_pa: step amplitude (pA, -110 to +230, sorted); sweep: original sweep "
+        "number; specimen_id.",
+    ),
+    "luria_delbruck_1943": Dataset(
+        "luria_delbruck_1943.csv",
+        "http://www.esp.org/foundations/genetics/classical/holdings/l/slmd-43.pdf",
+        "Luria & Delbrueck (1943), Mutations of bacteria from virus sensitivity to virus resistance, "
+        "Genetics 28:491-511 (PMC1209226), Tables 1-3. TRANSCRIBED from the ESP Foundations reprint at "
+        "the URL (a PDF, not a CSV) and cross-checked against the dataset `luriadel` of the CRAN package "
+        "flan (Mazoyer et al.), so keep the cached file in data/. Discrepancies: the reprint omits the 9th "
+        "culture of experiment 1 (17, in flan; 9 values give the published mean 26.8); experiment 16's "
+        "20th culture is 33 in the reprint and 35 in flan (35 gives the published mean 11.35, used here); "
+        "experiments 10 and 21b average 24.0 and 44.2, not the published 23.8 and 48.2 (both sources "
+        "agree on the values); experiment 23's frequency classes sum to 88, the paper says 87 cultures.",
+        "E. coli B cultures tested for resistance to phage T1 (one row per culture, or per frequency "
+        "class in table 3). table: 1 = ten samples from ONE culture (plating control), 2 = one sample from "
+        "each of a series of parallel cultures, 3 = frequency distribution for 100 and 87(88) parallel "
+        "cultures; experiment; medium (broth or synthetic); culture_ml and sample_ml (the fraction plated "
+        "is sample_ml / culture_ml); cells_per_culture (bacteria per culture at the time of the test); "
+        "culture (index); count_lo, count_hi (resistant colonies on the plate: equal for an exact count, "
+        "a class such as 6-10 in table 3); n_cultures (cultures in that row).",
+        {"comment": "#", "dtype": {"experiment": str}},
+    ),
+    # ---- examples (E55) ---------------------------------------------------
+    "larsson_bursting": Dataset(
+        "larsson2019_allelic_umis.csv",
+        "https://raw.githubusercontent.com/sandberg-lab/txburst/master/data/SS3_c57_UMIs_concat.csv",
+        "Larsson, Johnsson, Hagemann-Jensen, Hartmanis, Faridani, Reinius, Segerstolpe, Rivera, Ren & "
+        "Sandberg (2019), Genomic encoding of transcriptional burst kinetics, Nature 565:251-254; data files "
+        "of the paper's GitHub repository sandberg-lab/txburst (data/: SS3_c57_UMIs_concat.csv, "
+        "SS3_cast_UMIs_concat.csv, cell_cycle_annotation.csv, slam_seq.csv, SS3_c57_UMIs_concat_ML.pkl). "
+        "EXTRACTED: 24 genes from five files (the URL is the full 10,727-gene C57 table), so keep the "
+        "cached file in data/.",
+        "Allele-resolved single-cell RNA-seq UMI counts in 224 primary mouse fibroblasts from an F1 hybrid "
+        "(C57BL/6J x CAST/EiJ), 24 genes, one row per cell x gene: cell; phase (G1, S, G2M, the "
+        "repository's cell-cycle annotation); allelic_umis (all allele-assigned UMIs of the cell, both "
+        "alleles, all 10,727 genes: a capture/size factor); gene; c57, cast (UMIs of that gene from each "
+        "allele; empty = expressed but not assignable to an allele, i.e. missing); half_life_h (mRNA "
+        "half-life in hours from the repository's SLAM-seq table); txburst_kon, txburst_koff, "
+        "txburst_ksyn (the repository's published maximum-likelihood telegraph parameters for the C57 "
+        "allele, in units of the mRNA degradation rate).",
+    ),
+    # ---- examples (E56) ---------------------------------------------------
+    "tanouchi_mother_machine": Dataset(
+        "tanouchi2017_mc4100_mother_machine.npz",
+        "https://doi.org/10.6084/m9.figshare.c.3493548.v1",
+        "Tanouchi, Pai, Park, Huang, Buchler & You (2017), Long-term growth data of Escherichia coli at a "
+        "single-cell level, Scientific Data 4:170036 (doi:10.1038/sdata.2017.36); data on figshare "
+        "(collection 3493548, files released under CC0): 'Zipped analysis data files of mother cells "
+        "cultured at 25C / 27C / 37C' (ndownloader.figshare.com/files/6397359, 7235000, 6397368). "
+        "PACKED: the 279 per-lineage text files of the three zips (columns frame, division flag, cell "
+        "length) into one compressed NumPy file (fluorescence columns dropped), so keep the cached file "
+        "in data/.",
+        "NumPy .npz (open data.path(...) with np.load): mother-machine time-lapse of E. coli MC4100 "
+        "(constitutive YFP) mother cells in LB at 25, 27 and 37 C, one frame per minute, about 70 "
+        "generations per cell. lineage (279 names such as '37C_xy01_01'), temp_c; length_um "
+        "(concatenated cell lengths, the major axis of the segmented mask, float32) with frame_offset "
+        "(lineage k is length_um[frame_offset[k]:frame_offset[k+1]]); division_frame (frame indices, "
+        "within the lineage, of the first frame after each detected division; the first entry is frame "
+        "0, the start of the recording) with division_offset; minutes_per_frame = 1.",
+    ),
+    # ---- examples (E57) ---------------------------------------------------
+    "heckert2022_spt": Dataset(
+        "heckert2022_rara_nls_tracks.csv",
+        "https://raw.githubusercontent.com/alecheckert/saspt/main/examples/u2os_rara_ht_7.48ms/region_4_7ms_trajs.csv",
+        "Example data of the saSPT package (github.com/alecheckert/saspt, examples/, MIT licence), described "
+        "with the method in Heckert, Dahal, Tjian & Darzacq (2022), Recovering mixtures of fast-diffusing "
+        "states from short single-particle trajectories, eLife 11:e70169. EXTRACTED from 13 of the 22 "
+        "example CSVs (u2os_rara_ht_7.48ms/region_4 and region_5; u2os_ht_nls_7.48ms/region_0..10; the URL "
+        "is one of them), frames >= 1000, positions converted from pixels (0.16 um) to um, so keep the "
+        "cached file in data/.",
+        "Single-molecule tracks in nuclei of live human U2OS cells, 7.48 ms per frame (package settings: "
+        "0.16 um pixels, 0.7 um focal depth), one row per localisation: condition (rara = RARA-HaloTag, the "
+        "retinoic acid receptor alpha; nls = HaloTag-NLS, a free control), region (one nucleus / movie), "
+        "track (trajectory id within the region), frame, x_um, y_um, loc_err_um (mean of the fitted x and y "
+        "localisation errors). 34,401 RARA and 46,990 NLS localisations, tracks of 1 to 242 positions.",
+    ),
+    # ---- examples (E58) ---------------------------------------------------
+    "dannhauser2022_dstorm": Dataset(
+        "dannhauser2022_unc13_dstorm_roi.npz",
+        "https://zenodo.org/api/records/7328805/files/dStorm647_Unc13_7.tif/content",
+        "Mrestani (2022), Example raw dSTORM data of Brp (Alexa Fluor532) and Unc-13 (Alexa Fluor647), "
+        "Zenodo doi:10.5281/zenodo.7328805 (CC BY 4.0); from Dannhaeuser, Mrestani, Gundelach, Pauli, Komma, "
+        "Kollmannsberger, Sauer, Heckmann & Paul (2022), Endogenous tagging of Unc-13 reveals nanoscale "
+        "reorganization at active zones during presynaptic homeostatic potentiation, Frontiers in Cellular "
+        "Neuroscience 16:1074304 (Andor iXon Ultra 897 EMCCD, 127 nm pixels, 60x NA 1.49 objective). "
+        "EXTRACTED from the 1.2 GB TIFF stack at the URL (15,000 frames of 200 x 200 px; frames 3000-4999 "
+        "read with HTTP range requests, a 40 x 40 px region cropped), so keep the cached file in data/.",
+        "NumPy .npz (open data.path(...) with np.load): raw camera frames (ADU, uint16) of a dSTORM "
+        "recording of Unc-13-GFSTF (anti-GFP + Alexa Fluor647 F(ab')2) at a Drosophila larval "
+        "neuromuscular junction, 10 ms exposures. frames: 2000 x 40 x 40 (frames first_frame = 3000 "
+        "onwards; the crop starts at roi_row = 25, roi_col = 50 of the full field); pixel_nm = 127, "
+        "exposure_s; and per-pixel statistics of the full 200 x 200 field over the same 2000 frames for "
+        "camera calibration: field_median_adu, field_diff_var_adu2 (robust variance of frame-to-frame "
+        "differences / 2), field_max_adu. No dark frames or gain settings are included.",
+    ),
+    # ---- examples (E59) ---------------------------------------------------
+    "wolff2023_minflux_kinesin": Dataset(
+        "wolff2023_minflux_kinesin.npz",
+        "https://zenodo.org/records/7565676",
+        "Wolff & Scheiderer (2023), data and MATLAB scripts for 'MINFLUX dissects the unimpeded walking of "
+        "kinesin-1' (Wolff, Scheiderer et al., Science 379:1004, 2023), Zenodo doi:10.5281/zenodo.7565676 "
+        "(CC BY 4.0). PACKED from the 38 MB zip: the authors' processed step tables "
+        "(KinesinDataFiles/<construct>/<ATP>/allsteps_reeval.xls, read with xlrd) for 12 construct x ATP "
+        "conditions (ATPgammaS left out), plus 30 raw 1-D MINFLUX traces of construct N356C (DOL1) from two "
+        "files (10 uM: ...20220302sample2.txt, 1 mM: ...20220303sample2.txt) converted to positions with a "
+        "Python port of the authors' calculateSCE.m (photon window 7-300, sign flipped so that walking is "
+        "positive, shifted to start at 0), so keep the cached file in data/.",
+        "NumPy .npz (open data.path(...) with np.load): kinesin-1 stepping on microtubules tracked with "
+        "interferometric MINFLUX (a ~1 nm dye on a cysteine: N356C = coiled-coil stalk; T324C, K28C, E215C "
+        "= motor head) at 10 uM, 100 uM or 1 mM ATP. Step table, one row per detected step of one trace: "
+        "cond (index into cond_names / cond_construct / cond_atp_uM), step_nm (on-axis), offaxis_nm, "
+        "dwell_s (time from this step to the next; 0 on the last two rows of a trace), plateau_sd_nm, "
+        "photons, end_of_trace (1 on the last row of each trace), hmm_state (authors' step classes: "
+        "2 bound-to-bound, 3 bound-to-unbound, 4 unbound-to-bound, 5/6 rare, 0 not classified; not valid "
+        "for N356C). Raw traces: trace_t_s, trace_x_nm, trace_photons concatenated, trace k is "
+        "[trace_offset[k]:trace_offset[k+1]], trace_cond its condition name.",
+    ),
+    # ---- examples (E60) ---------------------------------------------------
+    "pytfm_colony_ko04": Dataset(
+        "pytfm_colony_ko04.npz",
+        "https://github.com/fabrylab/example_data_for_pyTFM",
+        "Bauer, Prechová, Fischer, Thievessen, Gregor & Fabry (2021), pyTFM: A tool for traction force and "
+        "monolayer stress microscopy, PLoS Computational Biology 17:e1008364; example data of the pyTFM "
+        "tutorial (GitHub fabrylab/example_data_for_pyTFM, which states no licence). PACKED from "
+        "clickpoints_tutorial/KO_analyzed/04u.npy, 04v.npy, 04tx.npy, 04ty.npy and the masks "
+        "python_tutorial/force_measurement.png and cell_borders.png (holes filled, resampled to the PIV "
+        "grid), so keep the cached file in data/.",
+        "NumPy .npz (open data.path(...) with np.load): substrate displacement field under a small cell "
+        "colony (7 cells; 'a critical cytoskeletal protein knocked out', per the tutorial) measured by PIV "
+        "(20 um windows, 18 um overlap) between bead images before and after the cells were removed. ux_um, "
+        "uy_um: displacements in um on a 189 x 193 grid (spacing grid_um = 2.117 um; rows run along +y, "
+        "i.e. the images were flipped so that y points up and the y components changed sign). "
+        "tx_pytfm_pa, ty_pytfm_pa: pyTFM's own tractions (finite-thickness FTTC followed by a Gaussian filter). "
+        "mask_force: region pyTFM sums forces over; mask_colony: the colony footprint. Gel substrate: "
+        "young_pa = 49 kPa, poisson = 0.49, thickness_um = 300. pyTFM's reported "
+        "contractility (2.13e-6 N) and strain energy (2.46e-13 J) are included.",
+    ),
+    # ---- examples (E61) ---------------------------------------------------
+    "pettmann2021_1g4_cd69": Dataset(
+        "pettmann2021_1g4_cd69.csv",
+        "https://elifesciences.org/articles/67092",
+        "Pettmann, Huhn, Abu Shah, Kutuzov, Wilson, Dustin, Davis, van der Merwe & Dushek (2021), The "
+        "discriminatory power of the T cell receptor, eLife 10:e67092 (CC BY 4.0). ASSEMBLED from two of the "
+        "article's source-data files: Figure 2 source data 1 (elife-67092-fig2-data1-v3.zip, folder "
+        "'Figure 2 - 1G4 blasts and U87', five CSVs) and Figure 1 source data 2 "
+        "(elife-67092-fig1-data2-v3.csv, SPR affinities at 37 C), so keep the cached file in data/.",
+        "Activation of primary human T cell blasts expressing the 1G4 TCR by U87 target cells pulsed "
+        "with one of 8 variants of the NY-ESO-1 peptide (SLLMWITQV = 9V and single substitutions), one row "
+        "per well: experiment (date code, 5 independent experiments), peptide, dose_uM (peptide pulsing "
+        "concentration, 0 = unpulsed), cd69_pct (% CD69-positive T cells). Per peptide: sequence, "
+        "kd_um, kd_sd_um, kd_n (SPR KD mean, SD and number of measurements; the Bmax-constrained estimate "
+        "where it exceeds 20 uM, else the Bmax-fitted one, the rule stated in the paper) and kd_method.",
+    ),
 }
 
 
