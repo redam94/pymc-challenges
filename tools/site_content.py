@@ -44,6 +44,12 @@ SERIES = [
                "single blinking molecules below the diffraction limit, and kinesin's steps counted from "
                "MINFLUX traces, the forces cells exert on their substrate (traction force microscopy), and "
                "decisions from dynamics: Turing patterns and kinetic proofreading in T cells. See also E50 (reaction-diffusion in tissues)."),
+    dict(key="failure", range="E62", title="When the model cannot answer", ids=["E62"],
+         intro="Most failed analyses do not crash: they answer a question nobody asked, report numbers the "
+               "prior chose, or never finish. Three real problems fail in these ways - an MMM that cannot "
+               "split credit between channels, a Gaussian process too large to fit, a trial whose hazard "
+               "ratio is not the clinic's question - and each is followed by the pivot: a question the data "
+               "can answer, a cheaper model checked against the exact one, and an answer audit."),
     dict(key="frontier", range="E11–E17", title="At the research frontier", ids=_ids("E", 11, 17),
          intro="Neural networks inside differential equations, inference beyond plain NUTS, state-space "
                "models, likelihood-free inference, BART, the display of uncertainty and privacy-preserving "
@@ -73,7 +79,7 @@ SERIES = [
                "aggregation, binning and unusual plots."),
 ]
 SERIES_BY_KEY = {s["key"]: s for s in SERIES}
-RECENT = ["E61", "E60", "E59", "E58", "E57", "E56", "E55"]          # newest first, shown on the home page
+RECENT = ["E62", "E61", "E60", "E59", "E58", "E57", "E56"]          # newest first, shown on the home page
 
 
 def _link(ctx, eid, text=None):
@@ -397,6 +403,9 @@ def guide_page(ctx):
         ("What is the causal graph?", "Structure learning for graphs and DAGs", f"{L('E20')}, {L('E19')}"),
         ("How much did a driver change the odds of an event?", "Attribution with non-stationary extremes", f"{L('E37')}"),
         ("What should we do?", "Optimise expected utility over posterior draws", f"{L('E33')}, {L('C04')}, {L('C07')}"),
+        ("The data cannot answer the question as asked",
+         "Swap priors, run a fake-data check, then answer the decision or the nearest supported question",
+         f"{L('E62')}"),
     ])
 
     def table(title, anchor, lead, body):
@@ -418,7 +427,7 @@ def guide_page(ctx):
   <ol class="recipe narrow">
     <li><strong>State the estimand.</strong> Write the quantity the decision depends on before writing any
     model: a difference in expected outcomes, a probability of exceeding a threshold, a forecast for
-    next week. Everything else is a means to computing it. ({L('D03')})</li>
+    next week. Everything else is a means to computing it. ({L('D03')}, {L('E62')})</li>
     <li><strong>Identify the unit and the support of the outcome.</strong> One row per what? Is the outcome
     a count, a proportion, a positive quantity, a time with censoring? This chooses the likelihood.
     ({L('D01')})</li>

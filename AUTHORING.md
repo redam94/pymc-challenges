@@ -584,6 +584,16 @@ doubt run `uv run python -c "..."` to check:
     default diagonal + `target_accept=0.95`, `tune=1500` gave 0. Summing out a discrete N while
     sampling a rate whose meaning depends on N split chains (r_hat 1.44): parameterise by a quantity
     identified for every N (the local slope). A shell `alarm` that kills memguard orphans its child.
+  - **Failure and pivots (E62).** Prior-to-posterior contraction against a vague prior was > 90% for
+    an MMM's Google - Meta ROI difference, which three priors then moved from P = 0.65 to 1.00: test
+    identification by swapping priors (or `az.psense`), not by contraction. Conjura brand `f7493de0`
+    (US apparel) has weekly Google/Meta spend correlated 0.89 - a ready-made collinear example. A
+    4-weekly random-walk baseline instead of a linear trend moved total media ROI from 31 to 25 with
+    non-overlapping intervals; LOO preferred it by 44 +- 6 (some k-hat > 0.7) - fit, not
+    attribution. Exact `pm.gp.Marginal` gradients grow as n^2.7 (168 ms at n = 2000; timing up to
+    n = 3000 peaked at 2 GB); an HSGP NegBin on all 17,379 bike hours costs 1.25 ms per gradient but
+    took ~8 minutes to sample. `az.extract(pp, var_names=[...])` on a posterior-predictive DataTree
+    raises "Can not extract posterior": pass `group="posterior_predictive"`.
   - **MRP (E36).** Group effects as plain `Normal` z plus a separate intercept (and a main
     effect plus its interaction) gave 28 divergences, 271 with r_hat 1.10 without state
     predictors; `pm.ZeroSumNormal` (`n_zerosum_axes=2` for interactions) gave 0. Non-centred

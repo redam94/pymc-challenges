@@ -25,7 +25,7 @@ Using VS Code or another IDE instead? Point it at the interpreter in `.venv`.
 
 ```
 notebooks/
-  examples/      E01-E61  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
+  examples/      E01-E62  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
   challenges/    C01-C11  your workspace. Tasks, empty cells, hints on request.
   solutions/     C01-C11  full reference solutions, executed, with commentary.
 ```
@@ -195,6 +195,14 @@ Mechanistic models of living cells. See also E50 (reaction-diffusion in tissues)
 | **E59** | Counting steps you cannot see: kinesin stepping and dwell-time kinetics | MINFLUX kinesin-1 step tables + raw traces (Wolff, Scheiderer et al. 2023, Zenodo CC BY 4.0); simulated traces for step detection | hypoexponential dwells, randomness parameter, penalised step finder vs 2-phase lattice HMM (forward algorithm in scan), missed-step bias, ordered rates and label switching, LOO over hidden steps, dead-time/hidden-step equivalence, ATP Michaelis-Menten with molecule heterogeneity |
 | **E60** | How hard does a cell pull? Traction force microscopy as a Bayesian inverse problem | Simulated cell with 16 known adhesions + real PIV displacement field of a 7-cell colony (pyTFM example data, Bauer et al. 2021) | FTTC Boussinesq Green's function, longitudinal/transverse Fourier diagonalisation, Tikhonov as a Gaussian prior, L-curve vs discrepancy vs marginal likelihood, hyperparameters in PyMC with the field integrated out, exact FFT posterior draws, GP spectra (SE/Matérn) + spectral predictive check, Young's-modulus uncertainty, constrained (footprint) TFM, regularised horseshoe via a sufficient statistic |
 | **E61** | Decisions from dynamics: Turing patterns and kinetic proofreading | Simulated Schnakenberg patterns; Nodal/Lefty diffusion coefficients (Müller et al. 2012, transcribed); real 1G4 T-cell CD69 dose-response + SPR KDs (Pettmann et al. 2021, eLife CC BY) | linear stability, FFT semi-implicit PDE solver, calibrated feature likelihood by importance sampling, exact Fourier-mode likelihood (Woodbury), P(Turing conditions), discrete N marginalised with logsumexp, reparameterising to remove multimodality, expected information gain design |
+
+#### When the model cannot answer (E62)
+
+Three real problems, each failing in a typical way, and what to do next.
+
+| | Topic | Data | Key techniques |
+|---|---|---|---|
+| **E62** | When the model cannot answer: unidentified parts, intractable models, and keeping the answer on the question | Conjura MMM (US apparel brand, 147 weeks, Google + Meta); Capital Bikeshare hourly rentals (17,379 hours); ACTG 175 HIV trial (2,139 patients, clinical events) | question contracts, prior swapping vs contraction, ridge posteriors, baseline-vs-media non-identifiability LOO cannot settle, fake-data recovery and the value of a lift test, decisions robust across models, timing one gradient to price an O(n^3) GP, pivots (aggregate to the question's resolution, HSGP checked against the exact GP), piecewise-exponential survival, hazard ratio vs standardised risk difference, P(best) and subgroup rankings the data cannot support, an answer audit |
 
 ### Data work (D-series)
 
