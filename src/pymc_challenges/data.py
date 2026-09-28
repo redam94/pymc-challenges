@@ -1129,6 +1129,23 @@ REGISTRY: dict[str, Dataset] = {
         "SDP, ..., Ind), party_name, is_speaker (the Speaker, Chorley, whom the main parties did not "
         "oppose), is_independent, votes (candidate's votes), position (finishing place; 1 = winner).",
     ),
+    # ---- examples (E71) ----
+    "speed_acc": Dataset(
+        "wagenmakers2008_speed_acc.csv",
+        "https://raw.githubusercontent.com/rtdists/rtdists/master/data/speed_acc.RData",
+        "Wagenmakers, Ratcliff, Gomez & McKoon (2008), 'A diffusion model account of criterion shifts "
+        "in the lexical decision task', Journal of Memory and Language 58:140-159, Experiment 1; "
+        "distributed as `speed_acc` in the R package rtdists (Singmann et al.; GPL >= 3; the URL). "
+        "CONVERTED from the xz-compressed .RData (R factors written as their labels; values "
+        "unchanged) - keep the CSV in data/.",
+        "Lexical decision (is this letter string a word?) with speed vs accuracy instructions "
+        "alternating by block: 17 participants, 31,522 trials. Columns: id (1-17), block (1-20; "
+        "participant 2 did 9), condition (speed / accuracy instruction), stim (item number), "
+        "stim_cat (word / nonword), frequency (high, low, very_low for words; nw_high, nw_low, "
+        "nw_very_low for nonwords made from words of that frequency), response (word, nonword, or "
+        "error = invalid key), rt (seconds), censor (1 for the 171 trials the authors excluded: "
+        "RT < 0.18 s or > 3 s, or an invalid response).",
+    ),
 }
 
 

@@ -58,12 +58,14 @@ SERIES = [
                "pharmacokinetics from theophylline and warfarin to a patient's dose after two monitoring "
                "samples; Hawkes and ETAS aftershock forecasts for the 2019 Ridgecrest sequence; and "
                "thousands of real headline A/B tests: winner's curse, peeking, and bandits."),
-    dict(key="outcomes", range="E67–E70", title="Rankings, choices, raters and compositions",
-         ids=_ids("E", 67, 70),
+    dict(key="outcomes", range="E67–E71", title="Rankings, choices, raters, compositions and decisions",
+         ids=_ids("E", 67, 71),
          intro="Outcomes that are not one number on a line. Skills estimated from who beat whom in tennis and "
                "from whole Formula 1 finishing orders; what people will pay for, from a panel of stated "
                "choices, with a market simulator; the true label when pathologists or anaesthetists "
-               "disagree and nobody knows the answer; and data that are parts of a whole."),
+               "disagree and nobody knows the answer; data that are parts of a whole; and quick decisions, "
+               "where a drift diffusion model explains both the choice and how long it took, and says "
+               "how cautious a person should be."),
     dict(key="frontier", range="E11–E17", title="At the research frontier", ids=_ids("E", 11, 17),
          intro="Neural networks inside differential equations, inference beyond plain NUTS, state-space "
                "models, likelihood-free inference, BART, the display of uncertainty and privacy-preserving "
@@ -93,7 +95,7 @@ SERIES = [
                "aggregation, binning and unusual plots."),
 ]
 SERIES_BY_KEY = {s["key"]: s for s in SERIES}
-RECENT = ["E70", "E69", "E68", "E67", "E66", "E65", "E64"]          # newest first, shown on the home page
+RECENT = ["E71", "E70", "E69", "E68", "E67", "E66", "E65"]          # newest first, shown on the home page
 
 
 def _link(ctx, eid, text=None):
@@ -345,6 +347,8 @@ def guide_page(ctx):
         ("A network of ties", "Latent-space and stochastic block models", f"{L('E21')}"),
         ("Who beat whom, or a whole finishing order", "Bradley-Terry, dynamic skills, Plackett-Luce", f"{L('E67')}"),
         ("A choice among alternatives", "Conditional and mixed logit; willingness to pay", f"{L('E68')}"),
+        ("A quick two-way choice and its response time", "Drift diffusion model (Wiener first-passage time)",
+         f"{L('E71')}"),
         ("Shares of a whole, or counts split into parts", "Dirichlet, logistic-normal and Dirichlet-multinomial models",
          f"{L('E70')}"),
     ])

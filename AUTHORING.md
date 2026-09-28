@@ -646,6 +646,21 @@ doubt run `uv run python -c "..."` to check:
     LOO between a Dirichlet and a logistic-normal needs the Jacobian: add `-sum(log x)` per row to the
     ALR log-likelihood, or the comparison is off by ~170 nats and picks the wrong model. A coords dim
     named `sample` triggers an ArviZ UserWarning on every fit (and breaks `az.extract`).
+  - **Drift diffusion / Wiener likelihood (E71).** Navarro-Fuss with fixed terms (small-time k = -2..2
+    below u = 0.5, two large-time terms above), each branch fed a clipped u, is accurate to 1e-8 with
+    finite gradients. 3-node Gauss-Legendre over the start range is fine for sz <= 0.4 but 31% off at
+    sz = 0.9: check the log-likelihood at posterior draws against 40 nodes rather than trusting a
+    unit test. In a wrapper that adds a quadrature axis, EVERY per-trial argument needs `[..., None]`
+    (a per-trial `sv` without it gave "Vectorized input has an incompatible shape"). Speed: one
+    gradient on 7.8k trials took 1.1 ms under JAX (2-3 cores per call) vs 5 ms under Numba; nutpie
+    runs JAX chains serially (GIL), Numba chains in parallel; numpyro with 4 host devices was slower
+    than both. Unrolling the series by hand sped JAX up and slowed Numba down. A uniform contaminant
+    with a random key over the whole RT window (i) made phantom slow errors wherever errors are rare
+    and (ii) left t0 mixing at r_hat 1.14 with zero divergences; a fast-guess contaminant (uniform
+    below 0.5 s, per-instruction rate) fixed both. With the contaminant rate FIXED, trials faster than
+    every plausible t0 have a constant log-likelihood and `az.loo` raises "All tail values are the
+    same"; estimating the rate removes it. A signed response time (+ upper / - lower) in one
+    `pm.CustomDist` gives per-trial LOO for choice and time together.
   - **MRP (E36).** Group effects as plain `Normal` z plus a separate intercept (and a main
     effect plus its interaction) gave 28 divergences, 271 with r_hat 1.10 without state
     predictors; `pm.ZeroSumNormal` (`n_zerosum_axes=2` for interactions) gave 0. Non-centred

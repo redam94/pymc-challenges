@@ -25,7 +25,7 @@ Using VS Code or another IDE instead? Point it at the interpreter in `.venv`.
 
 ```
 notebooks/
-  examples/      E01-E70  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
+  examples/      E01-E71  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
   challenges/    C01-C11  your workspace. Tasks, empty cells, hints on request.
   solutions/     C01-C11  full reference solutions, executed, with commentary.
 ```
@@ -215,10 +215,10 @@ Workhorse models from economics, pharmacology, seismology and online experimenta
 | **E65** | Self-exciting point processes: Hawkes and ETAS aftershock forecasting | USGS ComCat catalogue, 2019 Ridgecrest M6.4/M7.1 sequence (6,909 M2+ events, 2016-2019) | conditional intensity and branching ratio, point-process likelihood with closed-form compensator, Omori-Utsu ETAS with Gutenberg-Richter b-value, O(n^2) vs O(n) recursion vs power law as a mixture of exponentials (timed), short-term incompleteness and a time-varying Mc(t) likelihood, known-truth recovery, time-rescaling residuals, stochastic declustering, posterior-predictive cascade forecasts scored on a held-out week |
 | **E66** | Bayesian online experiments: A/B tests at scale, peeking, winner's curse, bandits | Upworthy Research Archive (4,873 headline A/B tests, 2013-2015; 1,000-test subsample for the model) | Beta-Binomial P(best) and expected loss, natural A/A check, hierarchical Student-t effects over 1,000 tests, centred vs non-centred, tail PPC, split-half replication of the winner's curse, population prior for a new test, simulated peeking (p-values vs posterior probabilities, calibration under optional stopping), expected-loss stopping, Thompson sampling vs fixed split / epsilon-greedy / explore-then-commit, preposterior test-length decision |
 
-#### Rankings, choices, raters and compositions (E67-E70)
+#### Rankings, choices, raters, compositions and decisions (E67-E71)
 
 Outcomes that are not a single number on a line: head-to-head results and finishing orders, choices among
-alternatives, labels from raters who disagree, and parts of a whole.
+alternatives, labels from raters who disagree, parts of a whole, and a choice together with the time it took.
 
 | | Topic | Data | Key techniques |
 |---|---|---|---|
@@ -226,6 +226,7 @@ alternatives, labels from raters who disagree, and parts of a whole.
 | **E68** | Discrete choice: multinomial logit, mixed logit, willingness to pay, market simulation | Train's electricity-supplier stated-preference survey (mlogit Electricity: 361 people x 12 choice tasks) | random-utility logit on (task, alt, attr) dims, choice-scale prior predictive, MLE cross-check, IIA, person-level PPC, mixed logit with LKJ + non-centred person effects, lognormal price coefficient, WTP posteriors (median vs mean, individual), task- vs person-level LOO, importance-sampled integrated likelihood, simulated known-truth check, diversion ratios and red-bus clone, market simulator and pricing decision |
 | **E69** | Truth without a gold standard: latent class models for noisy raters and diagnostic tests | 7 pathologists x 118 carcinoma slides (poLCA); Dawid & Skene's 5 anaesthetists x 45 patients (rater); simulated Hui-Walter and known-truth checks | majority vote as a model, two-class latent class model with logsumexp marginalisation, parameter vs degrees-of-freedom counting, label switching and a Youden (better-than-chance) fix, score/pairwise-agreement PPC, random-effects latent class model (Gauss-Hermite) and its loss of meaning, three-class model, LOO by slide, Hui-Walter and partial identification, informative priors, Dawid-Skene with hierarchically pooled confusion matrices vs EM, known-truth calibration check, value-of-information adjudication, rater-panel selection |
 | **E70** | Compositional data: parts of a whole (Dirichlet, logistic-normal, Dirichlet-multinomial) | Aitchison's Arctic lake sediments (sand/silt/clay vs depth); 2024 UK general election, 542 English constituencies | closure and spurious correlation, ALR/CLR/ILR log-ratios, Dirichlet regression (mean-precision), logistic-normal with LKJ and covariate-dependent scale, LOO across scales via the log-ratio Jacobian, multinomial vs Dirichlet-multinomial overdispersion, structural zeros by marginalising absent parts, partial pooling across regions, CLR effects, hand-drawn ternary plots, known-truth simulation, seat-count predictive check, win probabilities |
+| **E71** | Drift diffusion models: how people trade speed for accuracy, and what they should do | Wagenmakers et al. (2008) lexical decision, speed vs accuracy instructions (rtdists speed_acc: 17 people, 31,351 trials; a quarter fitted, the rest held out) | Euler simulation with a first-passage continuity correction, speed-accuracy closed forms and SPRT optimality, Wiener first-passage density in PyTensor (Navarro-Fuss small/large-time series with a NaN-safe switch), closed-form drift variability and Gauss-Legendre start variability, six unit tests of a likelihood, hierarchical DDM as a CustomDist on signed RTs, contaminant mixture instead of a t0 wall, slow/fast errors a plain DDM cannot produce, held-out quantile-probability plots, LOO and held-out log score, selective influence of instructions (threshold, t0, drift), reward-rate-optimal thresholds per person, Bayes vs plug-in threshold, sensitivity to the inter-trial interval |
 
 ### Data work (D-series)
 
