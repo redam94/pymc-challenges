@@ -50,6 +50,14 @@ SERIES = [
                "split credit between channels, a Gaussian process too large to fit, a trial whose hazard "
                "ratio is not the clinic's question - and each is followed by the pivot: a question the data "
                "can answer, a cheaper model checked against the exact one, and an answer audit."),
+    dict(key="decisions", range="E63–E66", title="Causal designs, doses, cascades and experiments",
+         ids=_ids("E", 63, 66),
+         intro="Workhorse models from four fields, each carried through to a decision. Difference-in-"
+               "differences, regression discontinuity and instrumental variables on classic natural "
+               "experiments, with each identifying assumption written as a prior; population "
+               "pharmacokinetics from theophylline and warfarin to a patient's dose after two monitoring "
+               "samples; Hawkes and ETAS aftershock forecasts for the 2019 Ridgecrest sequence; and "
+               "thousands of real headline A/B tests: winner's curse, peeking, and bandits."),
     dict(key="frontier", range="E11–E17", title="At the research frontier", ids=_ids("E", 11, 17),
          intro="Neural networks inside differential equations, inference beyond plain NUTS, state-space "
                "models, likelihood-free inference, BART, the display of uncertainty and privacy-preserving "
@@ -79,7 +87,7 @@ SERIES = [
                "aggregation, binning and unusual plots."),
 ]
 SERIES_BY_KEY = {s["key"]: s for s in SERIES}
-RECENT = ["E62", "E61", "E60", "E59", "E58", "E57", "E56"]          # newest first, shown on the home page
+RECENT = ["E66", "E65", "E64", "E63", "E62", "E61", "E60"]          # newest first, shown on the home page
 
 
 def _link(ctx, eid, text=None):
@@ -393,6 +401,12 @@ def guide_page(ctx):
         ("A discrete structural parameter (number of steps) is weakly identified",
          "Marginalise it with logsumexp and parameterise by what the data identify",
          f"{L('E61')}, {L('E59')}"),
+        ("Doses, concentrations and patients who differ",
+         "Hierarchical compartment models; flip-flop checks with multi-start chains; Bayesian therapeutic drug monitoring",
+         f"{L('E64')}"),
+        ("Events trigger more events (aftershocks, cascades)",
+         "Hawkes / ETAS likelihood with a closed-form compensator; incompleteness in the likelihood; cascade forecasts",
+         f"{L('E65')}"),
         ("You must decide where to put actuators and sensors", "Design under the posterior: greedy placement, Monte Carlo closed-loop evaluation",
          f"{L('E51')}"),
     ])
@@ -403,6 +417,12 @@ def guide_page(ctx):
         ("What is the causal graph?", "Structure learning for graphs and DAGs", f"{L('E20')}, {L('E19')}"),
         ("How much did a driver change the odds of an event?", "Attribution with non-stationary extremes", f"{L('E37')}"),
         ("What should we do?", "Optimise expected utility over posterior draws", f"{L('E33')}, {L('C04')}, {L('C07')}"),
+        ("A policy changed for some units, at a threshold, or through an instrument",
+         "Difference-in-differences, regression discontinuity, IV; the identifying assumption as a prior",
+         f"{L('E63')}"),
+        ("Which variant wins, and when can I stop the test?",
+         "Hierarchical effect sizes as the prior, expected-loss stopping, Thompson sampling",
+         f"{L('E66')}"),
         ("The data cannot answer the question as asked",
          "Swap priors, run a fake-data check, then answer the decision or the nearest supported question",
          f"{L('E62')}"),

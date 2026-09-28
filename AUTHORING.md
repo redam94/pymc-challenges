@@ -594,6 +594,33 @@ doubt run `uv run python -c "..."` to check:
     n = 3000 peaked at 2 GB); an HSGP NegBin on all 17,379 bike hours costs 1.25 ms per gradient but
     took ~8 minutes to sample. `az.extract(pp, var_names=[...])` on a posterior-predictive DataTree
     raises "Can not extract posterior": pass `group="posterior_predictive"`.
+  - **Quasi-experiments (E63).** In a triangular IV likelihood (outcome conditioned on the observed
+    endogenous regressor) posterior-predictive outcomes are built around the *observed* regressor, so
+    the replicated schooling-wage correlation came out near 0 against 0.31: add
+    `beta * (e_rep - e_obs)`. The LKJ IV posterior is a beta-rho ridge: nutpie
+    `nuts={"adaptation": "low_rank"}` took bulk ESS from ~250 to ~1800; with a weak instrument the
+    tails of beta are set by the LKJ eta, not the prior on beta. N(0, 1) on a standardised jump that
+    is ~2 sd shrank it by 20%: compare posterior against the raw estimate.
+  - **Population PK (E64).** A lag time as `pt.maximum(t - tlag, 0)` has no gradient for samples before
+    the lag; nutpie's start jitter left one chain in a spurious lag mode (r_hat 1.13, no divergences):
+    `initvals={"tlag": 0.6}` plus `compile_kwargs={"jitter_rvs": {...all free RVs but tlag}}`. The oral
+    one-compartment flip-flop (ka <-> ke) is an exact second mode with unit Jacobian: only multi-start
+    chains (PyMC NUTS with a list of per-chain `initvals`, `cores=2`) reveal it. Write the solution with
+    `expm1` so it stays finite at ka = ke. Many held-out refits: one compiled nutpie model with a 0/1
+    likelihood mask in `pm.Data` and `compiled.with_data(...)`.
+  - **Hawkes / ETAS (E65).** An exact O(n^2) Omori pair sum cost 3.6 ms per gradient at n = 790 (fit
+    ~2 min); writing (t + c)^-p as a trapezoid mixture of 79 exponentials driven by a `pytensor.scan`
+    recursion cost 0.4 ms and matched logp to 1e-5. PyTensor 3.3 has no `pt.logcumsumexp`.
+    `model.compile_logp()(point)` wants value variables only: a `find_MAP` result (with deterministics)
+    raises "Too many parameter passed". Cap forecast cascades (near-critical draws explode) and report
+    how many hit the cap. A constant magnitude of completeness after a mainshock biased c, p, b and
+    alpha; a time-varying Mc(t) in the likelihood fixed it.
+  - **A/B tests at scale (E66).** `pm.sample(var_names=[...])` under nutpie still stored every free
+    variable. Student-t effects written non-centred (`tau * StudentT(nu, 0, 1)`) gave tau/nu ESS ~130
+    with no divergences; centred `StudentT(nu, 0, tau)` tripled it (≈45 clicks per arm is not weak
+    data). A test intercept plus arm effects is a ridge: subtract each test's mean arm effect. A pandas
+    `Styler` shows as `<Styler at 0x...>` in `inspect_nb.py`, so print a rounded DataFrame.
+    `plt.hist(density=True)` on log-spaced bins misleads: use `weights=1/n`.
   - **MRP (E36).** Group effects as plain `Normal` z plus a separate intercept (and a main
     effect plus its interaction) gave 28 divergences, 271 with r_hat 1.10 without state
     predictors; `pm.ZeroSumNormal` (`n_zerosum_axes=2` for interactions) gave 0. Non-centred

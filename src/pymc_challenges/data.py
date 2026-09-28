@@ -903,6 +903,132 @@ REGISTRY: dict[str, Dataset] = {
         "kd_um, kd_sd_um, kd_n (SPR KD mean, SD and number of measurements; the Bmax-constrained estimate "
         "where it exceeds 20 uM, else the Bmax-fitted one, the rule stated in the paper) and kd_method.",
     ),
+    # ---- examples (E64) ----
+    "theoph": Dataset(
+        "theoph.csv",
+        f"{_RDATASETS}/datasets/Theoph.csv",
+        "Theophylline pharmacokinetics from Boeckmann, Sheiner & Beal (1994), NONMEM Users Guide Part V; "
+        "R package `datasets` (GPL-2 | GPL-3, part of R), via Rdatasets. Also in Pinheiro & Bates (2000).",
+        "Serum theophylline concentration (conc, mg/L) in 12 subjects after a single oral dose (Dose, "
+        "mg/kg, 3.1-5.9), 11 samples each over 25 h (Time, h since dosing; 132 rows), with body "
+        "weight (Wt, kg). Some pre-dose (Time 0) samples are above zero.",
+        {"index_col": 0},
+    ),
+    "warfarin_pkpd": Dataset(
+        "warfarin_pkpd.csv",
+        "https://github.com/nlmixr2/nlmixr2data/raw/main/data/warfarin.rda",
+        "O'Reilly, Aggeler & Leong (1963) J Clin Invest 42:1542 and O'Reilly & Aggeler (1968) "
+        "Circulation 38:169, as curated by Funaki, Holford & Fujita (2018) in R package `nlmixr2data` "
+        "(GPL >= 3). CONVERTED from the package's `warfarin.rda` (R serialisation) to CSV, so keep "
+        "the cached file in data/.",
+        "Warfarin PK/PD in 32 subjects after one oral dose of 1.5 mg/kg (amt, mg, on the evid = 1 "
+        "rows). 515 rows: id, time (h, 0-144), amt, dv (plasma warfarin mg/L when dvid = 'cp', 251 "
+        "samples, four reported as 0 at 0.5 h; prothrombin complex activity, % of normal, when "
+        "dvid = 'pca', 232 samples), evid, wt (kg, 40-102), age (y, 21-63), sex (27 male, 5 female).",
+    ),
+    # ---- examples (E63) ----
+    "card_krueger_njmin": Dataset(
+        "card_krueger_njmin.dat",
+        "https://davidcard.berkeley.edu/data_sets/njmin.zip",
+        "Card & Krueger (1994), Minimum wages and employment: a case study of the fast-food industry "
+        "in New Jersey and Pennsylvania, AER 84(4):772-793; public-use file `public.dat` from "
+        "njmin.zip on David Card's data page (posted by the author, no licence stated).",
+        "Two telephone/personal surveys of 410 Burger King, KFC, Roy Rogers and Wendy's restaurants "
+        "in New Jersey (331) and eastern Pennsylvania (79): Feb-Mar 1992, before NJ's minimum wage "
+        "rose from $4.25 to $5.05 on 1 April 1992, and Nov-Dec 1992. Per store: chain, co_owned, "
+        "state (1 = NJ), region dummies, full-time (empft), part-time (emppt) and manager (nmgrs) "
+        "employees, starting wage (wage_st), prices and hours; wave-2 columns end in 2; status2 = 3 "
+        "means closed permanently. Missing values are '.'.",
+        {"sep": r"\s+", "header": None, "na_values": ".", "names": (
+            "sheet chain co_owned state southj centralj northj pa1 pa2 shore ncalls empft emppt "
+            "nmgrs wage_st inctime firstinc bonus pctaff meals open hrsopen psoda pfry pentree "
+            "nregs nregs11 type2 status2 date2 ncalls2 empft2 emppt2 nmgrs2 wage_st2 inctime2 "
+            "firstin2 special2 meals2 open2r hrsopen2 psoda2 pfry2 pentree2 nregs2 nregs112").split()},
+        zip_member="public.dat",
+    ),
+    "banks_mississippi_1930": Dataset(
+        "banks_mississippi_1930.csv",
+        "https://raw.githubusercontent.com/pymc-labs/CausalPy/main/causalpy/data/banks.csv",
+        "Richardson & Troost (2009), Monetary intervention mitigated banking panics during the Great "
+        "Depression: quasi-experimental evidence from a Federal Reserve district border, 1929-1933, "
+        "JPE 117(6):1031-1073; daily series as distributed with CausalPy (Apache-2.0).",
+        "Daily counts, 1 Jul 1929 - 31 Aug 1934 (1,878 rows), of state banks in Mississippi in "
+        "business (bib6, bib8) and in operation (bio6, bio8) in the Atlanta (6th) and St Louis "
+        "(8th) Federal Reserve districts; the border splits the state. date (days since 1900), "
+        "weekday, day, month, year.",
+    ),
+    "mlda_mortality": Dataset(
+        "mlda_mortality.csv",
+        "https://raw.githubusercontent.com/pymc-labs/CausalPy/main/causalpy/data/drinking.csv",
+        "Carpenter & Dobkin (2009), The effect of alcohol consumption on mortality: regression "
+        "discontinuity evidence from the minimum drinking age, AEJ Applied 1(1):164-182; cell means "
+        "as used in Angrist & Pischke, Mastering 'Metrics (2015) ch. 4, distributed with CausalPy "
+        "(Apache-2.0).",
+        "US deaths per 100,000 person-years by age cell (agecell, 48 cells of ~30 days, ages 19.07-"
+        "22.93; the two cells nearest 21 are absent) and cause: all, internal, external, alcohol, "
+        "homicide, suicide, mva (motor vehicle accidents), drugs, externalother, each with a "
+        "`...fitted` column from the published fit.",
+        {"index_col": 0},
+    ),
+    "senate_rd": Dataset(
+        "senate_rd.csv",
+        "https://raw.githubusercontent.com/rdpackages/rdrobust/master/R/rdrobust_senate.csv",
+        "Cattaneo, Frandsen & Titiunik (2015), Randomization inference in the regression "
+        "discontinuity design: an application to party advantages in the U.S. Senate, J Causal "
+        "Inference 3(1):1-24; example data of the `rdrobust` package (GPL-3).",
+        "US Senate elections 1914-2010, one row per state x election (1,390 rows): margin "
+        "(Democratic margin of victory at election t, % points; the running variable), vote "
+        "(Democratic vote share in the next election for the same seat), state, year, class, "
+        "termshouse, termssenate, population.",
+    ),
+    "card1995_schooling": Dataset(
+        "card1995_schooling.csv",
+        f"{_RDATASETS}/wooldridge/card.csv",
+        "Card (1995), Using geographic variation in college proximity to estimate the return to "
+        "schooling, in Aspects of Labour Market Behaviour; NLS Young Men cohort, via R package "
+        "`wooldridge` (GPL-3), Rdatasets.",
+        "3,010 men interviewed in 1976 (aged 24-34): lwage (log hourly wage, cents), educ (years), "
+        "nearc4 / nearc2 (grew up near a 4-year / 2-year college in 1966), exper, expersq, black, "
+        "south, smsa (1976), smsa66, reg661-reg669 (1966 region), parents' education, IQ, KWW.",
+        {"index_col": 0},
+    ),
+    # ---- examples (E66) ----
+    "upworthy_exploratory": Dataset(
+        "upworthy_exploratory.csv",
+        "https://osf.io/download/3vqmp/",
+        "Matias, Munger, Aubin Le Quere & Ebersole (2021), The Upworthy Research Archive, a time "
+        "series of 32,487 experiments in U.S. media, Scientific Data 8:195 "
+        "(doi:10.1038/s41597-021-00934-7); OSF project jd64p (CC BY 4.0), file "
+        "upworthy-archive-exploratory-packages-03.12.2020.csv (the URL). TRIMMED: kept the columns "
+        "below, dropped excerpt/lede/share text/image URL/slug, added arm and content_id, so keep "
+        "the cached file in data/.",
+        "Exploratory sample of Upworthy's headline A/B tests, Jan 2013 - Apr 2015: 4,873 tests, "
+        "22,666 packages (arms; 2-14 per test, mostly 4-6), one row per package: test_id "
+        "(clickability_test_id), test_created (date of the test's first package), test_week "
+        "(YYYYWW), arm (0.. within test, by creation time), content_id (arms of one test with the "
+        "same id are identical in headline, image, excerpt, lede, share text and square image: "
+        "natural A/A arms), headline, eyecatcher_id (image), impressions, clicks, significance "
+        "(Upworthy's dashboard number), first_place, winner (editor's declared winner).",
+    ),
+    # ---- examples (E65) ----
+    "ridgecrest_2019_comcat": Dataset(
+        "ridgecrest_2019_comcat.csv",
+        "https://earthquake.usgs.gov/fdsnws/event/1/query?format=csv&starttime=2016-01-01"
+        "&endtime=2020-01-01&minlatitude=35.2&maxlatitude=36.4&minlongitude=-118.2"
+        "&maxlongitude=-117.0&minmagnitude=2.0&orderby=time-asc&eventtype=earthquake",
+        "USGS ANSS Comprehensive Earthquake Catalog (ComCat), FDSN event web service; Southern "
+        "California Seismic Network solutions (network ci; 3 events from us; 1,877 events still "
+        "status 'automatic'). US Government work, public domain. "
+        "Downloaded 2026-09-28; ComCat revises events over time, so a fresh download can differ "
+        "slightly - keep the cached file in data/.",
+        "Every earthquake of magnitude 2.0 or more in the box 35.2-36.4 N, 118.2-117.0 W, "
+        "2016-01-01 to 2019-12-31 (6,909 events), which contains the 2019 Ridgecrest, California "
+        "sequence: the M6.4 of 2019-07-04 17:33:49 UTC and the M7.1 of 2019-07-06 03:19:53 UTC. "
+        "Standard ComCat CSV columns: time (UTC, ISO 8601), latitude, longitude, depth (km), mag, "
+        "magType (ml, mlr, mw...), nst, gap, dmin, rms, net, id, updated, place, type, "
+        "horizontalError, depthError, magError, magNst, status, locationSource, magSource.",
+        {"parse_dates": ["time"]},
+    ),
 }
 
 

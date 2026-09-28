@@ -25,7 +25,7 @@ Using VS Code or another IDE instead? Point it at the interpreter in `.venv`.
 
 ```
 notebooks/
-  examples/      E01-E62  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
+  examples/      E01-E66  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
   challenges/    C01-C11  your workspace. Tasks, empty cells, hints on request.
   solutions/     C01-C11  full reference solutions, executed, with commentary.
 ```
@@ -203,6 +203,17 @@ Three real problems, each failing in a typical way, and what to do next.
 | | Topic | Data | Key techniques |
 |---|---|---|---|
 | **E62** | When the model cannot answer: unidentified parts, intractable models, and keeping the answer on the question | Conjura MMM (US apparel brand, 147 weeks, Google + Meta); Capital Bikeshare hourly rentals (17,379 hours); ACTG 175 HIV trial (2,139 patients, clinical events) | question contracts, prior swapping vs contraction, ridge posteriors, baseline-vs-media non-identifiability LOO cannot settle, fake-data recovery and the value of a lift test, decisions robust across models, timing one gradient to price an O(n^3) GP, pivots (aggregate to the question's resolution, HSGP checked against the exact GP), piecewise-exponential survival, hazard ratio vs standardised risk difference, P(best) and subgroup rankings the data cannot support, an answer audit |
+
+#### Causal designs, doses, cascades and experiments (E63-E66)
+
+Workhorse models from economics, pharmacology, seismology and online experimentation, each built to answer a decision.
+
+| | Topic | Data | Key techniques |
+|---|---|---|---|
+| **E63** | Bayesian quasi-experiments: difference-in-differences, regression discontinuity, instrumental variables | Card & Krueger NJ/PA minimum wage; Mississippi banks 1929-34; Carpenter & Dobkin drinking-age mortality; Card (1995) college proximity; US Senate margins | first-difference DiD, Student-t robustness, placebo and alternative control groups, hierarchical regional trends (few clusters), parallel-trends violation as a prior with a break-down value, event study with counterfactual forecast, local-polynomial bandwidth x order grid, Gaussian-process RDD, placebo outcomes and cutoffs, Bayesian density (McCrary-style) check, joint IV with MvNormal + LKJCholeskyCov, weak-instrument ridge, fake-data check, exclusion restriction as a prior, reduced form |
+| **E64** | Population pharmacokinetics: hierarchical compartment models and dosing decisions | Theophylline (12 subjects, Boeckmann/Sheiner/Beal via R datasets) and warfarin PK/PD (32 subjects, O'Reilly et al. via nlmixr2data) | one-compartment oral model in closed form, hierarchical log-normal CL/V/ka with LKJ correlation, flip-flop mirror-image non-identifiability and multi-start chains, ordering constraint vs physiological prior, combined error compared by LOO, normalised prediction errors, allometric covariates, censored below-LLOQ samples, lag-time spurious mode, turnover PK/PD solved as a convolution, visual predictive check, Bayesian TDM validated on held-out subjects, probability of target attainment |
+| **E65** | Self-exciting point processes: Hawkes and ETAS aftershock forecasting | USGS ComCat catalogue, 2019 Ridgecrest M6.4/M7.1 sequence (6,909 M2+ events, 2016-2019) | conditional intensity and branching ratio, point-process likelihood with closed-form compensator, Omori-Utsu ETAS with Gutenberg-Richter b-value, O(n^2) vs O(n) recursion vs power law as a mixture of exponentials (timed), short-term incompleteness and a time-varying Mc(t) likelihood, known-truth recovery, time-rescaling residuals, stochastic declustering, posterior-predictive cascade forecasts scored on a held-out week |
+| **E66** | Bayesian online experiments: A/B tests at scale, peeking, winner's curse, bandits | Upworthy Research Archive (4,873 headline A/B tests, 2013-2015; 1,000-test subsample for the model) | Beta-Binomial P(best) and expected loss, natural A/A check, hierarchical Student-t effects over 1,000 tests, centred vs non-centred, tail PPC, split-half replication of the winner's curse, population prior for a new test, simulated peeking (p-values vs posterior probabilities, calibration under optional stopping), expected-loss stopping, Thompson sampling vs fixed split / epsilon-greedy / explore-then-commit, preposterior test-length decision |
 
 ### Data work (D-series)
 
