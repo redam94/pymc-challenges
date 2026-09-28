@@ -48,6 +48,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pymc as pm
 import pytensor.tensor as pt
+from IPython.display import HTML
+from matplotlib import animation
 from matplotlib.patches import Rectangle
 from scipy.optimize import lsq_linear
 
@@ -548,6 +550,84 @@ print(f"final design: {N_HEAT} heaters (nominal powers {np.round(p_nom, 1)} W, t
 # hot. That points at the next improvements: a heat sink or cooled bar at the left edge, heaters
 # spread over longer strips instead of small patches, and edge insulation to remove the least-known
 # heat loss.
+#
+# ### Switching it on: how long until the gradient is ready?
+#
+# Everything so far was steady state. A user also cares how long the plate takes to reach the
+# gradient after it is switched on. That needs one more property, the plate's heat capacity per unit
+# area, $\rho c\,\delta$ (brass: $\rho c \approx 3.2$ MJ m⁻³ K⁻¹, so 16 kJ m⁻² K⁻¹ at 5 mm). The
+# transient heat equation on the same grid is $C\,\dot u = -A\,u + \eta\,q$ with $C = \rho c\,\delta\,\Delta x^2$
+# per cell. $A$ is symmetric, so one `eigh` gives the exact solution at any time,
+# $u(t) = u_\infty - V e^{-\Lambda t / C} V^\top u_\infty$, with $u_\infty$ the steady field. The
+# slowest mode, about $\rho c\,\delta / 2h \approx 15$ minutes, sets the time scale. The animation shows
+# the true plate with the final design at its nominal powers, starting at room temperature; the lower
+# panel is the profile along the centre line against the target.
+
+# %%
+RHO_C = 3.2e6                                                   # J m^-3 K^-1 (brass)
+C_CELL = RHO_C * DELTA * DX**2
+
+
+def warm_up(theta, times):
+    """Exact transient temperatures (times, cells) from room temperature, final design, nominal powers."""
+    A = operator(theta["k"], theta["h"], theta["h_edge"], BACK)
+    q = np.zeros(N)
+    q[CANDIDATES[sites]] = theta["eta"] * p_nom
+    lam_w, V_w = np.linalg.eigh(A)
+    u_inf = V_w @ ((V_w.T @ q) / lam_w)
+    return T_ROOM + u_inf[None, :] - (np.exp(-lam_w[None, :] * times[:, None] / C_CELL)
+                                      * (V_w.T @ u_inf)[None, :]) @ V_w.T
+
+
+def ready_time(theta, tol=0.5):
+    """Minutes until every working-area cell is within tol of its own steady temperature."""
+    t_ = np.linspace(0, 3 * 3600, 721)
+    T_ = warm_up(theta, t_)
+    gap = np.abs(T_[:, WORK] - T_[-1, WORK]).max(axis=1)
+    return t_[np.argmax(gap < tol)] / 60
+
+
+t_anim = np.linspace(0, 60 * 60, 41)
+T_anim = warm_up(THETA_TRUE, t_anim)
+ready = np.array([ready_time(th) for th in THETA_DRAWS[:200]])
+print(f"slowest time constant (true plate): {C_CELL / np.linalg.eigvalsh(operator(THETA_TRUE['k'], THETA_TRUE['h'], THETA_TRUE['h_edge'], BACK)).min() / 60:.1f} min")
+print(f"time until the working area is within 0.5 C of steady state: true plate {ready_time(THETA_TRUE):.0f} min; "
+      f"posterior median {np.median(ready):.0f} min (90%: {np.quantile(ready, 0.05):.0f}-{np.quantile(ready, 0.95):.0f})")
+
+row = NY // 2
+fig = plt.figure(figsize=(9, 6.5), dpi=72)
+ax_f, ax_p = fig.subplots(2, 1, height_ratios=[1.3, 1])
+im = show_field(ax_f, T_anim[0], "")
+fig.colorbar(im, ax=ax_f, label="°C")
+(prof_line,) = ax_p.plot(100 * xc, T_anim[0].reshape(NY, NX)[row], color=RED, lw=2, label="plate, centre line")
+ax_p.plot(100 * xc, T_anim[-1].reshape(NY, NX)[row], ":", color=GREY, label="after 60 min")
+ax_p.plot(100 * xc[(xc >= 0.05) & (xc <= 0.35)], T_TARGET.reshape(NY, NX)[row][(xc >= 0.05) & (xc <= 0.35)],
+          "--", color=INK, label="target")
+ax_p.set(xlabel="x (cm)", ylabel="°C", ylim=(15, 80))
+ax_p.legend(fontsize=8, loc="upper left")
+plt.close(fig)
+
+
+def update(i):
+    im.set_data(T_anim[i].reshape(NY, NX))
+    ax_f.set_title(f"{t_anim[i] / 60:.1f} min after switching on")
+    prof_line.set_ydata(T_anim[i].reshape(NY, NX)[row])
+    return im, prof_line
+
+
+anim = animation.FuncAnimation(fig, update, frames=len(t_anim), interval=150)
+HTML(anim.to_jshtml(default_mode="once"))
+
+# %% [markdown]
+# The hot right end comes up first, because that is where most of the power goes in; the cool
+# left end, fed only by conduction and the edge heaters, lags. The slowest mode has a time constant
+# of about 17 minutes, but "ready" means every working-area cell within 0.5 °C of its final value,
+# which takes several time constants: 74 minutes for the true plate (at 60 minutes, the end of the
+# animation, the profile is still a degree short). Over the calibration posterior the answer is 76
+# minutes (90%: 72-85). That spread comes only from $k$, $h$ and $h_e$; the heat capacity was taken
+# as known, and an error in it would scale every time proportionally. A faster start-up is a
+# control problem the steady design does not solve: drive the heaters above their nominal powers for
+# the first minutes (the headroom of section 5), then settle.
 #
 # ## Summary
 #

@@ -51,6 +51,8 @@ import numpy as np
 import pymc as pm
 import pytensor
 import pytensor.tensor as pt
+from IPython.display import HTML
+from matplotlib import animation
 
 from pymc_challenges import data
 
@@ -261,6 +263,60 @@ axes[2].set(xlabel="wave speed 2 sqrt(D lambda) (um/h)", yticks=[], title="Invas
 # with mitomycin C. Part two meets the same problem in signaling, and solves it with a second kind
 # of measurement.
 #
+# ### The wound closing, hour by hour
+#
+# The fit only ever sees five snapshots. The model, though, describes every moment in between, so we
+# can replay the assay: the animation runs the delay model forward in NumPy for 200 posterior draws
+# and shows the median cell density and its 90% band (the uncertainty in the *mean* density, without
+# the Poisson counting noise) every hour, with the counts overlaid when the clock passes an
+# observation time. Watch for the long pause at the start (the $\tanh(\beta t)$ delay), then the
+# two fronts moving in at the wave speed while the sheet behind them densifies.
+
+# %%
+def kpp_paths(D, lam, K, beta, every=10):
+    """Explicit Euler paths of the delay model for vectors of draws; returns (frames, draws, columns)."""
+    u = (count0[None, :] / K[:, None]).copy()
+    frames = [u.copy()]
+    for i, t in enumerate(t_grid):
+        lap = np.concatenate([u[:, 1:2] - u[:, :1], u[:, 2:] - 2 * u[:, 1:-1] + u[:, :-2],
+                              u[:, -2:-1] - u[:, -1:]], axis=1) / DX**2
+        u = u + DT * np.tanh(beta[:, None] * t) * (D[:, None] * lap + lam[:, None] * u * (1 - u))
+        if (i + 1) % every == 0:
+            frames.append(u.copy())
+    return np.array(frames) * K[None, :, None]
+
+
+pick_anim = rng.choice(D_s.size, 200, replace=False)
+dens = kpp_paths(D_s[pick_anim], lam_s[pick_anim], K_s[pick_anim], beta_s[pick_anim])   # (49, 200, 38)
+hours = np.arange(dens.shape[0]) * 10 * DT
+lo_b, med_b, hi_b = np.quantile(dens, [0.05, 0.5, 0.95], axis=1)
+
+fig, ax = plt.subplots(figsize=(8, 4), dpi=72)
+band = ax.fill_between(x_cols, lo_b[0], hi_b[0], color=BLUE, alpha=0.3, lw=0)
+(line,) = ax.plot(x_cols, med_b[0], color=BLUE, lw=2, label="model: median and 90% band")
+(pts,) = ax.plot(x_cols, C[0], "o", color=INK, ms=4, label="counts at the last observation")
+ax.set(xlabel="position (um)", ylabel="cells per column", ylim=(0, 140))
+ax.legend(fontsize=8, loc="lower left")
+title = ax.set_title("")
+plt.close(fig)
+
+
+def update(i):
+    global band
+    band.remove()
+    band = ax.fill_between(x_cols, lo_b[i], hi_b[i], color=BLUE, alpha=0.3, lw=0)
+    line.set_ydata(med_b[i])
+    j = int(np.searchsorted(t_obs, hours[i] + 1e-9)) - 1                # last observation passed
+    pts.set_ydata(C[j])
+    pts.set_alpha(1.0 if np.isclose(hours[i], t_obs[j]) else 0.25)
+    title.set_text(f"t = {hours[i]:4.1f} h  (counts shown: {t_obs[j]:.0f} h)")
+    return line, pts, title
+
+
+anim = animation.FuncAnimation(fig, update, frames=len(hours), interval=150)
+HTML(anim.to_jshtml(default_mode="once"))
+
+# %% [markdown]
 # ## 5 · Synthesis, diffusion and degradation, solved exactly
 #
 # Embryos are patterned by **morphogens**: signaling proteins secreted by a group of cells that
@@ -429,6 +485,56 @@ ax.set(xlabel="minutes after bleaching", ylabel="recovery (relative)",
 #
 # ## 7 · FRAP separates diffusion from degradation
 #
+# The ridge is easiest to see in time. Switch the source on in an empty field and let the gradient
+# form: every posterior draw from the image-only fit ends at the same steady shape, but they get
+# there at very different speeds, because a fast-diffusing, quickly cleared morphogen equilibrates in
+# minutes and a slow, stable one takes hours. The draws from the joint fit agree on the speed as
+# well. (Each curve is scaled by its own steady-state maximum, as the images are.)
+
+# %%
+def forming(D, k, t):
+    """c(t) / max(c_ss) after switching the source on at t = 0 in an empty field."""
+    rates = D * mu_eig - k
+    c_ss = V_eig @ ((V_eig.T @ source) / (-rates))
+    c_t = c_ss[None, :] - (np.exp(rates[None, :] * t[:, None]) * (V_eig.T @ c_ss)[None, :]) @ V_eig.T
+    return c_t / c_ss.max()
+
+
+t_form = np.geomspace(60, 12 * 3600, 45)                      # 1 min to 12 h
+curves = {}
+for label in grad_fits:
+    p_ = grad_fits[label].posterior
+    idx_ = rng.choice(p_.sizes["chain"] * p_.sizes["draw"], 25, replace=False)
+    curves[label] = [forming(p_["D"].values.ravel()[i], p_["k"].values.ravel()[i], t_form) for i in idx_]
+truth_form = forming(D_TRUE, K_TRUE, t_form)
+
+fig, axes = plt.subplots(1, 2, figsize=(10, 3.6), dpi=72, sharey=True)
+lines = {}
+for ax, (label, col) in zip(axes, [("image only", GREY), ("image + FRAP", RED)]):
+    lines[label] = [ax.plot(xs, c_[0], color=col, lw=0.8, alpha=0.6)[0] for c_ in curves[label]]
+    ax.plot(xs, c_true / c_true.max(), ":", color=INK, lw=1, label="steady state (truth)")
+    lines[label].append(ax.plot(xs, truth_form[0], color=INK, lw=1.8, label="truth")[0])
+    ax.set(xlabel="distance from source (um)", title=f"posterior draws: {label}", ylim=(0, 1.05))
+axes[0].set_ylabel("concentration / steady-state max")
+axes[0].legend(fontsize=8)
+suptitle = fig.suptitle("")
+plt.close(fig)
+
+
+def update(i):
+    for label in curves:
+        for ln, c_ in zip(lines[label], curves[label]):
+            ln.set_ydata(c_[i])
+        lines[label][-1].set_ydata(truth_form[i])
+    suptitle.set_text(f"{t_form[i] / 60:5.0f} minutes after the source switches on")
+    return []
+
+
+anim = animation.FuncAnimation(fig, update, frames=len(t_form), interval=180)
+HTML(anim.to_jshtml(default_mode="once"))
+
+# %% [markdown]
+
 # **FRAP breaks the tie.** Bleaching a window and watching it refill measures a *rate*: how
 # fast unbleached molecules diffuse back in and how fast the pool turns over. The image-only
 # posterior predicts a whole fan of recovery curves (right panel, grey), and the observed curve

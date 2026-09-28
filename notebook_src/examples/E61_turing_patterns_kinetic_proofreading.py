@@ -65,6 +65,8 @@ import numpy as np
 import pandas as pd
 import pymc as pm
 import pytensor.tensor as pt
+from IPython.display import HTML
+from matplotlib import animation
 
 from pymc_challenges import data
 
@@ -310,6 +312,50 @@ for ax, (img, title) in zip(axes, panels):
 # spots are weak. So the same chemistry makes spots or stripes depending on one diffusion ratio. Nothing
 # in the model marks where a spot should be; their positions come from the noise, their spacing from
 # the dispersion relation.
+#
+# The animation replays both simulations up to $t = 150$. Each image is scaled to its own range
+# (early on the pattern is only a few parts per thousand of $u^*$, so a fixed scale would show
+# nothing), and the right panel tracks the radially averaged power spectrum of the spot pattern: the
+# power concentrates on the fastest-growing wavenumber of linear theory (dashed) long before the
+# spots are visible, then locks there as they saturate.
+
+# %%
+T_ANIM = np.arange(4.0, 150.1, 4.0)
+_, anim_spots = simulate(initial_state(TRUE["s"], TRUE["rho"], seed=1), **TRUE, t_end=T_ANIM[-1], snaps=T_ANIM)
+_, anim_stripes = simulate(initial_state(1.0, 0.1, seed=2), 1.0, 0.1, 10.0, 1.0, t_end=T_ANIM[-1], snaps=T_ANIM)
+spectra = np.array([radial_spectrum(anim_spots[t])[: N_GRID // 2] for t in T_ANIM])
+
+fig = plt.figure(figsize=(12, 3.9), dpi=72, layout="constrained")
+ax_a, ax_b, ax_c = fig.subplots(1, 3)
+im_a = ax_a.imshow(anim_spots[T_ANIM[0]], cmap="magma", extent=(0, L_BOX, 0, L_BOX))
+im_b = ax_b.imshow(anim_stripes[T_ANIM[0]], cmap="magma", extent=(0, L_BOX, 0, L_BOX))
+for ax_, t_ in [(ax_a, "d = 20: spots"), (ax_b, "d = 10: stripes")]:
+    ax_.set(xticks=[], yticks=[], title=t_)
+    ax_.grid(False)
+shells = np.arange(N_GRID // 2)
+(spec_line,) = ax_c.semilogy(shells[1:], spectra[0, 1:], color=BLUE)
+ax_c.axvline(km_true[0] / (2 * np.pi / L_BOX), color=INK, ls="--", lw=1, label="fastest mode, linear theory")
+ax_c.set(xlabel="wavenumber shell |k| L / 2 pi", ylabel="power", xlim=(0, 30),
+         ylim=(spectra[:, 1:30].min() / 2, spectra[:, 1:30].max() * 2), title="power spectrum (spots)")
+ax_c.legend(fontsize=8)
+suptitle = fig.suptitle("")
+plt.close(fig)
+
+
+def update(i):
+    t_ = T_ANIM[i]
+    for im_, u_ in [(im_a, anim_spots[t_]), (im_b, anim_stripes[t_])]:
+        im_.set_data(u_)
+        im_.set_clim(u_.min(), u_.max())
+    spec_line.set_ydata(spectra[i, 1:])
+    suptitle.set_text(f"t = {t_:.0f}   (spot field range {anim_spots[t_].min():.3f} to {anim_spots[t_].max():.3f})")
+    return im_a, im_b, spec_line
+
+
+anim = animation.FuncAnimation(fig, update, frames=len(T_ANIM), interval=200)
+with plt.rc_context({"animation.frame_format": "jpeg"}):          # noisy images: JPEG frames are ~5x smaller
+    html = anim.to_jshtml(default_mode="once")
+HTML(html)
 
 # %% [markdown]
 # ## 3 · What a finished pattern can tell you

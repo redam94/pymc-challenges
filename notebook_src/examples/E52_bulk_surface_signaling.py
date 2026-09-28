@@ -56,6 +56,8 @@ import numpy as np
 import pymc as pm
 import pytensor.tensor as pt
 import scipy.sparse as sp
+from IPython.display import HTML
+from matplotlib import animation
 from scipy.linalg import expm
 from scipy.sparse.linalg import splu
 
@@ -308,6 +310,29 @@ for r, (name, U) in enumerate(pulse.items()):
     for c, t in enumerate(SNAP_T):
         cell_image(axes[r, c], U[c], cmax=0.02, mmax=0.5, title=f"{name}\nt = {t:.0f} s" if c == 0 else f"t = {t:.0f} s")
 fig.suptitle("A pulse at the front (right). Inside: cytosol (0-0.02 per um²). Ring: membrane (0-0.5 per um)", fontsize=10);
+
+# %% [markdown]
+# The animation below plays the same three cells continuously from 0.5 s to 2 minutes (time runs
+# on a log scale, so the fast early exchange and the slow late spreading both get frames).
+
+# %%
+T_ANIM = np.geomspace(0.5, 120, 40)
+pulse_anim = {name: evolve(REGIMES[name], u0, T_ANIM) for name in SHOW}
+fig, axes = plt.subplots(1, 3, figsize=(10.5, 4), dpi=72, subplot_kw=dict(projection="polar"))
+suptitle = fig.suptitle("")
+plt.close(fig)
+
+
+def update(k):
+    for ax, name in zip(axes, SHOW):
+        ax.clear()
+        cell_image(ax, pulse_anim[name][k], cmax=0.02, mmax=0.5, title=name)
+    suptitle.set_text(f"t = {T_ANIM[k]:5.1f} s after the pulse")
+    return []
+
+
+anim = animation.FuncAnimation(fig, update, frames=len(T_ANIM), interval=150)
+HTML(anim.to_jshtml(default_mode="once"))
 
 # %% [markdown]
 # The membrane-only protein spreads by a few µm in 90 s and never reaches the back. The exchanging
@@ -815,6 +840,39 @@ for c, (Da, Db, lab) in enumerate([(0.1, 10.0, "D_a = 0.1, D_b = 10"), (3.0, 10.
         axp = right.add_subplot(2, 2, 1 + c + 2 * r_, projection="polar")
         cell_image(axp, snaps[k_], cmin=0.34, cmax=0.40, mmax=1.4,
                    title=f"{lab}\nt = {15 * (k_ % len(snaps) + 1)} s")
+
+# %% [markdown]
+# The animation plays the two cells of the snapshots side by side for 5 minutes, with the membrane
+# profile $a(\theta)$ of both underneath.
+
+# %%
+snap_dt = 6.0
+wp_runs = {lab: wave_pinning(Da, 10.0, T=300.0, snap_every=int(snap_dt / 0.02))[1]
+           for lab, Da in [("D_a = 0.1", 0.1), ("D_a = 3", 3.0)]}
+fig = plt.figure(figsize=(10, 7), dpi=72)
+top, bottom = fig.subfigures(2, 1, height_ratios=[1.3, 1])
+pax = [top.add_subplot(1, 2, c + 1, projection="polar") for c in range(2)]
+lax = bottom.subplots()
+prof = {lab: lax.plot(np.rad2deg(TH[order]), snaps_[0][NB:][order], color=col, lw=2, label=lab)[0]
+        for (lab, snaps_), col in zip(wp_runs.items(), [BLUE, ORANGE])}
+lax.set(xlabel="angle from the front (degrees)", ylabel="active form a on the membrane", ylim=(0, 1.5),
+        xlim=(-180, 180))
+lax.legend(fontsize=8)
+suptitle = fig.suptitle("")
+plt.close(fig)
+
+
+def update(k):
+    for ax, (lab, snaps_) in zip(pax, wp_runs.items()):
+        ax.clear()
+        cell_image(ax, snaps_[k], cmin=0.34, cmax=0.40, mmax=1.4, title=f"{lab}, D_b = 10")
+        prof[lab].set_ydata(snaps_[k][NB:][order])
+    suptitle.set_text(f"t = {snap_dt * (k + 1):.0f} s (stimulus at the front for the first 10 s)")
+    return []
+
+
+anim = animation.FuncAnimation(fig, update, frames=len(wp_runs["D_a = 0.1"]), interval=150)
+HTML(anim.to_jshtml(default_mode="once"))
 
 # %% [markdown]
 # The map has a clear polarised region: **slow membrane diffusion and fast cytosolic diffusion**.

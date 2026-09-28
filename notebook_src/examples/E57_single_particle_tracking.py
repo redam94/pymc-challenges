@@ -762,9 +762,9 @@ ax.legend(fontsize=8);
 # state $i$, the forward probability $\alpha_k(i)$ and one Gaussian $\mathcal N(m_i, P_i)$ for the
 # current error; at every step,
 #
-# 1. for each previous state $j$ and new state $i$: predict $\Delta_k \sim \mathcal N(-m_j,\, 2D_i\Delta t
-#    + \sigma^2 + P_j)$, score it, and update the error ($e_{k+1} \mid \Delta_k$ is Gaussian with gain
-#    $\sigma^2 / V_{ij}$);
+# 1. for each previous state $j$ and new state $i$: predict $\Delta_k \sim \mathcal N(-m_j,\, 2D_i\Delta t + \sigma^2 + P_j)$
+#    , score it, and update the error $e_{k+1} \mid \Delta_k$ is Gaussian with gain
+#    ($\sigma^2 / V_{ij}$);
 # 2. $\alpha_{k+1}(i) = \sum_j \alpha_k(j)\,\Gamma_{ji}\,\text{score}_{ij}$ (the usual forward step);
 # 3. collapse the $K$ Gaussians arriving in state $i$ into one by moment matching.
 #
@@ -1059,13 +1059,15 @@ fig.colorbar(sc, ax=axes, label="P(free)", shrink=0.8);
 # *simulated* benchmark tracks): is this motion anomalous, and what is $\alpha$?
 #
 # This covariance is no longer tridiagonal, so no fixed basis diagonalises it: we use a batched
-# Cholesky factor, one 30 × 30 matrix per track. Each track $i$ has its own $\alpha_i = 2\,\text{logit}^{-1}(
-# \mu_\alpha + \tau_\alpha z_i)$ (partial pooling, $\alpha \in (0, 2)$) and its own amplitude, which we
+# Cholesky factor, one 30 × 30 matrix per track. Each track $i$ has its own $\alpha_i = 2\,\text{logit}^{-1}(\mu_\alpha + \tau_\alpha z_i)$ 
+# (partial pooling, $\alpha \in (0, 2)$) and its own amplitude, which we
 # parameterise by the MSD at lag 6 frames, $2K(6\Delta t)^\alpha$, not by $K$: $K$ and $\alpha$
 # trade off strongly (a change in $\alpha$ rotates the MSD line about $\tau = 1$ s, far outside the
 # data), and the lag-6 amplitude decorrelates them (this cut the sampling time by 2-3x in a
-# prototype). Priors: $\mu_\alpha \sim \mathcal N(0, 1)$ (so $\alpha_{\text{pop}}$ is centred on 1),
-# $\tau_\alpha \sim$ HalfNormal(0.5); the amplitudes are pooled too, log MSD$_6 \sim \mathcal N(\mu_m, \tau_m)$
+# prototype). 
+#
+# Priors: $\mu_\alpha \sim \mathcal N(0, 1)$ (so $\alpha_{\text{pop}}$ is centred on 1),
+# $\tau_\alpha \sim$ HalfNormal(0.5); the amplitudes are pooled too, log $\text{MSD}_6 \sim \mathcal N(\mu_m, \tau_m)$
 # with $\mu_m \sim \mathcal N(\log(12 \cdot 0.03\,\Delta t), 1.5)$ and $\tau_m \sim$ HalfNormal(1) (why, below); $\sigma$
 # as before. First the trap, on 30 simulated **Brownian** tracks ($D = 0.02$ µm²/s, $\sigma = 30$ nm,
 # 31 positions): fit fBM without and with the error term.
