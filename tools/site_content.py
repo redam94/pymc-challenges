@@ -58,6 +58,12 @@ SERIES = [
                "pharmacokinetics from theophylline and warfarin to a patient's dose after two monitoring "
                "samples; Hawkes and ETAS aftershock forecasts for the 2019 Ridgecrest sequence; and "
                "thousands of real headline A/B tests: winner's curse, peeking, and bandits."),
+    dict(key="outcomes", range="E67–E70", title="Rankings, choices, raters and compositions",
+         ids=_ids("E", 67, 70),
+         intro="Outcomes that are not one number on a line. Skills estimated from who beat whom in tennis and "
+               "from whole Formula 1 finishing orders; what people will pay for, from a panel of stated "
+               "choices, with a market simulator; the true label when pathologists or anaesthetists "
+               "disagree and nobody knows the answer; and data that are parts of a whole."),
     dict(key="frontier", range="E11–E17", title="At the research frontier", ids=_ids("E", 11, 17),
          intro="Neural networks inside differential equations, inference beyond plain NUTS, state-space "
                "models, likelihood-free inference, BART, the display of uncertainty and privacy-preserving "
@@ -87,7 +93,7 @@ SERIES = [
                "aggregation, binning and unusual plots."),
 ]
 SERIES_BY_KEY = {s["key"]: s for s in SERIES}
-RECENT = ["E66", "E65", "E64", "E63", "E62", "E61", "E60"]          # newest first, shown on the home page
+RECENT = ["E70", "E69", "E68", "E67", "E66", "E65", "E64"]          # newest first, shown on the home page
 
 
 def _link(ctx, eid, text=None):
@@ -337,6 +343,10 @@ def guide_page(ctx):
         ("Points in space and time", "A (log-Gaussian) Cox process", f"{L('E07')}"),
         ("A partition or a vocabulary", "Chinese restaurant / Pitman–Yor process", f"{L('E30')}"),
         ("A network of ties", "Latent-space and stochastic block models", f"{L('E21')}"),
+        ("Who beat whom, or a whole finishing order", "Bradley-Terry, dynamic skills, Plackett-Luce", f"{L('E67')}"),
+        ("A choice among alternatives", "Conditional and mixed logit; willingness to pay", f"{L('E68')}"),
+        ("Shares of a whole, or counts split into parts", "Dirichlet, logistic-normal and Dirichlet-multinomial models",
+         f"{L('E70')}"),
     ])
     structure = rows([
         ("Observations in groups (schools, counties, markets)", "Hierarchical model with partial pooling",
@@ -352,6 +362,7 @@ def guide_page(ctx):
         ("Values are missing", "Model the missingness jointly instead of dropping rows", f"{L('D02')}"),
         ("Measurements carry known error", "Measurement-error model; the error is data", f"{L('D02')}, {L('E17')}"),
         ("Species or cases can be missed", "Occupancy, N-mixture and capture–recapture models", f"{L('E28')}"),
+        ("Raters disagree and there is no gold standard", "Latent class and Dawid-Skene models", f"{L('E69')}"),
         ("Recent data are still arriving", "Nowcasting the reporting delay", f"{L('E38')}"),
         ("The survey sample is unrepresentative", "Multilevel regression and poststratification", f"{L('E36')}"),
         ("Only published summaries, not individuals", "Meta-analysis on sufficient statistics", f"{L('E17')}"),

@@ -621,6 +621,31 @@ doubt run `uv run python -c "..."` to check:
     data). A test intercept plus arm effects is a ridge: subtract each test's mean arm effect. A pandas
     `Styler` shows as `<Styler at 0x...>` in `inspect_nb.py`, so print a rounded DataFrame.
     `plt.hist(density=True)` on log-spaced bins misleads: use `weights=1/n`.
+  - **Rankings (E67).** Bradley-Terry / Plackett-Luce skills under a flat prior sampled with 0
+    divergences and r_hat ~1.9 (ESS 6) while every skill *difference* had r_hat 1.00: check r_hat on
+    identified contrasts and use `pm.ZeroSumNormal`; anchoring one player instead inflates everyone
+    else's sd. `pm.ZeroSumNormal(dims=(..., "team"), n_zerosum_axes=1)` constrains only the LAST axis.
+    Plackett-Luce as a `pm.Potential`: reverse cumulative denominators via
+    `pt.cumsum(e[:, ::-1], axis=1)[:, ::-1]` and mask padding with `pt.log(pt.where(valid, tail, 1.0))`
+    (0 * log 0 gives NaN). A PPC on a sufficient statistic (wins per player) cannot fail.
+  - **Discrete choice (E68).** Leave-one-*person*-out for a random-coefficient panel: summing task
+    log-likelihoods per person gave Pareto k > 0.7 for 359 of 361 people. Integrate the person effects
+    out instead; plain Monte Carlo from N(mu, Sigma) was biased low by ~100 nats at R = 200 (still ~12 at
+    R = 2000), importance sampling from a t fitted to each person's posterior draws converged at R = 200.
+    `az.loo` on a hand-built log-likelihood DataTree needs some `posterior` group (a dummy
+    `(chain, draw)` variable works). CRAN `.rda` files from the GitHub mirror may be bzip2, not gzip.
+  - **Latent class models (E69).** `pm.sample(nuts_sampler="pymc", initvals=[4 dicts], cores=2)`
+    fails because `chains` defaults to `cores`: pass `chains=4`. Under label switching the prevalence
+    (near 0.5) showed r_hat 1.16 while sensitivities showed 1.7: check every parameter. A random-effects
+    latent class model won LOO by ~21 nats but its random effect absorbed the class (a slide nobody
+    called positive got P(disease) = 0.27): check what the latent class still means, not only the fit.
+  - **Compositional data (E70).** A structural zero in `pm.DirichletMultinomial`:
+    `a = pt.where(present, phi * p, 1e-8)` (a zero count then adds exactly 0 to the logp); in
+    `pm.Multinomial` set the absent part's logit to `-inf` before the softmax. `pm.MvNormal` takes a
+    batched Cholesky `(n, k, k)` for a per-row covariance and still gives one log-likelihood per row.
+    LOO between a Dirichlet and a logistic-normal needs the Jacobian: add `-sum(log x)` per row to the
+    ALR log-likelihood, or the comparison is off by ~170 nats and picks the wrong model. A coords dim
+    named `sample` triggers an ArviZ UserWarning on every fit (and breaks `az.extract`).
   - **MRP (E36).** Group effects as plain `Normal` z plus a separate intercept (and a main
     effect plus its interaction) gave 28 divergences, 271 with r_hat 1.10 without state
     predictors; `pm.ZeroSumNormal` (`n_zerosum_axes=2` for interactions) gave 0. Non-centred

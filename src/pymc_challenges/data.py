@@ -1029,6 +1029,106 @@ REGISTRY: dict[str, Dataset] = {
         "horizontalError, depthError, magError, magNst, status, locationSource, magSource.",
         {"parse_dates": ["time"]},
     ),
+    # ---- examples (E67) ----
+    "atp_tour_matches": Dataset(
+        "atp_tour_matches_2021_2026.csv",
+        "https://raw.githubusercontent.com/Aneeshers/tennis-sackmann-archive/main/atp/atp_matches_2025.csv",
+        "Jeff Sackmann, tennis_atp (github.com/JeffSackmann/tennis_atp), CC BY-NC-SA 4.0 "
+        "(non-commercial, share-alike). The upstream repository was unreachable (404) on "
+        "2026-09-28; downloaded from the archival mirror github.com/Aneeshers/tennis-sackmann-archive "
+        "(atp/atp_matches_2021.csv ... atp_matches_2026.csv, June 2026 snapshot; the URL is one of "
+        "the six files). ASSEMBLED: concatenated, kept tour-level events only and the columns below "
+        "- keep the cached file in data/.",
+        "ATP men's tour-level singles matches, 2021-01 to 2026-06-07 (Roland Garros 2026 is the "
+        "last event): 14,844 matches, one row per match, winner first. Levels G (Grand Slam), M "
+        "(Masters 1000), A (ATP 250/500 and other tour events), F (season finals); Davis Cup, "
+        "Challengers and qualifying excluded. Columns: tourney_id, tourney_name, surface "
+        "(Hard/Clay/Grass), tourney_level, tourney_date (YYYYMMDD, usually the Monday of the event "
+        "week), round (R128...F, RR), best_of (3 or 5), match_num, winner_id, winner_name, loser_id, "
+        "loser_name, winner_rank / loser_rank and *_rank_points (ATP ranking at the time), score "
+        "(contains RET, W/O or DEF for retirements, walkovers, defaults).",
+    ),
+    "f1_race_results": Dataset(
+        "f1_race_results_2021_2025.csv",
+        "https://api.jolpi.ca/ergast/f1/2025/results.json?limit=100",
+        "Jolpica-F1 API (successor of the Ergast motor-racing API; github.com/jolpica/jolpica-f1), "
+        "data CC BY-NC-SA 4.0 per its Terms of Use. ASSEMBLED on 2026-09-28 from the paged "
+        "/ergast/f1/<season>/results.json and /sprint.json endpoints for 2021-2025 (the URL is one "
+        "page) into one table - keep the cached file in data/.",
+        "Formula 1 results 2021-2025: 114 Grand Prix races and 24 sprint races, 2,758 rows, one "
+        "per driver per session. Columns: season, round, session ('race' or 'sprint'; a sprint "
+        "shares its weekend's round number), race, date, circuit, driver_id, driver_code, "
+        "driver, constructor (team id), grid (0 = pit-lane start), position (FIA order including "
+        "non-classified cars), position_text (the classification: a number if classified, R = "
+        "retired / not classified, D = disqualified, W = withdrew before the start), status "
+        "(Finished, +1 Lap, Collision, Engine...), laps, points.",
+    ),
+    # ---- examples (E68) ----
+    "electricity_choice": Dataset(
+        "electricity_choice.csv",
+        "https://raw.githubusercontent.com/arteagac/xlogit/master/examples/data/electricity_long.csv",
+        "Kenneth Train's stated-preference survey of electricity suppliers (Huber & Train 2001, "
+        "Marketing Letters 12:259-269; Revelt & Train 2000, UC Berkeley working paper), distributed as `Electricity` in the R package "
+        "mlogit (GPL >= 2) and, in long format, in the Python package xlogit (GPL-3; the URL). "
+        "Verified identical, value for value, to mlogit 2.0-0's data/Electricity.rda.",
+        "Stated-preference choice experiment: 361 residential customers each made up to 12 "
+        "choices (4,308 choice tasks; 348 people did all 12) among 4 hypothetical electricity "
+        "suppliers. Long format, one row per task x alternative (17,232 rows): choice (1 if "
+        "chosen), id (person), alt (1-4, unlabelled), pf (fixed price, cents/kWh: 7 or 9; 0 when "
+        "the contract is time-of-day or seasonal), cl (contract length in years: 0, 1 or 5; "
+        "switching early costs a penalty), loc (local company), wk (well-known company), tod "
+        "(time-of-day rates: 11c 8am-8pm, 5c otherwise), seas (seasonal rates: 10c summer, 8c "
+        "winter, 6c spring/fall), chid (choice-task id).",
+    ),
+    # ---- examples (E69) ----
+    "carcinoma_pathologists": Dataset(
+        "carcinoma_pathologists.csv",
+        "https://raw.githubusercontent.com/cran/poLCA/master/data/carcinoma.rda",
+        "Holmquist, McMahan & Williams (1967, Archives of Pathology), as dichotomised in "
+        "Landis & Koch (1977, Biometrics 33:363-374) and Agresti (2002, Categorical Data Analysis, "
+        "Table 13.1); distributed as `carcinoma` in the CRAN package poLCA (GPL >= 2; the URL). "
+        "CONVERTED from the .rda with R (values unchanged, a slide index added) - keep the CSV in data/.",
+        "Seven pathologists (A-G) each classified the same 118 slides of the uterine cervix for "
+        "carcinoma (in situ or invasive). One row per slide: slide (1-118), A..G (1 = no carcinoma, "
+        "2 = carcinoma). There is no gold standard; 20 distinct rating patterns occur.",
+    ),
+    "anesthesia_dawid_skene": Dataset(
+        "anesthesia_dawid_skene.csv",
+        "https://raw.githubusercontent.com/cran/rater/master/data/anesthesia.rda",
+        "Dawid & Skene (1979), Applied Statistics 28:20-28, Table 1; distributed as `anesthesia` in "
+        "the CRAN package rater (Pullin, Gurrin & Vukcevic; GPL-2; the URL). CONVERTED from the .rda "
+        "with R - keep the CSV in data/. An independent transcription (github.com/dallascard/"
+        "dawid_skene) differs in one reading (patient 7, anaesthetist 1: 1,1,2 here vs 1,2,2).",
+        "Pre-operative assessments of 45 patients by 5 anaesthetists on a 4-point ordinal scale of "
+        "pre-operative health, made from a standard form; anaesthetist 1 assessed every form three "
+        "times weeks apart, the others once (315 ratings). Long format: item (patient, 1-45), rater "
+        "(1-5), rating (1-4).",
+    ),
+    # ---- examples (E70) ----
+    "arctic_lake_sediment": Dataset(
+        "arctic_lake_sediment.csv",
+        "https://raw.githubusercontent.com/cran/compositions/master/data/ArcticLake.rda",
+        "Aitchison (1986), The Statistical Analysis of Compositional Data, Data 5 (file ARCTIC.DAT "
+        "of his CODA package); distributed as `ArcticLake` in the CRAN package compositions "
+        "(van den Boogaart, Tolosana-Delgado & Bren; GPL >= 2; the URL). CONVERTED from the .rda with "
+        "R (values unchanged, a sample index added) - keep the CSV in data/.",
+        "Sand, silt and clay percentages of 39 sediment samples from an Arctic lake, with the water "
+        "depth (m) at which each was taken. Columns: sample (1-39), sand, silt, clay (percent; rows "
+        "sum to 100 up to rounding, 99.7-100.5), depth (10.4-103.7 m).",
+    ),
+    "uk_ge2024_england": Dataset(
+        "uk_ge2024_england_candidates.csv",
+        "https://electionresults.parliament.uk/general-elections/6/candidacies.csv",
+        "UK Parliament election results service (House of Commons Library), general election of "
+        "4 July 2024, candidacies file; Open Parliament Licence v3.0. DERIVED: English "
+        "constituencies only and 11 of the 52 columns kept (renamed; values unchanged; independents' "
+        "missing party set to 'Ind') - keep the CSV in data/ (the URL is the full UK file).",
+        "One row per candidate standing in the 543 English constituencies (3,720 candidacies). "
+        "Columns: region (9 English regions), constituency, ons_code, electorate, valid_votes (all "
+        "valid votes in the seat), party (abbreviation: Lab, Con, RUK = Reform UK, LD, Green, WPB, "
+        "SDP, ..., Ind), party_name, is_speaker (the Speaker, Chorley, whom the main parties did not "
+        "oppose), is_independent, votes (candidate's votes), position (finishing place; 1 = winner).",
+    ),
 }
 
 
