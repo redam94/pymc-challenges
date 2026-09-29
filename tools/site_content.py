@@ -58,14 +58,15 @@ SERIES = [
                "pharmacokinetics from theophylline and warfarin to a patient's dose after two monitoring "
                "samples; Hawkes and ETAS aftershock forecasts for the 2019 Ridgecrest sequence; and "
                "thousands of real headline A/B tests: winner's curse, peeking, and bandits."),
-    dict(key="outcomes", range="E67–E71", title="Rankings, choices, raters, compositions and decisions",
-         ids=_ids("E", 67, 71),
+    dict(key="outcomes", range="E67–E72", title="Rankings, choices, raters, compositions, topics and decisions",
+         ids=_ids("E", 67, 72),
          intro="Outcomes that are not one number on a line. Skills estimated from who beat whom in tennis and "
                "from whole Formula 1 finishing orders; what people will pay for, from a panel of stated "
                "choices, with a market simulator; the true label when pathologists or anaesthetists "
                "disagree and nobody knows the answer; data that are parts of a whole; and quick decisions, "
                "where a drift diffusion model explains both the choice and how long it took, and says "
-               "how cautious a person should be."),
+               "how cautious a person should be; and topic models for anything that comes as a bag of "
+               "features: the stories behind Upworthy's headlines and the palettes of a century of posters."),
     dict(key="frontier", range="E11–E17", title="At the research frontier", ids=_ids("E", 11, 17),
          intro="Neural networks inside differential equations, inference beyond plain NUTS, state-space "
                "models, likelihood-free inference, BART, the display of uncertainty and privacy-preserving "
@@ -95,7 +96,7 @@ SERIES = [
                "aggregation, binning and unusual plots."),
 ]
 SERIES_BY_KEY = {s["key"]: s for s in SERIES}
-RECENT = ["E71", "E70", "E69", "E68", "E67", "E66", "E65"]          # newest first, shown on the home page
+RECENT = ["E72", "E71", "E70", "E69", "E68", "E67", "E66"]          # newest first, shown on the home page
 
 
 def _link(ctx, eid, text=None):
@@ -351,6 +352,8 @@ def guide_page(ctx):
          f"{L('E71')}"),
         ("Shares of a whole, or counts split into parts", "Dirichlet, logistic-normal and Dirichlet-multinomial models",
          f"{L('E70')}"),
+        ("Counts of many features per item (words, colours, products)", "Topic models (LDA) and covariate topic models",
+         f"{L('E72')}"),
     ])
     structure = rows([
         ("Observations in groups (schools, counties, markets)", "Hierarchical model with partial pooling",

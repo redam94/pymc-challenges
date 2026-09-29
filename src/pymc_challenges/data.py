@@ -1129,6 +1129,23 @@ REGISTRY: dict[str, Dataset] = {
         "SDP, ..., Ind), party_name, is_speaker (the Speaker, Chorley, whom the main parties did not "
         "oppose), is_independent, votes (candidate's votes), position (finishing place; 1 = winner).",
     ),
+    # ---- examples (E72) ----
+    "loc_posters_thumbs": Dataset(
+        "loc_posters_thumbs.npz",
+        "https://www.loc.gov/pictures/search/?co=pos&fo=json",
+        "Library of Congress Prints & Photographs Division: Posters collection (search 'magazine', "
+        "dated 1889-1905; search 'world war 1914-1918', dated 1914-1919) and Work Projects "
+        "Administration Poster Collection (co=wpapos, dated 1935-1943); public domain / no known "
+        "restrictions on publication per the LoC rights statements. BUILT by "
+        "tools/fetch_loc_posters.py (seed 72): 250 randomly sampled items per era with a dated "
+        "year and a reference image; each 640-px reference JPEG (the URL's `image.full`) resized "
+        "to 64 x 48 with Lanczos. Keep the cached file in data/ (a rebuild draws from whatever "
+        "the live search returns).",
+        "NumPy .npz (open data.path(...) with np.load): thumbs (750 x 64 x 48 x 3 uint8 RGB, rows "
+        "= height), era ('1890s magazine', 'WWI', 'WPA'; 250 each), year (first four-digit year "
+        "in the LoC date), title, creator, loc_id, image_url. Many scans include the black or grey "
+        "backing and a colour-checker strip around the poster (most often in the WWI group).",
+    ),
     # ---- examples (E71) ----
     "speed_acc": Dataset(
         "wagenmakers2008_speed_acc.csv",

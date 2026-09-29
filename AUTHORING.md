@@ -661,6 +661,29 @@ doubt run `uv run python -c "..."` to check:
     every plausible t0 have a constant log-likelihood and `az.loo` raises "All tail values are the
     same"; estimating the rate removes it. A signed response time (+ upper / - lower) in one
     `pm.CustomDist` gives per-trial LOO for choice and time together.
+  - **Topic models (E72).** LDA with token topics summed out (`pm.Multinomial(p=theta @ phi)`) samples
+    fine on a small simulated corpus, but raw r_hat of `phi` is ~1.75 with zero divergences from label
+    switching across chains: align chains with `linear_sum_assignment` first. On 800 headline documents
+    x 652 words (sparse Dirichlet 0.1) NUTS took 6 minutes, 517 divergences, depth-10 transitions, four
+    different topic sets: use a Numba collapsed Gibbs sampler (~1 ms per sweep over 50k tokens) and
+    report stability across restarts. Even on a 32-colour vocabulary, jointly sampling palettes and
+    mixtures hit tree depth 9-10 (~4 min; the Theta-Phi trade-off); with Phi fixed the era model took
+    ~50 s. Zero-sum or centred mixture parameterisations and low-rank adaptation did not help (low-rank
+    was slower). `pm.Dirichlet` rows with alpha < 1: ~295 s at max depth; the normalised-Gamma construction
+    (`u = log g`, `pm.Flat` + Potential `a*u - exp(u) - gammaln(a)`, `theta = softmax(u)`) gave the same
+    answers in ~145 s at depth 8, and a mixture over covariate levels for unlabelled documents is exact on
+    that scale. A logistic-normal (STM-style) prior dated held-out documents OVERCONFIDENTLY (log score
+    worse than chance) - its quadratic penalty on near-absent topics; the Dirichlet was better. Pooling a
+    downstream regression over posterior draws of theta ATTENUATED effects by ~25% (verified by simulation);
+    the posterior-mean plug-in was unbiased. Held-out document completion kept improving to K = 80 when
+    documents repeat their own words. LoC's www.loc.gov answers a browser-like User-Agent with a
+    Cloudflare challenge (403); a plain one works. Pixel-to-codebook assignment over 2.3M pixels needs
+    chunking (a pixels x codes x 3 temporary hit the memory cap). Pixels are not independent tokens: top
+    vs bottom halves gave chi-square/df ~20, i.e. ~120 effective tokens per poster.
+    Topic displays: word-by-word highlighted text in matplotlib needs `fig.canvas.get_renderer()` and
+    `text.get_window_extent(renderer)` converted with `ax.transData.inverted()` to place the next word
+    (also for a legend row of long labels); 2-D MDS of the 24 chain topics kept only 37% of the JS-distance
+    variation - say so on the map.
   - **MRP (E36).** Group effects as plain `Normal` z plus a separate intercept (and a main
     effect plus its interaction) gave 28 divergences, 271 with r_hat 1.10 without state
     predictors; `pm.ZeroSumNormal` (`n_zerosum_axes=2` for interactions) gave 0. Non-centred
