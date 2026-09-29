@@ -7,13 +7,13 @@
 # ---
 
 # %% [markdown]
-# # E72 · Topic models beyond text: LDA for headlines, and for the colours of posters
+# # E72 · Topic models beyond text: headlines, poster colours, web sessions and shopping baskets
 #
 # | | |
 # |---|---|
 # | **Type** | Advanced worked example - read, run, modify |
-# | **Data** | Real: (1) the **Upworthy Research Archive** (Matias et al. 2021, *Scientific Data*): 4,873 headline A/B tests, 2013-2015, with impressions and clicks; (2) **750 public-domain posters from the Library of Congress** in three eras of printed "creatives" - 1890s magazine and book posters, First World War posters, and WPA posters (1936-1943) - as 64 x 48 thumbnails |
-# | **You will learn** | **Latent Dirichlet allocation** (LDA) as a mixed-membership model for *any* bag of discrete features · marginalising the token-level topic labels so NUTS can fit it in PyMC · **label switching** across chains and aligning topics with the Hungarian algorithm · why NUTS struggles on a large sparse vocabulary and how a **collapsed Gibbs sampler** (Numba) does the text · topic **stability** across restarts · why held-out likelihood keeps asking for more topics, and choosing the number of topics by what they are *for* · using topic proportions as regressors (click-through rates), and why pooling regressions over posterior draws of the mixtures **biases** the effects - checked by simulation · turning images into documents: a **colour vocabulary** in CIELab and pixels as tokens · removing what the scanner adds · palette topics from Gibbs restarts, and paper as a pictorial stopword · topic mixtures that depend on covariates: **logistic normal** (structural topic model) vs **Dirichlet-multinomial regression**, sampled as normalised log-Gammas · a semi-supervised model that dates hidden posters, and checking its calibration · how many independent tokens a picture is worth · **displaying topics so readers understand them**: relevance-ranked terms (LDAvis), an intertopic map that shows chain-to-chain stability, words highlighted by topic inside headlines, prevalence over time with bands, palettes on a lightness-hue map, posters segmented pixel by pixel into palettes with a colour check, a thumbnail atlas of the collection, and era compositions painted in their own palettes |
+# | **Data** | Real: (1) the **Upworthy Research Archive** (Matias et al. 2021, *Scientific Data*): 4,873 headline A/B tests, 2013-2015, with impressions and clicks; (2) **750 public-domain posters from the Library of Congress** in three eras of printed "creatives" - 1890s magazine and book posters, First World War posters, and WPA posters (1936-1943) - as 64 x 48 thumbnails; (3) the **msnbc.com anonymous web data** (UCI; 60,000 sessions of 28 September 1999); (4) the **UCI Online Retail** data (a UK giftware shop's customers and products, 2010-2011) |
+# | **You will learn** | **Latent Dirichlet allocation** (LDA) as a mixed-membership model for *any* bag of discrete features · marginalising the token-level topic labels so NUTS can fit it in PyMC · **label switching** across chains and aligning topics with the Hungarian algorithm · why NUTS struggles on a large sparse vocabulary and how a **collapsed Gibbs sampler** (Numba) does the text · topic **stability** across restarts · why held-out likelihood keeps asking for more topics, and choosing the number of topics by what they are *for* · using topic proportions as regressors (click-through rates), and why pooling regressions over posterior draws of the mixtures **biases** the effects - checked by simulation · turning images into documents: a **colour vocabulary** in CIELab and pixels as tokens · removing what the scanner adds · palette topics from Gibbs restarts, and paper as a pictorial stopword · topic mixtures that depend on covariates: **logistic normal** (structural topic model) vs **Dirichlet-multinomial regression**, sampled as normalised log-Gammas · a semi-supervised model that dates hidden posters, and checking its calibration · how many independent tokens a picture is worth · the same model for **web analytics** (sessions as documents: browsing intents, and why they do not beat "more of the same" at predicting a visit) and **retail** (customers as documents: shopping missions by market, and recommendations compared with best-sellers and item-to-item similarity) · **displaying topics so readers understand them**: relevance-ranked terms (LDAvis), an intertopic map that shows chain-to-chain stability, words highlighted by topic inside headlines, prevalence over time with bands, palettes on a lightness-hue map, posters segmented pixel by pixel into palettes with a colour check, a thumbnail atlas of the collection, and era compositions painted in their own palettes |
 #
 # ## The setting
 #
@@ -51,6 +51,7 @@
 # | E | Which palettes recur across 750 posters? | Gibbs restarts, palette stability; four displays of palettes |
 # | F | How did palettes change from the 1890s to the WPA, and when was this poster made? | logistic-normal vs Dirichlet era models, semi-supervised dating, calibration |
 # | G | How much is a picture worth? | the number of tokens per image and what it does to certainty |
+# | H | And for web sessions and shopping baskets? | browsing intents on msnbc.com; shopping missions of an online retailer, by market; predicting the rest of a visit and recommending products against baselines |
 
 # %%
 import logging
@@ -1663,7 +1664,283 @@ ax.set(xscale="log", xlabel="effective independent tokens per poster (pixels / o
 #
 # The same question arises whenever a "document" is built from correlated measurements: repeated
 # words within one text, sessions from one user, reads from one sequencing library.
+
+# %% [markdown]
+# ## H. Two more bags of features: web sessions and shopping baskets
 #
+# The same model, and the same code, on the two business uses from the table at the top.
+#
+# ### H1. Web analytics: browsing intents on a news site
+#
+# The **msnbc.com anonymous web data** (Heckerman 1999, UCI) records every page request made to
+# msnbc.com and the news pages of msn.com on 28 September 1999, at the level of 17 page categories
+# (front page, news, sports, weather, ...). A **session** - one user's requests that day - is the
+# document and the categories are its words, so a topic is a **browsing intent**: a set of sections
+# that tend to be visited together. We use a 60,000-session random sample and keep sessions with 2
+# to 100 page views (a single view has no co-occurrence to learn from; a few sessions with
+# thousands of views are robots). Order within a session is ignored by LDA, but we will use it to
+# test prediction.
+
+# %%
+data.describe("msnbc_sessions")
+web = data.load("msnbc_sessions")
+CATEGORIES = np.array("frontpage news tech local opinion on-air misc weather msn-news health living business "
+                      "msn-sports sports summary bbs travel".split())
+sessions = [np.array(p.split(), int) - 1 for p in web["pages"]]
+sessions = [s for s in sessions if 2 <= len(s) <= 100]
+X_web = np.array([np.bincount(s, minlength=len(CATEGORIES)) for s in sessions])
+print(f"{len(sessions):,} sessions with 2-100 views (of {len(web):,}); median {np.median(X_web.sum(1)):.0f} views")
+
+K_WEB = 6
+phi_web_d, theta_web_d, _ = lda_gibbs(X_web, K_WEB, alpha=0.1, beta=0.1, burn=500, draws=20, thin=10, seed=1)
+phi_web, theta_web = phi_web_d.mean(0), theta_web_d.mean(0)
+web_order = np.argsort(-theta_web.mean(0))
+phi_web, theta_web = phi_web[web_order], theta_web[:, web_order]
+intents = [" + ".join(CATEGORIES[np.argsort(-phi_web[k])[:2]]) for k in range(K_WEB)]
+
+fig, ax = plt.subplots(figsize=(12, 3.8))
+cat_order = np.argsort(-X_web.sum(0))
+for k in range(K_WEB):
+    ax.scatter(np.arange(len(CATEGORIES)), np.full(len(CATEGORIES), k), s=phi_web[k, cat_order] * 1400,
+               color=TOPIC_COLOURS[k], alpha=0.85, edgecolor="white", lw=1)
+    ax.text(len(CATEGORIES) - 0.3, k, f"{theta_web[:, k].mean():.0%} of views", va="center", fontsize=8, color=INK)
+ax.set_xticks(range(len(CATEGORIES)), CATEGORIES[cat_order], rotation=40, ha="right", fontsize=8)
+ax.set_yticks(range(K_WEB), [f"intent {k}: {intents[k]}" for k in range(K_WEB)], fontsize=8)
+ax.set(xlim=(-0.7, len(CATEGORIES) + 1.3), ylim=(K_WEB - 0.5, -0.6),
+       title="Browsing intents on msnbc.com (circle area = share of the intent's page views; "
+             "categories ordered by overall traffic)")
+ax.grid(False);
+
+# %% [markdown]
+# Six intents, each readable as a kind of visit. What do visits of each intent look like? A session
+# "is" an intent when more than 80% of its mixture belongs to it.
+
+# %%
+lengths = X_web.sum(1)
+dominant = theta_web.argmax(1)
+pure = theta_web.max(1) > 0.8
+print(f"{pure.mean():.0%} of sessions are more than 80% one intent")
+print(pd.DataFrame({
+    "share of sessions (dominant)": [np.mean(dominant == k) for k in range(K_WEB)],
+    "of which > 80% pure": [np.mean(pure[dominant == k]) for k in range(K_WEB)],
+    "median views": [np.median(lengths[dominant == k]) for k in range(K_WEB)],
+    "mean views": [lengths[dominant == k].mean() for k in range(K_WEB)],
+}, index=[f"intent {k}: {intents[k]}" for k in range(K_WEB)]).round(2))
+
+# %% [markdown]
+# **Can intents predict where a visit goes next?** A realistic test: hold out 20% of the sessions
+# with at least four views, show the model the *first half* of each (in the order requested),
+# and score its prediction of the categories of the second half. Two baselines: overall
+# popularity, and "more of the same" - the session's own first-half counts smoothed towards
+# popularity, $(n_{dw} + c\,p_w) / (n_d + c)$ with $c = 2$ (the best of a few values tried while
+# preparing this notebook). We also score only the views of categories the visitor had *not* seen
+# yet - where a model of intents should help most.
+
+# %%
+split_web = np.random.default_rng(12)
+test_web = (split_web.random(len(X_web)) < 0.2) & (lengths >= 4)
+X_web_train = X_web[~test_web]
+test_rows = np.flatnonzero(test_web)
+seen = np.array([np.bincount(sessions[i][: len(sessions[i]) // 2], minlength=len(CATEGORIES)) for i in test_rows])
+rest = X_web[test_rows] - seen
+new_mask = seen == 0
+popular = (X_web_train.sum(0) + 0.5) / (X_web_train.sum() + 0.5 * len(CATEGORIES))
+
+
+def predict_hidden(X_seen, phis, alpha=0.1, sweeps=50, seed=0):
+    """Posterior predictive word probabilities for documents with the seen part only (topics fixed)."""
+    g = np.random.default_rng(seed)
+    d_i, w_i = np.nonzero(X_seen)
+    n = X_seen[d_i, w_i]
+    doc, word = np.repeat(d_i, n), np.repeat(w_i, n)
+    K = phis.shape[1]
+    prob = np.zeros(X_seen.shape)
+    for s, phi_s in enumerate(phis):
+        z = g.integers(K, size=doc.size)
+        ndk = np.zeros((X_seen.shape[0], K), np.int64)
+        np.add.at(ndk, (doc, z), 1)
+        _foldin_sweeps(doc, word, z, ndk, phi_s, alpha, sweeps, seed + s)
+        prob += (ndk + alpha) / (ndk.sum(1, keepdims=True) + K * alpha) @ phi_s
+    return prob / len(phis)
+
+
+def web_scores(p):
+    all_views = np.sum(rest * np.log(p)) / rest.sum()
+    q = p * new_mask
+    q = q / q.sum(1, keepdims=True)
+    new = rest * new_mask
+    ok = new.sum(1) > 0
+    return all_views, np.sum(new[ok] * np.log(np.clip(q[ok], 1e-300, None))) / new[ok].sum()
+
+
+rows_web = {"popularity": np.tile(popular, (len(seen), 1)),
+            "more of the same (c = 2)": (seen + 2 * popular) / (seen.sum(1, keepdims=True) + 2)}
+for K in [6, 14]:
+    phis_k, _, _ = lda_gibbs(X_web_train, K, alpha=0.1, beta=0.1, burn=300, draws=5, thin=20, seed=20 + K)
+    rows_web[f"LDA, {K} intents"] = predict_hidden(seen, phis_k)
+print(f"{len(test_rows):,} held-out sessions; {(rest * new_mask).sum() / rest.sum():.0%} of their second-half "
+      "views are of categories not seen in the first half")
+print(pd.DataFrame([web_scores(p) for p in rows_web.values()], index=list(rows_web),
+                   columns=["log score per view", "log score, new categories only"]).round(3))
+
+# %% [markdown]
+# Topics are an excellent *description* of this traffic and a poor *predictor* of it:
+#
+# * **Description.** Six intents, each a recognisable kind of visit: the front page (with business),
+#   news (with tech, health, living and summaries), on-air and misc (TV-related pages), sports,
+#   local news, and weather - which is almost a topic of its own. Nearly half the sessions are
+#   more than 80% one intent, weather visits the most single-minded (two thirds pure) and slightly
+#   longer. For a site this is a segmentation of *visits* rather than of visitors, with mixed
+#   visits represented as mixtures instead of being forced into one cluster.
+# * **Prediction.** Knowing a visit's intents did not beat the simplest rule, "more of the same":
+#   people keep returning to the categories they have already opened, which the visit's own counts
+#   capture directly (-1.64 nats per view, against -1.66 for 14 intents and -1.86 for 6). For the
+#   pages a visitor had *not* yet opened - 23% of the second-half views - intents were worse than
+#   plain popularity (-2.62 and -2.77 against -2.57). With 17 broad categories there is little
+#   co-occurrence structure beyond "stay where you are". A sequence model (a Markov chain or a
+#   hidden Markov model over categories, see E24) is the natural next step for prediction.
+##
+# ### H2. Retail: shopping missions of a gift wholesaler
+#
+# The **UCI Online Retail** data (Chen, Sain & Guo 2012) are a year of orders (December 2010 to
+# December 2011) from a UK online shop selling giftware, many of whose customers are small
+# retailers. A **customer** is the document and the **products** they bought are its words, so a
+# topic is a **shopping mission** - a set of products bought by the same kinds of customer. We
+# keep products bought by at least 30 customers and customers who bought at least 10 of them, and
+# record each product once per customer (bought or not): repeat orders of one product would
+# otherwise dominate a wholesaler's "document".
+
+# %%
+data.describe("online_retail")
+retail = data.load("online_retail")
+product_names = data.load("online_retail_products").set_index("stock_code")["description"]
+n_cust = retail.groupby("stock_code")["customer_id"].nunique()
+retail = retail[retail["stock_code"].isin(n_cust.index[n_cust >= 30])]
+n_prod = retail.groupby("customer_id")["stock_code"].nunique()
+retail = retail[retail["customer_id"].isin(n_prod.index[n_prod >= 10])]
+cust_i, customers = pd.factorize(retail["customer_id"])
+prod_i, products = pd.factorize(retail["stock_code"])
+X_ret = np.zeros((len(customers), len(products)), np.int64)
+X_ret[cust_i, prod_i] = 1
+names = product_names.loc[products].str.strip().str.lower().to_numpy()
+cust_country = retail.groupby("customer_id")["country"].first().loc[customers].to_numpy()
+print(f"{len(customers):,} customers x {len(products):,} products; median {np.median(X_ret.sum(1)):.0f} "
+      f"products per customer")
+
+K_RET = 10
+t0 = time.perf_counter()
+phi_ret_d, theta_ret_d, _ = lda_gibbs(X_ret, K_RET, alpha=0.1, beta=0.05, burn=500, draws=20, thin=10, seed=3)
+print(f"fitted in {time.perf_counter() - t0:.0f} s")
+phi_ret, theta_ret = phi_ret_d.mean(0), theta_ret_d.mean(0)
+ret_order = np.argsort(-theta_ret.mean(0))
+phi_ret, theta_ret = phi_ret[ret_order], theta_ret[:, ret_order]
+p_prod = X_ret.sum(0) / X_ret.sum()
+rel_ret = 0.6 * np.log(phi_ret) + 0.4 * np.log(phi_ret / p_prod)
+
+# %%
+fig, axes = plt.subplots(2, 5, figsize=(16, 7.5))
+customers_in = (theta_ret * X_ret.sum(1)[:, None]).sum(0)
+for k, ax in enumerate(axes.ravel()):
+    top = np.argsort(-rel_ret[k])[:8][::-1]
+    ax.barh(range(8), X_ret.sum(0)[top], color=GREY_BAR, height=0.72)
+    ax.barh(range(8), phi_ret[k, top] * customers_in[k], color="#2a78d6", height=0.72)
+    ax.set_yticks(range(8), [n[:26] for n in names[top]], fontsize=7)
+    ax.set_title(f"mission {k} ({theta_ret[:, k].mean():.0%} of purchases)", fontsize=9, loc="left")
+    ax.tick_params(axis="x", labelsize=7)
+    ax.grid(axis="y", visible=False)
+fig.supxlabel("customers buying the product: all (grey) and estimated within the mission (blue)", fontsize=9)
+fig.suptitle("Ten shopping missions: the 8 most relevant products of each (relevance, lambda = 0.6)");
+
+# %% [markdown]
+# **Who shops which mission?** The shop's customers are mostly British, with a sizeable group of
+# European businesses (Germany, France, the Benelux, Scandinavia, Iberia, ...). Averaging the
+# mixtures by market, with a bootstrap over customers for the uncertainty, shows whether the
+# European customers buy a different mix - the kind of question a merchandiser would ask before
+# printing a catalogue for a market.
+
+# %%
+market = np.where(cust_country == "United Kingdom", "UK", "rest of the world")
+market = np.where(np.isin(cust_country, ["Germany", "France", "EIRE", "Belgium", "Netherlands", "Switzerland",
+                                          "Spain", "Portugal", "Italy", "Norway", "Finland", "Sweden",
+                                          "Denmark", "Austria", "Poland", "Cyprus", "Channel Islands",
+                                          "Greece", "Iceland", "Malta", "Lithuania", "Czech Republic"]),
+                  "Europe (not UK)", market)
+MARKETS = ["UK", "Europe (not UK)", "rest of the world"]
+g_boot = np.random.default_rng(13)
+fig, ax = plt.subplots(figsize=(10, 4.2))
+for j, mk in enumerate(MARKETS):
+    rows_m = np.flatnonzero(market == mk)
+    boots = np.array([theta_ret[g_boot.choice(rows_m, len(rows_m))].mean(0) for _ in range(400)])
+    lo, hi = np.quantile(boots, [0.05, 0.95], axis=0)
+    mid = theta_ret[rows_m].mean(0)
+    ax.errorbar(np.arange(K_RET) + (j - 1) * 0.22, mid, yerr=[mid - lo, hi - mid], fmt="o",
+                color=["#2a78d6", "#eb6834", "#1baf7a"][j], label=f"{mk} ({len(rows_m)} customers)")
+labels_ret = [names[np.argsort(-rel_ret[k])[0]][:18] for k in range(K_RET)]
+ax.set_xticks(range(K_RET), [f"{k}: {labels_ret[k]}" for k in range(K_RET)], rotation=35, ha="right", fontsize=8)
+ax.set(ylabel="average share of a customer's purchases\n(90% bootstrap interval)",
+       title="Shopping missions by market")
+ax.legend(fontsize=8);
+
+# %% [markdown]
+# **Recommending products.** For a random 20% of customers we hide half of their products, infer
+# each customer's mission mix from the other half, and recommend the ten most probable products
+# they have not bought. The score is the **hit rate**: the share of the ten (or of all their
+# hidden products, if fewer) that they did in fact buy. Baselines: the ten best-sellers, and the
+# workhorse of recommender systems, **item-to-item** similarity (products scored by their cosine
+# similarity, across customers, to what the customer already bought).
+
+# %%
+split_ret = np.random.default_rng(14)
+test_ret = split_ret.random(len(X_ret)) < 0.2
+X_ret_train, X_ret_test = X_ret[~test_ret], X_ret[test_ret]
+shown = np.zeros_like(X_ret_test)
+for d in range(len(X_ret_test)):
+    bought = np.flatnonzero(X_ret_test[d])
+    split_ret.shuffle(bought)
+    shown[d, bought[: len(bought) // 2]] = 1
+hidden = X_ret_test - shown
+
+
+def hit_rate(score):
+    score = np.where(shown > 0, -np.inf, score)
+    top10 = np.argsort(-score, 1)[:, :10]
+    return np.mean(np.take_along_axis(hidden, top10, 1).sum(1) / np.minimum(hidden.sum(1), 10))
+
+
+col_norm = np.linalg.norm(X_ret_train, axis=0).clip(1e-9)
+item_sim = (X_ret_train / col_norm).T @ (X_ret_train / col_norm)
+np.fill_diagonal(item_sim, 0)
+best_sellers = X_ret_train.sum(0).astype(float)
+recs = {"best-sellers": np.tile(best_sellers, (len(shown), 1)),
+        "item-to-item similarity": shown @ item_sim + 1e-9 * best_sellers}
+t0 = time.perf_counter()
+for K in [10, 40, 80]:
+    phis_k, _, _ = lda_gibbs(X_ret_train, K, alpha=0.1, beta=0.05, burn=300, draws=5, thin=20, seed=30 + K)
+    recs[f"LDA, {K} missions"] = predict_hidden(shown, phis_k)
+print(f"LDA fits and predictions: {time.perf_counter() - t0:.0f} s; {len(shown)} held-out customers")
+print(pd.Series({name: hit_rate(s) for name, s in recs.items()}, name="hit rate of the top 10").round(3))
+
+# %% [markdown]
+# Here topics earn their keep in both ways:
+#
+# * **Description.** The ten missions are the shop's product lines as customers actually combine
+#   them: wicker and wooden hearts (home decoration), vintage Christmas (paper chains, crackers),
+#   Regency tea sets and cake tins, humorous metal signs, feltcraft toys, children's party goods
+#   (birthday cards, lunch boxes), ceramic drawer knobs and herb markers, "retrospot" baking and
+#   party tableware, gift stationery, and bags. The market comparison is actionable: European
+#   customers put about three times the UK share of their purchases into children's party goods
+#   (about 0.24 against 0.08) and "retrospot" baking (0.20 against 0.08), and much less into the
+#   hearts, Christmas decorations, metal signs and drawer knobs. The 32 customers outside Europe
+#   are too few for firm conclusions (see their intervals).
+# * **Prediction.** Mission mixtures lift the hit rate of ten recommendations from 0.11 (best-sellers)
+#   to 0.19 with 10 missions, 0.25 with 40 and 0.29 with 80 - level with item-to-item similarity
+#   (0.27). Once more the number of topics depends on the purpose: ten missions to describe the
+#   business, eighty to recommend. LDA's advantages over item-to-item similarity are not accuracy
+#   but a posterior for every customer (with few purchases a customer's mixture is broad, which a
+#   recommender can use to hedge; item-to-item similarity has no notion of uncertainty) and missions a merchandiser can
+#   read.
+#
+# %% [markdown]
 # ## Summary
 #
 # * **LDA is a model of any count table.** Documents x features, each document a mixture of a few
@@ -1694,6 +1971,10 @@ ax.set(xscale="log", xlabel="effective independent tokens per poster (pixels / o
 #   top-10 list; palettes read best on a lightness-hue map, as pixel segmentations of real posters
 #   (with a check of how well the model reproduces each poster's colours - roughly, here), in an
 #   atlas of thumbnails, and as era bars painted in their own colours.
+# * **Web sessions and baskets.** Browsing intents describe a news site's visits well but predicted
+#   the rest of a visit no better than "more of the same". Shopping missions describe a retailer's
+#   customers (and how Europe differs from the UK) and, with enough of them, recommend as well as
+#   item-to-item similarity - again, few topics to describe, many to predict.
 # * **Pixels are not independent tokens**: a poster is worth about 120 independent colour draws,
 #   not 2,600. How many tokens a document contributes is a modelling decision with consequences
 #   for every interval.
@@ -1707,7 +1988,10 @@ ax.set(xscale="log", xlabel="effective independent tokens per poster (pixels / o
 #    words inform the mixtures together: add the Normal likelihood of part C to the Gibbs sampler's
 #    full conditional for each token's topic (Blei & McAuliffe 2007 derive it). Do topics change?
 #    Do the effects move away from the plug-in estimates?
-# 3. **Another bag of features.** Use the same code on a different count table: word counts per
-#    speech in a collection of political speeches, products per order in a public retail dataset,
-#    or the `bci_trees` species counts per plot used in E30 (plots as documents, species as words:
-#    the topics are plant communities). Which parts of this notebook's checks carry over?
+# 3. **Another bag of features.** Use the same code on a different count table, for example the
+#    `bci_trees` species counts per plot used in E30 (plots as documents, species as words: the
+#    topics are plant communities). Which parts of this notebook's checks carry over?
+# 4. **Orders instead of customers.** Rebuild the retail corpus with *orders* as documents (the
+#    UCI spreadsheet has invoice numbers; `tools/build_e72_extras.py` aggregates them away). Are
+#    order-level missions the same as customer-level ones? Which recommends better for the next
+#    order?

@@ -1146,6 +1146,39 @@ REGISTRY: dict[str, Dataset] = {
         "in the LoC date), title, creator, loc_id, image_url. Many scans include the black or grey "
         "backing and a colour-checker strip around the poster (most often in the WWI group).",
     ),
+    "msnbc_sessions": Dataset(
+        "msnbc_sessions_sample.csv",
+        "https://archive.ics.uci.edu/static/public/133/msnbc+com+anonymous+web+data.zip",
+        "Heckerman, D. (1999), msnbc.com anonymous web data, UCI Machine Learning Repository "
+        "(CC BY 4.0): IIS logs of msnbc.com and the news parts of msn.com for "
+        "28 September 1999, 989,818 users. SUBSAMPLED by tools/build_e72_extras.py (seed 72): 60,000 "
+        "random sessions - keep the cached file in data/.",
+        "One row per user session (all page requests of one user that day): session (line number in "
+        "the original file, from 0), n_views, pages (space-separated page-category codes in request "
+        "order: 1 frontpage, 2 news, 3 tech, 4 local, 5 opinion, 6 on-air, 7 misc, 8 weather, "
+        "9 msn-news, 10 health, 11 living, 12 business, 13 msn-sports, 14 sports, 15 summary, 16 bbs, "
+        "17 travel). Cached pages were not logged.",
+    ),
+    "online_retail": Dataset(
+        "online_retail_customer_products.csv",
+        "https://archive.ics.uci.edu/static/public/352/online+retail.zip",
+        "Chen, D. (2015), Online Retail, UCI Machine Learning Repository "
+        "(CC BY 4.0); Chen, Sain & Guo (2012), Journal of Database Marketing & Customer Strategy "
+        "Management 19:197-208. AGGREGATED by tools/build_e72_extras.py from the 541,909 "
+        "transaction lines of the spreadsheet at the URL - keep the cached file in data/.",
+        "A UK online retailer of giftware (many customers are wholesalers), orders 1 Dec 2010 - 9 Dec "
+        "2011, one row per (customer, product): customer_id, country (the customer's most common), "
+        "stock_code, n_invoices (orders containing the product), quantity (units). 4,335 customers, "
+        "3,659 products, 266,226 rows; cancellations, returns, rows without a customer and "
+        "non-product codes (postage, fees, adjustments) removed. Product names: online_retail_products.",
+    ),
+    "online_retail_products": Dataset(
+        "online_retail_products.csv",
+        "https://archive.ics.uci.edu/static/public/352/online+retail.zip",
+        "As online_retail (UCI Online Retail, CC BY 4.0), built by tools/build_e72_extras.py.",
+        "One row per product: stock_code, description (its most common description in the "
+        "transactions), n_customers.",
+    ),
     # ---- examples (E71) ----
     "speed_acc": Dataset(
         "wagenmakers2008_speed_acc.csv",

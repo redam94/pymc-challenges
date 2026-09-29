@@ -684,6 +684,22 @@ doubt run `uv run python -c "..."` to check:
     `text.get_window_extent(renderer)` converted with `ax.transData.inverted()` to place the next word
     (also for a legend row of long labels); 2-D MDS of the 24 chain topics kept only 37% of the JS-distance
     variation - say so on the map.
+    Web/retail corpora (E72 part H): the UCI Online Retail spreadsheet needs openpyxl - convert once
+    with `uv run --no-project --with openpyxl` (tools/build_e72_extras.py) instead of adding a
+    dependency. On msnbc.com sessions (17 categories) LDA did NOT beat "more of the same" (the session's
+    own counts smoothed to popularity) at predicting the rest of a visit, and lost to popularity on
+    unseen categories; on retail baskets it matched item-to-item cosine only at K = 80. Always include
+    a strong simple baseline. Binarise per-customer product counts, or wholesalers' repeat orders
+    dominate their documents.
+  - **Newer topic models (E73).** Measure topic stability with top-word Jaccard after Hungarian matching,
+    not cosine of word distributions: ProdLDA's near-uniform softmax(B) rows gave cosine 0.99 between runs
+    whose top words barely overlapped. `from module import *` skips `_private` Numba kernels - import them
+    by name. GSDMM on headline sets made one catch-all cluster of half the documents (also with 40
+    clusters); anchor words on 4.5k short docs were poor (diversity 0.33) and anchor-started Gibbs did not
+    make topics agree; learned asymmetric alpha and a weak-limit HDP did not switch topics off (HDP ~40 topics
+    > 1% at truncation 40 or 100). ProdLDA in plain JAX: batch-normalise decoder logits, Adam b1 = 0.99,
+    300 epochs x 4 seeds ~25 s. Supervised LDA must be scored on held-out documents via fold-in. HPF CAVI
+    with a (nonzeros x K) responsibility array peaked at 1.5 GB for 250k nonzeros x 80.
   - **MRP (E36).** Group effects as plain `Normal` z plus a separate intercept (and a main
     effect plus its interaction) gave 28 divergences, 271 with r_hat 1.10 without state
     predictors; `pm.ZeroSumNormal` (`n_zerosum_axes=2` for interactions) gave 0. Non-centred
