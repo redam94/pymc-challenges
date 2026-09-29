@@ -700,6 +700,25 @@ doubt run `uv run python -c "..."` to check:
     > 1% at truncation 40 or 100). ProdLDA in plain JAX: batch-normalise decoder logits, Adam b1 = 0.99,
     300 epochs x 4 seeds ~25 s. Supervised LDA must be scored on held-out documents via fold-in. HPF CAVI
     with a (nonzeros x K) responsibility array peaked at 1.5 GB for 250k nonzeros x 80.
+  - **Colour science and fading (E74).** Spectra to CIELAB is `R @ W` (CMF x illuminant, columns
+    normalised so white = 1) plus a cube root: write it once for NumPy and once with `pt.switch` for the
+    model, and check it against published Lab values (0.02 units on the xenon data). Kubelka-Munk K/S
+    `(1-R)^2/2R` is additive, so fading is linear in K/S: a rank-one SVD of the K/S *changes* tells
+    you before fitting whether "one chromophore gets weaker" can work. Dye spectra from a sample minus
+    the paper go slightly negative at some wavelengths: clip K/S at 1e-6 before inverting or a grid
+    produces NaN. Fit to CIELAB (3 numbers per spectrum) rather than 36 correlated reflectances. A
+    degradation-product term shared across light sources was captured by the smooth, precise
+    microfading curves and missed the xenon hue shifts: give each light source its own product term.
+    Rates from two instruments need a per-colourant transfer factor (pooled); expect it to vary ~50x.
+    Photographs of two impressions: register by FFT cross-correlation of edge maps over a scale grid;
+    an affine Lab map between photos distorts saturated colours, so calibrate each photo against
+    inert anchors (bare paper, carbon ink) inside the model. Recipes: sum out a handful in PyMC
+    (`pt.logsumexp` over per-recipe log-likelihoods in a `pm.Potential`, recover probabilities from
+    a Deterministic); for many tiny multimodal problems use an exact grid per posterior draw. Use a
+    lab posterior as a prior (MvNormal on per-dye parameters) - "cut" - so a weak photograph cannot
+    drag lab rates. `pm.sample(idata_kwargs={"log_likelihood": True})` warns FutureWarning: call
+    `pm.compute_log_likelihood`. `plt.figure()` under the arviz style + manual `add_axes` warns about
+    layoutgrids: `plt.subplots(..., layout="none")`. Builds in ~190 s at 1.2 GB.
   - **MRP (E36).** Group effects as plain `Normal` z plus a separate intercept (and a main
     effect plus its interaction) gave 28 divergences, 271 with r_hat 1.10 without state
     predictors; `pm.ZeroSumNormal` (`n_zerosum_axes=2` for interactions) gave 0. Non-centred

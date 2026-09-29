@@ -1179,6 +1179,53 @@ REGISTRY: dict[str, Dataset] = {
         "One row per product: stock_code, description (its most common description in the "
         "transactions), n_customers.",
     ),
+    # ---- examples (E74) ----
+    "woodblock_fading": Dataset(
+        "woodblock_fading_spectra.csv",
+        "https://zenodo.org/records/17014267",
+        "Baines, Brokerhof, Christoforou, Jansen, van Leeuwen, Patin & Sauvage (2026), Balancing "
+        "access and preservation: investigating light-induced fading of colourants used in Japanese "
+        "woodblock prints, Journal of Paper Conservation 27:18-30; data on Zenodo 17014267 (CC BY "
+        "4.0), Rijksmuseum / Cultural Heritage Agency of the Netherlands (RCE). BUILT by "
+        "tools/build_e74_fading.py from the MFT and xenotest spreadsheets - keep the cached file.",
+        "Reflectance spectra of reconstructions of Edo-period woodblock-print colourants printed on "
+        "Japanese paper in 1999 by the Museum of Fine Arts, Boston, faded in 2024 by a microfading "
+        "tester (instrument MFT: 2700 K LED spot, ~4.2 Mlx, no UV; three spots averaged) and in a "
+        "xenon-arc chamber (XT: daylight-through-glass filter, 0.1 Mlx). One row per (instrument, "
+        "colourant, dose, wavelength): dose_Mlxh (visible exposure, million lux hours), wavelength "
+        "(380-730 nm, 10 nm; MFT averaged over +-4 nm), reflectance (0-1), refl_sd (MFT spot sd). "
+        "Colourants: dayflower, safflower, turmeric, sappanwood, cochineal, yellowwood, orpiment, "
+        "indigo, Prussian blue, vermilion, red lead, iron oxide, ochre, lead white, mica, brass "
+        "powder, three mixtures (safflower+dayflower, indigo+orpiment, turmeric+orpiment), the bare "
+        "paper, and (MFT only) Blue Wool references BW1-BW4.",
+    ),
+    "woodblock_fading_lab": Dataset(
+        "woodblock_fading_lab.csv",
+        "https://zenodo.org/records/17014267",
+        "As woodblock_fading (Baines et al. 2026, Zenodo 17014267, CC BY 4.0).",
+        "The CIELAB values the authors computed (D65, 10 degree observer): instrument, colourant, "
+        "dose_Mlxh, L, a, b. MFT: every 10-second reading (0.1 MJ/m2 apart).",
+    ),
+    "cie1964_d65": Dataset(
+        "cie1964_d65.csv",
+        "http://www.cvrl.org/database/data/cmfs/ciexyz64_1.csv",
+        "CIE 1964 10-degree colour-matching functions (CVRL, UCL) and CIE standard illuminant D65 "
+        "(CIE 015; the 5 nm table as distributed with colour-science), assembled by "
+        "tools/build_e74_fading.py.",
+        "wavelength (360-830 nm, 1 nm), xbar, ybar, zbar, d65 (relative power, 100 at 560 nm; "
+        "linearly interpolated from 5 nm).",
+    ),
+    "harunobu_impressions": Dataset(
+        "harunobu_impressions.npz",
+        "https://api.artic.edu/api/v1/artworks/20814",
+        "Suzuki Harunobu (c. 1766), two impressions each of two designs from the series Eight Views of "
+        "the Parlor (Zashiki hakkei): Descending Geese of the Koto Bridges (AIC 20814, 88966) and The "
+        "Evening Glow of a Lamp (AIC 88968, 20817). Art Institute of Chicago, public domain, "
+        "CC0 images via IIIF. Downloaded by tools/build_e74_fading.py.",
+        "NumPy .npz (open data.path(...) with np.load): images (4 x 528 x 400 x 3 uint8 sRGB; the "
+        "400-px-wide IIIF JPEGs trimmed top and bottom to a common height), aic_id, design "
+        "('geese', 'lamp'), title.",
+    ),
     # ---- examples (E71) ----
     "speed_acc": Dataset(
         "wagenmakers2008_speed_acc.csv",

@@ -69,6 +69,12 @@ SERIES = [
                "features: the stories behind Upworthy's headlines, the palettes of a century of posters, the "
                "intents behind web visits and the missions behind shopping baskets - and the newer topic models "
                "built for LDA's problems, tested on the same data."),
+    dict(key="colour", range="E74", title="Colour, light and images", ids=["E74"],
+         intro="When the estimate is a colour. How the dyes of Japanese woodblock prints fade, measured with "
+               "a microfading tester and a xenon-arc chamber and modelled from the physics of dyed paper; "
+               "why the two instruments disagree; what two impressions of a 1766 Harunobu print looked like "
+               "when new, recovered from museum photographs; and uncertainty displays that still work when "
+               "colour cannot be used to show the uncertainty, ending with how long a print can be shown."),
     dict(key="frontier", range="E11–E17", title="At the research frontier", ids=_ids("E", 11, 17),
          intro="Neural networks inside differential equations, inference beyond plain NUTS, state-space "
                "models, likelihood-free inference, BART, the display of uncertainty and privacy-preserving "
@@ -98,7 +104,7 @@ SERIES = [
                "aggregation, binning and unusual plots."),
 ]
 SERIES_BY_KEY = {s["key"]: s for s in SERIES}
-RECENT = ["E73", "E72", "E71", "E70", "E69", "E68", "E67"]          # newest first, shown on the home page
+RECENT = ["E74", "E73", "E72", "E71", "E70", "E69", "E68"]          # newest first, shown on the home page
 
 
 def _link(ctx, eid, text=None):
@@ -356,6 +362,8 @@ def guide_page(ctx):
          f"{L('E70')}"),
         ("Counts of many features per item (words, colours, pages, products)", "Topic models (LDA) and covariate topic models",
          f"{L('E72')}, {L('E73')}"),
+        ("Colours or spectra that change with exposure", "Kubelka-Munk mixing, fading kinetics rendered through the "
+         "CIE observer", f"{L('E74')}"),
     ])
     structure = rows([
         ("Observations in groups (schools, counties, markets)", "Hierarchical model with partial pooling",
