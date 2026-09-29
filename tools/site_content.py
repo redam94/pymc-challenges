@@ -69,12 +69,14 @@ SERIES = [
                "features: the stories behind Upworthy's headlines, the palettes of a century of posters, the "
                "intents behind web visits and the missions behind shopping baskets - and the newer topic models "
                "built for LDA's problems, tested on the same data."),
-    dict(key="colour", range="E74", title="Colour, light and images", ids=["E74"],
-         intro="When the estimate is a colour. How the dyes of Japanese woodblock prints fade, measured with "
-               "a microfading tester and a xenon-arc chamber and modelled from the physics of dyed paper; "
-               "why the two instruments disagree; what two impressions of a 1766 Harunobu print looked like "
-               "when new, recovered from museum photographs; and uncertainty displays that still work when "
-               "colour cannot be used to show the uncertainty, ending with how long a print can be shown."),
+    dict(key="colour", range="E74–E77", title="Colour, light and images", ids=_ids("E", 74, 77),
+         intro="When the estimate is a colour, a spectrum, a region or a word. How the dyes of Japanese woodblock "
+               "prints fade, and what a 1766 Harunobu print looked like when new; why two paints can match in "
+               "the shop and differ at home (metamers), inverted from colour to spectrum with a prior learned "
+               "from 1,269 Munsell chips; segmenting photographs with an unknown number of regions and checking "
+               "the result, and its confidence, against the people who outlined them; and how 110 languages "
+               "divide colour space, speaker by speaker - each with uncertainty displays that still work when "
+               "colour cannot be used to show the uncertainty."),
     dict(key="frontier", range="E11–E17", title="At the research frontier", ids=_ids("E", 11, 17),
          intro="Neural networks inside differential equations, inference beyond plain NUTS, state-space "
                "models, likelihood-free inference, BART, the display of uncertainty and privacy-preserving "
@@ -104,7 +106,7 @@ SERIES = [
                "aggregation, binning and unusual plots."),
 ]
 SERIES_BY_KEY = {s["key"]: s for s in SERIES}
-RECENT = ["E74", "E73", "E72", "E71", "E70", "E69", "E68"]          # newest first, shown on the home page
+RECENT = ["E77", "E76", "E75", "E74", "E73", "E72", "E71"]          # newest first, shown on the home page
 
 
 def _link(ctx, eid, text=None):
@@ -364,6 +366,10 @@ def guide_page(ctx):
          f"{L('E72')}, {L('E73')}"),
         ("Colours or spectra that change with exposure", "Kubelka-Munk mixing, fading kinetics rendered through the "
          "CIE observer", f"{L('E74')}"),
+        ("A spectrum from a colour measurement", "Bayesian inversion with a learned spectral prior; metamers",
+         f"{L('E76')}"),
+        ("Regions of an image, number unknown", "Dirichlet-process mixture with a Potts spatial prior", f"{L('E75')}"),
+        ("Names people give to colours", "Softmax categories over CIELAB with speaker-level effects", f"{L('E77')}"),
     ])
     structure = rows([
         ("Observations in groups (schools, counties, markets)", "Hierarchical model with partial pooling",

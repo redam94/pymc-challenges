@@ -719,6 +719,39 @@ doubt run `uv run python -c "..."` to check:
     drag lab rates. `pm.sample(idata_kwargs={"log_likelihood": True})` warns FutureWarning: call
     `pm.compute_log_likelihood`. `plt.figure()` under the arviz style + manual `add_axes` warns about
     layoutgrids: `plt.subplots(..., layout="none")`. Builds in ~190 s at 1.2 GB.
+  - **Partition posteriors and segmentation (E75).** A Potts x CRP collapsed Gibbs chain started with everything
+    in one segment stayed there (K = 2, 1,259 nats below the posterior at beta = 2) with no warning; start from
+    random labels, anneal beta over burn-in and add parallel tempering (inverse temperatures 1-0.7, swaps
+    40-65%; below ~0.6 the tempered copies sit in a many-cluster phase and never swap). Even so, 2 of 8
+    photographs kept two chains 19-26 nats apart: compare chain log posteriors. Starting at singletons overflows
+    a `kmax`-sized cluster table and Numba segfaults silently (exit 245): allocate n + 2 slots. The partition
+    prior alone collapses (largest segment 97% at beta = 0.01), so a prior predictive cannot choose beta; tune
+    it on held-out images. NUTS on a truncated stick-breaking mixture of superpixel features: 0 divergences,
+    r_hat 2.8, chain log densities 150+ apart, all 12 components used. A sliding-window texture feature makes
+    a halo class along every edge: compute it inside each superpixel. Tabulating the size-only terms of the NIW
+    log marginal likelihood halved sampler time. A Numba loop over a tuple of arrays with different ndim fails
+    to compile: write a `_swap(arr, r)` helper. Posterior boundary probabilities came out nearly binary and
+    uncalibrated against people (0.99 -> 59% of people). Builds in ~2-2.5 min at 1.1 GB.
+  - **Metamers and spectral inversion (E76).** Build 10 nm tristimulus weights by integrating the 1 nm
+    light x CMF against linear-interpolation "hats" per node: point-sampling FL11 at 10 nm is off by 1 ΔE00
+    (3 at worst) because its lines fall between nodes. Batch independent inversions as one model with a `chip`
+    dim. Expect tree depth 8-9; nutpie `adaptation="low_rank"` was 7-25x slower with divergences, so keep the
+    diagonal default. Metamer-mismatch bodies are exact and cheap with `scipy.optimize.linprog(method="highs")`
+    (900 LPs in 0.5 s). A 3-component linear model looks as good as a full learned prior at the posterior
+    median but covers 66-74% at nominal 90%: validate the colour under *unmeasured* lights, not the fit. A
+    calibrated global-Gaussian posterior lost a decision to a nearest-neighbour rule that uses local
+    structure; check decisions against simple rules. Builds in ~3 min at ~1.1-1.4 GB.
+  - **Colour naming (E77).** A Gaussian-category softmax written as centre + width per term is a ridge (a far
+    centre with a huge width is a linear logit: 56-94 divergences, r_hat 1.06). Write it as multinomial
+    regression on standardised quadratic CIELAB features with `pm.ZeroSumNormal(dims=("feat", "term"))`:
+    pooled fits 3 s, speaker-level models 15-60 s. Put the likelihood in a `pm.Potential` with one-hot counts
+    (`pt.einsum("ck,skt->sct")`). A pooled model matches every per-chip share yet fails a per-speaker check
+    completely: check at the level of the real unit. WCS `foci-exp.txt` has CR line endings and lists A1-A40 /
+    J1-J40 for one white/black choice: map to A0/J0 and deduplicate, or 70% of focus rows are dropped. One
+    random scoring split per speaker was too noisy to compare question strategies: average several and report
+    paired per-speaker differences. Importance sampling of one new speaker's 16 effects stayed usable to 40
+    answers (ESS median 161-578 of 8,000, worst 8). A display colour per term from the argmax chip picks ties
+    badly; use a P^8-weighted CIELAB mean. Builds in ~250 s at under 1.4 GB.
   - **MRP (E36).** Group effects as plain `Normal` z plus a separate intercept (and a main
     effect plus its interaction) gave 28 divergences, 271 with r_hat 1.10 without state
     predictors; `pm.ZeroSumNormal` (`n_zerosum_axes=2` for interactions) gave 0. Non-centred

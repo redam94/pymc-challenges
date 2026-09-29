@@ -1179,6 +1179,23 @@ REGISTRY: dict[str, Dataset] = {
         "One row per product: stock_code, description (its most common description in the "
         "transactions), n_customers.",
     ),
+    # ---- examples (E75) ----
+    "bsds500_subset": Dataset(
+        "bsds500_subset.npz",
+        "https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/BSR/BSR_bsds500.tgz",
+        "Berkeley Segmentation Dataset BSDS500: Arbelaez, Maire, Fowlkes & Malik (2011), Contour "
+        "detection and hierarchical image segmentation, IEEE TPAMI 33(5):898-916; human segmentations "
+        "from Martin, Fowlkes, Tal & Malik (2001), ICCV. Images from the Corel collection. The Berkeley "
+        "page allows downloading 'a portion of the dataset for non-commercial research and educational "
+        "purposes' and asks users to cite the papers; no open licence. A SMALL SUBSET BUILT by "
+        "tools/build_e75_bsds.py from the 70 MB archive (the URL) - keep the cached file.",
+        "NumPy .npz (open data.path(...) with np.load): ten landscape photographs at half resolution "
+        "(2 x 2 box average of 321 x 481): ids (BSDS ids), split ('train': 118035, 113044; 'test': "
+        "100007, 8068, 3063, 228076, 97010, 29030, 16068, 108004), images (10 x 161 x 241 x 3 uint8 "
+        "sRGB), human (10 x 7 x 161 x 241 int16: each annotator's segment labels 1, 2, ..., "
+        "subsampled [::2, ::2] from the full-resolution maps; 0 = no such annotator), n_human (5-6 "
+        "annotators per photograph).",
+    ),
     # ---- examples (E74) ----
     "woodblock_fading": Dataset(
         "woodblock_fading_spectra.csv",
@@ -1225,6 +1242,66 @@ REGISTRY: dict[str, Dataset] = {
         "NumPy .npz (open data.path(...) with np.load): images (4 x 528 x 400 x 3 uint8 sRGB; the "
         "400-px-wide IIIF JPEGs trimmed top and bottom to a common height), aic_id, design "
         "('geese', 'lamp'), title.",
+    ),
+    # ---- examples (E76) ----
+    "munsell_matt": Dataset(
+        "munsell_matt_spectra.csv",
+        "https://zenodo.org/records/3269912",
+        "Munsell Colors Matt (spectrophotometer measured), University of Kuopio / University of "
+        "Eastern Finland spectral color research database (Hauta-Kasari, n.d.; measured by J. "
+        "Hiltunen), mirrored on Zenodo 3269912 by the colour-science project. Licence "
+        "field on Zenodo: 'not specified'; cite the database. BUILT by tools/build_e76_metamers.py "
+        "(10 nm means of the 1 nm data) - keep the cached file.",
+        "Reflectance spectra of the 1,269 chips of the Munsell Book of Color, Matte Finish Collection "
+        "(1976), measured on a Perkin-Elmer Lambda 9 at 1 nm. One row per chip: chip (e.g. '2.5R 9/2'), "
+        "hue, hue_family (R, YR, Y, GY, G, BG, B, PB, P, RP), value, chroma, r380 ... r780 "
+        "(reflectance 0-1 at 10 nm, the mean of the 1 nm readings within +-4 nm).",
+    ),
+    "cie_illuminants_e76": Dataset(
+        "cie_illuminants_e76.csv",
+        "https://raw.githubusercontent.com/colour-science/colour/develop/colour/colorimetry/datasets/"
+        "illuminants/sds.py",
+        "CIE illuminants (CIE 15:2004 tables, CIE 015:2018) as distributed with colour-science; A "
+        "computed from Planck's law (CIE formula, checked against the table to 4e-6). Assembled by "
+        "tools/build_e76_metamers.py.",
+        "wavelength (380-780 nm, 5 nm) and relative spectral power of A (incandescent, 2856 K), FL2 "
+        "(cool-white fluorescent), FL11 (narrow-band triphosphor fluorescent), LED_B2 and LED_B4 "
+        "(phosphor-converted white LEDs).",
+    ),
+    # ---- examples (E77) ----
+    "wcs_naming": Dataset(
+        "wcs_naming.npz",
+        "https://raw.githubusercontent.com/jvosten/wcs/master/data-raw/term.txt",
+        "World Color Survey (Kay, Berlin, Maffi, Merrifield & Cook 2009, The World Color Survey, CSLI "
+        "Publications); WCS Data Archives, https://linguistics.berkeley.edu/wcs/data.html (formerly "
+        "www1.icsi.berkeley.edu/wcs), which asks that published work cite the archives and states no "
+        "other licence. Raw files read from the GitHub mirror jvosten/wcs (data-raw/). BUILT by "
+        "tools/build_e77_wcs.py - keep the cached file.",
+        "NumPy .npz (open data.path(...) with np.load): naming (2,616 speakers x 330 chips, int16 term "
+        "code - see wcs_terms - or -1 for no response), lang, speaker, age (-1 unknown), sex ('M', 'F', "
+        "''); foci_lang, foci_speaker, foci_code, foci_chip (31k best-example choices; white/black bar "
+        "choices mapped to chips A0/J0). 110 languages, ~24 speakers each; chip = column index + 1.",
+    ),
+    "wcs_terms": Dataset(
+        "wcs_terms.csv",
+        "https://raw.githubusercontent.com/jvosten/wcs/master/data-raw/dict.txt",
+        "As wcs_naming (World Color Survey archives; built by tools/build_e77_wcs.py).",
+        "One row per (language, term) used in the naming task: lang, code (0 = most used), abbrev (WCS "
+        "abbreviation), term (transcription(s) from dict.txt), n_responses, n_speakers.",
+    ),
+    "wcs_chips": Dataset(
+        "wcs_chips.csv",
+        "https://raw.githubusercontent.com/jvosten/wcs/master/data-raw/cnum-vhcm-lab-new.txt",
+        "As wcs_naming (World Color Survey archives: chip.txt and cnum-vhcm-lab-new.txt).",
+        "The 330 WCS Munsell chips: chip (1-330), row (A-J, light to dark), col (0 achromatic, 1-40 "
+        "hue), grid, munsell_hue, munsell_value, munsell_chroma, L, a, b (CIELAB as given by the "
+        "archive).",
+    ),
+    "wcs_languages": Dataset(
+        "wcs_languages.csv",
+        "https://raw.githubusercontent.com/jvosten/wcs/master/data-raw/wcs_iso_codes.csv",
+        "As wcs_naming (the archive's WCS_SIL_codes table, via jvosten/wcs).",
+        "lang (1-110), name, iso639_3, family, country, n_speakers.",
     ),
     # ---- examples (E71) ----
     "speed_acc": Dataset(
