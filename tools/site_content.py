@@ -26,15 +26,16 @@ SERIES = [
          intro="Most models that refuse to sample are data problems in disguise. These cover the craft "
                "around the model: preparing arrays, treating missingness and measurement error as part "
                "of the model, and carrying an analysis through to a report."),
-    dict(key="science", range="E07–E10, E46–E51, E78", title="Mechanistic and scientific models",
-         ids=_ids("E", 7, 10) + _ids("E", 46, 51) + ["E78"],
+    dict(key="science", range="E07–E10, E46–E51, E78–E80", title="Mechanistic and scientific models",
+         ids=_ids("E", 7, 10) + _ids("E", 46, 51) + _ids("E", 78, 80),
          intro="When theory supplies the regression function. Earthquakes as a point process in space "
                "and time, the expansion of the universe from supernovae, differential equations with "
                "JAX gradients, a black-hole ringdown in real LIGO strain, chaotic dynamics (fitting, forecasting "
                "and controlling systems that amplify every error, from blowflies to Lorenz's toy atmospheres), "
                "jump-diffusion SDEs for market crashes, and reaction-diffusion PDEs for cell invasion and "
                "signaling gradients, designing heaters, insulation and sensors for a heat-equation plate, and "
-               "finding planets in Kepler light curves and proving an interstellar comet is unbound."),
+               "finding planets in Kepler light curves and proving an interstellar comet is unbound; and cosmology "
+               "from whole images: every pixel of a Planck CMB patch, and a Hubble Einstein ring modelled pixel by pixel."),
     dict(key="biology", range="E52–E61", title="Cell biology and biophysics", ids=_ids("E", 52, 61),
          intro="Mechanistic models of living cells, fitted to what biologists measure: signals that travel "
                "through the membrane and the cytosol, the fluctuation test that showed mutations arise before "
@@ -107,7 +108,7 @@ SERIES = [
                "aggregation, binning and unusual plots."),
 ]
 SERIES_BY_KEY = {s["key"]: s for s in SERIES}
-RECENT = ["E78", "E77", "E76", "E75", "E74", "E73", "E72"]          # newest first, shown on the home page
+RECENT = ["E80", "E79", "E78", "E77", "E76", "E75", "E74"]          # newest first, shown on the home page
 
 
 def _link(ctx, eid, text=None):

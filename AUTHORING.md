@@ -765,6 +765,27 @@ doubt run `uv run python -c "..."` to check:
     distance, then use a sheared grid of +-6 conditional sd. Pass the arc as a mask argument so JAX compiles
     once. MPC's NEOSSat (C53) positions carry geocentric pos1-pos3 and it has no parallax constants. uv-run
     Python fails TLS to ssd.jpl.nasa.gov here: `--with truststore`. Builds in ~340 s at ~2 GB.
+  - **CMB field-level inference (E79).** Planck's 2 GB HEALPix FITS are NESTED tables: fetch only a patch's
+    rows with HTTP range requests (IRSA supports them; the big file sometimes answers 504 - retry). Use a
+    Hartley basis (Re - Im of the FFT) so every field coefficient is real and independent. At Planck noise,
+    non-centred coefficients froze (r_hat 3.6, zero divergences) and centred ones froze at 30x the noise;
+    partial non-centring with w = 1/(1+S/N) per mode works in both. A large mask hole or unobserved border
+    sends nutpie to tree depth 10 on every draw (a Hartley-diagonal mass matrix cannot precondition
+    prior-only directions): use Gibbs with preconditioned CG plus an exact dense block for modes below
+    l ~ 300; CG stopped at 1e-4 without that block biased large-scale bandpowers 30-40% low. A periodic model
+    on a non-periodic patch fakes small-scale power (pad ~1 degree), and the prior must include power aliased
+    from beyond Nyquist or the top bins come out high. `np.matmul` was 6x faster than `einsum` in the
+    preconditioner. Builds in ~150 s at ~1.3 GB.
+  - **Pixel-level lensing (E80).** Drizzled HST images correlate neighbouring pixels (lag-1 ~0.23, sum of
+    correlations 2.1): an independent-pixel likelihood shrinks every posterior sd by ~1.4 with nothing visible
+    in the residuals - whiten with FFT(r/sigma)/sqrt(P(k)) from a blank-sky patch. All six optimisations from
+    random prior draws landed in wrong modes; a staged start (masked lens-light fit, ring radius from the
+    azimuthal profile, a few source positions) worked 4 times in 5. `jax.hessian` of a 900-pixel evidence
+    blew the 3 GB cap: central differences of the exact JAX gradient use one gradient's memory.
+    `arctan2(e2, e1)` has a NaN gradient at e = 0: write the elliptical radius as a quadratic form in
+    (e1, e2). Setting det A = 1 at the singular centre makes a fake critical curve: drop contours near the
+    centre instead. nutpie `adaptation="low_rank"` gave depth 3-4 on 24 correlated lens parameters.
+    Builds in ~225 s at ~1.1-1.6 GB.
   - **MRP (E36).** Group effects as plain `Normal` z plus a separate intercept (and a main
     effect plus its interaction) gave 28 divergences, 271 with r_hat 1.10 without state
     predictors; `pm.ZeroSumNormal` (`n_zerosum_axes=2` for interactions) gave 0. Non-centred

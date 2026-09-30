@@ -1196,6 +1196,26 @@ REGISTRY: dict[str, Dataset] = {
         "subsampled [::2, ::2] from the full-resolution maps; 0 = no such annotator), n_human (5-6 "
         "annotators per photograph).",
     ),
+    # ---- examples (E80) ----
+    "slacs_j1627": Dataset(
+        "slacs_j1627_f814w.npz",
+        "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:HST/product/j9c701020_drc.fits",
+        "NASA/ESA Hubble Space Telescope, ACS/WFC F814W, programme 10494 (PI L. Koopmans; SLACS "
+        "follow-up), observed 2006-03-12, 4 exposures, 2,224 s; pipeline-drizzled, CTE-corrected product "
+        "j9c701020_drc.fits from the Mikulski Archive for Space Telescopes (MAST, STScI). HST archival data "
+        "are public; MAST asks for the acknowledgement 'Based on observations made with the NASA/ESA Hubble "
+        "Space Telescope, obtained from the data archive at the Space Telescope Science Institute. STScI is "
+        "operated by the Association of Universities for Research in Astronomy, Inc. under NASA contract "
+        "NAS 5-26555.' The lens is SDSS J162746.44-005357.5 (Bolton et al. 2008, ApJ 682, 964). A SMALL "
+        "EXTRACT BUILT by tools/build_e80_lens.py from the 215 MB FITS file (the URL) - keep the cached file.",
+        "NumPy .npz (open data.path(...) with np.load), all arrays turned by a multiple of 90 degrees so "
+        "that north is up and east left (north_residual_deg: the remaining angle of north from +y, towards "
+        "-x): sci (121 x 121 cutout centred on the lens galaxy, electrons/s, sky subtracted by the pipeline), "
+        "wht (the same, effective exposure time in s), blank_sci / blank_wht (128 x 128 empty sky nearby), "
+        "star_stamps (10 x 41 x 41 isolated stars within 70\" of the lens, for the PSF) and star_xy (their "
+        "positions in the original frame), pixel_scale (0.05 arcsec), exptime, photflam, photplam, ra_dec, "
+        "lens_xy_full, date_obs, proposal, rootname, filter.",
+    ),
     # ---- examples (E74) ----
     "woodblock_fading": Dataset(
         "woodblock_fading_spectra.csv",
@@ -1364,6 +1384,50 @@ REGISTRY: dict[str, Dataset] = {
         "JPL's published orbit of 2I/Borisov (solution 54, epoch JD 2458853.5 TDB): element, value, sigma, "
         "units - e, a, q, i, om, w, ma, tp, n, the non-gravitational parameters A1-A3 and DT, and rows for "
         "orbit_id, epoch, data_arc, first_obs, last_obs, n_obs_used, producer.",
+    ),
+    # ---- examples (E79) ----
+    "planck_smica_patches": Dataset(
+        "planck_smica_patches.npz",
+        "https://irsa.ipac.caltech.edu/data/Planck/release_3/all-sky-maps/maps/component-maps/cmb/",
+        "Planck 2018 (PR3) SMICA CMB temperature maps (COM_CMB_IQU-smica_2048_R3.00_full, _hm1, _hm2; "
+        "Planck Collaboration 2020, A&A 641, A4) and the common intensity confidence mask "
+        "(COM_Mask_CMB-common-Mask-Int_2048_R3.00), from the IRSA mirror of the ESA Planck Legacy "
+        "Archive. ESA asks users to acknowledge: 'Based on observations obtained with Planck "
+        "(http://www.esa.int/Planck), an ESA science mission with instruments and contributions directly "
+        "funded by ESA Member States, NASA, and Canada.' BUILT by tools/build_e79_cmb.py, which "
+        "downloads only the needed HEALPix rows with HTTP range requests - keep the cached file.",
+        "NumPy .npz (open data.path(...) with np.load): two 16 x 16 degree gnomonic patches, 256 x 256 "
+        "pixels of 3.75 arcmin, each pixel the mean of 4 x 4 point samples of the Nside-2048 maps; rows "
+        "run up in galactic latitude, columns towards decreasing galactic longitude. Per patch (prefix "
+        "'lmc_' centred on (l, b) = (280, -35), around the Large Magellanic Cloud; 'north_' on (60, 55)): "
+        "I (full-mission temperature, uK_CMB), hm1, hm2 (half-mission maps), inp (SMICA's inpainted "
+        "map, released 'for PR purposes'), mask (fraction of samples kept by the common mask; 1 = "
+        "usable), tmask (the same for SMICA's own confidence mask), centre. Global: reso_arcmin, n, sub, "
+        "beam_fwhm_arcmin (5: SMICA's effective Gaussian beam), pixwin_2048 (HEALPix Nside-2048 "
+        "temperature pixel window, ell = 0..4096, from healpy).",
+    ),
+    "planck_tt_theory": Dataset(
+        "planck_theory_tt.txt",
+        "https://irsa.ipac.caltech.edu/data/Planck/release_3/ancillary-data/cosmoparams/"
+        "COM_PowerSpect_CMB-base-plikHM-TTTEEE-lowl-lowE-lensing-minimum-theory_R3.01.txt",
+        "Planck 2018 best-fit LCDM theory spectra (base_plikHM_TTTEEE_lowl_lowE_lensing, the 'minimum' "
+        "file; Planck Collaboration 2020, A&A 641, A6), Planck Legacy Archive via IRSA; acknowledgement "
+        "as planck_smica_patches.",
+        "ell (2-2508) and D_ell = ell (ell + 1) C_ell / 2 pi in uK^2 for TT, TE, EE, BB, and the lensing "
+        "potential PP.",
+        read_kwargs={"sep": r"\s+", "comment": "#", "header": None,
+                     "names": ["ell", "TT", "TE", "EE", "BB", "PP"]},
+    ),
+    "planck_tt_binned": Dataset(
+        "planck_tt_binned.txt",
+        "https://irsa.ipac.caltech.edu/data/Planck/release_3/ancillary-data/cosmoparams/"
+        "COM_PowerSpect_CMB-TT-binned_R3.01.txt",
+        "Planck 2018 binned TT power spectrum (Planck Collaboration 2020, A&A 641, A5), Planck Legacy "
+        "Archive via IRSA; acknowledgement as planck_smica_patches.",
+        "83 bins from ell = 48 to 2499 (the full-sky, foreground-cleaned Plik spectrum): ell (bin "
+        "centre), Dl, dDl_lo, dDl_hi (uK^2), bestfit.",
+        read_kwargs={"sep": r"\s+", "comment": "#", "header": None,
+                     "names": ["ell", "Dl", "dDl_lo", "dDl_hi", "bestfit"]},
     ),
     # ---- examples (E71) ----
     "speed_acc": Dataset(
