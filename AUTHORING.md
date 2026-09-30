@@ -786,6 +786,34 @@ doubt run `uv run python -c "..."` to check:
     (e1, e2). Setting det A = 1 at the singular centre makes a fake critical curve: drop contours near the
     centre instead. nutpie `adaptation="low_rank"` gave depth 3-4 on 24 correlated lens parameters.
     Builds in ~225 s at ~1.1-1.6 GB.
+  - **Circular data (E81).** `pm.VonMises` returns -inf for observations outside [-pi, pi]: wrap the data
+    first. `mu ~ Uniform(-pi, pi)` near +-pi pinned a chain to the wall (r_hat 2.4, zero divergences), and the
+    same broke a von Mises activity mixture: sample natural parameters eta = kappa (cos mu, sin mu) with a
+    normal prior (the log-likelihood is concave in eta). A free point (c, s) used only for its angle funnels
+    near the origin. The tan-half link mu0 + 2 atan(beta x) has a real second mode at large |beta| (a step
+    function); the canonical link eta = XB avoids it (+242 LOO). With label switching check r_hat of the
+    density on a grid. A log-Fourier density can be fitted from its trigonometric moments (6 species in ~6 s).
+    ASOS reports winds under 3 kt as calm with direction 0: drop calms. Use local standard time for diurnal
+    effects. Circular PIT needs a chosen origin; jitter directions rounded to 10 degrees. ~200 s at ~2 GB.
+  - **Bayesian optimisation (E82).** Thousands of surrogate refits are cheap with one compiled
+    `model.logp_dlogp_function(ravel_inputs=True)` + `pm.set_data` (arrays may change length, no recompile)
+    + scipy L-BFGS: ~3 ms per MAP refit (`DictToArrayBijection` / `RaveledVars` map vectors to parameters).
+    `nutpie.compile_pymc_model(m).with_data(...)` refits NUTS in 0.2-0.3 s (target_accept 0.95 removed 37
+    divergences at n = 30). A categorical grid kernel is per-factor level matrices indexed by `idx` (equals
+    ExpQuad on one-hot with ls = 1/sqrt(-log rho)); on a full grid it is Kronecker, so exact joint draws need
+    five tiny Choleskys + Matheron's rule. A category coded as a number made BO worse than random search for
+    ~15 reactions. MAP plug-in sd was ~24% too small yet campaigns did as well as NUTS ones. Max-EI < threshold
+    is not a safe stopping rule. Pair campaigns by seed; compute random search exactly. ~200 s at 0.9 GB.
+  - **Quantile regression (E83).** `pm.AsymmetricLaplace(mu, b, q=tau)`'s `b` is a RATE in a symmetric
+    parameterisation: the check-loss ALD with scale sigma is `b = sqrt(tau (1 - tau)) / sigma`; it has no
+    logcdf. It is a working likelihood: the mode is the LP estimate but posterior sds were 0.35-0.9 of
+    bootstrap sds and nominal 90% intervals covered 65% (slope, tau = 0.9) in simulation, as the sandwich
+    predicts; with sigma fixed at 1, grams vs kilograms changed posterior sds 20-35x. Fix with the
+    Yang-Wang-He sandwich or a `pm.Potential` Gibbs posterior with a bootstrap-calibrated learning rate (one
+    scalar cannot fix every coefficient). A NumPy Frisch-Newton solver: 13 ms vs 680 ms for HiGHS `linprog`.
+    Monotone increments across tau never cross but need nutpie `adaptation="low_rank"`. Sinh-arcsinh
+    regression with mu, epsilon, log delta all linear: every draw divergent, r_hat 8 - parameterise by the
+    median and switch off jitter. Natality `cig_3` is "unknown" for 76% of births before 28 weeks. ~245 s.
   - **MRP (E36).** Group effects as plain `Normal` z plus a separate intercept (and a main
     effect plus its interaction) gave 28 divergences, 271 with r_hat 1.10 without state
     predictors; `pm.ZeroSumNormal` (`n_zerosum_axes=2` for interactions) gave 0. Non-centred

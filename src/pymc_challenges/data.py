@@ -1216,6 +1216,49 @@ REGISTRY: dict[str, Dataset] = {
         "positions in the original frame), pixel_scale (0.05 arcsec), exptime, photflam, photplam, ra_dec, "
         "lens_xy_full, date_obs, proposal, rootname, filter.",
     ),
+    # ---- examples (E82) ----
+    "edbo_arylation": Dataset(
+        "edbo_arylation.csv",
+        "https://raw.githubusercontent.com/b-shields/edbo/master/experiments/data/direct_arylation/"
+        "experiment_index.csv",
+        "Shields, Stevens, Li, Parasram, Damani, Martinez Alvarado, Janey, Adams & Doyle (2021), Bayesian "
+        "reaction optimization as a tool for chemical synthesis, Nature 590:89-96; data from the authors' "
+        "repository github.com/b-shields/edbo (MIT licence, (c) 2020 Benjamin J. Shields). BUILT by "
+        "tools/build_e82_arylation.py (SMILES replaced by the names in the repository's *-list.csv files) "
+        "- keep the cached file.",
+        "A fully enumerated high-throughput screen of a palladium-catalysed direct (C-H) arylation: every "
+        "combination of 12 phosphine ligands x 4 carboxylate bases x 4 solvents x 3 concentrations x 3 "
+        "temperatures, one yield each (1,728 rows): ligand, base, solvent, concentration (M: 0.057, 0.1, "
+        "0.153), temperature (C: 90, 105, 120), yield (%, 0-100).",
+    ),
+    "edbo_arylation_game": Dataset(
+        "edbo_arylation_game.csv",
+        "https://raw.githubusercontent.com/b-shields/edbo/master/experiments/arylation_game_summary.csv",
+        "As edbo_arylation: the 'reaction optimisation game' of Shields et al. (2021), in which chemists "
+        "chose experiments on the same grid and were shown the recorded yields. BUILT (reshaped to long "
+        "format) by tools/build_e82_arylation.py.",
+        "1,548 experiments by 50 participants (10-100 each): participant (0-49), area (Pharma, Academic, "
+        "Other), expertise, experience (as self-reported), step (order played), ligand, base, solvent, "
+        "concentration, temperature, yield.",
+    ),
+    "edbo_arylation_edbo_runs": Dataset(
+        "edbo_arylation_edbo_runs.csv",
+        "https://raw.githubusercontent.com/b-shields/edbo/master/experiments/"
+        "arylation_bo_results_GP-EI_bs=5.csv",
+        "As edbo_arylation: the authors' own simulated EDBO campaigns (Gaussian-process surrogate, "
+        "expected improvement, batches of 5, as the file name says). BUILT (long format) by tools/build_e82_arylation.py.",
+        "50 simulated campaigns x 100 experiments: run, step (1-100), yield (%).",
+    ),
+    "edbo_arylation_ligand_dft": Dataset(
+        "edbo_arylation_ligand_dft.csv",
+        "https://raw.githubusercontent.com/b-shields/edbo/master/experiments/data/direct_arylation/"
+        "ligand-boltzmann_dft.csv",
+        "As edbo_arylation: DFT descriptors of the ligands computed by the authors (conformer "
+        "Boltzmann-weighted averages). BUILT by tools/build_e82_arylation.py (the '_Boltz' numeric "
+        "columns only).",
+        "12 rows (ligand) x 366 descriptors: energies (HOMO, LUMO, ...), dipole, volumes, atomic charges, "
+        "NMR shifts and buried volumes of the phosphorus and its neighbours, and so on.",
+    ),
     # ---- examples (E74) ----
     "woodblock_fading": Dataset(
         "woodblock_fading_spectra.csv",
@@ -1428,6 +1471,51 @@ REGISTRY: dict[str, Dataset] = {
         "centre), Dl, dDl_lo, dDl_hi (uK^2), bestfit.",
         read_kwargs={"sep": r"\s+", "comment": "#", "header": None,
                      "names": ["ell", "Dl", "dDl_lo", "dDl_hi", "bestfit"]},
+    ),
+    # ---- examples (E81) ----
+    "ksba_wind": Dataset(
+        "asos_ksba_2021_2023.csv.gz",
+        "https://mesonet.agron.iastate.edu/cgi-bin/request/asos.py?station=SBA&data=drct&data=sknt&data=tmpf"
+        "&data=dwpf&year1=2021&month1=1&day1=1&year2=2024&month2=1&day2=1&tz=Etc/UTC&format=onlycomma"
+        "&latlon=no&missing=empty&trace=empty&direct=no&report_type=3",
+        "Iowa Environmental Mesonet (IEM, Iowa State University) ASOS/METAR archive, station SBA (Santa "
+        "Barbara Municipal Airport, California; an FAA/NWS Automated Surface Observing System). Public "
+        "US government observations redistributed by IEM, which asks to be acknowledged. BUILT by "
+        "tools/build_e81_circular.py (the URL returns an uncompressed CSV) - keep the cached file.",
+        "Routine hourly METAR reports, 2021-01-01 to 2023-12-31 (26,101 rows, at minute 53 of each hour): "
+        "valid (UTC timestamp), drct (direction the wind blows FROM, degrees clockwise from true north, "
+        "reported in steps of 10; 0 together with sknt = 0 means calm), sknt (speed, knots), tmpf and dwpf "
+        "(air and dew-point temperature, Fahrenheit). Empty = missing (e.g. variable direction).",
+    ),
+    "bci_camera_trap": Dataset(
+        "bci_camera_trap_times.csv",
+        "https://ndownloader.figshare.com/files/3219290",
+        "Rowcliffe, Kays, Kranstauber, Carbone & Jansen (2014), 'Activity level estimation data', figshare, "
+        "doi:10.6084/m9.figshare.1160536 (CC BY 4.0), file BCItime.txt; data of Rowcliffe et al. (2014), "
+        "'Quantifying levels of animal activity using camera trap data', Methods in Ecology and Evolution "
+        "5:1170-1179. Also shipped as `BCItime` in the R package activity. CONVERTED from space- to "
+        "comma-separated by tools/build_e81_circular.py - keep the cached file.",
+        "17,820 camera-trap records from Barro Colorado Island, Panama, 2008: species (13: agouti, peccary, "
+        "paca, rat, brocket, squirrel, coati, ocelot, tamandua, armadillo, opossum, mouse, tayra) and time "
+        "(time of day as a fraction of 24 hours, to the minute; no dates).",
+    ),
+    # ---- examples (E83) ----
+    "natality_births": Dataset(
+        "natality2023_births_sample.csv.gz",
+        "https://data.nber.org/nvss/natality/csv/2023/natality2023us.zip",
+        "National Center for Health Statistics (NCHS), National Vital Statistics System, Natality public use "
+        "file 2023 (all 3,605,081 US birth certificates of 2023; codes as in the NCHS 'User Guide to the 2023 "
+        "Natality Public Use File'), read from NBER's CSV conversion (the URL; 188 MB). US government work, "
+        "public domain; NCHS asks users to cite the source and not to attempt to identify anyone. BUILT by "
+        "tools/build_e83_natality.py (a seeded random subsample) - keep the cached file.",
+        "A simple random sample of 20,000 of the 3,491,735 SINGLETON births of 2023 (raw codes; 9 / 99 / "
+        "99.9 / 999 / 9999 = unknown, empty = not reported): dob_mm, mager (mother's age), mrace6 (1 White, "
+        "2 Black, 3 AIAN, 4 Asian, 5 NHOPI, 6 more than one race), dmar (1 married, 2 unmarried; not reported "
+        "for California), meduc (1-8 education, 9 unknown), tbo_rec (total birth order), previs (prenatal "
+        "visits), cig_0..cig_3 (cigarettes per day before pregnancy and in trimesters 1-3), m_ht_in (inches), "
+        "bmi (pre-pregnancy), pwgt_r (pre-pregnancy weight, lb), wtgain (lb), rf_pdiab / rf_gdiab / rf_ghype "
+        "(pre-pregnancy diabetes, gestational diabetes, gestational hypertension: Y/N/U), sex (M/F), combgest "
+        "and oegest_comb (gestation in weeks, combined and obstetric estimate), dbwt (birth weight, grams).",
     ),
     # ---- examples (E71) ----
     "speed_acc": Dataset(

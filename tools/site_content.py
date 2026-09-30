@@ -79,6 +79,12 @@ SERIES = [
                "the result, and its confidence, against the people who outlined them; and how 110 languages "
                "divide colour space, speaker by speaker - each with uncertainty displays that still work when "
                "colour cannot be used to show the uncertainty."),
+    dict(key="gaps", range="E81–E83", title="Directions, experiments and quantiles", ids=_ids("E", 81, 83),
+         intro="Three model families that need their own tricks. Angles wrap around, so means, priors and links "
+               "that work on a line break on a circle (wind at Santa Barbara, ocelots and their prey); Bayesian "
+               "optimisation chooses the next reaction on a fully measured chemistry screen and is scored "
+               "against 50 real chemists; and quantile regression for birth weights shows why the asymmetric "
+               "Laplace posterior is too sure of itself, and how to fix it."),
     dict(key="frontier", range="E11–E17", title="At the research frontier", ids=_ids("E", 11, 17),
          intro="Neural networks inside differential equations, inference beyond plain NUTS, state-space "
                "models, likelihood-free inference, BART, the display of uncertainty and privacy-preserving "
@@ -108,7 +114,7 @@ SERIES = [
                "aggregation, binning and unusual plots."),
 ]
 SERIES_BY_KEY = {s["key"]: s for s in SERIES}
-RECENT = ["E80", "E79", "E78", "E77", "E76", "E75", "E74"]          # newest first, shown on the home page
+RECENT = ["E83", "E82", "E81", "E80", "E79", "E78", "E77"]          # newest first, shown on the home page
 
 
 def _link(ctx, eid, text=None):

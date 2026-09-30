@@ -1,0 +1,1549 @@
+participant,area,expertise,experience,step,ligand,base,solvent,concentration,temperature,yield
+0,Pharma,Process Chemist,1_5 years,1,BrettPhos,KOAc,DMAc,0.1,105,5.47
+0,Pharma,Process Chemist,1_5 years,2,BrettPhos,KOPiv,DMAc,0.1,105,0.07
+0,Pharma,Process Chemist,1_5 years,3,BrettPhos,CsOAc,DMAc,0.1,105,4.74
+0,Pharma,Process Chemist,1_5 years,4,BrettPhos,KOAc,BuOAc,0.1,105,17.09
+0,Pharma,Process Chemist,1_5 years,5,BrettPhos,KOAc,BuCN,0.1,105,18.44
+0,Pharma,Process Chemist,1_5 years,6,BrettPhos,CsOAc,BuOAc,0.1,105,26.64
+0,Pharma,Process Chemist,1_5 years,7,BrettPhos,KOAc,p-Xylene,0.1,105,16.44
+0,Pharma,Process Chemist,1_5 years,8,PPhtBu2,KOAc,BuOAc,0.1,105,0.0
+0,Pharma,Process Chemist,1_5 years,9,GorlosPhos HBF4,KOAc,BuOAc,0.1,105,2.85
+0,Pharma,Process Chemist,1_5 years,10,PCy3 HBF4,KOAc,BuOAc,0.1,105,0.0
+0,Pharma,Process Chemist,1_5 years,11,JackiePhos,CsOPiv,BuOAc,0.1,105,2.41
+0,Pharma,Process Chemist,1_5 years,12,tBPh-CPhos,CsOPiv,BuOAc,0.1,105,15.16
+0,Pharma,Process Chemist,1_5 years,13,X-Phos,CsOPiv,BuOAc,0.1,105,59.92
+0,Pharma,Process Chemist,1_5 years,14,CgMe-PPh,CsOPiv,BuOAc,0.1,105,24.0
+0,Pharma,Process Chemist,1_5 years,15,P(fur)3,CsOPiv,BuOAc,0.1,105,14.51
+0,Pharma,Process Chemist,1_5 years,16,X-Phos,CsOPiv,BuOAc,0.1,90,3.0
+0,Pharma,Process Chemist,1_5 years,17,X-Phos,CsOPiv,BuOAc,0.1,120,52.22
+0,Pharma,Process Chemist,1_5 years,18,X-Phos,CsOPiv,p-Xylene,0.1,105,53.63
+0,Pharma,Process Chemist,1_5 years,19,X-Phos,KOAc,BuOAc,0.1,105,64.62
+0,Pharma,Process Chemist,1_5 years,20,X-Phos,KOAc,BuOAc,0.153,105,53.49
+0,Pharma,Process Chemist,1_5 years,21,X-Phos,KOAc,BuOAc,0.057,90,32.71
+0,Pharma,Process Chemist,1_5 years,22,X-Phos,KOPiv,BuOAc,0.057,90,68.86
+0,Pharma,Process Chemist,1_5 years,23,PPhMe2,KOAc,BuOAc,0.057,90,0.0
+0,Pharma,Process Chemist,1_5 years,24,BrettPhos,KOAc,BuOAc,0.057,90,17.54
+0,Pharma,Process Chemist,1_5 years,25,X-Phos,KOAc,BuCN,0.057,90,18.72
+0,Pharma,Process Chemist,1_5 years,26,X-Phos,CsOAc,BuOAc,0.057,90,61.71
+0,Pharma,Process Chemist,1_5 years,27,X-Phos,CsOAc,BuCN,0.057,90,72.9
+0,Pharma,Process Chemist,1_5 years,28,X-Phos,CsOAc,BuOAc,0.057,105,80.77
+0,Pharma,Process Chemist,1_5 years,29,X-Phos,KOPiv,BuOAc,0.057,105,69.26
+0,Pharma,Process Chemist,1_5 years,30,X-Phos,KOPiv,BuOAc,0.1,90,42.3
+0,Pharma,Process Chemist,1_5 years,31,X-Phos,CsOAc,BuCN,0.1,120,84.17
+0,Pharma,Process Chemist,1_5 years,32,X-Phos,CsOAc,BuCN,0.057,120,72.21
+0,Pharma,Process Chemist,1_5 years,33,X-Phos,CsOAc,p-Xylene,0.057,120,54.52
+0,Pharma,Process Chemist,1_5 years,34,X-Phos,KOPiv,BuCN,0.057,120,27.8
+0,Pharma,Process Chemist,1_5 years,35,X-Phos,CsOAc,BuOAc,0.057,120,7.02
+0,Pharma,Process Chemist,1_5 years,36,X-Phos,CsOAc,BuCN,0.153,120,77.01
+0,Pharma,Process Chemist,1_5 years,37,X-Phos,CsOAc,BuCN,0.153,90,0.0
+0,Pharma,Process Chemist,1_5 years,38,X-Phos,CsOAc,BuOAc,0.057,120,7.02
+0,Pharma,Process Chemist,1_5 years,39,X-Phos,CsOAc,BuOAc,0.153,120,6.23
+0,Pharma,Process Chemist,1_5 years,40,X-Phos,CsOAc,BuOAc,0.153,90,82.21
+1,Pharma,Engineer,1_5 years,1,BrettPhos,KOAc,DMAc,0.057,105,2.41
+1,Pharma,Engineer,1_5 years,2,PPhtBu2,KOAc,DMAc,0.057,105,0.12
+1,Pharma,Engineer,1_5 years,3,PPhtBu2,KOAc,BuCN,0.057,105,0.0
+1,Pharma,Engineer,1_5 years,4,BrettPhos,CsOPiv,BuCN,0.057,105,39.86
+1,Pharma,Engineer,1_5 years,5,BrettPhos,KOPiv,DMAc,0.1,120,0.26
+1,Pharma,Engineer,1_5 years,6,BrettPhos,CsOPiv,DMAc,0.057,105,0.0
+1,Pharma,Engineer,1_5 years,7,BrettPhos,CsOAc,DMAc,0.057,105,1.85
+1,Pharma,Engineer,1_5 years,8,X-Phos,CsOPiv,DMAc,0.057,105,30.21
+1,Pharma,Engineer,1_5 years,9,GorlosPhos HBF4,CsOPiv,DMAc,0.057,105,24.03
+1,Pharma,Engineer,1_5 years,10,BrettPhos,CsOPiv,BuOAc,0.057,105,49.23
+1,Pharma,Engineer,1_5 years,11,BrettPhos,CsOPiv,p-Xylene,0.057,105,23.53
+1,Pharma,Engineer,1_5 years,12,JackiePhos,CsOPiv,BuOAc,0.057,105,1.3
+1,Pharma,Engineer,1_5 years,13,BrettPhos,CsOPiv,BuOAc,0.153,120,25.67
+1,Pharma,Engineer,1_5 years,14,P(fur)3,CsOPiv,BuOAc,0.057,105,14.84
+1,Pharma,Engineer,1_5 years,15,CgMe-PPh,CsOPiv,BuOAc,0.057,105,19.84
+1,Pharma,Engineer,1_5 years,16,X-Phos,CsOPiv,p-Xylene,0.057,105,39.81
+1,Pharma,Engineer,1_5 years,17,X-Phos,CsOPiv,BuOAc,0.057,105,5.4
+1,Pharma,Engineer,1_5 years,18,X-Phos,KOAc,BuOAc,0.057,105,41.69
+1,Pharma,Engineer,1_5 years,19,X-Phos,KOAc,BuOAc,0.153,120,76.24
+1,Pharma,Engineer,1_5 years,20,GorlosPhos HBF4,CsOPiv,BuOAc,0.057,105,33.41
+1,Pharma,Engineer,1_5 years,21,X-Phos,KOAc,BuCN,0.153,120,78.6
+1,Pharma,Engineer,1_5 years,22,X-Phos,CsOAc,BuCN,0.153,120,77.01
+1,Pharma,Engineer,1_5 years,23,X-Phos,KOAc,BuOAc,0.153,90,25.35
+1,Pharma,Engineer,1_5 years,24,PCy3 HBF4,KOAc,BuOAc,0.153,120,0.0
+1,Pharma,Engineer,1_5 years,25,X-Phos,KOPiv,BuCN,0.153,120,71.43
+1,Pharma,Engineer,1_5 years,26,X-Phos,CsOPiv,BuCN,0.153,120,78.44
+1,Pharma,Engineer,1_5 years,27,X-Phos,KOAc,p-Xylene,0.153,120,61.67
+1,Pharma,Engineer,1_5 years,28,BrettPhos,KOAc,BuCN,0.153,120,25.77
+1,Pharma,Engineer,1_5 years,29,X-Phos,KOAc,BuCN,0.1,105,47.3
+1,Pharma,Engineer,1_5 years,30,X-Phos,KOAc,BuCN,0.057,120,43.22
+1,Pharma,Engineer,1_5 years,31,PCy3 HBF4,KOAc,BuCN,0.153,120,0.74
+1,Pharma,Engineer,1_5 years,32,PPh3,KOAc,BuCN,0.153,120,12.34
+1,Pharma,Engineer,1_5 years,33,BrettPhos,CsOPiv,BuOAc,0.153,120,25.67
+1,Pharma,Engineer,1_5 years,34,BrettPhos,KOPiv,BuCN,0.153,120,58.48
+2,Pharma,Process Chemist,1_5 years,1,BrettPhos,KOAc,DMAc,0.1,105,5.47
+2,Pharma,Process Chemist,1_5 years,2,JackiePhos,KOAc,DMAc,0.1,105,75.22
+2,Pharma,Process Chemist,1_5 years,3,P(fur)3,KOAc,DMAc,0.1,105,41.9
+2,Pharma,Process Chemist,1_5 years,4,PPh2Me,KOAc,DMAc,0.1,105,8.23
+2,Pharma,Process Chemist,1_5 years,5,PPh3,KOAc,DMAc,0.1,105,28.15
+2,Pharma,Process Chemist,1_5 years,6,JackiePhos,CsOAc,DMAc,0.1,105,41.0
+2,Pharma,Process Chemist,1_5 years,7,JackiePhos,KOPiv,DMAc,0.1,105,50.54
+2,Pharma,Process Chemist,1_5 years,8,JackiePhos,CsOPiv,DMAc,0.1,105,0.0
+2,Pharma,Process Chemist,1_5 years,9,GorlosPhos HBF4,KOAc,DMAc,0.1,105,13.11
+2,Pharma,Process Chemist,1_5 years,10,tBPh-CPhos,KOAc,DMAc,0.1,105,78.95
+2,Pharma,Process Chemist,1_5 years,11,tBPh-CPhos,CsOAc,DMAc,0.1,105,29.31
+2,Pharma,Process Chemist,1_5 years,12,tBPh-CPhos,KOAc,DMAc,0.153,105,57.33
+2,Pharma,Process Chemist,1_5 years,13,tBPh-CPhos,KOAc,DMAc,0.153,120,76.59
+2,Pharma,Process Chemist,1_5 years,14,tBPh-CPhos,KOAc,p-Xylene,0.1,105,6.39
+2,Pharma,Process Chemist,1_5 years,15,tBPh-CPhos,KOAc,BuCN,0.1,105,6.17
+2,Pharma,Process Chemist,1_5 years,16,tBPh-CPhos,KOAc,BuOAc,0.1,105,0.0
+2,Pharma,Process Chemist,1_5 years,17,tBPh-CPhos,KOAc,DMAc,0.057,105,68.71
+2,Pharma,Process Chemist,1_5 years,18,tBPh-CPhos,KOAc,DMAc,0.1,90,47.03
+2,Pharma,Process Chemist,1_5 years,19,CgMe-PPh,KOAc,DMAc,0.1,105,80.38
+2,Pharma,Process Chemist,1_5 years,20,X-Phos,KOAc,DMAc,0.1,105,65.37
+3,Pharma,Engineer,1_5 years,1,PPhtBu2,KOAc,DMAc,0.1,105,0.0
+3,Pharma,Engineer,1_5 years,2,PCy3 HBF4,KOAc,DMAc,0.1,105,7.26
+3,Pharma,Engineer,1_5 years,3,CgMe-PPh,KOAc,DMAc,0.1,105,80.38
+3,Pharma,Engineer,1_5 years,4,JackiePhos,KOAc,DMAc,0.1,105,75.22
+3,Pharma,Engineer,1_5 years,5,PPh3,KOAc,DMAc,0.1,105,28.15
+3,Pharma,Engineer,1_5 years,6,CgMe-PPh,KOPiv,DMAc,0.1,105,89.76
+3,Pharma,Engineer,1_5 years,7,CgMe-PPh,CsOAc,DMAc,0.1,105,83.25
+3,Pharma,Engineer,1_5 years,8,CgMe-PPh,KOAc,BuCN,0.1,105,54.67
+3,Pharma,Engineer,1_5 years,9,CgMe-PPh,KOAc,BuOAc,0.1,105,41.35
+3,Pharma,Engineer,1_5 years,10,CgMe-PPh,KOAc,p-Xylene,0.1,105,35.6
+3,Pharma,Engineer,1_5 years,11,CgMe-PPh,CsOPiv,DMAc,0.1,105,91.11
+3,Pharma,Engineer,1_5 years,12,CgMe-PPh,CsOPiv,DMAc,0.153,90,84.03
+3,Pharma,Engineer,1_5 years,13,CgMe-PPh,CsOPiv,DMAc,0.153,120,92.19
+3,Pharma,Engineer,1_5 years,14,CgMe-PPh,CsOPiv,DMAc,0.057,120,92.03
+3,Pharma,Engineer,1_5 years,15,CgMe-PPh,CsOPiv,DMAc,0.057,90,65.32
+3,Pharma,Engineer,1_5 years,16,GorlosPhos HBF4,CsOPiv,DMAc,0.153,120,54.83
+3,Pharma,Engineer,1_5 years,17,P(fur)3,CsOPiv,DMAc,0.153,120,68.17
+3,Pharma,Engineer,1_5 years,18,tBPh-CPhos,CsOPiv,DMAc,0.153,120,9.96
+3,Pharma,Engineer,1_5 years,19,JackiePhos,CsOPiv,DMAc,0.153,120,5.65
+3,Pharma,Engineer,1_5 years,20,BrettPhos,CsOPiv,DMAc,0.153,120,0.0
+3,Pharma,Engineer,1_5 years,21,X-Phos,CsOPiv,DMAc,0.153,120,48.34
+3,Pharma,Engineer,1_5 years,22,PPh2Me,CsOPiv,DMAc,0.153,120,10.49
+3,Pharma,Engineer,1_5 years,23,CgMe-PPh,CsOPiv,DMAc,0.153,105,100.0
+4,Pharma,Process Chemist,1_5 years,1,BrettPhos,KOAc,DMAc,0.1,105,5.47
+4,Pharma,Process Chemist,1_5 years,2,X-Phos,KOAc,DMAc,0.1,105,65.37
+4,Pharma,Process Chemist,1_5 years,3,GorlosPhos HBF4,KOAc,DMAc,0.1,105,13.11
+4,Pharma,Process Chemist,1_5 years,4,JackiePhos,KOAc,DMAc,0.1,105,75.22
+4,Pharma,Process Chemist,1_5 years,5,P(fur)3,KOAc,DMAc,0.1,105,41.9
+4,Pharma,Process Chemist,1_5 years,6,X-Phos,KOPiv,DMAc,0.1,105,77.41
+4,Pharma,Process Chemist,1_5 years,7,JackiePhos,KOPiv,DMAc,0.1,105,50.54
+4,Pharma,Process Chemist,1_5 years,8,JackiePhos,CsOAc,DMAc,0.1,105,41.0
+4,Pharma,Process Chemist,1_5 years,9,JackiePhos,KOAc,DMAc,0.1,120,75.12
+4,Pharma,Process Chemist,1_5 years,10,JackiePhos,KOAc,DMAc,0.153,120,85.21
+4,Pharma,Process Chemist,1_5 years,11,JackiePhos,KOAc,BuCN,0.153,120,20.72
+4,Pharma,Process Chemist,1_5 years,12,JackiePhos,KOAc,BuOAc,0.153,120,6.48
+4,Pharma,Process Chemist,1_5 years,13,JackiePhos,KOAc,p-Xylene,0.153,120,7.88
+4,Pharma,Process Chemist,1_5 years,14,X-Phos,KOAc,BuOAc,0.153,120,76.24
+4,Pharma,Process Chemist,1_5 years,15,X-Phos,KOAc,p-Xylene,0.153,120,61.67
+4,Pharma,Process Chemist,1_5 years,16,PPhtBu2,KOAc,DMAc,0.153,120,4.3
+4,Pharma,Process Chemist,1_5 years,17,tBPh-CPhos,KOAc,DMAc,0.153,120,76.59
+4,Pharma,Process Chemist,1_5 years,18,PCy3 HBF4,KOAc,DMAc,0.153,120,11.91
+4,Pharma,Process Chemist,1_5 years,19,PPh3,KOAc,DMAc,0.153,120,51.83
+4,Pharma,Process Chemist,1_5 years,20,PPh2Me,KOAc,DMAc,0.153,120,7.5
+4,Pharma,Process Chemist,1_5 years,21,JackiePhos,CsOPiv,DMAc,0.153,120,5.65
+4,Pharma,Process Chemist,1_5 years,22,X-Phos,CsOPiv,DMAc,0.153,120,48.34
+4,Pharma,Process Chemist,1_5 years,23,JackiePhos,KOAc,DMAc,0.057,120,89.14
+4,Pharma,Process Chemist,1_5 years,24,X-Phos,KOAc,DMAc,0.057,120,77.58
+4,Pharma,Process Chemist,1_5 years,25,CgMe-PPh,KOAc,DMAc,0.153,120,98.38
+4,Pharma,Process Chemist,1_5 years,26,CgMe-PPh,KOPiv,DMAc,0.153,120,99.81
+4,Pharma,Process Chemist,1_5 years,27,CgMe-PPh,CsOAc,DMAc,0.153,120,99.22
+4,Pharma,Process Chemist,1_5 years,28,CgMe-PPh,KOAc,BuCN,0.153,120,80.86
+4,Pharma,Process Chemist,1_5 years,29,CgMe-PPh,KOAc,BuOAc,0.153,120,52.47
+4,Pharma,Process Chemist,1_5 years,30,CgMe-PPh,KOAc,p-Xylene,0.153,120,60.29
+4,Pharma,Process Chemist,1_5 years,31,CgMe-PPh,CsOPiv,DMAc,0.153,120,92.19
+4,Pharma,Process Chemist,1_5 years,32,CgMe-PPh,KOPiv,BuCN,0.153,120,80.65
+4,Pharma,Process Chemist,1_5 years,33,CgMe-PPh,KOPiv,BuOAc,0.153,120,45.73
+4,Pharma,Process Chemist,1_5 years,34,CgMe-PPh,KOPiv,p-Xylene,0.153,120,44.47
+4,Pharma,Process Chemist,1_5 years,35,CgMe-PPh,CsOPiv,BuOAc,0.153,120,26.69
+5,Pharma,Process Chemist,1_5 years,1,BrettPhos,CsOPiv,DMAc,0.1,105,0.0
+5,Pharma,Process Chemist,1_5 years,2,BrettPhos,CsOPiv,BuCN,0.1,105,55.41
+5,Pharma,Process Chemist,1_5 years,3,BrettPhos,CsOPiv,BuOAc,0.1,105,27.48
+5,Pharma,Process Chemist,1_5 years,4,BrettPhos,CsOPiv,p-Xylene,0.1,105,21.54
+5,Pharma,Process Chemist,1_5 years,5,X-Phos,CsOPiv,DMAc,0.1,105,29.16
+5,Pharma,Process Chemist,1_5 years,6,X-Phos,CsOPiv,BuCN,0.1,105,68.53
+5,Pharma,Process Chemist,1_5 years,7,X-Phos,CsOPiv,BuCN,0.057,105,36.65
+5,Pharma,Process Chemist,1_5 years,8,X-Phos,CsOPiv,BuCN,0.153,105,79.76
+5,Pharma,Process Chemist,1_5 years,9,X-Phos,CsOPiv,BuCN,0.1,90,69.11
+5,Pharma,Process Chemist,1_5 years,10,X-Phos,CsOPiv,BuCN,0.1,120,59.81
+5,Pharma,Process Chemist,1_5 years,11,X-Phos,KOAc,BuCN,0.153,90,32.5
+5,Pharma,Process Chemist,1_5 years,12,X-Phos,KOPiv,BuCN,0.153,90,33.95
+5,Pharma,Process Chemist,1_5 years,13,X-Phos,CsOAc,BuCN,0.153,90,0.0
+5,Pharma,Process Chemist,1_5 years,14,X-Phos,CsOPiv,BuCN,0.153,90,75.4
+5,Pharma,Process Chemist,1_5 years,15,BrettPhos,CsOPiv,BuCN,0.153,90,54.55
+5,Pharma,Process Chemist,1_5 years,16,PPhtBu2,CsOPiv,BuCN,0.153,90,0.0
+5,Pharma,Process Chemist,1_5 years,17,tBPh-CPhos,CsOPiv,BuCN,0.153,90,8.95
+5,Pharma,Process Chemist,1_5 years,18,PCy3 HBF4,CsOPiv,BuCN,0.153,90,0.0
+5,Pharma,Process Chemist,1_5 years,19,PPh3,CsOPiv,BuCN,0.153,90,2.53
+5,Pharma,Process Chemist,1_5 years,20,P(fur)3,CsOPiv,BuCN,0.153,90,44.4
+5,Pharma,Process Chemist,1_5 years,21,PPh2Me,CsOPiv,BuCN,0.153,90,0.0
+5,Pharma,Process Chemist,1_5 years,22,GorlosPhos HBF4,CsOPiv,BuCN,0.153,90,18.19
+5,Pharma,Process Chemist,1_5 years,23,JackiePhos,CsOPiv,BuCN,0.153,90,16.91
+5,Pharma,Process Chemist,1_5 years,24,CgMe-PPh,CsOPiv,BuCN,0.153,90,36.73
+5,Pharma,Process Chemist,1_5 years,25,PPhMe2,CsOPiv,BuCN,0.153,90,0.0
+5,Pharma,Process Chemist,1_5 years,26,P(fur)3,CsOPiv,DMAc,0.153,90,31.66
+5,Pharma,Process Chemist,1_5 years,27,P(fur)3,CsOPiv,BuOAc,0.153,90,25.64
+5,Pharma,Process Chemist,1_5 years,28,P(fur)3,CsOPiv,p-Xylene,0.153,90,18.95
+5,Pharma,Process Chemist,1_5 years,29,P(fur)3,KOPiv,BuCN,0.153,90,52.2
+5,Pharma,Process Chemist,1_5 years,30,P(fur)3,KOPiv,DMAc,0.153,90,37.37
+5,Pharma,Process Chemist,1_5 years,31,P(fur)3,KOPiv,BuCN,0.153,105,57.68
+5,Pharma,Process Chemist,1_5 years,32,P(fur)3,KOPiv,BuCN,0.153,120,53.11
+5,Pharma,Process Chemist,1_5 years,33,P(fur)3,KOAc,BuCN,0.153,105,11.61
+5,Pharma,Process Chemist,1_5 years,34,P(fur)3,CsOAc,BuCN,0.153,105,31.29
+5,Pharma,Process Chemist,1_5 years,35,P(fur)3,CsOPiv,BuCN,0.153,105,52.69
+5,Pharma,Process Chemist,1_5 years,36,X-Phos,CsOPiv,DMAc,0.153,105,40.06
+5,Pharma,Process Chemist,1_5 years,37,X-Phos,CsOPiv,BuOAc,0.153,105,5.53
+5,Pharma,Process Chemist,1_5 years,38,X-Phos,CsOPiv,p-Xylene,0.153,105,73.93
+5,Pharma,Process Chemist,1_5 years,39,X-Phos,KOPiv,p-Xylene,0.153,105,34.45
+5,Pharma,Process Chemist,1_5 years,40,X-Phos,KOPiv,BuOAc,0.153,105,44.48
+5,Pharma,Process Chemist,1_5 years,41,X-Phos,KOPiv,BuCN,0.153,105,73.33
+5,Pharma,Process Chemist,1_5 years,42,X-Phos,KOPiv,DMAc,0.153,105,82.28
+5,Pharma,Process Chemist,1_5 years,43,X-Phos,KOAc,DMAc,0.153,105,48.86
+5,Pharma,Process Chemist,1_5 years,44,X-Phos,KOAc,BuCN,0.153,105,75.39
+5,Pharma,Process Chemist,1_5 years,45,X-Phos,KOAc,BuOAc,0.153,105,53.49
+5,Pharma,Process Chemist,1_5 years,46,X-Phos,KOAc,p-Xylene,0.153,105,39.32
+5,Pharma,Process Chemist,1_5 years,47,X-Phos,CsOAc,p-Xylene,0.153,105,76.63
+5,Pharma,Process Chemist,1_5 years,48,X-Phos,CsOAc,BuOAc,0.153,105,81.66
+5,Pharma,Process Chemist,1_5 years,49,X-Phos,CsOAc,BuCN,0.153,105,84.62
+5,Pharma,Process Chemist,1_5 years,50,X-Phos,CsOAc,DMAc,0.153,105,84.48
+5,Pharma,Process Chemist,1_5 years,51,X-Phos,CsOAc,DMAc,0.1,105,87.83
+5,Pharma,Process Chemist,1_5 years,52,X-Phos,CsOAc,DMAc,0.1,90,84.17
+5,Pharma,Process Chemist,1_5 years,53,X-Phos,CsOAc,DMAc,0.1,120,84.81
+5,Pharma,Process Chemist,1_5 years,54,X-Phos,CsOAc,DMAc,0.057,120,88.41
+5,Pharma,Process Chemist,1_5 years,55,X-Phos,CsOAc,DMAc,0.057,105,89.17
+5,Pharma,Process Chemist,1_5 years,56,X-Phos,CsOAc,DMAc,0.057,90,79.33
+5,Pharma,Process Chemist,1_5 years,57,X-Phos,CsOAc,DMAc,0.153,90,86.14
+5,Pharma,Process Chemist,1_5 years,58,X-Phos,CsOAc,DMAc,0.153,120,84.49
+5,Pharma,Process Chemist,1_5 years,59,CgMe-PPh,CsOAc,DMAc,0.1,105,83.25
+5,Pharma,Process Chemist,1_5 years,60,P(fur)3,CsOAc,DMAc,0.1,105,45.21
+5,Pharma,Process Chemist,1_5 years,61,CgMe-PPh,CsOAc,DMAc,0.057,105,91.39
+5,Pharma,Process Chemist,1_5 years,62,CgMe-PPh,CsOAc,DMAc,0.057,120,95.48
+5,Pharma,Process Chemist,1_5 years,63,CgMe-PPh,CsOAc,DMAc,0.057,90,38.8
+5,Pharma,Process Chemist,1_5 years,64,CgMe-PPh,CsOAc,DMAc,0.153,105,100.0
+5,Pharma,Process Chemist,1_5 years,65,CgMe-PPh,CsOAc,DMAc,0.153,90,43.84
+6,Pharma,Process Chemist,5_10 years,1,BrettPhos,CsOPiv,DMAc,0.153,120,0.0
+6,Pharma,Process Chemist,5_10 years,2,PPhtBu2,CsOPiv,DMAc,0.153,120,0.0
+6,Pharma,Process Chemist,5_10 years,3,tBPh-CPhos,CsOPiv,DMAc,0.153,120,9.96
+6,Pharma,Process Chemist,5_10 years,4,PCy3 HBF4,CsOPiv,DMAc,0.153,120,13.88
+6,Pharma,Process Chemist,5_10 years,5,PPh3,CsOPiv,DMAc,0.153,120,58.4
+6,Pharma,Process Chemist,5_10 years,6,X-Phos,CsOPiv,DMAc,0.153,120,48.34
+6,Pharma,Process Chemist,5_10 years,7,P(fur)3,CsOPiv,DMAc,0.153,120,68.17
+6,Pharma,Process Chemist,5_10 years,8,PPh2Me,CsOPiv,DMAc,0.153,120,10.49
+6,Pharma,Process Chemist,5_10 years,9,CgMe-PPh,CsOPiv,DMAc,0.153,120,92.19
+6,Pharma,Process Chemist,5_10 years,10,GorlosPhos HBF4,CsOPiv,DMAc,0.153,120,54.83
+6,Pharma,Process Chemist,5_10 years,11,CgMe-PPh,KOAc,DMAc,0.153,120,98.38
+6,Pharma,Process Chemist,5_10 years,12,CgMe-PPh,KOPiv,DMAc,0.153,120,99.81
+6,Pharma,Process Chemist,5_10 years,13,CgMe-PPh,CsOAc,DMAc,0.153,120,99.22
+6,Pharma,Process Chemist,5_10 years,14,CgMe-PPh,CsOPiv,p-Xylene,0.153,120,19.13
+6,Pharma,Process Chemist,5_10 years,15,CgMe-PPh,CsOPiv,BuCN,0.153,120,71.81
+6,Pharma,Process Chemist,5_10 years,16,CgMe-PPh,KOPiv,BuOAc,0.153,90,22.65
+6,Pharma,Process Chemist,5_10 years,17,CgMe-PPh,KOPiv,DMAc,0.153,105,98.49
+6,Pharma,Process Chemist,5_10 years,18,CgMe-PPh,KOPiv,BuOAc,0.153,120,45.73
+6,Pharma,Process Chemist,5_10 years,19,CgMe-PPh,KOPiv,DMAc,0.1,120,87.59
+6,Pharma,Process Chemist,5_10 years,20,CgMe-PPh,KOPiv,DMAc,0.057,120,89.95
+7,Pharma,Process Chemist,1_5 years,1,PPhtBu2,KOAc,DMAc,0.1,105,0.0
+7,Pharma,Process Chemist,1_5 years,2,X-Phos,KOAc,DMAc,0.1,105,65.37
+7,Pharma,Process Chemist,1_5 years,3,CgMe-PPh,KOAc,DMAc,0.1,105,80.38
+7,Pharma,Process Chemist,1_5 years,4,PCy3 HBF4,KOAc,DMAc,0.1,105,7.26
+7,Pharma,Process Chemist,1_5 years,5,PPh3,KOAc,DMAc,0.1,105,28.15
+7,Pharma,Process Chemist,1_5 years,6,JackiePhos,KOAc,DMAc,0.1,105,75.22
+7,Pharma,Process Chemist,1_5 years,7,GorlosPhos HBF4,KOAc,DMAc,0.1,105,13.11
+7,Pharma,Process Chemist,1_5 years,8,tBPh-CPhos,KOAc,DMAc,0.1,105,78.95
+7,Pharma,Process Chemist,1_5 years,9,CgMe-PPh,KOAc,DMAc,0.1,90,13.19
+7,Pharma,Process Chemist,1_5 years,10,CgMe-PPh,KOAc,DMAc,0.1,120,83.22
+7,Pharma,Process Chemist,1_5 years,11,CgMe-PPh,KOAc,p-Xylene,0.1,105,35.6
+7,Pharma,Process Chemist,1_5 years,12,CgMe-PPh,KOAc,BuCN,0.1,120,67.57
+7,Pharma,Process Chemist,1_5 years,13,CgMe-PPh,KOAc,BuOAc,0.1,120,51.37
+7,Pharma,Process Chemist,1_5 years,14,CgMe-PPh,KOPiv,BuOAc,0.1,120,42.62
+7,Pharma,Process Chemist,1_5 years,15,CgMe-PPh,CsOAc,BuOAc,0.1,120,57.84
+7,Pharma,Process Chemist,1_5 years,16,CgMe-PPh,KOAc,BuOAc,0.153,120,52.47
+7,Pharma,Process Chemist,1_5 years,17,CgMe-PPh,CsOAc,DMAc,0.153,120,99.22
+7,Pharma,Process Chemist,1_5 years,18,JackiePhos,CsOAc,DMAc,0.153,120,39.57
+7,Pharma,Process Chemist,1_5 years,19,BrettPhos,CsOAc,DMAc,0.153,120,7.43
+7,Pharma,Process Chemist,1_5 years,20,tBPh-CPhos,CsOAc,DMAc,0.153,120,32.21
+7,Pharma,Process Chemist,1_5 years,21,CgMe-PPh,CsOPiv,DMAc,0.153,120,92.19
+8,Pharma,Engineer,No experience,1,PPhtBu2,KOAc,DMAc,0.1,105,0.0
+8,Pharma,Engineer,No experience,2,GorlosPhos HBF4,KOAc,DMAc,0.1,105,13.11
+8,Pharma,Engineer,No experience,3,JackiePhos,KOAc,DMAc,0.1,105,75.22
+8,Pharma,Engineer,No experience,4,tBPh-CPhos,KOAc,DMAc,0.1,105,78.95
+8,Pharma,Engineer,No experience,5,P(fur)3,KOAc,DMAc,0.1,105,41.9
+8,Pharma,Engineer,No experience,6,PPhMe2,KOAc,DMAc,0.1,105,0.0
+8,Pharma,Engineer,No experience,7,PPh3,KOAc,DMAc,0.1,105,28.15
+8,Pharma,Engineer,No experience,8,P(fur)3,KOAc,DMAc,0.1,105,41.9
+8,Pharma,Engineer,No experience,9,GorlosPhos HBF4,KOAc,DMAc,0.1,105,13.11
+8,Pharma,Engineer,No experience,10,CgMe-PPh,KOAc,DMAc,0.1,105,80.38
+8,Pharma,Engineer,No experience,11,JackiePhos,CsOPiv,p-Xylene,0.1,105,8.06
+8,Pharma,Engineer,No experience,12,BrettPhos,CsOPiv,p-Xylene,0.1,105,21.54
+8,Pharma,Engineer,No experience,13,CgMe-PPh,CsOPiv,p-Xylene,0.1,105,16.46
+8,Pharma,Engineer,No experience,14,CgMe-PPh,KOPiv,p-Xylene,0.1,105,32.37
+8,Pharma,Engineer,No experience,15,CgMe-PPh,CsOAc,p-Xylene,0.1,105,68.35
+8,Pharma,Engineer,No experience,16,PCy3 HBF4,KOPiv,DMAc,0.1,105,10.44
+8,Pharma,Engineer,No experience,17,tBPh-CPhos,KOPiv,DMAc,0.1,105,28.64
+8,Pharma,Engineer,No experience,18,CgMe-PPh,CsOAc,DMAc,0.1,120,81.63
+8,Pharma,Engineer,No experience,19,CgMe-PPh,KOAc,BuCN,0.1,105,54.67
+8,Pharma,Engineer,No experience,20,CgMe-PPh,KOAc,BuOAc,0.1,105,41.35
+8,Pharma,Engineer,No experience,21,CgMe-PPh,KOAc,DMAc,0.1,105,80.38
+8,Pharma,Engineer,No experience,22,CgMe-PPh,CsOAc,p-Xylene,0.153,105,80.69
+8,Pharma,Engineer,No experience,23,CgMe-PPh,CsOAc,DMAc,0.057,120,95.48
+8,Pharma,Engineer,No experience,24,tBPh-CPhos,CsOAc,DMAc,0.1,105,29.31
+8,Pharma,Engineer,No experience,25,CgMe-PPh,KOAc,DMAc,0.153,120,98.38
+8,Pharma,Engineer,No experience,26,CgMe-PPh,CsOAc,DMAc,0.153,120,99.22
+8,Pharma,Engineer,No experience,27,CgMe-PPh,KOAc,DMAc,0.057,120,96.64
+8,Pharma,Engineer,No experience,28,CgMe-PPh,KOAc,p-Xylene,0.153,120,60.29
+8,Pharma,Engineer,No experience,29,CgMe-PPh,KOAc,DMAc,0.1,120,83.22
+8,Pharma,Engineer,No experience,30,CgMe-PPh,KOAc,DMAc,0.1,90,13.19
+8,Pharma,Engineer,No experience,31,CgMe-PPh,CsOAc,BuCN,0.153,120,99.98
+8,Pharma,Engineer,No experience,32,CgMe-PPh,CsOAc,BuOAc,0.153,120,62.33
+8,Pharma,Engineer,No experience,33,CgMe-PPh,CsOAc,p-Xylene,0.153,120,91.19
+8,Pharma,Engineer,No experience,34,CgMe-PPh,CsOAc,DMAc,0.153,90,43.84
+8,Pharma,Engineer,No experience,35,CgMe-PPh,CsOAc,DMAc,0.153,105,100.0
+9,Pharma,Engineer,No experience,1,GorlosPhos HBF4,KOAc,BuOAc,0.1,105,2.85
+9,Pharma,Engineer,No experience,2,P(fur)3,KOAc,BuOAc,0.1,105,9.87
+9,Pharma,Engineer,No experience,3,P(fur)3,KOAc,DMAc,0.1,105,41.9
+9,Pharma,Engineer,No experience,4,P(fur)3,KOAc,DMAc,0.153,105,32.04
+9,Pharma,Engineer,No experience,5,P(fur)3,KOAc,DMAc,0.057,105,39.39
+9,Pharma,Engineer,No experience,6,P(fur)3,KOPiv,DMAc,0.057,105,64.12
+9,Pharma,Engineer,No experience,7,P(fur)3,KOPiv,DMAc,0.1,105,73.59
+9,Pharma,Engineer,No experience,8,P(fur)3,KOPiv,DMAc,0.153,105,64.46
+9,Pharma,Engineer,No experience,9,P(fur)3,KOPiv,DMAc,0.1,120,76.02
+9,Pharma,Engineer,No experience,10,P(fur)3,KOPiv,DMAc,0.1,90,26.29
+9,Pharma,Engineer,No experience,11,P(fur)3,CsOPiv,DMAc,0.1,105,49.4
+9,Pharma,Engineer,No experience,12,P(fur)3,CsOPiv,DMAc,0.057,105,46.33
+9,Pharma,Engineer,No experience,13,P(fur)3,CsOPiv,DMAc,0.153,105,55.96
+9,Pharma,Engineer,No experience,14,P(fur)3,CsOPiv,p-Xylene,0.153,105,15.44
+9,Pharma,Engineer,No experience,15,P(fur)3,CsOPiv,BuCN,0.153,105,52.69
+9,Pharma,Engineer,No experience,16,BrettPhos,KOPiv,DMAc,0.1,105,0.07
+9,Pharma,Engineer,No experience,17,PPhtBu2,KOPiv,DMAc,0.1,105,0.0
+9,Pharma,Engineer,No experience,18,tBPh-CPhos,KOPiv,DMAc,0.1,105,28.64
+9,Pharma,Engineer,No experience,19,PCy3 HBF4,KOPiv,DMAc,0.1,105,10.44
+9,Pharma,Engineer,No experience,20,PPh3,KOPiv,DMAc,0.1,105,63.13
+9,Pharma,Engineer,No experience,21,X-Phos,KOPiv,DMAc,0.1,105,77.41
+9,Pharma,Engineer,No experience,22,PPh2Me,KOPiv,DMAc,0.1,105,8.85
+9,Pharma,Engineer,No experience,23,JackiePhos,KOPiv,DMAc,0.1,105,50.54
+9,Pharma,Engineer,No experience,24,CgMe-PPh,KOPiv,DMAc,0.1,105,89.76
+9,Pharma,Engineer,No experience,25,PPhMe2,KOPiv,DMAc,0.1,105,0.0
+9,Pharma,Engineer,No experience,26,CgMe-PPh,KOPiv,DMAc,0.057,105,90.39
+9,Pharma,Engineer,No experience,27,CgMe-PPh,KOPiv,DMAc,0.153,105,98.49
+9,Pharma,Engineer,No experience,28,CgMe-PPh,KOPiv,DMAc,0.153,90,61.09
+9,Pharma,Engineer,No experience,29,CgMe-PPh,KOPiv,DMAc,0.057,90,62.75
+9,Pharma,Engineer,No experience,30,CgMe-PPh,KOPiv,DMAc,0.1,90,55.7
+9,Pharma,Engineer,No experience,31,CgMe-PPh,KOPiv,DMAc,0.153,120,99.81
+9,Pharma,Engineer,No experience,32,CgMe-PPh,KOPiv,DMAc,0.1,120,87.59
+9,Pharma,Engineer,No experience,33,CgMe-PPh,KOPiv,DMAc,0.057,120,89.95
+9,Pharma,Engineer,No experience,34,CgMe-PPh,KOAc,DMAc,0.1,120,83.22
+9,Pharma,Engineer,No experience,35,CgMe-PPh,KOAc,DMAc,0.153,120,98.38
+9,Pharma,Engineer,No experience,36,CgMe-PPh,CsOAc,DMAc,0.153,120,99.22
+9,Pharma,Engineer,No experience,37,CgMe-PPh,CsOPiv,DMAc,0.153,120,92.19
+9,Pharma,Engineer,No experience,38,CgMe-PPh,KOAc,DMAc,0.153,120,98.38
+9,Pharma,Engineer,No experience,39,X-Phos,KOPiv,DMAc,0.153,120,80.39
+9,Pharma,Engineer,No experience,40,P(fur)3,KOPiv,DMAc,0.153,120,78.93
+9,Pharma,Engineer,No experience,41,CgMe-PPh,KOPiv,BuCN,0.153,120,80.65
+9,Pharma,Engineer,No experience,42,CgMe-PPh,KOPiv,BuOAc,0.153,120,45.73
+9,Pharma,Engineer,No experience,43,CgMe-PPh,KOPiv,p-Xylene,0.153,120,44.47
+9,Pharma,Engineer,No experience,44,CgMe-PPh,KOAc,p-Xylene,0.153,120,60.29
+9,Pharma,Engineer,No experience,45,CgMe-PPh,KOAc,BuOAc,0.153,120,52.47
+9,Pharma,Engineer,No experience,46,CgMe-PPh,KOAc,BuCN,0.153,120,80.86
+9,Pharma,Engineer,No experience,47,CgMe-PPh,CsOAc,DMAc,0.057,120,95.48
+9,Pharma,Engineer,No experience,48,CgMe-PPh,CsOAc,DMAc,0.1,120,81.63
+9,Pharma,Engineer,No experience,49,CgMe-PPh,CsOAc,DMAc,0.1,105,83.25
+9,Pharma,Engineer,No experience,50,CgMe-PPh,CsOAc,DMAc,0.153,105,100.0
+10,Pharma,Process Chemist,1_5 years,1,PPh3,KOAc,DMAc,0.1,105,28.15
+10,Pharma,Process Chemist,1_5 years,2,PPh3,KOAc,BuCN,0.1,105,6.24
+10,Pharma,Process Chemist,1_5 years,3,PPh3,KOAc,BuOAc,0.1,105,3.41
+10,Pharma,Process Chemist,1_5 years,4,PPh3,KOAc,p-Xylene,0.1,105,2.06
+10,Pharma,Process Chemist,1_5 years,5,PPh3,CsOAc,DMAc,0.1,105,62.82
+10,Pharma,Process Chemist,1_5 years,6,PPh3,KOPiv,DMAc,0.1,105,63.13
+10,Pharma,Process Chemist,1_5 years,7,PPh3,CsOPiv,DMAc,0.1,105,52.05
+10,Pharma,Process Chemist,1_5 years,8,X-Phos,CsOAc,DMAc,0.1,105,87.83
+10,Pharma,Process Chemist,1_5 years,9,PPhtBu2,CsOAc,DMAc,0.1,105,0.0
+10,Pharma,Process Chemist,1_5 years,10,PCy3 HBF4,CsOAc,DMAc,0.1,105,12.83
+10,Pharma,Process Chemist,1_5 years,11,X-Phos,CsOAc,DMAc,0.1,90,84.17
+10,Pharma,Process Chemist,1_5 years,12,X-Phos,CsOAc,DMAc,0.1,120,84.81
+10,Pharma,Process Chemist,1_5 years,13,X-Phos,CsOAc,DMAc,0.057,105,89.17
+10,Pharma,Process Chemist,1_5 years,14,X-Phos,CsOAc,DMAc,0.153,105,84.48
+10,Pharma,Process Chemist,1_5 years,15,BrettPhos,CsOAc,DMAc,0.1,105,4.74
+10,Pharma,Process Chemist,1_5 years,16,JackiePhos,CsOAc,DMAc,0.057,105,71.97
+10,Pharma,Process Chemist,1_5 years,17,PPh2Me,CsOAc,DMAc,0.057,105,20.41
+10,Pharma,Process Chemist,1_5 years,18,PPhMe2,CsOAc,DMAc,0.057,105,0.0
+10,Pharma,Process Chemist,1_5 years,19,CgMe-PPh,CsOAc,DMAc,0.057,105,91.39
+10,Pharma,Process Chemist,1_5 years,20,tBPh-CPhos,CsOAc,DMAc,0.057,105,42.43
+11,Pharma,Engineer,No experience,1,BrettPhos,CsOAc,BuOAc,0.153,120,20.6
+11,Pharma,Engineer,No experience,2,PPhtBu2,CsOAc,BuOAc,0.153,120,0.0
+11,Pharma,Engineer,No experience,3,tBPh-CPhos,CsOAc,BuOAc,0.153,120,0.0
+11,Pharma,Engineer,No experience,4,PCy3 HBF4,CsOAc,BuOAc,0.153,120,0.0
+11,Pharma,Engineer,No experience,5,PPh3,CsOAc,BuOAc,0.153,120,14.26
+11,Pharma,Engineer,No experience,6,X-Phos,CsOAc,BuOAc,0.153,120,6.23
+11,Pharma,Engineer,No experience,7,P(fur)3,CsOAc,BuOAc,0.153,120,53.61
+11,Pharma,Engineer,No experience,8,PPh2Me,CsOAc,BuOAc,0.153,120,0.0
+11,Pharma,Engineer,No experience,9,GorlosPhos HBF4,CsOAc,BuOAc,0.153,120,23.3
+11,Pharma,Engineer,No experience,10,BrettPhos,CsOAc,BuOAc,0.057,105,27.71
+11,Pharma,Engineer,No experience,11,JackiePhos,CsOAc,BuOAc,0.153,120,4.87
+11,Pharma,Engineer,No experience,12,CgMe-PPh,CsOAc,BuOAc,0.153,120,62.33
+11,Pharma,Engineer,No experience,13,PPhMe2,CsOAc,BuOAc,0.153,120,1.8
+11,Pharma,Engineer,No experience,14,P(fur)3,CsOAc,BuOAc,0.057,120,12.14
+11,Pharma,Engineer,No experience,15,BrettPhos,CsOAc,BuOAc,0.153,90,17.16
+11,Pharma,Engineer,No experience,16,CgMe-PPh,CsOAc,DMAc,0.153,120,99.22
+11,Pharma,Engineer,No experience,17,CgMe-PPh,KOPiv,DMAc,0.153,120,99.81
+11,Pharma,Engineer,No experience,18,P(fur)3,KOPiv,BuOAc,0.153,120,31.43
+11,Pharma,Engineer,No experience,19,P(fur)3,CsOPiv,BuOAc,0.153,120,21.09
+11,Pharma,Engineer,No experience,20,CgMe-PPh,KOPiv,BuOAc,0.153,120,45.73
+11,Pharma,Engineer,No experience,21,CgMe-PPh,KOAc,DMAc,0.153,120,98.38
+11,Pharma,Engineer,No experience,22,CgMe-PPh,CsOPiv,DMAc,0.153,120,92.19
+11,Pharma,Engineer,No experience,23,CgMe-PPh,KOPiv,BuCN,0.153,120,80.65
+11,Pharma,Engineer,No experience,24,CgMe-PPh,KOPiv,p-Xylene,0.153,120,44.47
+11,Pharma,Engineer,No experience,25,CgMe-PPh,KOPiv,DMAc,0.153,90,61.09
+11,Pharma,Engineer,No experience,26,CgMe-PPh,KOPiv,DMAc,0.057,120,89.95
+11,Pharma,Engineer,No experience,27,CgMe-PPh,KOPiv,DMAc,0.1,105,89.76
+11,Pharma,Engineer,No experience,28,P(fur)3,KOPiv,DMAc,0.153,120,78.93
+11,Pharma,Engineer,No experience,29,GorlosPhos HBF4,KOPiv,DMAc,0.153,120,61.33
+11,Pharma,Engineer,No experience,30,BrettPhos,KOPiv,DMAc,0.153,120,0.89
+12,Pharma,Process Chemist,5_10 years,1,X-Phos,KOAc,DMAc,0.1,105,65.37
+12,Pharma,Process Chemist,5_10 years,2,X-Phos,KOAc,DMAc,0.1,90,38.03
+12,Pharma,Process Chemist,5_10 years,3,X-Phos,KOAc,DMAc,0.1,120,88.41
+12,Pharma,Process Chemist,5_10 years,4,X-Phos,KOAc,DMAc,0.057,105,55.4
+12,Pharma,Process Chemist,5_10 years,5,X-Phos,KOAc,DMAc,0.153,105,48.86
+12,Pharma,Process Chemist,5_10 years,6,X-Phos,KOPiv,DMAc,0.1,120,80.61
+12,Pharma,Process Chemist,5_10 years,7,X-Phos,CsOAc,DMAc,0.1,120,84.81
+12,Pharma,Process Chemist,5_10 years,8,P(fur)3,KOAc,DMAc,0.1,120,60.48
+12,Pharma,Process Chemist,5_10 years,9,BrettPhos,KOAc,DMAc,0.1,120,5.03
+12,Pharma,Process Chemist,5_10 years,10,JackiePhos,KOAc,DMAc,0.1,120,75.12
+12,Pharma,Process Chemist,5_10 years,11,X-Phos,KOAc,BuOAc,0.1,120,73.71
+12,Pharma,Process Chemist,5_10 years,12,X-Phos,KOAc,BuCN,0.1,120,56.57
+12,Pharma,Process Chemist,5_10 years,13,PPhtBu2,KOAc,DMAc,0.1,120,7.71
+12,Pharma,Process Chemist,5_10 years,14,CgMe-PPh,KOAc,DMAc,0.1,120,83.22
+12,Pharma,Process Chemist,5_10 years,15,PPhMe2,KOAc,DMAc,0.1,120,3.59
+12,Pharma,Process Chemist,5_10 years,16,tBPh-CPhos,KOAc,DMAc,0.1,120,82.09
+12,Pharma,Process Chemist,5_10 years,17,GorlosPhos HBF4,KOAc,DMAc,0.1,120,15.42
+12,Pharma,Process Chemist,5_10 years,18,tBPh-CPhos,KOAc,DMAc,0.153,120,76.59
+12,Pharma,Process Chemist,5_10 years,19,tBPh-CPhos,KOAc,DMAc,0.1,105,78.95
+12,Pharma,Process Chemist,5_10 years,20,tBPh-CPhos,CsOPiv,DMAc,0.1,120,17.43
+13,Pharma,Engineer,No experience,1,BrettPhos,KOAc,DMAc,0.153,120,5.95
+13,Pharma,Engineer,No experience,2,PPhtBu2,KOAc,DMAc,0.153,120,4.3
+13,Pharma,Engineer,No experience,3,tBPh-CPhos,KOAc,DMAc,0.153,120,76.59
+13,Pharma,Engineer,No experience,4,PCy3 HBF4,KOAc,DMAc,0.153,120,11.91
+13,Pharma,Engineer,No experience,5,PPh3,KOAc,DMAc,0.153,120,51.83
+13,Pharma,Engineer,No experience,6,X-Phos,KOAc,DMAc,0.153,120,84.67
+13,Pharma,Engineer,No experience,7,P(fur)3,KOAc,DMAc,0.153,120,52.08
+13,Pharma,Engineer,No experience,8,PPh2Me,KOAc,DMAc,0.153,120,7.5
+13,Pharma,Engineer,No experience,9,GorlosPhos HBF4,KOAc,DMAc,0.153,120,14.06
+13,Pharma,Engineer,No experience,10,JackiePhos,KOAc,DMAc,0.153,120,85.21
+13,Pharma,Engineer,No experience,11,CgMe-PPh,KOAc,DMAc,0.153,120,98.38
+13,Pharma,Engineer,No experience,12,PPhMe2,KOAc,DMAc,0.153,120,2.78
+13,Pharma,Engineer,No experience,13,PPhMe2,KOAc,DMAc,0.153,90,0.0
+13,Pharma,Engineer,No experience,14,PPhMe2,KOAc,DMAc,0.057,120,3.33
+13,Pharma,Engineer,No experience,15,PPhMe2,KOAc,DMAc,0.057,120,3.33
+13,Pharma,Engineer,No experience,16,CgMe-PPh,KOPiv,DMAc,0.153,120,99.81
+13,Pharma,Engineer,No experience,17,CgMe-PPh,CsOAc,DMAc,0.153,120,99.22
+13,Pharma,Engineer,No experience,18,CgMe-PPh,CsOPiv,DMAc,0.153,120,92.19
+13,Pharma,Engineer,No experience,19,CgMe-PPh,KOAc,BuCN,0.153,120,80.86
+13,Pharma,Engineer,No experience,20,CgMe-PPh,KOAc,BuOAc,0.153,120,52.47
+14,Pharma,Process Chemist,No experience,1,CgMe-PPh,KOPiv,DMAc,0.1,105,89.76
+14,Pharma,Process Chemist,No experience,2,PCy3 HBF4,KOPiv,DMAc,0.1,105,10.44
+14,Pharma,Process Chemist,No experience,3,X-Phos,KOPiv,DMAc,0.1,105,77.41
+14,Pharma,Process Chemist,No experience,4,PPhtBu2,KOPiv,DMAc,0.1,105,0.0
+14,Pharma,Process Chemist,No experience,5,PPhMe2,KOPiv,DMAc,0.1,105,0.0
+14,Pharma,Process Chemist,No experience,6,CgMe-PPh,KOAc,DMAc,0.1,105,80.38
+14,Pharma,Process Chemist,No experience,7,CgMe-PPh,KOPiv,DMAc,0.153,105,98.49
+14,Pharma,Process Chemist,No experience,8,CgMe-PPh,KOPiv,DMAc,0.1,120,87.59
+14,Pharma,Process Chemist,No experience,9,CgMe-PPh,KOPiv,DMAc,0.153,120,99.81
+14,Pharma,Process Chemist,No experience,10,CgMe-PPh,KOPiv,BuCN,0.153,105,69.2
+14,Pharma,Process Chemist,No experience,11,CgMe-PPh,KOPiv,p-Xylene,0.153,105,31.32
+14,Pharma,Process Chemist,No experience,12,CgMe-PPh,KOPiv,BuOAc,0.153,105,32.43
+14,Pharma,Process Chemist,No experience,13,X-Phos,KOPiv,DMAc,0.153,120,80.39
+15,Pharma,Engineer,No experience,1,JackiePhos,KOAc,DMAc,0.1,105,75.22
+15,Pharma,Engineer,No experience,2,PPhMe2,CsOAc,DMAc,0.1,105,0.0
+15,Pharma,Engineer,No experience,3,PPh2Me,KOAc,DMAc,0.1,105,8.23
+15,Pharma,Engineer,No experience,4,JackiePhos,CsOAc,DMAc,0.1,105,41.0
+15,Pharma,Engineer,No experience,5,PPh3,KOPiv,BuOAc,0.1,105,1.92
+15,Pharma,Engineer,No experience,6,BrettPhos,KOAc,BuOAc,0.1,105,17.09
+15,Pharma,Engineer,No experience,7,GorlosPhos HBF4,KOAc,BuCN,0.1,105,14.36
+15,Pharma,Engineer,No experience,8,GorlosPhos HBF4,CsOAc,BuCN,0.1,105,33.34
+15,Pharma,Engineer,No experience,9,BrettPhos,CsOAc,DMAc,0.1,105,4.74
+15,Pharma,Engineer,No experience,10,CgMe-PPh,KOAc,p-Xylene,0.1,105,35.6
+15,Pharma,Engineer,No experience,11,JackiePhos,KOAc,DMAc,0.1,105,75.22
+15,Pharma,Engineer,No experience,12,PPhMe2,CsOAc,DMAc,0.1,105,0.0
+15,Pharma,Engineer,No experience,13,PPh2Me,KOAc,DMAc,0.1,105,8.23
+15,Pharma,Engineer,No experience,14,JackiePhos,CsOAc,DMAc,0.1,105,41.0
+15,Pharma,Engineer,No experience,15,PPh3,KOPiv,BuOAc,0.1,105,1.92
+15,Pharma,Engineer,No experience,16,BrettPhos,KOAc,BuOAc,0.1,105,17.09
+15,Pharma,Engineer,No experience,17,GorlosPhos HBF4,KOAc,BuCN,0.1,105,14.36
+15,Pharma,Engineer,No experience,18,GorlosPhos HBF4,CsOAc,BuCN,0.1,105,33.34
+15,Pharma,Engineer,No experience,19,BrettPhos,CsOAc,DMAc,0.1,105,4.74
+15,Pharma,Engineer,No experience,20,CgMe-PPh,KOAc,p-Xylene,0.1,105,35.6
+15,Pharma,Engineer,No experience,21,JackiePhos,KOAc,DMAc,0.153,120,85.21
+15,Pharma,Engineer,No experience,22,JackiePhos,KOAc,DMAc,0.057,120,89.14
+15,Pharma,Engineer,No experience,23,JackiePhos,KOAc,BuCN,0.057,120,21.88
+15,Pharma,Engineer,No experience,24,JackiePhos,KOAc,BuOAc,0.057,120,5.16
+15,Pharma,Engineer,No experience,25,JackiePhos,KOAc,p-Xylene,0.057,120,5.4
+15,Pharma,Engineer,No experience,26,GorlosPhos HBF4,KOAc,DMAc,0.1,105,13.11
+15,Pharma,Engineer,No experience,27,JackiePhos,KOAc,DMAc,0.057,90,72.24
+15,Pharma,Engineer,No experience,28,JackiePhos,KOAc,DMAc,0.057,105,87.62
+15,Pharma,Engineer,No experience,29,CgMe-PPh,KOAc,DMAc,0.1,105,80.38
+15,Pharma,Engineer,No experience,30,CgMe-PPh,KOAc,DMAc,0.153,120,98.38
+15,Pharma,Engineer,No experience,31,CgMe-PPh,KOAc,DMAc,0.057,120,96.64
+15,Pharma,Engineer,No experience,32,JackiePhos,KOAc,DMAc,0.1,105,75.22
+15,Pharma,Engineer,No experience,33,PPhMe2,CsOAc,DMAc,0.1,105,0.0
+15,Pharma,Engineer,No experience,34,PPh2Me,KOAc,DMAc,0.1,105,8.23
+15,Pharma,Engineer,No experience,35,JackiePhos,CsOAc,DMAc,0.1,105,41.0
+15,Pharma,Engineer,No experience,36,PPh3,KOPiv,BuOAc,0.1,105,1.92
+15,Pharma,Engineer,No experience,37,BrettPhos,KOAc,BuOAc,0.1,105,17.09
+15,Pharma,Engineer,No experience,38,GorlosPhos HBF4,KOAc,BuCN,0.1,105,14.36
+15,Pharma,Engineer,No experience,39,GorlosPhos HBF4,CsOAc,BuCN,0.1,105,33.34
+15,Pharma,Engineer,No experience,40,BrettPhos,CsOAc,DMAc,0.1,105,4.74
+15,Pharma,Engineer,No experience,41,CgMe-PPh,KOAc,p-Xylene,0.1,105,35.6
+15,Pharma,Engineer,No experience,42,JackiePhos,KOAc,DMAc,0.153,120,85.21
+15,Pharma,Engineer,No experience,43,JackiePhos,KOAc,DMAc,0.057,120,89.14
+15,Pharma,Engineer,No experience,44,JackiePhos,KOAc,BuCN,0.057,120,21.88
+15,Pharma,Engineer,No experience,45,JackiePhos,KOAc,BuOAc,0.057,120,5.16
+15,Pharma,Engineer,No experience,46,JackiePhos,KOAc,p-Xylene,0.057,120,5.4
+15,Pharma,Engineer,No experience,47,GorlosPhos HBF4,KOAc,DMAc,0.1,105,13.11
+15,Pharma,Engineer,No experience,48,JackiePhos,KOAc,DMAc,0.057,90,72.24
+15,Pharma,Engineer,No experience,49,JackiePhos,KOAc,DMAc,0.057,105,87.62
+15,Pharma,Engineer,No experience,50,CgMe-PPh,KOAc,DMAc,0.1,105,80.38
+15,Pharma,Engineer,No experience,51,CgMe-PPh,KOAc,DMAc,0.153,120,98.38
+15,Pharma,Engineer,No experience,52,CgMe-PPh,KOAc,DMAc,0.057,120,96.64
+15,Pharma,Engineer,No experience,53,CgMe-PPh,KOAc,BuCN,0.1,120,67.57
+15,Pharma,Engineer,No experience,54,CgMe-PPh,CsOAc,BuCN,0.1,120,88.82
+15,Pharma,Engineer,No experience,55,CgMe-PPh,KOAc,BuOAc,0.1,120,51.37
+15,Pharma,Engineer,No experience,56,CgMe-PPh,CsOAc,BuOAc,0.1,120,57.84
+15,Pharma,Engineer,No experience,57,CgMe-PPh,CsOAc,DMAc,0.1,120,81.63
+15,Pharma,Engineer,No experience,58,CgMe-PPh,CsOAc,p-Xylene,0.1,120,62.73
+15,Pharma,Engineer,No experience,59,CgMe-PPh,KOAc,p-Xylene,0.1,120,46.75
+15,Pharma,Engineer,No experience,60,CgMe-PPh,KOAc,DMAc,0.153,120,98.38
+15,Pharma,Engineer,No experience,61,CgMe-PPh,KOAc,DMAc,0.153,90,28.9
+15,Pharma,Engineer,No experience,62,CgMe-PPh,KOAc,DMAc,0.1,90,13.19
+15,Pharma,Engineer,No experience,63,CgMe-PPh,KOAc,DMAc,0.153,120,98.38
+15,Pharma,Engineer,No experience,64,CgMe-PPh,KOAc,DMAc,0.153,120,98.38
+15,Pharma,Engineer,No experience,65,CgMe-PPh,KOAc,DMAc,0.153,120,98.38
+15,Pharma,Engineer,No experience,66,CgMe-PPh,KOAc,DMAc,0.153,120,98.38
+15,Pharma,Engineer,No experience,67,CgMe-PPh,KOAc,DMAc,0.153,120,98.38
+16,Pharma,Engineer,1_5 years,1,BrettPhos,KOAc,DMAc,0.153,120,5.95
+16,Pharma,Engineer,1_5 years,2,PPhtBu2,KOAc,DMAc,0.153,120,4.3
+16,Pharma,Engineer,1_5 years,3,tBPh-CPhos,KOAc,DMAc,0.153,120,76.59
+16,Pharma,Engineer,1_5 years,4,PCy3 HBF4,KOAc,DMAc,0.153,120,11.91
+16,Pharma,Engineer,1_5 years,5,PPh3,KOAc,DMAc,0.153,120,51.83
+16,Pharma,Engineer,1_5 years,6,X-Phos,KOAc,DMAc,0.153,120,84.67
+16,Pharma,Engineer,1_5 years,7,P(fur)3,KOAc,DMAc,0.153,120,52.08
+16,Pharma,Engineer,1_5 years,8,PPh2Me,KOAc,DMAc,0.153,120,7.5
+16,Pharma,Engineer,1_5 years,9,GorlosPhos HBF4,KOAc,DMAc,0.153,120,14.06
+16,Pharma,Engineer,1_5 years,10,JackiePhos,KOAc,DMAc,0.153,120,85.21
+16,Pharma,Engineer,1_5 years,11,CgMe-PPh,KOAc,DMAc,0.153,120,98.38
+16,Pharma,Engineer,1_5 years,12,PPhMe2,KOAc,DMAc,0.153,120,2.78
+16,Pharma,Engineer,1_5 years,13,X-Phos,KOPiv,DMAc,0.153,120,80.39
+16,Pharma,Engineer,1_5 years,14,X-Phos,CsOAc,DMAc,0.153,120,84.49
+16,Pharma,Engineer,1_5 years,15,X-Phos,CsOPiv,DMAc,0.153,120,48.34
+16,Pharma,Engineer,1_5 years,16,CgMe-PPh,KOAc,DMAc,0.153,105,87.0
+16,Pharma,Engineer,1_5 years,17,CgMe-PPh,KOAc,DMAc,0.153,90,28.9
+16,Pharma,Engineer,1_5 years,18,CgMe-PPh,KOAc,DMAc,0.1,120,83.22
+16,Pharma,Engineer,1_5 years,19,CgMe-PPh,KOAc,DMAc,0.057,120,96.64
+16,Pharma,Engineer,1_5 years,20,CgMe-PPh,KOAc,p-Xylene,0.153,120,60.29
+16,Pharma,Engineer,1_5 years,21,CgMe-PPh,KOAc,BuCN,0.153,120,80.86
+16,Pharma,Engineer,1_5 years,22,CgMe-PPh,KOAc,BuOAc,0.153,120,52.47
+16,Pharma,Engineer,1_5 years,23,CgMe-PPh,KOPiv,DMAc,0.153,120,99.81
+16,Pharma,Engineer,1_5 years,24,CgMe-PPh,CsOAc,DMAc,0.153,120,99.22
+16,Pharma,Engineer,1_5 years,25,CgMe-PPh,CsOPiv,DMAc,0.153,120,92.19
+16,Pharma,Engineer,1_5 years,26,CgMe-PPh,KOPiv,BuCN,0.153,120,80.65
+16,Pharma,Engineer,1_5 years,27,CgMe-PPh,KOPiv,BuOAc,0.153,120,45.73
+16,Pharma,Engineer,1_5 years,28,CgMe-PPh,KOPiv,p-Xylene,0.153,120,44.47
+16,Pharma,Engineer,1_5 years,29,CgMe-PPh,KOPiv,DMAc,0.057,90,62.75
+16,Pharma,Engineer,1_5 years,30,CgMe-PPh,KOPiv,DMAc,0.1,105,89.76
+16,Pharma,Engineer,1_5 years,31,CgMe-PPh,KOPiv,DMAc,0.1,120,87.59
+16,Pharma,Engineer,1_5 years,32,CgMe-PPh,KOPiv,DMAc,0.057,120,89.95
+16,Pharma,Engineer,1_5 years,33,CgMe-PPh,KOPiv,DMAc,0.153,105,98.49
+16,Pharma,Engineer,1_5 years,34,JackiePhos,KOPiv,DMAc,0.153,105,11.68
+16,Pharma,Engineer,1_5 years,35,JackiePhos,CsOAc,DMAc,0.153,105,22.3
+17,Pharma,Process Chemist,5_10 years,1,BrettPhos,KOAc,DMAc,0.153,105,5.49
+17,Pharma,Process Chemist,5_10 years,2,BrettPhos,KOAc,DMAc,0.153,120,5.95
+17,Pharma,Process Chemist,5_10 years,3,BrettPhos,KOAc,DMAc,0.153,90,5.75
+17,Pharma,Process Chemist,5_10 years,4,PPh3,KOAc,DMAc,0.153,90,11.68
+17,Pharma,Process Chemist,5_10 years,5,PPh3,KOAc,DMAc,0.153,120,51.83
+17,Pharma,Process Chemist,5_10 years,6,PPh3,CsOAc,DMAc,0.153,120,78.19
+17,Pharma,Process Chemist,5_10 years,7,PPh3,CsOAc,DMAc,0.153,90,31.85
+17,Pharma,Process Chemist,5_10 years,8,BrettPhos,CsOAc,DMAc,0.153,90,6.26
+17,Pharma,Process Chemist,5_10 years,9,BrettPhos,CsOAc,DMAc,0.153,120,7.43
+17,Pharma,Process Chemist,5_10 years,10,JackiePhos,CsOAc,DMAc,0.153,120,39.57
+17,Pharma,Process Chemist,5_10 years,11,P(fur)3,CsOAc,DMAc,0.153,120,74.3
+17,Pharma,Process Chemist,5_10 years,12,PPh3,CsOAc,BuCN,0.153,120,19.64
+17,Pharma,Process Chemist,5_10 years,13,PPh3,CsOAc,BuOAc,0.153,120,14.26
+17,Pharma,Process Chemist,5_10 years,14,PPh3,CsOAc,p-Xylene,0.153,120,11.83
+17,Pharma,Process Chemist,5_10 years,15,PPh3,CsOAc,DMAc,0.057,120,89.71
+17,Pharma,Process Chemist,5_10 years,16,PPh3,CsOAc,DMAc,0.153,105,66.27
+17,Pharma,Process Chemist,5_10 years,17,PPh2Me,CsOAc,DMAc,0.153,120,2.33
+17,Pharma,Process Chemist,5_10 years,18,PPh3,KOPiv,DMAc,0.057,120,91.27
+17,Pharma,Process Chemist,5_10 years,19,PPh3,CsOPiv,DMAc,0.057,120,84.64
+17,Pharma,Process Chemist,5_10 years,20,P(fur)3,CsOPiv,DMAc,0.057,120,50.7
+17,Pharma,Process Chemist,5_10 years,21,P(fur)3,KOPiv,DMAc,0.057,120,83.62
+17,Pharma,Process Chemist,5_10 years,22,GorlosPhos HBF4,CsOAc,DMAc,0.057,120,16.77
+17,Pharma,Process Chemist,5_10 years,23,CgMe-PPh,CsOAc,DMAc,0.057,120,95.48
+17,Pharma,Process Chemist,5_10 years,24,PCy3 HBF4,CsOAc,DMAc,0.057,120,35.61
+17,Pharma,Process Chemist,5_10 years,25,tBPh-CPhos,CsOAc,DMAc,0.057,120,66.84
+18,Pharma,Engineer,No experience,1,X-Phos,KOAc,DMAc,0.1,105,65.37
+18,Pharma,Engineer,No experience,2,X-Phos,KOPiv,DMAc,0.1,105,77.41
+18,Pharma,Engineer,No experience,3,BrettPhos,CsOAc,DMAc,0.1,105,4.74
+18,Pharma,Engineer,No experience,4,BrettPhos,CsOPiv,DMAc,0.1,105,0.0
+18,Pharma,Engineer,No experience,5,PPh3,KOAc,DMAc,0.1,105,28.15
+18,Pharma,Engineer,No experience,6,tBPh-CPhos,KOAc,DMAc,0.1,105,78.95
+18,Pharma,Engineer,No experience,7,X-Phos,KOAc,DMAc,0.057,105,55.4
+18,Pharma,Engineer,No experience,8,X-Phos,KOAc,DMAc,0.153,105,48.86
+18,Pharma,Engineer,No experience,9,JackiePhos,KOAc,DMAc,0.1,105,75.22
+18,Pharma,Engineer,No experience,10,X-Phos,KOAc,DMAc,0.1,120,88.41
+18,Pharma,Engineer,No experience,11,JackiePhos,KOPiv,DMAc,0.057,120,82.13
+18,Pharma,Engineer,No experience,12,JackiePhos,KOPiv,BuCN,0.057,120,16.07
+18,Pharma,Engineer,No experience,13,JackiePhos,KOPiv,BuOAc,0.057,120,3.96
+18,Pharma,Engineer,No experience,14,X-Phos,KOPiv,DMAc,0.057,120,62.07
+18,Pharma,Engineer,No experience,15,JackiePhos,KOPiv,DMAc,0.057,120,82.13
+18,Pharma,Engineer,No experience,16,JackiePhos,KOPiv,p-Xylene,0.057,120,8.9
+18,Pharma,Engineer,No experience,17,JackiePhos,KOAc,DMAc,0.057,120,89.14
+18,Pharma,Engineer,No experience,18,X-Phos,KOAc,DMAc,0.057,120,77.58
+19,Pharma,Process Chemist,5_10 years,1,BrettPhos,KOAc,DMAc,0.1,120,5.03
+19,Pharma,Process Chemist,5_10 years,2,X-Phos,KOAc,DMAc,0.1,120,88.41
+19,Pharma,Process Chemist,5_10 years,3,PPhtBu2,KOAc,DMAc,0.1,120,7.71
+19,Pharma,Process Chemist,5_10 years,4,GorlosPhos HBF4,KOAc,DMAc,0.1,120,15.42
+19,Pharma,Process Chemist,5_10 years,5,CgMe-PPh,KOAc,DMAc,0.1,120,83.22
+19,Pharma,Process Chemist,5_10 years,6,CgMe-PPh,KOPiv,DMAc,0.1,120,87.59
+19,Pharma,Process Chemist,5_10 years,7,CgMe-PPh,CsOAc,DMAc,0.1,120,81.63
+19,Pharma,Process Chemist,5_10 years,8,X-Phos,KOPiv,DMAc,0.1,120,80.61
+19,Pharma,Process Chemist,5_10 years,9,X-Phos,CsOAc,DMAc,0.1,120,84.81
+19,Pharma,Process Chemist,5_10 years,10,X-Phos,KOAc,DMAc,0.1,90,38.03
+19,Pharma,Process Chemist,5_10 years,11,X-Phos,KOAc,BuCN,0.1,120,56.57
+19,Pharma,Process Chemist,5_10 years,12,X-Phos,KOAc,BuOAc,0.1,120,73.71
+19,Pharma,Process Chemist,5_10 years,13,X-Phos,KOAc,p-Xylene,0.1,120,67.04
+19,Pharma,Process Chemist,5_10 years,14,CgMe-PPh,KOPiv,BuCN,0.1,120,70.51
+19,Pharma,Process Chemist,5_10 years,15,CgMe-PPh,KOPiv,BuOAc,0.1,120,42.62
+19,Pharma,Process Chemist,5_10 years,16,X-Phos,KOAc,DMAc,0.153,120,84.67
+19,Pharma,Process Chemist,5_10 years,17,CgMe-PPh,KOPiv,DMAc,0.153,120,99.81
+19,Pharma,Process Chemist,5_10 years,18,tBPh-CPhos,KOAc,DMAc,0.153,120,76.59
+19,Pharma,Process Chemist,5_10 years,19,PCy3 HBF4,KOAc,DMAc,0.153,120,11.91
+19,Pharma,Process Chemist,5_10 years,20,PPh3,KOAc,DMAc,0.153,120,51.83
+19,Pharma,Process Chemist,5_10 years,21,CgMe-PPh,CsOPiv,DMAc,0.153,120,92.19
+19,Pharma,Process Chemist,5_10 years,22,CgMe-PPh,CsOPiv,BuCN,0.153,120,71.81
+19,Pharma,Process Chemist,5_10 years,23,CgMe-PPh,CsOPiv,BuOAc,0.153,120,26.69
+19,Pharma,Process Chemist,5_10 years,24,CgMe-PPh,CsOPiv,p-Xylene,0.153,120,19.13
+19,Pharma,Process Chemist,5_10 years,25,CgMe-PPh,KOPiv,p-Xylene,0.153,105,31.32
+19,Pharma,Process Chemist,5_10 years,26,JackiePhos,KOAc,DMAc,0.153,120,85.21
+19,Pharma,Process Chemist,5_10 years,27,PPhMe2,KOAc,DMAc,0.153,120,2.78
+19,Pharma,Process Chemist,5_10 years,28,P(fur)3,KOAc,DMAc,0.153,120,52.08
+19,Pharma,Process Chemist,5_10 years,29,PPh2Me,KOAc,DMAc,0.153,120,7.5
+19,Pharma,Process Chemist,5_10 years,30,X-Phos,KOPiv,DMAc,0.153,120,80.39
+19,Pharma,Process Chemist,5_10 years,31,JackiePhos,KOPiv,DMAc,0.153,120,43.12
+19,Pharma,Process Chemist,5_10 years,32,JackiePhos,CsOAc,DMAc,0.153,120,39.57
+19,Pharma,Process Chemist,5_10 years,33,JackiePhos,CsOPiv,DMAc,0.153,120,5.65
+19,Pharma,Process Chemist,5_10 years,34,JackiePhos,KOAc,p-Xylene,0.153,120,7.88
+19,Pharma,Process Chemist,5_10 years,35,JackiePhos,KOAc,BuCN,0.153,120,20.72
+19,Pharma,Process Chemist,5_10 years,36,CgMe-PPh,CsOAc,BuCN,0.153,120,99.98
+19,Pharma,Process Chemist,5_10 years,37,CgMe-PPh,CsOAc,BuOAc,0.153,120,62.33
+19,Pharma,Process Chemist,5_10 years,38,CgMe-PPh,CsOAc,p-Xylene,0.153,120,91.19
+19,Pharma,Process Chemist,5_10 years,39,CgMe-PPh,KOAc,p-Xylene,0.153,120,60.29
+19,Pharma,Process Chemist,5_10 years,40,CgMe-PPh,KOAc,BuOAc,0.153,120,52.47
+20,Pharma,Process Chemist,1_5 years,1,BrettPhos,KOPiv,DMAc,0.1,105,0.07
+20,Pharma,Process Chemist,1_5 years,2,PCy3 HBF4,KOPiv,DMAc,0.1,105,10.44
+20,Pharma,Process Chemist,1_5 years,3,X-Phos,KOPiv,DMAc,0.1,105,77.41
+20,Pharma,Process Chemist,1_5 years,4,P(fur)3,KOPiv,DMAc,0.1,105,73.59
+20,Pharma,Process Chemist,1_5 years,5,PPh3,KOPiv,DMAc,0.1,105,63.13
+20,Pharma,Process Chemist,1_5 years,6,JackiePhos,KOPiv,DMAc,0.1,105,50.54
+20,Pharma,Process Chemist,1_5 years,7,PPhtBu2,KOPiv,DMAc,0.1,105,0.0
+20,Pharma,Process Chemist,1_5 years,8,tBPh-CPhos,KOPiv,DMAc,0.1,105,28.64
+20,Pharma,Process Chemist,1_5 years,9,X-Phos,CsOPiv,DMAc,0.1,105,29.16
+20,Pharma,Process Chemist,1_5 years,10,X-Phos,KOPiv,DMAc,0.1,90,55.17
+20,Pharma,Process Chemist,1_5 years,11,BrettPhos,KOPiv,DMAc,0.1,105,0.07
+20,Pharma,Process Chemist,1_5 years,12,X-Phos,KOPiv,DMAc,0.1,105,77.41
+20,Pharma,Process Chemist,1_5 years,13,PPh3,KOPiv,DMAc,0.1,105,63.13
+20,Pharma,Process Chemist,1_5 years,14,PPhtBu2,KOPiv,DMAc,0.1,105,0.0
+20,Pharma,Process Chemist,1_5 years,15,JackiePhos,KOPiv,DMAc,0.1,105,50.54
+20,Pharma,Process Chemist,1_5 years,16,X-Phos,KOPiv,DMAc,0.1,90,55.17
+20,Pharma,Process Chemist,1_5 years,17,X-Phos,KOPiv,DMAc,0.1,120,80.61
+20,Pharma,Process Chemist,1_5 years,18,X-Phos,KOPiv,DMAc,0.057,105,61.0
+20,Pharma,Process Chemist,1_5 years,19,X-Phos,KOPiv,DMAc,0.153,105,82.28
+20,Pharma,Process Chemist,1_5 years,20,X-Phos,KOAc,DMAc,0.1,105,65.37
+20,Pharma,Process Chemist,1_5 years,21,X-Phos,CsOPiv,DMAc,0.153,120,48.34
+20,Pharma,Process Chemist,1_5 years,22,X-Phos,KOPiv,BuCN,0.153,120,71.43
+20,Pharma,Process Chemist,1_5 years,23,X-Phos,KOPiv,BuOAc,0.153,120,48.91
+20,Pharma,Process Chemist,1_5 years,24,X-Phos,KOPiv,p-Xylene,0.153,120,62.15
+20,Pharma,Process Chemist,1_5 years,25,X-Phos,CsOAc,DMAc,0.153,120,84.49
+20,Pharma,Process Chemist,1_5 years,26,PPhMe2,KOPiv,DMAc,0.1,105,0.0
+20,Pharma,Process Chemist,1_5 years,27,PPh2Me,KOPiv,DMAc,0.1,105,8.85
+20,Pharma,Process Chemist,1_5 years,28,CgMe-PPh,KOPiv,DMAc,0.1,105,89.76
+20,Pharma,Process Chemist,1_5 years,29,tBPh-CPhos,KOPiv,DMAc,0.1,105,28.64
+20,Pharma,Process Chemist,1_5 years,30,GorlosPhos HBF4,KOPiv,DMAc,0.1,105,38.15
+20,Pharma,Process Chemist,1_5 years,31,CgMe-PPh,KOPiv,DMAc,0.153,120,99.81
+20,Pharma,Process Chemist,1_5 years,32,CgMe-PPh,CsOAc,DMAc,0.153,120,99.22
+20,Pharma,Process Chemist,1_5 years,33,CgMe-PPh,CsOAc,BuCN,0.153,120,99.98
+20,Pharma,Process Chemist,1_5 years,34,CgMe-PPh,CsOAc,BuOAc,0.153,120,62.33
+20,Pharma,Process Chemist,1_5 years,35,CgMe-PPh,CsOAc,p-Xylene,0.153,120,91.19
+21,Pharma,Engineer,1_5 years,1,BrettPhos,CsOPiv,DMAc,0.153,120,0.0
+21,Pharma,Engineer,1_5 years,2,PPhtBu2,KOAc,BuOAc,0.153,120,0.0
+21,Pharma,Engineer,1_5 years,3,tBPh-CPhos,CsOPiv,BuOAc,0.153,120,0.0
+21,Pharma,Engineer,1_5 years,4,PCy3 HBF4,KOAc,BuOAc,0.153,120,0.0
+21,Pharma,Engineer,1_5 years,5,PPh3,KOAc,BuOAc,0.153,120,4.86
+21,Pharma,Engineer,1_5 years,6,X-Phos,KOPiv,BuOAc,0.153,120,48.91
+21,Pharma,Engineer,1_5 years,7,P(fur)3,CsOAc,DMAc,0.153,120,74.3
+21,Pharma,Engineer,1_5 years,8,PPh2Me,CsOAc,DMAc,0.153,120,2.33
+21,Pharma,Engineer,1_5 years,9,GorlosPhos HBF4,CsOAc,DMAc,0.153,120,40.26
+21,Pharma,Engineer,1_5 years,10,JackiePhos,KOPiv,p-Xylene,0.153,120,13.33
+21,Pharma,Engineer,1_5 years,11,CgMe-PPh,KOAc,DMAc,0.153,120,98.38
+21,Pharma,Engineer,1_5 years,12,GorlosPhos HBF4,KOPiv,p-Xylene,0.153,120,17.56
+21,Pharma,Engineer,1_5 years,13,GorlosPhos HBF4,KOAc,BuCN,0.153,120,19.95
+21,Pharma,Engineer,1_5 years,14,tBPh-CPhos,CsOAc,p-Xylene,0.153,120,22.08
+21,Pharma,Engineer,1_5 years,15,tBPh-CPhos,KOPiv,BuCN,0.153,120,9.61
+21,Pharma,Engineer,1_5 years,16,tBPh-CPhos,CsOAc,DMAc,0.153,120,32.21
+21,Pharma,Engineer,1_5 years,17,X-Phos,CsOAc,DMAc,0.057,90,79.33
+21,Pharma,Engineer,1_5 years,18,X-Phos,CsOAc,DMAc,0.153,120,84.49
+21,Pharma,Engineer,1_5 years,19,tBPh-CPhos,CsOAc,DMAc,0.153,120,32.21
+21,Pharma,Engineer,1_5 years,20,JackiePhos,CsOAc,DMAc,0.153,120,39.57
+21,Pharma,Engineer,1_5 years,21,CgMe-PPh,KOAc,DMAc,0.1,105,80.38
+21,Pharma,Engineer,1_5 years,22,CgMe-PPh,KOAc,DMAc,0.057,120,96.64
+21,Pharma,Engineer,1_5 years,23,CgMe-PPh,KOAc,DMAc,0.153,90,28.9
+21,Pharma,Engineer,1_5 years,24,P(fur)3,KOAc,DMAc,0.153,120,52.08
+21,Pharma,Engineer,1_5 years,25,X-Phos,KOAc,DMAc,0.153,120,84.67
+21,Pharma,Engineer,1_5 years,26,CgMe-PPh,CsOAc,DMAc,0.153,120,99.22
+21,Pharma,Engineer,1_5 years,27,CgMe-PPh,KOPiv,DMAc,0.153,120,99.81
+21,Pharma,Engineer,1_5 years,28,CgMe-PPh,KOPiv,p-Xylene,0.153,120,44.47
+21,Pharma,Engineer,1_5 years,29,CgMe-PPh,KOAc,p-Xylene,0.153,120,60.29
+21,Pharma,Engineer,1_5 years,30,CgMe-PPh,CsOAc,p-Xylene,0.153,120,91.19
+21,Pharma,Engineer,1_5 years,31,CgMe-PPh,KOPiv,DMAc,0.1,120,87.59
+21,Pharma,Engineer,1_5 years,32,CgMe-PPh,KOPiv,DMAc,0.153,105,98.49
+21,Pharma,Engineer,1_5 years,33,CgMe-PPh,KOPiv,BuOAc,0.153,120,45.73
+21,Pharma,Engineer,1_5 years,34,CgMe-PPh,CsOAc,BuOAc,0.153,120,62.33
+21,Pharma,Engineer,1_5 years,35,CgMe-PPh,CsOPiv,DMAc,0.153,120,92.19
+22,Pharma,Process Chemist,Above 10 years,1,BrettPhos,CsOPiv,DMAc,0.1,105,0.0
+22,Pharma,Process Chemist,Above 10 years,2,BrettPhos,CsOPiv,p-Xylene,0.1,105,21.54
+22,Pharma,Process Chemist,Above 10 years,3,BrettPhos,KOPiv,p-Xylene,0.1,105,29.17
+22,Pharma,Process Chemist,Above 10 years,4,BrettPhos,KOPiv,DMAc,0.1,105,0.07
+22,Pharma,Process Chemist,Above 10 years,5,BrettPhos,KOPiv,BuOAc,0.1,105,49.22
+22,Pharma,Process Chemist,Above 10 years,6,CgMe-PPh,KOPiv,p-Xylene,0.1,105,32.37
+22,Pharma,Process Chemist,Above 10 years,7,GorlosPhos HBF4,KOPiv,p-Xylene,0.1,105,10.98
+22,Pharma,Process Chemist,Above 10 years,8,JackiePhos,KOPiv,p-Xylene,0.1,105,9.9
+22,Pharma,Process Chemist,Above 10 years,9,P(fur)3,KOPiv,DMAc,0.1,105,73.59
+22,Pharma,Process Chemist,Above 10 years,10,PCy3 HBF4,CsOAc,DMAc,0.1,105,12.83
+22,Pharma,Process Chemist,Above 10 years,11,PCy3 HBF4,CsOAc,p-Xylene,0.1,105,0.55
+22,Pharma,Process Chemist,Above 10 years,12,PCy3 HBF4,KOPiv,DMAc,0.1,105,10.44
+22,Pharma,Process Chemist,Above 10 years,13,PCy3 HBF4,KOPiv,p-Xylene,0.1,105,0.0
+22,Pharma,Process Chemist,Above 10 years,14,PCy3 HBF4,KOPiv,BuOAc,0.1,105,0.0
+22,Pharma,Process Chemist,Above 10 years,15,PPh2Me,CsOAc,DMAc,0.1,105,9.55
+22,Pharma,Process Chemist,Above 10 years,16,PPh2Me,CsOAc,p-Xylene,0.1,105,0.0
+22,Pharma,Process Chemist,Above 10 years,17,PPh2Me,KOPiv,DMAc,0.1,105,8.85
+22,Pharma,Process Chemist,Above 10 years,18,PPh2Me,KOPiv,p-Xylene,0.1,105,0.0
+22,Pharma,Process Chemist,Above 10 years,19,PPh2Me,KOPiv,BuCN,0.1,105,0.0
+22,Pharma,Process Chemist,Above 10 years,20,PPh3,KOAc,DMAc,0.1,105,28.15
+22,Pharma,Process Chemist,Above 10 years,21,PPh3,KOAc,p-Xylene,0.1,105,2.06
+22,Pharma,Process Chemist,Above 10 years,22,PPh3,KOPiv,DMAc,0.1,105,63.13
+22,Pharma,Process Chemist,Above 10 years,23,PPh3,KOPiv,p-Xylene,0.1,105,1.41
+22,Pharma,Process Chemist,Above 10 years,24,PPh3,KOPiv,BuCN,0.1,105,4.28
+22,Pharma,Process Chemist,Above 10 years,25,PPhMe2,KOPiv,DMAc,0.1,105,0.0
+22,Pharma,Process Chemist,Above 10 years,26,PPhtBu2,KOPiv,DMAc,0.1,105,0.0
+22,Pharma,Process Chemist,Above 10 years,27,tBPh-CPhos,KOPiv,p-Xylene,0.1,105,14.92
+22,Pharma,Process Chemist,Above 10 years,28,X-Phos,KOPiv,p-Xylene,0.1,105,35.07
+22,Pharma,Process Chemist,Above 10 years,29,X-Phos,KOPiv,p-Xylene,0.1,105,35.07
+22,Pharma,Process Chemist,Above 10 years,30,X-Phos,KOPiv,p-Xylene,0.1,105,35.07
+22,Pharma,Process Chemist,Above 10 years,31,PPh3,KOPiv,BuOAc,0.1,105,1.92
+22,Pharma,Process Chemist,Above 10 years,32,P(fur)3,KOPiv,BuOAc,0.1,105,18.21
+22,Pharma,Process Chemist,Above 10 years,33,JackiePhos,KOPiv,BuOAc,0.1,105,5.98
+22,Pharma,Process Chemist,Above 10 years,34,PPhtBu2,KOPiv,BuOAc,0.1,105,0.0
+22,Pharma,Process Chemist,Above 10 years,35,tBPh-CPhos,KOPiv,BuOAc,0.1,105,22.75
+22,Pharma,Process Chemist,Above 10 years,36,X-Phos,KOPiv,BuOAc,0.1,105,48.25
+22,Pharma,Process Chemist,Above 10 years,37,GorlosPhos HBF4,KOPiv,BuOAc,0.1,105,20.21
+22,Pharma,Process Chemist,Above 10 years,38,CgMe-PPh,KOPiv,BuOAc,0.1,105,36.23
+22,Pharma,Process Chemist,Above 10 years,39,PPhMe2,KOPiv,BuOAc,0.1,105,0.0
+22,Pharma,Process Chemist,Above 10 years,40,GorlosPhos HBF4,KOPiv,DMAc,0.1,105,38.15
+22,Pharma,Process Chemist,Above 10 years,41,CgMe-PPh,KOPiv,DMAc,0.1,105,89.76
+22,Pharma,Process Chemist,Above 10 years,42,JackiePhos,KOPiv,DMAc,0.1,105,50.54
+22,Pharma,Process Chemist,Above 10 years,43,BrettPhos,KOPiv,DMAc,0.1,105,0.07
+22,Pharma,Process Chemist,Above 10 years,44,tBPh-CPhos,KOPiv,DMAc,0.1,105,28.64
+22,Pharma,Process Chemist,Above 10 years,45,tBPh-CPhos,KOPiv,DMAc,0.1,105,28.64
+22,Pharma,Process Chemist,Above 10 years,46,tBPh-CPhos,KOAc,DMAc,0.1,105,78.95
+22,Pharma,Process Chemist,Above 10 years,47,tBPh-CPhos,CsOPiv,DMAc,0.1,105,7.62
+22,Pharma,Process Chemist,Above 10 years,48,tBPh-CPhos,CsOAc,DMAc,0.1,105,29.31
+22,Pharma,Process Chemist,Above 10 years,49,tBPh-CPhos,KOPiv,BuCN,0.1,105,6.39
+22,Pharma,Process Chemist,Above 10 years,50,tBPh-CPhos,CsOPiv,BuOAc,0.1,105,15.16
+22,Pharma,Process Chemist,Above 10 years,51,CgMe-PPh,KOPiv,DMAc,0.057,90,62.75
+22,Pharma,Process Chemist,Above 10 years,52,CgMe-PPh,KOPiv,DMAc,0.057,105,90.39
+22,Pharma,Process Chemist,Above 10 years,53,CgMe-PPh,KOPiv,DMAc,0.057,120,89.95
+22,Pharma,Process Chemist,Above 10 years,54,CgMe-PPh,KOPiv,DMAc,0.1,120,87.59
+22,Pharma,Process Chemist,Above 10 years,55,CgMe-PPh,KOPiv,DMAc,0.1,90,55.7
+22,Pharma,Process Chemist,Above 10 years,56,CgMe-PPh,KOPiv,DMAc,0.153,90,61.09
+22,Pharma,Process Chemist,Above 10 years,57,CgMe-PPh,KOPiv,DMAc,0.153,105,98.49
+22,Pharma,Process Chemist,Above 10 years,58,CgMe-PPh,KOPiv,DMAc,0.153,120,99.81
+22,Pharma,Process Chemist,Above 10 years,59,CgMe-PPh,CsOPiv,DMAc,0.153,120,92.19
+22,Pharma,Process Chemist,Above 10 years,60,CgMe-PPh,CsOAc,DMAc,0.153,120,99.22
+23,Pharma,Faculty,1_5 years,1,PCy3 HBF4,KOPiv,DMAc,0.153,120,24.11
+23,Pharma,Faculty,1_5 years,2,PPh3,KOPiv,DMAc,0.153,120,79.1
+23,Pharma,Faculty,1_5 years,3,X-Phos,KOPiv,DMAc,0.153,120,80.39
+23,Pharma,Faculty,1_5 years,4,PPhtBu2,KOPiv,DMAc,0.153,120,0.0
+23,Pharma,Faculty,1_5 years,5,PPh2Me,KOPiv,DMAc,0.153,120,2.64
+23,Pharma,Faculty,1_5 years,6,CgMe-PPh,KOAc,DMAc,0.1,120,83.22
+23,Pharma,Faculty,1_5 years,7,X-Phos,KOAc,DMAc,0.1,120,88.41
+23,Pharma,Faculty,1_5 years,8,X-Phos,CsOAc,DMAc,0.1,120,84.81
+23,Pharma,Faculty,1_5 years,9,CgMe-PPh,KOAc,DMAc,0.153,120,98.38
+23,Pharma,Faculty,1_5 years,10,CgMe-PPh,CsOAc,DMAc,0.1,120,81.63
+24,Pharma,Engineer,Above 10 years,1,BrettPhos,KOAc,p-Xylene,0.1,105,16.44
+24,Pharma,Engineer,Above 10 years,2,BrettPhos,KOAc,p-Xylene,0.1,105,16.44
+24,Pharma,Engineer,Above 10 years,3,PPhtBu2,KOAc,p-Xylene,0.1,105,0.0
+24,Pharma,Engineer,Above 10 years,4,tBPh-CPhos,KOAc,p-Xylene,0.1,105,6.39
+24,Pharma,Engineer,Above 10 years,5,PCy3 HBF4,KOAc,p-Xylene,0.1,105,0.0
+24,Pharma,Engineer,Above 10 years,6,X-Phos,KOAc,p-Xylene,0.1,105,43.76
+24,Pharma,Engineer,Above 10 years,7,GorlosPhos HBF4,KOAc,p-Xylene,0.1,105,0.83
+24,Pharma,Engineer,Above 10 years,8,JackiePhos,KOAc,p-Xylene,0.1,105,5.36
+24,Pharma,Engineer,Above 10 years,9,PPhMe2,KOAc,p-Xylene,0.1,105,0.0
+24,Pharma,Engineer,Above 10 years,10,PPhMe2,KOAc,p-Xylene,0.1,105,0.0
+24,Pharma,Engineer,Above 10 years,11,X-Phos,KOAc,DMAc,0.1,105,65.37
+24,Pharma,Engineer,Above 10 years,12,X-Phos,KOAc,BuCN,0.1,105,47.3
+24,Pharma,Engineer,Above 10 years,13,X-Phos,KOAc,BuOAc,0.1,105,64.62
+24,Pharma,Engineer,Above 10 years,14,X-Phos,KOAc,BuOAc,0.1,90,28.11
+24,Pharma,Engineer,Above 10 years,15,X-Phos,KOAc,BuOAc,0.1,120,73.71
+24,Pharma,Engineer,Above 10 years,16,X-Phos,KOPiv,BuOAc,0.1,120,66.49
+24,Pharma,Engineer,Above 10 years,17,X-Phos,CsOAc,BuOAc,0.1,120,2.79
+24,Pharma,Engineer,Above 10 years,18,X-Phos,CsOPiv,BuOAc,0.1,120,52.22
+24,Pharma,Engineer,Above 10 years,19,X-Phos,CsOPiv,BuOAc,0.1,90,3.0
+24,Pharma,Engineer,Above 10 years,20,X-Phos,CsOPiv,BuOAc,0.1,105,59.92
+24,Pharma,Engineer,Above 10 years,21,X-Phos,KOAc,BuOAc,0.153,105,53.49
+24,Pharma,Engineer,Above 10 years,22,X-Phos,KOAc,BuOAc,0.153,120,76.24
+24,Pharma,Engineer,Above 10 years,23,CgMe-PPh,KOAc,BuOAc,0.153,120,52.47
+24,Pharma,Engineer,Above 10 years,24,P(fur)3,KOAc,BuOAc,0.153,120,13.12
+24,Pharma,Engineer,Above 10 years,25,PPh2Me,KOAc,BuOAc,0.153,120,0.0
+24,Pharma,Engineer,Above 10 years,26,PPh2Me,KOAc,DMAc,0.153,120,7.5
+24,Pharma,Engineer,Above 10 years,27,X-Phos,KOAc,DMAc,0.153,120,84.67
+24,Pharma,Engineer,Above 10 years,28,X-Phos,KOAc,BuCN,0.153,120,78.6
+24,Pharma,Engineer,Above 10 years,29,X-Phos,KOAc,p-Xylene,0.153,120,61.67
+24,Pharma,Engineer,Above 10 years,30,X-Phos,CsOAc,DMAc,0.153,120,84.49
+25,Pharma,Process Chemist,1_5 years,1,CgMe-PPh,KOPiv,DMAc,0.1,105,89.76
+25,Pharma,Process Chemist,1_5 years,2,CgMe-PPh,KOPiv,BuCN,0.1,105,76.68
+25,Pharma,Process Chemist,1_5 years,3,CgMe-PPh,KOPiv,BuOAc,0.1,105,36.23
+25,Pharma,Process Chemist,1_5 years,4,CgMe-PPh,KOPiv,p-Xylene,0.1,105,32.37
+25,Pharma,Process Chemist,1_5 years,5,JackiePhos,KOPiv,DMAc,0.1,105,50.54
+25,Pharma,Process Chemist,1_5 years,6,CgMe-PPh,KOPiv,DMAc,0.1,90,55.7
+25,Pharma,Process Chemist,1_5 years,7,CgMe-PPh,KOPiv,DMAc,0.1,120,87.59
+25,Pharma,Process Chemist,1_5 years,8,CgMe-PPh,KOPiv,DMAc,0.057,105,90.39
+25,Pharma,Process Chemist,1_5 years,9,CgMe-PPh,KOPiv,DMAc,0.057,90,62.75
+25,Pharma,Process Chemist,1_5 years,10,CgMe-PPh,KOPiv,DMAc,0.057,120,89.95
+25,Pharma,Process Chemist,1_5 years,11,CgMe-PPh,KOPiv,DMAc,0.153,105,98.49
+25,Pharma,Process Chemist,1_5 years,12,CgMe-PPh,KOPiv,DMAc,0.153,90,61.09
+25,Pharma,Process Chemist,1_5 years,13,CgMe-PPh,KOPiv,DMAc,0.153,120,99.81
+25,Pharma,Process Chemist,1_5 years,14,CgMe-PPh,KOPiv,BuCN,0.057,120,77.52
+25,Pharma,Process Chemist,1_5 years,15,CgMe-PPh,KOPiv,BuCN,0.057,105,76.85
+25,Pharma,Process Chemist,1_5 years,16,CgMe-PPh,KOPiv,BuCN,0.153,120,80.65
+25,Pharma,Process Chemist,1_5 years,17,CgMe-PPh,KOPiv,BuOAc,0.153,120,45.73
+25,Pharma,Process Chemist,1_5 years,18,CgMe-PPh,KOPiv,p-Xylene,0.153,120,44.47
+25,Pharma,Process Chemist,1_5 years,19,CgMe-PPh,CsOPiv,p-Xylene,0.153,120,19.13
+25,Pharma,Process Chemist,1_5 years,20,CgMe-PPh,CsOPiv,BuOAc,0.153,120,26.69
+26,Pharma,Process Chemist,1_5 years,1,BrettPhos,CsOPiv,BuOAc,0.1,105,27.48
+26,Pharma,Process Chemist,1_5 years,2,BrettPhos,KOPiv,p-Xylene,0.1,105,29.17
+26,Pharma,Process Chemist,1_5 years,3,CgMe-PPh,CsOPiv,BuCN,0.1,105,65.69
+26,Pharma,Process Chemist,1_5 years,4,CgMe-PPh,KOAc,BuOAc,0.1,105,41.35
+26,Pharma,Process Chemist,1_5 years,5,GorlosPhos HBF4,CsOAc,BuOAc,0.1,105,8.11
+26,Pharma,Process Chemist,1_5 years,6,GorlosPhos HBF4,KOAc,DMAc,0.1,105,13.11
+26,Pharma,Process Chemist,1_5 years,7,JackiePhos,CsOAc,p-Xylene,0.1,105,7.15
+26,Pharma,Process Chemist,1_5 years,8,JackiePhos,CsOPiv,DMAc,0.1,105,0.0
+26,Pharma,Process Chemist,1_5 years,9,P(fur)3,CsOAc,BuCN,0.1,105,16.19
+26,Pharma,Process Chemist,1_5 years,10,P(fur)3,KOPiv,DMAc,0.1,105,73.59
+26,Pharma,Process Chemist,1_5 years,11,PCy3 HBF4,CsOPiv,p-Xylene,0.1,105,0.0
+26,Pharma,Process Chemist,1_5 years,12,PCy3 HBF4,KOPiv,BuCN,0.1,105,0.35
+26,Pharma,Process Chemist,1_5 years,13,PPh3,CsOAc,DMAc,0.1,105,62.82
+26,Pharma,Process Chemist,1_5 years,14,PPh3,KOAc,BuCN,0.1,105,6.24
+26,Pharma,Process Chemist,1_5 years,15,PPh2Me,KOAc,p-Xylene,0.1,105,0.0
+26,Pharma,Process Chemist,1_5 years,16,PPh2Me,KOPiv,BuCN,0.1,105,0.0
+26,Pharma,Process Chemist,1_5 years,17,PPhMe2,KOAc,BuCN,0.1,105,0.0
+26,Pharma,Process Chemist,1_5 years,18,PPhMe2,KOPiv,BuOAc,0.1,105,0.0
+26,Pharma,Process Chemist,1_5 years,19,PPhtBu2,CsOAc,DMAc,0.1,105,0.0
+26,Pharma,Process Chemist,1_5 years,20,PPhtBu2,KOPiv,p-Xylene,0.1,105,0.0
+26,Pharma,Process Chemist,1_5 years,21,tBPh-CPhos,CsOAc,DMAc,0.1,105,29.31
+26,Pharma,Process Chemist,1_5 years,22,tBPh-CPhos,CsOPiv,BuOAc,0.1,105,15.16
+26,Pharma,Process Chemist,1_5 years,23,X-Phos,CsOPiv,p-Xylene,0.1,105,53.63
+26,Pharma,Process Chemist,1_5 years,24,X-Phos,KOAc,BuOAc,0.1,105,64.62
+26,Pharma,Process Chemist,1_5 years,25,CgMe-PPh,CsOPiv,DMAc,0.1,105,91.11
+26,Pharma,Process Chemist,1_5 years,26,BrettPhos,CsOAc,BuCN,0.1,105,64.48
+26,Pharma,Process Chemist,1_5 years,27,BrettPhos,KOAc,DMAc,0.1,105,5.47
+26,Pharma,Process Chemist,1_5 years,28,CgMe-PPh,KOPiv,p-Xylene,0.1,105,32.37
+26,Pharma,Process Chemist,1_5 years,29,CgMe-PPh,CsOAc,BuOAc,0.1,105,45.01
+26,Pharma,Process Chemist,1_5 years,30,P(fur)3,KOAc,p-Xylene,0.1,105,8.45
+26,Pharma,Process Chemist,1_5 years,31,P(fur)3,CsOAc,BuOAc,0.1,105,15.72
+26,Pharma,Process Chemist,1_5 years,32,P(fur)3,CsOPiv,DMAc,0.1,105,49.4
+26,Pharma,Process Chemist,1_5 years,33,PPh3,KOPiv,BuOAc,0.1,105,1.92
+26,Pharma,Process Chemist,1_5 years,34,PPh3,CsOPiv,p-Xylene,0.1,105,0.66
+26,Pharma,Process Chemist,1_5 years,35,tBPh-CPhos,KOPiv,BuCN,0.1,105,6.39
+26,Pharma,Process Chemist,1_5 years,36,tBPh-CPhos,KOAc,p-Xylene,0.1,105,6.39
+26,Pharma,Process Chemist,1_5 years,37,X-Phos,KOPiv,BuCN,0.1,105,56.14
+26,Pharma,Process Chemist,1_5 years,38,X-Phos,CsOAc,p-Xylene,0.1,105,67.17
+26,Pharma,Process Chemist,1_5 years,39,X-Phos,KOPiv,DMAc,0.1,105,77.41
+26,Pharma,Process Chemist,1_5 years,40,X-Phos,KOAc,BuCN,0.1,105,47.3
+26,Pharma,Process Chemist,1_5 years,41,PPh3,KOPiv,DMAc,0.1,105,63.13
+26,Pharma,Process Chemist,1_5 years,42,BrettPhos,CsOPiv,DMAc,0.1,105,0.0
+26,Pharma,Process Chemist,1_5 years,43,X-Phos,CsOPiv,DMAc,0.1,105,29.16
+26,Pharma,Process Chemist,1_5 years,44,CgMe-PPh,KOPiv,DMAc,0.1,105,89.76
+26,Pharma,Process Chemist,1_5 years,45,P(fur)3,CsOPiv,DMAc,0.1,105,49.4
+26,Pharma,Process Chemist,1_5 years,46,CgMe-PPh,CsOAc,BuCN,0.057,120,50.74
+26,Pharma,Process Chemist,1_5 years,47,CgMe-PPh,CsOAc,BuCN,0.153,90,63.2
+26,Pharma,Process Chemist,1_5 years,48,CgMe-PPh,CsOAc,p-Xylene,0.1,105,68.35
+26,Pharma,Process Chemist,1_5 years,49,CgMe-PPh,CsOPiv,BuOAc,0.153,105,22.88
+26,Pharma,Process Chemist,1_5 years,50,CgMe-PPh,CsOPiv,BuCN,0.1,120,71.57
+26,Pharma,Process Chemist,1_5 years,51,CgMe-PPh,CsOPiv,p-Xylene,0.057,90,0.4
+26,Pharma,Process Chemist,1_5 years,52,CgMe-PPh,KOAc,BuOAc,0.057,105,35.64
+26,Pharma,Process Chemist,1_5 years,53,CgMe-PPh,KOAc,DMAc,0.057,90,30.41
+26,Pharma,Process Chemist,1_5 years,54,CgMe-PPh,KOAc,DMAc,0.1,120,83.22
+26,Pharma,Process Chemist,1_5 years,55,CgMe-PPh,KOPiv,BuCN,0.1,105,76.68
+26,Pharma,Process Chemist,1_5 years,56,CgMe-PPh,KOPiv,BuOAc,0.153,90,22.65
+26,Pharma,Process Chemist,1_5 years,57,CgMe-PPh,KOPiv,DMAc,0.153,120,99.81
+26,Pharma,Process Chemist,1_5 years,58,CgMe-PPh,KOPiv,p-Xylene,0.153,120,44.47
+26,Pharma,Process Chemist,1_5 years,59,X-Phos,CsOAc,BuOAc,0.1,120,2.79
+26,Pharma,Process Chemist,1_5 years,60,X-Phos,CsOAc,DMAc,0.057,90,79.33
+26,Pharma,Process Chemist,1_5 years,61,CgMe-PPh,CsOAc,DMAc,0.153,120,99.22
+26,Pharma,Process Chemist,1_5 years,62,CgMe-PPh,KOAc,DMAc,0.153,120,98.38
+26,Pharma,Process Chemist,1_5 years,63,CgMe-PPh,CsOPiv,DMAc,0.153,120,92.19
+26,Pharma,Process Chemist,1_5 years,64,CgMe-PPh,KOPiv,DMAc,0.153,105,98.49
+26,Pharma,Process Chemist,1_5 years,65,X-Phos,KOPiv,DMAc,0.153,120,80.39
+26,Pharma,Process Chemist,1_5 years,66,CgMe-PPh,KOPiv,DMAc,0.1,120,87.59
+26,Pharma,Process Chemist,1_5 years,67,CgMe-PPh,KOPiv,DMAc,0.057,120,89.95
+26,Pharma,Process Chemist,1_5 years,68,P(fur)3,KOPiv,DMAc,0.153,120,78.93
+26,Pharma,Process Chemist,1_5 years,69,X-Phos,CsOPiv,DMAc,0.153,120,48.34
+26,Pharma,Process Chemist,1_5 years,70,X-Phos,KOAc,DMAc,0.153,120,84.67
+27,Academic,Postdoc,1_5 years,1,BrettPhos,KOAc,p-Xylene,0.1,120,18.55
+27,Academic,Postdoc,1_5 years,2,JackiePhos,KOAc,p-Xylene,0.1,120,7.03
+27,Academic,Postdoc,1_5 years,3,P(fur)3,KOAc,p-Xylene,0.1,120,9.72
+27,Academic,Postdoc,1_5 years,4,X-Phos,KOAc,p-Xylene,0.1,120,67.04
+27,Academic,Postdoc,1_5 years,5,PPhtBu2,KOAc,p-Xylene,0.1,120,0.0
+27,Academic,Postdoc,1_5 years,6,PPhMe2,KOAc,p-Xylene,0.1,120,0.0
+27,Academic,Postdoc,1_5 years,7,GorlosPhos HBF4,KOAc,p-Xylene,0.1,120,7.43
+27,Academic,Postdoc,1_5 years,8,tBPh-CPhos,KOAc,p-Xylene,0.1,120,5.69
+27,Academic,Postdoc,1_5 years,9,PCy3 HBF4,KOAc,p-Xylene,0.1,120,0.0
+27,Academic,Postdoc,1_5 years,10,CgMe-PPh,KOAc,p-Xylene,0.1,120,46.75
+27,Academic,Postdoc,1_5 years,11,BrettPhos,KOAc,DMAc,0.1,120,5.03
+27,Academic,Postdoc,1_5 years,12,PPhtBu2,KOAc,DMAc,0.1,120,7.71
+27,Academic,Postdoc,1_5 years,13,tBPh-CPhos,KOAc,DMAc,0.1,120,82.09
+27,Academic,Postdoc,1_5 years,14,PCy3 HBF4,KOAc,DMAc,0.1,120,24.56
+27,Academic,Postdoc,1_5 years,15,X-Phos,KOAc,DMAc,0.1,120,88.41
+27,Academic,Postdoc,1_5 years,16,P(fur)3,KOAc,DMAc,0.1,120,60.48
+27,Academic,Postdoc,1_5 years,17,GorlosPhos HBF4,KOAc,DMAc,0.1,120,15.42
+27,Academic,Postdoc,1_5 years,18,JackiePhos,KOAc,DMAc,0.1,120,75.12
+27,Academic,Postdoc,1_5 years,19,CgMe-PPh,KOAc,DMAc,0.1,120,83.22
+27,Academic,Postdoc,1_5 years,20,PPhMe2,KOAc,DMAc,0.1,120,3.59
+27,Academic,Postdoc,1_5 years,21,BrettPhos,KOAc,BuCN,0.1,120,29.25
+27,Academic,Postdoc,1_5 years,22,PPhtBu2,KOAc,BuCN,0.1,120,0.0
+27,Academic,Postdoc,1_5 years,23,tBPh-CPhos,KOAc,BuCN,0.1,120,8.4
+27,Academic,Postdoc,1_5 years,24,PCy3 HBF4,KOAc,BuCN,0.1,120,1.96
+27,Academic,Postdoc,1_5 years,25,X-Phos,KOAc,BuCN,0.1,120,56.57
+27,Academic,Postdoc,1_5 years,26,P(fur)3,KOAc,BuCN,0.1,120,13.89
+27,Academic,Postdoc,1_5 years,27,GorlosPhos HBF4,KOAc,BuCN,0.1,120,22.06
+27,Academic,Postdoc,1_5 years,28,JackiePhos,KOAc,BuCN,0.1,120,20.08
+27,Academic,Postdoc,1_5 years,29,CgMe-PPh,KOAc,BuCN,0.1,120,67.57
+27,Academic,Postdoc,1_5 years,30,PPhMe2,KOAc,BuCN,0.1,120,0.0
+27,Academic,Postdoc,1_5 years,31,X-Phos,KOPiv,DMAc,0.1,120,80.61
+27,Academic,Postdoc,1_5 years,32,X-Phos,CsOAc,DMAc,0.1,120,84.81
+27,Academic,Postdoc,1_5 years,33,X-Phos,CsOPiv,DMAc,0.1,120,48.15
+27,Academic,Postdoc,1_5 years,34,X-Phos,KOAc,DMAc,0.057,120,77.58
+27,Academic,Postdoc,1_5 years,35,X-Phos,KOAc,DMAc,0.153,120,84.67
+27,Academic,Postdoc,1_5 years,36,CgMe-PPh,KOPiv,DMAc,0.1,120,87.59
+27,Academic,Postdoc,1_5 years,37,CgMe-PPh,CsOAc,DMAc,0.1,120,81.63
+27,Academic,Postdoc,1_5 years,38,CgMe-PPh,CsOPiv,DMAc,0.1,120,83.85
+27,Academic,Postdoc,1_5 years,39,CgMe-PPh,KOAc,DMAc,0.057,120,96.64
+27,Academic,Postdoc,1_5 years,40,CgMe-PPh,KOAc,DMAc,0.153,120,98.38
+27,Academic,Postdoc,1_5 years,41,CgMe-PPh,KOAc,BuOAc,0.1,120,51.37
+27,Academic,Postdoc,1_5 years,42,JackiePhos,KOAc,BuOAc,0.1,120,7.82
+27,Academic,Postdoc,1_5 years,43,X-Phos,KOAc,BuOAc,0.1,120,73.71
+27,Academic,Postdoc,1_5 years,44,tBPh-CPhos,KOAc,BuOAc,0.1,120,0.0
+27,Academic,Postdoc,1_5 years,45,P(fur)3,KOAc,BuOAc,0.1,120,21.34
+27,Academic,Postdoc,1_5 years,46,JackiePhos,KOPiv,DMAc,0.1,120,70.26
+27,Academic,Postdoc,1_5 years,47,JackiePhos,CsOAc,DMAc,0.1,120,67.63
+27,Academic,Postdoc,1_5 years,48,JackiePhos,CsOPiv,DMAc,0.1,120,13.46
+27,Academic,Postdoc,1_5 years,49,JackiePhos,KOAc,DMAc,0.057,120,89.14
+27,Academic,Postdoc,1_5 years,50,JackiePhos,KOAc,DMAc,0.153,120,85.21
+27,Academic,Postdoc,1_5 years,51,tBPh-CPhos,KOPiv,DMAc,0.1,120,68.33
+27,Academic,Postdoc,1_5 years,52,tBPh-CPhos,CsOAc,DMAc,0.1,120,62.6
+27,Academic,Postdoc,1_5 years,53,tBPh-CPhos,CsOPiv,DMAc,0.1,120,17.43
+27,Academic,Postdoc,1_5 years,54,tBPh-CPhos,KOAc,DMAc,0.057,120,88.89
+27,Academic,Postdoc,1_5 years,55,tBPh-CPhos,KOAc,DMAc,0.153,120,76.59
+27,Academic,Postdoc,1_5 years,56,CgMe-PPh,KOPiv,DMAc,0.153,120,99.81
+27,Academic,Postdoc,1_5 years,57,CgMe-PPh,CsOAc,DMAc,0.153,120,99.22
+27,Academic,Postdoc,1_5 years,58,CgMe-PPh,CsOPiv,DMAc,0.153,120,92.19
+27,Academic,Postdoc,1_5 years,59,CgMe-PPh,KOAc,DMAc,0.153,105,87.0
+27,Academic,Postdoc,1_5 years,60,CgMe-PPh,KOAc,DMAc,0.153,90,28.9
+28,Academic,Graduate Student,1_5 years,1,BrettPhos,KOAc,DMAc,0.1,90,5.22
+28,Academic,Graduate Student,1_5 years,2,PPh3,KOAc,DMAc,0.1,90,14.29
+28,Academic,Graduate Student,1_5 years,3,GorlosPhos HBF4,KOAc,DMAc,0.1,90,4.85
+28,Academic,Graduate Student,1_5 years,4,X-Phos,KOAc,DMAc,0.1,90,38.03
+28,Academic,Graduate Student,1_5 years,5,JackiePhos,KOAc,DMAc,0.1,90,45.87
+28,Academic,Graduate Student,1_5 years,6,PPhMe2,KOAc,DMAc,0.1,90,0.0
+28,Academic,Graduate Student,1_5 years,7,CgMe-PPh,KOAc,DMAc,0.1,90,13.19
+28,Academic,Graduate Student,1_5 years,8,PPh2Me,KOAc,DMAc,0.1,90,1.06
+28,Academic,Graduate Student,1_5 years,9,P(fur)3,KOAc,DMAc,0.1,90,9.59
+28,Academic,Graduate Student,1_5 years,10,PCy3 HBF4,KOAc,DMAc,0.1,90,1.71
+28,Academic,Graduate Student,1_5 years,11,JackiePhos,KOAc,DMAc,0.1,90,45.87
+28,Academic,Graduate Student,1_5 years,12,JackiePhos,KOPiv,DMAc,0.1,90,3.51
+28,Academic,Graduate Student,1_5 years,13,JackiePhos,CsOAc,DMAc,0.1,90,16.92
+28,Academic,Graduate Student,1_5 years,14,JackiePhos,CsOPiv,DMAc,0.1,90,1.26
+28,Academic,Graduate Student,1_5 years,15,JackiePhos,CsOPiv,p-Xylene,0.1,90,7.8
+28,Academic,Graduate Student,1_5 years,16,JackiePhos,KOAc,DMAc,0.1,90,45.87
+28,Academic,Graduate Student,1_5 years,17,JackiePhos,KOAc,BuCN,0.1,90,19.97
+28,Academic,Graduate Student,1_5 years,18,JackiePhos,KOAc,p-Xylene,0.1,90,4.95
+28,Academic,Graduate Student,1_5 years,19,JackiePhos,KOAc,BuOAc,0.1,90,4.43
+28,Academic,Graduate Student,1_5 years,20,JackiePhos,KOAc,DMAc,0.057,90,72.24
+28,Academic,Graduate Student,1_5 years,21,JackiePhos,KOAc,DMAc,0.057,90,72.24
+28,Academic,Graduate Student,1_5 years,22,JackiePhos,KOAc,DMAc,0.153,90,36.97
+28,Academic,Graduate Student,1_5 years,23,JackiePhos,KOAc,DMAc,0.057,105,87.62
+28,Academic,Graduate Student,1_5 years,24,JackiePhos,KOAc,DMAc,0.057,120,89.14
+28,Academic,Graduate Student,1_5 years,25,JackiePhos,KOAc,DMAc,0.057,120,89.14
+28,Academic,Graduate Student,1_5 years,26,BrettPhos,KOAc,DMAc,0.057,120,3.14
+28,Academic,Graduate Student,1_5 years,27,X-Phos,KOAc,DMAc,0.057,120,77.58
+28,Academic,Graduate Student,1_5 years,28,JackiePhos,KOAc,BuCN,0.057,120,21.88
+28,Academic,Graduate Student,1_5 years,29,JackiePhos,KOAc,BuOAc,0.057,120,5.16
+28,Academic,Graduate Student,1_5 years,30,JackiePhos,KOAc,p-Xylene,0.057,120,5.4
+28,Academic,Graduate Student,1_5 years,31,JackiePhos,KOAc,BuCN,0.1,120,20.08
+28,Academic,Graduate Student,1_5 years,32,JackiePhos,KOAc,BuCN,0.057,120,21.88
+28,Academic,Graduate Student,1_5 years,33,JackiePhos,KOAc,DMAc,0.057,120,89.14
+28,Academic,Graduate Student,1_5 years,34,JackiePhos,KOPiv,DMAc,0.057,120,82.13
+28,Academic,Graduate Student,1_5 years,35,JackiePhos,CsOAc,DMAc,0.057,120,81.48
+28,Academic,Graduate Student,1_5 years,36,JackiePhos,CsOPiv,DMAc,0.057,120,22.07
+28,Academic,Graduate Student,1_5 years,37,JackiePhos,CsOPiv,DMAc,0.1,120,13.46
+28,Academic,Graduate Student,1_5 years,38,JackiePhos,KOAc,DMAc,0.057,105,87.62
+28,Academic,Graduate Student,1_5 years,39,JackiePhos,KOAc,DMAc,0.057,90,72.24
+28,Academic,Graduate Student,1_5 years,40,JackiePhos,KOAc,DMAc,0.057,120,89.14
+28,Academic,Graduate Student,1_5 years,41,JackiePhos,KOAc,DMAc,0.1,120,75.12
+28,Academic,Graduate Student,1_5 years,42,JackiePhos,KOAc,DMAc,0.1,105,75.22
+28,Academic,Graduate Student,1_5 years,43,JackiePhos,KOAc,DMAc,0.057,105,87.62
+29,Academic,Graduate Student,1_5 years,1,X-Phos,KOPiv,p-Xylene,0.1,120,44.74
+29,Academic,Graduate Student,1_5 years,2,JackiePhos,KOPiv,p-Xylene,0.1,120,11.69
+29,Academic,Graduate Student,1_5 years,3,BrettPhos,KOPiv,p-Xylene,0.1,120,37.36
+29,Academic,Graduate Student,1_5 years,4,BrettPhos,CsOAc,p-Xylene,0.1,120,28.93
+29,Academic,Graduate Student,1_5 years,5,X-Phos,CsOAc,p-Xylene,0.1,120,67.17
+29,Academic,Graduate Student,1_5 years,6,X-Phos,CsOAc,BuCN,0.1,120,84.17
+29,Academic,Graduate Student,1_5 years,7,X-Phos,CsOAc,BuOAc,0.1,120,2.79
+29,Academic,Graduate Student,1_5 years,8,X-Phos,CsOAc,DMAc,0.1,120,84.81
+29,Academic,Graduate Student,1_5 years,9,X-Phos,CsOPiv,DMAc,0.1,120,48.15
+29,Academic,Graduate Student,1_5 years,10,X-Phos,CsOPiv,p-Xylene,0.1,120,55.8
+29,Academic,Graduate Student,1_5 years,11,X-Phos,CsOAc,DMAc,0.153,120,84.49
+29,Academic,Graduate Student,1_5 years,12,X-Phos,CsOAc,DMAc,0.057,120,88.41
+29,Academic,Graduate Student,1_5 years,13,JackiePhos,CsOAc,DMAc,0.1,120,67.63
+29,Academic,Graduate Student,1_5 years,14,BrettPhos,CsOAc,DMAc,0.1,120,4.08
+29,Academic,Graduate Student,1_5 years,15,CgMe-PPh,CsOAc,DMAc,0.1,120,81.63
+30,Academic,Graduate Student,1_5 years,1,X-Phos,KOAc,p-Xylene,0.1,90,25.5
+30,Academic,Graduate Student,1_5 years,2,X-Phos,KOAc,DMAc,0.1,90,38.03
+30,Academic,Graduate Student,1_5 years,3,X-Phos,KOAc,BuCN,0.1,90,26.5
+30,Academic,Graduate Student,1_5 years,4,X-Phos,KOAc,BuOAc,0.1,90,28.11
+30,Academic,Graduate Student,1_5 years,5,X-Phos,KOAc,p-Xylene,0.1,105,43.76
+30,Academic,Graduate Student,1_5 years,6,X-Phos,KOAc,DMAc,0.1,105,65.37
+30,Academic,Graduate Student,1_5 years,7,X-Phos,KOAc,DMAc,0.1,120,88.41
+30,Academic,Graduate Student,1_5 years,8,X-Phos,KOAc,p-Xylene,0.1,120,67.04
+30,Academic,Graduate Student,1_5 years,9,X-Phos,CsOAc,p-Xylene,0.1,105,67.17
+30,Academic,Graduate Student,1_5 years,10,X-Phos,KOPiv,p-Xylene,0.1,105,35.07
+30,Academic,Graduate Student,1_5 years,11,X-Phos,KOAc,DMAc,0.057,120,77.58
+30,Academic,Graduate Student,1_5 years,12,X-Phos,KOAc,DMAc,0.153,120,84.67
+30,Academic,Graduate Student,1_5 years,13,BrettPhos,KOAc,DMAc,0.1,120,5.03
+30,Academic,Graduate Student,1_5 years,14,PCy3 HBF4,KOAc,DMAc,0.1,120,24.56
+30,Academic,Graduate Student,1_5 years,15,GorlosPhos HBF4,KOAc,DMAc,0.1,120,15.42
+30,Academic,Graduate Student,1_5 years,16,CgMe-PPh,KOAc,DMAc,0.1,120,83.22
+30,Academic,Graduate Student,1_5 years,17,PPhtBu2,KOAc,DMAc,0.1,120,7.71
+30,Academic,Graduate Student,1_5 years,18,PPh3,KOAc,DMAc,0.1,120,74.04
+30,Academic,Graduate Student,1_5 years,19,JackiePhos,KOAc,DMAc,0.1,120,75.12
+30,Academic,Graduate Student,1_5 years,20,tBPh-CPhos,KOAc,DMAc,0.1,120,82.09
+31,Academic,Graduate Student,No experience,1,tBPh-CPhos,KOAc,DMAc,0.1,105,78.95
+31,Academic,Graduate Student,No experience,2,P(fur)3,KOAc,DMAc,0.1,105,41.9
+31,Academic,Graduate Student,No experience,3,PCy3 HBF4,KOAc,DMAc,0.1,105,7.26
+31,Academic,Graduate Student,No experience,4,PPh3,KOAc,DMAc,0.1,105,28.15
+31,Academic,Graduate Student,No experience,5,PPhMe2,KOAc,DMAc,0.1,105,0.0
+31,Academic,Graduate Student,No experience,6,X-Phos,KOAc,DMAc,0.1,105,65.37
+31,Academic,Graduate Student,No experience,7,BrettPhos,KOAc,DMAc,0.1,105,5.47
+31,Academic,Graduate Student,No experience,8,JackiePhos,KOAc,DMAc,0.1,105,75.22
+31,Academic,Graduate Student,No experience,9,tBPh-CPhos,KOAc,p-Xylene,0.1,105,6.39
+31,Academic,Graduate Student,No experience,10,tBPh-CPhos,KOAc,BuOAc,0.1,105,0.0
+31,Academic,Graduate Student,No experience,11,tBPh-CPhos,KOAc,BuCN,0.1,105,6.17
+31,Academic,Graduate Student,No experience,12,tBPh-CPhos,KOAc,DMAc,0.057,105,68.71
+31,Academic,Graduate Student,No experience,13,tBPh-CPhos,KOAc,DMAc,0.153,105,57.33
+31,Academic,Graduate Student,No experience,14,tBPh-CPhos,KOAc,DMAc,0.1,120,82.09
+31,Academic,Graduate Student,No experience,15,tBPh-CPhos,CsOAc,DMAc,0.1,105,29.31
+31,Academic,Graduate Student,No experience,16,tBPh-CPhos,KOPiv,DMAc,0.1,105,28.64
+31,Academic,Graduate Student,No experience,17,tBPh-CPhos,KOAc,DMAc,0.1,90,47.03
+31,Academic,Graduate Student,No experience,18,JackiePhos,KOAc,DMAc,0.1,120,75.12
+31,Academic,Graduate Student,No experience,19,JackiePhos,KOAc,BuCN,0.1,120,20.08
+31,Academic,Graduate Student,No experience,20,JackiePhos,KOAc,p-Xylene,0.1,120,7.03
+32,Academic,Postdoc,1_5 years,1,JackiePhos,KOPiv,DMAc,0.1,105,50.54
+32,Academic,Postdoc,1_5 years,2,GorlosPhos HBF4,KOPiv,DMAc,0.1,105,38.15
+32,Academic,Postdoc,1_5 years,3,P(fur)3,KOPiv,DMAc,0.1,105,73.59
+32,Academic,Postdoc,1_5 years,4,BrettPhos,KOPiv,DMAc,0.1,105,0.07
+32,Academic,Postdoc,1_5 years,5,CgMe-PPh,KOPiv,DMAc,0.1,105,89.76
+32,Academic,Postdoc,1_5 years,6,CgMe-PPh,KOPiv,DMAc,0.1,90,55.7
+32,Academic,Postdoc,1_5 years,7,CgMe-PPh,KOPiv,DMAc,0.1,120,87.59
+32,Academic,Postdoc,1_5 years,8,CgMe-PPh,KOPiv,DMAc,0.057,105,90.39
+32,Academic,Postdoc,1_5 years,9,CgMe-PPh,KOPiv,DMAc,0.153,105,98.49
+32,Academic,Postdoc,1_5 years,10,CgMe-PPh,KOPiv,p-Xylene,0.1,105,32.37
+32,Academic,Postdoc,1_5 years,11,CgMe-PPh,KOPiv,DMAc,0.153,120,99.81
+32,Academic,Postdoc,1_5 years,12,CgMe-PPh,CsOPiv,DMAc,0.153,105,100.0
+32,Academic,Postdoc,1_5 years,13,CgMe-PPh,KOAc,DMAc,0.153,105,87.0
+32,Academic,Postdoc,1_5 years,14,CgMe-PPh,CsOAc,DMAc,0.153,105,100.0
+32,Academic,Postdoc,1_5 years,15,CgMe-PPh,KOPiv,BuOAc,0.153,105,32.43
+32,Academic,Postdoc,1_5 years,16,CgMe-PPh,KOPiv,DMAc,0.153,120,99.81
+33,Academic,Graduate Student,1_5 years,1,P(fur)3,CsOAc,DMAc,0.1,105,45.21
+33,Academic,Graduate Student,1_5 years,2,CgMe-PPh,CsOAc,BuOAc,0.1,105,45.01
+33,Academic,Graduate Student,1_5 years,3,PCy3 HBF4,CsOAc,DMAc,0.1,105,12.83
+33,Academic,Graduate Student,1_5 years,4,X-Phos,CsOAc,BuCN,0.1,105,83.83
+33,Academic,Graduate Student,1_5 years,5,PCy3 HBF4,KOPiv,BuCN,0.1,105,0.35
+33,Academic,Graduate Student,1_5 years,6,BrettPhos,CsOAc,BuCN,0.1,105,64.48
+33,Academic,Graduate Student,1_5 years,7,X-Phos,CsOAc,BuCN,0.153,120,77.01
+33,Academic,Graduate Student,1_5 years,8,X-Phos,CsOAc,p-Xylene,0.153,120,70.8
+33,Academic,Graduate Student,1_5 years,9,X-Phos,CsOPiv,BuCN,0.153,120,78.44
+33,Academic,Graduate Student,1_5 years,10,X-Phos,KOPiv,BuCN,0.153,120,71.43
+33,Academic,Graduate Student,1_5 years,11,X-Phos,CsOAc,BuCN,0.057,90,72.9
+33,Academic,Graduate Student,1_5 years,12,PPhtBu2,CsOAc,BuCN,0.1,105,0.0
+33,Academic,Graduate Student,1_5 years,13,JackiePhos,CsOAc,BuCN,0.1,105,26.69
+33,Academic,Graduate Student,1_5 years,14,tBPh-CPhos,CsOAc,BuCN,0.1,105,5.88
+33,Academic,Graduate Student,1_5 years,15,GorlosPhos HBF4,CsOAc,BuCN,0.1,105,33.34
+33,Academic,Graduate Student,1_5 years,16,X-Phos,CsOAc,BuOAc,0.1,105,86.43
+33,Academic,Graduate Student,1_5 years,17,X-Phos,CsOAc,DMAc,0.1,105,87.83
+33,Academic,Graduate Student,1_5 years,18,X-Phos,KOAc,DMAc,0.1,105,65.37
+33,Academic,Graduate Student,1_5 years,19,X-Phos,KOPiv,DMAc,0.1,105,77.41
+33,Academic,Graduate Student,1_5 years,20,X-Phos,CsOPiv,BuOAc,0.1,105,59.92
+33,Academic,Graduate Student,1_5 years,21,X-Phos,CsOAc,DMAc,0.153,120,84.49
+33,Academic,Graduate Student,1_5 years,22,X-Phos,CsOAc,DMAc,0.057,105,89.17
+33,Academic,Graduate Student,1_5 years,23,X-Phos,CsOAc,DMAc,0.1,90,84.17
+33,Academic,Graduate Student,1_5 years,24,X-Phos,CsOAc,p-Xylene,0.1,105,67.17
+33,Academic,Graduate Student,1_5 years,25,X-Phos,CsOPiv,p-Xylene,0.1,105,53.63
+33,Academic,Graduate Student,1_5 years,26,X-Phos,CsOAc,DMAc,0.057,120,88.41
+33,Academic,Graduate Student,1_5 years,27,X-Phos,CsOAc,DMAc,0.057,90,79.33
+33,Academic,Graduate Student,1_5 years,28,X-Phos,KOPiv,DMAc,0.057,105,61.0
+33,Academic,Graduate Student,1_5 years,29,X-Phos,CsOPiv,DMAc,0.057,105,30.21
+33,Academic,Graduate Student,1_5 years,30,X-Phos,CsOPiv,DMAc,0.057,120,38.48
+33,Academic,Graduate Student,1_5 years,31,X-Phos,CsOPiv,BuCN,0.057,105,36.65
+33,Academic,Graduate Student,1_5 years,32,X-Phos,CsOAc,BuCN,0.057,105,72.89
+33,Academic,Graduate Student,1_5 years,33,X-Phos,CsOAc,BuCN,0.057,120,72.21
+33,Academic,Graduate Student,1_5 years,34,X-Phos,CsOPiv,BuCN,0.057,120,31.51
+33,Academic,Graduate Student,1_5 years,35,X-Phos,CsOPiv,BuOAc,0.057,120,22.87
+34,Academic,Graduate Student,1_5 years,1,BrettPhos,KOAc,DMAc,0.153,120,5.95
+34,Academic,Graduate Student,1_5 years,2,X-Phos,KOAc,DMAc,0.153,120,84.67
+34,Academic,Graduate Student,1_5 years,3,JackiePhos,KOAc,DMAc,0.153,120,85.21
+34,Academic,Graduate Student,1_5 years,4,tBPh-CPhos,KOAc,DMAc,0.153,120,76.59
+34,Academic,Graduate Student,1_5 years,5,PPhtBu2,KOAc,DMAc,0.153,120,4.3
+34,Academic,Graduate Student,1_5 years,6,JackiePhos,KOAc,DMAc,0.153,90,36.97
+34,Academic,Graduate Student,1_5 years,7,JackiePhos,KOPiv,DMAc,0.153,120,43.12
+34,Academic,Graduate Student,1_5 years,8,JackiePhos,CsOAc,DMAc,0.153,120,39.57
+34,Academic,Graduate Student,1_5 years,9,JackiePhos,CsOPiv,DMAc,0.153,120,5.65
+34,Academic,Graduate Student,1_5 years,10,JackiePhos,KOAc,DMAc,0.153,105,63.88
+34,Academic,Graduate Student,1_5 years,11,JackiePhos,KOAc,BuCN,0.153,120,20.72
+34,Academic,Graduate Student,1_5 years,12,JackiePhos,KOAc,BuOAc,0.153,120,6.48
+34,Academic,Graduate Student,1_5 years,13,JackiePhos,KOAc,p-Xylene,0.153,120,7.88
+34,Academic,Graduate Student,1_5 years,14,JackiePhos,KOAc,p-Xylene,0.1,120,7.03
+34,Academic,Graduate Student,1_5 years,15,JackiePhos,KOAc,p-Xylene,0.057,120,5.4
+34,Academic,Graduate Student,1_5 years,16,CgMe-PPh,KOAc,DMAc,0.153,120,98.38
+34,Academic,Graduate Student,1_5 years,17,P(fur)3,KOAc,DMAc,0.153,120,52.08
+34,Academic,Graduate Student,1_5 years,18,GorlosPhos HBF4,KOAc,DMAc,0.153,120,14.06
+34,Academic,Graduate Student,1_5 years,19,PPh3,KOAc,DMAc,0.153,120,51.83
+34,Academic,Graduate Student,1_5 years,20,PPhMe2,KOAc,DMAc,0.153,120,2.78
+34,Academic,Graduate Student,1_5 years,21,CgMe-PPh,KOAc,DMAc,0.153,105,87.0
+34,Academic,Graduate Student,1_5 years,22,CgMe-PPh,KOAc,DMAc,0.153,90,28.9
+34,Academic,Graduate Student,1_5 years,23,CgMe-PPh,KOAc,BuCN,0.153,90,19.99
+34,Academic,Graduate Student,1_5 years,24,CgMe-PPh,KOAc,BuCN,0.153,120,80.86
+34,Academic,Graduate Student,1_5 years,25,CgMe-PPh,CsOAc,BuCN,0.153,120,99.98
+34,Academic,Graduate Student,1_5 years,26,CgMe-PPh,CsOPiv,BuCN,0.153,120,71.81
+34,Academic,Graduate Student,1_5 years,27,CgMe-PPh,CsOAc,BuOAc,0.153,120,62.33
+34,Academic,Graduate Student,1_5 years,28,CgMe-PPh,CsOAc,p-Xylene,0.153,120,91.19
+34,Academic,Graduate Student,1_5 years,29,CgMe-PPh,CsOPiv,BuCN,0.153,120,71.81
+34,Academic,Graduate Student,1_5 years,30,CgMe-PPh,CsOPiv,BuOAc,0.153,120,26.69
+34,Academic,Graduate Student,1_5 years,31,CgMe-PPh,CsOPiv,p-Xylene,0.153,120,19.13
+35,Academic,Graduate Student,1_5 years,1,X-Phos,CsOAc,DMAc,0.153,120,84.49
+35,Academic,Graduate Student,1_5 years,2,GorlosPhos HBF4,CsOAc,DMAc,0.153,120,40.26
+35,Academic,Graduate Student,1_5 years,3,PCy3 HBF4,CsOAc,DMAc,0.153,120,18.61
+35,Academic,Graduate Student,1_5 years,4,tBPh-CPhos,CsOAc,DMAc,0.153,120,32.21
+35,Academic,Graduate Student,1_5 years,5,PPhtBu2,CsOAc,DMAc,0.153,120,0.51
+35,Academic,Graduate Student,1_5 years,6,X-Phos,KOAc,DMAc,0.153,120,84.67
+35,Academic,Graduate Student,1_5 years,7,X-Phos,KOPiv,DMAc,0.153,120,80.39
+35,Academic,Graduate Student,1_5 years,8,X-Phos,CsOPiv,DMAc,0.153,120,48.34
+35,Academic,Graduate Student,1_5 years,9,X-Phos,CsOAc,DMAc,0.1,120,84.81
+35,Academic,Graduate Student,1_5 years,10,X-Phos,CsOAc,DMAc,0.153,105,84.48
+35,Academic,Graduate Student,1_5 years,11,BrettPhos,CsOAc,DMAc,0.153,120,7.43
+35,Academic,Graduate Student,1_5 years,12,JackiePhos,CsOAc,DMAc,0.153,120,39.57
+35,Academic,Graduate Student,1_5 years,13,CgMe-PPh,CsOAc,DMAc,0.153,120,99.22
+35,Academic,Graduate Student,1_5 years,14,X-Phos,CsOAc,BuCN,0.153,120,77.01
+35,Academic,Graduate Student,1_5 years,15,X-Phos,CsOAc,BuOAc,0.153,120,6.23
+35,Academic,Graduate Student,1_5 years,16,CgMe-PPh,CsOAc,BuCN,0.153,120,99.98
+35,Academic,Graduate Student,1_5 years,17,CgMe-PPh,CsOAc,BuOAc,0.153,120,62.33
+35,Academic,Graduate Student,1_5 years,18,CgMe-PPh,CsOAc,p-Xylene,0.153,120,91.19
+35,Academic,Graduate Student,1_5 years,19,CgMe-PPh,CsOPiv,DMAc,0.153,120,92.19
+35,Academic,Graduate Student,1_5 years,20,CgMe-PPh,KOPiv,DMAc,0.153,120,99.81
+36,Academic,Postdoc,5_10 years,1,BrettPhos,CsOAc,BuCN,0.1,90,48.21
+36,Academic,Postdoc,5_10 years,2,BrettPhos,CsOAc,BuCN,0.1,105,64.48
+36,Academic,Postdoc,5_10 years,3,BrettPhos,CsOAc,BuCN,0.1,120,69.13
+36,Academic,Postdoc,5_10 years,4,JackiePhos,CsOAc,BuCN,0.1,120,23.5
+36,Academic,Postdoc,5_10 years,5,tBPh-CPhos,CsOAc,BuCN,0.1,120,7.69
+36,Academic,Postdoc,5_10 years,6,CgMe-PPh,CsOAc,BuCN,0.1,120,88.82
+36,Academic,Postdoc,5_10 years,7,CgMe-PPh,KOPiv,BuCN,0.1,120,70.51
+36,Academic,Postdoc,5_10 years,8,CgMe-PPh,KOAc,BuCN,0.1,120,67.57
+36,Academic,Postdoc,5_10 years,9,CgMe-PPh,CsOPiv,BuCN,0.1,120,71.57
+36,Academic,Postdoc,5_10 years,10,CgMe-PPh,CsOAc,BuCN,0.057,120,50.74
+36,Academic,Postdoc,5_10 years,11,CgMe-PPh,CsOAc,DMAc,0.1,120,81.63
+36,Academic,Postdoc,5_10 years,12,CgMe-PPh,CsOAc,BuOAc,0.1,120,57.84
+36,Academic,Postdoc,5_10 years,13,CgMe-PPh,CsOAc,p-Xylene,0.1,120,62.73
+36,Academic,Postdoc,5_10 years,14,JackiePhos,CsOAc,p-Xylene,0.1,120,8.31
+36,Academic,Postdoc,5_10 years,15,GorlosPhos HBF4,CsOAc,p-Xylene,0.1,120,21.42
+36,Academic,Postdoc,5_10 years,16,PPhtBu2,CsOAc,BuCN,0.1,120,0.0
+36,Academic,Postdoc,5_10 years,17,tBPh-CPhos,CsOAc,BuCN,0.1,120,7.69
+36,Academic,Postdoc,5_10 years,18,PCy3 HBF4,CsOAc,BuCN,0.1,120,3.8
+36,Academic,Postdoc,5_10 years,19,PPh3,CsOAc,BuCN,0.1,120,13.09
+36,Academic,Postdoc,5_10 years,20,P(fur)3,CsOAc,BuCN,0.1,120,13.75
+37,Academic,Graduate Student,No experience,1,BrettPhos,KOAc,DMAc,0.153,120,5.95
+37,Academic,Graduate Student,No experience,2,PPhtBu2,KOAc,DMAc,0.153,120,4.3
+37,Academic,Graduate Student,No experience,3,tBPh-CPhos,KOAc,DMAc,0.153,120,76.59
+37,Academic,Graduate Student,No experience,4,PCy3 HBF4,KOAc,DMAc,0.153,120,11.91
+37,Academic,Graduate Student,No experience,5,PPh3,KOAc,DMAc,0.153,120,51.83
+37,Academic,Graduate Student,No experience,6,X-Phos,KOAc,DMAc,0.153,120,84.67
+37,Academic,Graduate Student,No experience,7,P(fur)3,KOAc,DMAc,0.153,120,52.08
+37,Academic,Graduate Student,No experience,8,PPh2Me,KOAc,DMAc,0.153,120,7.5
+37,Academic,Graduate Student,No experience,9,GorlosPhos HBF4,KOAc,DMAc,0.153,120,14.06
+37,Academic,Graduate Student,No experience,10,JackiePhos,KOAc,DMAc,0.153,120,85.21
+37,Academic,Graduate Student,No experience,11,CgMe-PPh,KOAc,DMAc,0.153,120,98.38
+37,Academic,Graduate Student,No experience,12,PPhMe2,KOAc,DMAc,0.153,120,2.78
+37,Academic,Graduate Student,No experience,13,JackiePhos,KOPiv,DMAc,0.153,120,43.12
+37,Academic,Graduate Student,No experience,14,JackiePhos,CsOAc,DMAc,0.153,120,39.57
+37,Academic,Graduate Student,No experience,15,JackiePhos,CsOPiv,DMAc,0.153,120,5.65
+37,Academic,Graduate Student,No experience,16,CgMe-PPh,KOPiv,DMAc,0.153,120,99.81
+37,Academic,Graduate Student,No experience,17,CgMe-PPh,CsOAc,DMAc,0.153,120,99.22
+37,Academic,Graduate Student,No experience,18,CgMe-PPh,CsOPiv,DMAc,0.153,120,92.19
+37,Academic,Graduate Student,No experience,19,CgMe-PPh,KOAc,BuCN,0.153,120,80.86
+37,Academic,Graduate Student,No experience,20,CgMe-PPh,KOAc,BuOAc,0.153,120,52.47
+37,Academic,Graduate Student,No experience,21,CgMe-PPh,KOPiv,BuCN,0.153,120,80.65
+37,Academic,Graduate Student,No experience,22,CgMe-PPh,KOPiv,BuOAc,0.153,120,45.73
+37,Academic,Graduate Student,No experience,23,CgMe-PPh,KOPiv,p-Xylene,0.153,120,44.47
+37,Academic,Graduate Student,No experience,24,CgMe-PPh,KOPiv,DMAc,0.057,120,89.95
+37,Academic,Graduate Student,No experience,25,CgMe-PPh,KOPiv,DMAc,0.1,120,87.59
+37,Academic,Graduate Student,No experience,26,CgMe-PPh,KOPiv,DMAc,0.153,90,61.09
+37,Academic,Graduate Student,No experience,27,CgMe-PPh,KOPiv,DMAc,0.153,105,98.49
+37,Academic,Graduate Student,No experience,28,CgMe-PPh,KOPiv,DMAc,0.057,90,62.75
+37,Academic,Graduate Student,No experience,29,CgMe-PPh,KOPiv,DMAc,0.057,105,90.39
+37,Academic,Graduate Student,No experience,30,CgMe-PPh,KOPiv,DMAc,0.1,90,55.7
+37,Academic,Graduate Student,No experience,31,JackiePhos,KOAc,BuCN,0.153,120,20.72
+37,Academic,Graduate Student,No experience,32,JackiePhos,KOAc,BuOAc,0.153,120,6.48
+37,Academic,Graduate Student,No experience,33,JackiePhos,KOAc,p-Xylene,0.153,120,7.88
+37,Academic,Graduate Student,No experience,34,JackiePhos,KOAc,DMAc,0.1,120,75.12
+37,Academic,Graduate Student,No experience,35,JackiePhos,KOAc,DMAc,0.057,120,89.14
+38,Other,Graduate Student,1_5 years,1,CgMe-PPh,KOAc,DMAc,0.153,120,98.38
+38,Other,Graduate Student,1_5 years,2,CgMe-PPh,KOAc,DMAc,0.153,105,87.0
+38,Other,Graduate Student,1_5 years,3,CgMe-PPh,KOAc,DMAc,0.153,90,28.9
+38,Other,Graduate Student,1_5 years,4,CgMe-PPh,KOPiv,DMAc,0.153,120,99.81
+38,Other,Graduate Student,1_5 years,5,CgMe-PPh,CsOAc,DMAc,0.153,120,99.22
+38,Other,Graduate Student,1_5 years,6,CgMe-PPh,CsOPiv,DMAc,0.153,120,92.19
+38,Other,Graduate Student,1_5 years,7,CgMe-PPh,CsOPiv,DMAc,0.1,120,83.85
+38,Other,Graduate Student,1_5 years,8,CgMe-PPh,CsOPiv,DMAc,0.057,120,92.03
+38,Other,Graduate Student,1_5 years,9,CgMe-PPh,CsOPiv,BuCN,0.057,120,75.46
+38,Other,Graduate Student,1_5 years,10,CgMe-PPh,CsOPiv,BuCN,0.153,120,71.81
+39,Academic,Faculty,No experience,1,BrettPhos,CsOPiv,DMAc,0.1,120,0.0
+39,Academic,Faculty,No experience,2,PCy3 HBF4,CsOPiv,DMAc,0.1,120,27.93
+39,Academic,Faculty,No experience,3,PPh3,CsOPiv,DMAc,0.1,120,76.33
+39,Academic,Faculty,No experience,4,X-Phos,CsOPiv,DMAc,0.1,120,48.15
+39,Academic,Faculty,No experience,5,PPhMe2,CsOPiv,DMAc,0.1,120,0.0
+39,Academic,Faculty,No experience,6,PPh3,CsOAc,DMAc,0.1,120,87.32
+39,Academic,Faculty,No experience,7,PPh3,KOPiv,DMAc,0.1,120,86.46
+39,Academic,Faculty,No experience,8,PPh3,KOAc,DMAc,0.1,120,74.04
+39,Academic,Faculty,No experience,9,PPh3,CsOPiv,DMAc,0.1,90,33.59
+39,Academic,Faculty,No experience,10,PPh3,CsOPiv,DMAc,0.1,105,52.05
+39,Academic,Faculty,No experience,11,PPh3,CsOAc,p-Xylene,0.1,120,16.64
+39,Academic,Faculty,No experience,12,PPh3,CsOAc,BuCN,0.1,120,13.09
+39,Academic,Faculty,No experience,13,PPh3,CsOAc,BuOAc,0.1,120,4.94
+39,Academic,Faculty,No experience,14,PPh3,CsOAc,DMAc,0.057,120,89.71
+39,Academic,Faculty,No experience,15,PPh3,CsOAc,DMAc,0.153,120,78.19
+39,Academic,Faculty,No experience,16,PPh3,KOPiv,DMAc,0.1,120,86.46
+39,Academic,Faculty,No experience,17,JackiePhos,CsOAc,DMAc,0.057,120,81.48
+39,Academic,Faculty,No experience,18,P(fur)3,CsOAc,DMAc,0.057,120,78.6
+39,Academic,Faculty,No experience,19,PPh2Me,CsOAc,DMAc,0.057,120,18.16
+39,Academic,Faculty,No experience,20,tBPh-CPhos,CsOAc,DMAc,0.057,120,66.84
+39,Academic,Faculty,No experience,21,CgMe-PPh,CsOAc,DMAc,0.057,120,95.48
+39,Academic,Faculty,No experience,22,CgMe-PPh,KOPiv,DMAc,0.057,120,89.95
+39,Academic,Faculty,No experience,23,CgMe-PPh,CsOAc,DMAc,0.1,120,81.63
+39,Academic,Faculty,No experience,24,CgMe-PPh,CsOAc,DMAc,0.153,120,99.22
+39,Academic,Faculty,No experience,25,CgMe-PPh,KOPiv,DMAc,0.1,120,87.59
+39,Academic,Faculty,No experience,26,CgMe-PPh,KOPiv,DMAc,0.153,120,99.81
+40,Pharma,Med Chemist,1_5 years,1,PPh3,KOPiv,BuOAc,0.1,105,1.92
+40,Pharma,Med Chemist,1_5 years,2,PCy3 HBF4,KOPiv,BuOAc,0.1,105,0.0
+40,Pharma,Med Chemist,1_5 years,3,PCy3 HBF4,CsOAc,BuOAc,0.1,105,0.0
+40,Pharma,Med Chemist,1_5 years,4,PPh3,CsOAc,BuOAc,0.1,105,4.22
+40,Pharma,Med Chemist,1_5 years,5,PPh3,KOPiv,p-Xylene,0.1,120,4.48
+40,Pharma,Med Chemist,1_5 years,6,GorlosPhos HBF4,KOAc,p-Xylene,0.057,120,0.0
+40,Pharma,Med Chemist,1_5 years,7,JackiePhos,KOAc,DMAc,0.057,120,89.14
+40,Pharma,Med Chemist,1_5 years,8,JackiePhos,CsOAc,BuOAc,0.057,120,2.45
+40,Pharma,Med Chemist,1_5 years,9,tBPh-CPhos,CsOAc,BuCN,0.057,120,7.42
+40,Pharma,Med Chemist,1_5 years,10,tBPh-CPhos,CsOAc,p-Xylene,0.057,120,15.98
+40,Pharma,Med Chemist,1_5 years,11,JackiePhos,KOAc,BuCN,0.057,120,21.88
+40,Pharma,Med Chemist,1_5 years,12,JackiePhos,KOAc,BuOAc,0.057,120,5.16
+40,Pharma,Med Chemist,1_5 years,13,JackiePhos,KOAc,p-Xylene,0.057,120,5.4
+40,Pharma,Med Chemist,1_5 years,14,JackiePhos,KOAc,DMAc,0.057,105,87.62
+40,Pharma,Med Chemist,1_5 years,15,JackiePhos,KOAc,DMAc,0.153,120,85.21
+40,Pharma,Med Chemist,1_5 years,16,JackiePhos,CsOAc,DMAc,0.057,120,81.48
+40,Pharma,Med Chemist,1_5 years,17,JackiePhos,CsOPiv,DMAc,0.057,120,22.07
+40,Pharma,Med Chemist,1_5 years,18,JackiePhos,KOAc,DMAc,0.057,90,72.24
+40,Pharma,Med Chemist,1_5 years,19,JackiePhos,KOAc,DMAc,0.153,90,36.97
+40,Pharma,Med Chemist,1_5 years,20,JackiePhos,KOAc,DMAc,0.1,90,45.87
+40,Pharma,Med Chemist,1_5 years,21,JackiePhos,CsOAc,DMAc,0.057,105,71.97
+40,Pharma,Med Chemist,1_5 years,22,JackiePhos,CsOAc,DMAc,0.153,120,39.57
+40,Pharma,Med Chemist,1_5 years,23,JackiePhos,KOAc,DMAc,0.1,120,75.12
+40,Pharma,Med Chemist,1_5 years,24,JackiePhos,CsOPiv,DMAc,0.153,120,5.65
+40,Pharma,Med Chemist,1_5 years,25,JackiePhos,CsOPiv,DMAc,0.057,105,9.52
+40,Pharma,Med Chemist,1_5 years,26,JackiePhos,KOPiv,DMAc,0.057,120,82.13
+40,Pharma,Med Chemist,1_5 years,27,JackiePhos,KOPiv,DMAc,0.057,105,54.07
+40,Pharma,Med Chemist,1_5 years,28,JackiePhos,KOPiv,DMAc,0.153,120,43.12
+40,Pharma,Med Chemist,1_5 years,29,JackiePhos,KOPiv,DMAc,0.153,105,11.68
+40,Pharma,Med Chemist,1_5 years,30,JackiePhos,KOPiv,DMAc,0.1,120,70.26
+40,Pharma,Med Chemist,1_5 years,31,P(fur)3,KOAc,DMAc,0.057,120,62.04
+40,Pharma,Med Chemist,1_5 years,32,PPh3,KOAc,DMAc,0.057,120,45.85
+40,Pharma,Med Chemist,1_5 years,33,PPh2Me,KOAc,DMAc,0.057,120,12.01
+40,Pharma,Med Chemist,1_5 years,34,tBPh-CPhos,KOAc,DMAc,0.057,120,88.89
+40,Pharma,Med Chemist,1_5 years,35,BrettPhos,KOAc,DMAc,0.057,120,3.14
+40,Pharma,Med Chemist,1_5 years,36,X-Phos,KOAc,DMAc,0.057,120,77.58
+40,Pharma,Med Chemist,1_5 years,37,PPhMe2,KOAc,DMAc,0.057,120,3.33
+40,Pharma,Med Chemist,1_5 years,38,PPhtBu2,KOAc,DMAc,0.057,120,2.13
+40,Pharma,Med Chemist,1_5 years,39,CgMe-PPh,KOAc,DMAc,0.057,120,96.64
+40,Pharma,Med Chemist,1_5 years,40,GorlosPhos HBF4,KOAc,DMAc,0.057,120,13.87
+40,Pharma,Med Chemist,1_5 years,41,CgMe-PPh,KOAc,DMAc,0.057,105,67.21
+40,Pharma,Med Chemist,1_5 years,42,CgMe-PPh,KOAc,DMAc,0.057,90,30.41
+40,Pharma,Med Chemist,1_5 years,43,CgMe-PPh,KOAc,DMAc,0.153,120,98.38
+40,Pharma,Med Chemist,1_5 years,44,CgMe-PPh,KOAc,DMAc,0.153,105,87.0
+40,Pharma,Med Chemist,1_5 years,45,CgMe-PPh,KOPiv,DMAc,0.057,120,89.95
+41,Pharma,Med Chemist,5_10 years,1,X-Phos,KOPiv,DMAc,0.1,120,80.61
+41,Pharma,Med Chemist,5_10 years,2,BrettPhos,KOPiv,DMAc,0.1,120,0.26
+41,Pharma,Med Chemist,5_10 years,3,PCy3 HBF4,KOPiv,DMAc,0.1,120,47.58
+41,Pharma,Med Chemist,5_10 years,4,JackiePhos,KOPiv,DMAc,0.1,120,70.26
+41,Pharma,Med Chemist,5_10 years,5,PPhtBu2,KOPiv,DMAc,0.1,120,28.53
+41,Pharma,Med Chemist,5_10 years,6,X-Phos,KOPiv,BuCN,0.1,120,50.93
+41,Pharma,Med Chemist,5_10 years,7,X-Phos,KOPiv,BuOAc,0.1,120,66.49
+41,Pharma,Med Chemist,5_10 years,8,X-Phos,KOPiv,p-Xylene,0.1,120,44.74
+41,Pharma,Med Chemist,5_10 years,9,X-Phos,CsOPiv,DMAc,0.1,120,48.15
+41,Pharma,Med Chemist,5_10 years,10,X-Phos,KOAc,DMAc,0.1,120,88.41
+41,Pharma,Med Chemist,5_10 years,11,X-Phos,CsOAc,DMAc,0.1,120,84.81
+41,Pharma,Med Chemist,5_10 years,12,X-Phos,KOAc,DMAc,0.057,105,55.4
+41,Pharma,Med Chemist,5_10 years,13,X-Phos,KOAc,DMAc,0.153,105,48.86
+41,Pharma,Med Chemist,5_10 years,14,X-Phos,KOAc,DMAc,0.1,105,65.37
+41,Pharma,Med Chemist,5_10 years,15,X-Phos,KOAc,DMAc,0.057,120,77.58
+41,Pharma,Med Chemist,5_10 years,16,X-Phos,KOAc,DMAc,0.153,120,84.67
+42,Academic,Graduate Student,1_5 years,1,PPh3,CsOAc,BuCN,0.1,105,3.21
+42,Academic,Graduate Student,1_5 years,2,PPh3,CsOAc,DMAc,0.1,105,62.82
+42,Academic,Graduate Student,1_5 years,3,PPh3,CsOAc,BuOAc,0.1,105,4.22
+42,Academic,Graduate Student,1_5 years,4,PPh3,CsOAc,p-Xylene,0.1,105,10.5
+42,Academic,Graduate Student,1_5 years,5,PPh3,CsOPiv,DMAc,0.1,105,52.05
+42,Academic,Graduate Student,1_5 years,6,X-Phos,CsOAc,DMAc,0.1,105,87.83
+42,Academic,Graduate Student,1_5 years,7,BrettPhos,CsOAc,DMAc,0.1,105,4.74
+42,Academic,Graduate Student,1_5 years,8,tBPh-CPhos,CsOAc,DMAc,0.1,105,29.31
+42,Academic,Graduate Student,1_5 years,9,JackiePhos,CsOAc,DMAc,0.1,105,41.0
+42,Academic,Graduate Student,1_5 years,10,P(fur)3,CsOAc,DMAc,0.1,105,45.21
+42,Academic,Graduate Student,1_5 years,11,X-Phos,CsOAc,DMAc,0.1,90,84.17
+42,Academic,Graduate Student,1_5 years,12,X-Phos,CsOAc,DMAc,0.1,120,84.81
+42,Academic,Graduate Student,1_5 years,13,X-Phos,CsOAc,DMAc,0.057,105,89.17
+42,Academic,Graduate Student,1_5 years,14,X-Phos,CsOAc,DMAc,0.153,105,84.48
+42,Academic,Graduate Student,1_5 years,15,X-Phos,KOAc,DMAc,0.1,105,65.37
+43,Academic,Graduate Student,1_5 years,1,PCy3 HBF4,CsOAc,p-Xylene,0.1,105,0.55
+43,Academic,Graduate Student,1_5 years,2,GorlosPhos HBF4,CsOAc,p-Xylene,0.1,105,14.97
+43,Academic,Graduate Student,1_5 years,3,PPh3,CsOAc,p-Xylene,0.1,105,10.5
+43,Academic,Graduate Student,1_5 years,4,X-Phos,CsOAc,p-Xylene,0.1,105,67.17
+43,Academic,Graduate Student,1_5 years,5,PPhtBu2,CsOAc,p-Xylene,0.1,105,0.0
+43,Academic,Graduate Student,1_5 years,6,CgMe-PPh,CsOAc,p-Xylene,0.1,105,68.35
+43,Academic,Graduate Student,1_5 years,7,X-Phos,CsOAc,DMAc,0.1,105,87.83
+43,Academic,Graduate Student,1_5 years,8,X-Phos,CsOAc,BuCN,0.1,105,83.83
+43,Academic,Graduate Student,1_5 years,9,X-Phos,CsOAc,BuOAc,0.1,105,86.43
+43,Academic,Graduate Student,1_5 years,10,BrettPhos,CsOAc,p-Xylene,0.1,105,40.03
+43,Academic,Graduate Student,1_5 years,11,X-Phos,KOAc,DMAc,0.1,105,65.37
+43,Academic,Graduate Student,1_5 years,12,X-Phos,KOPiv,DMAc,0.1,105,77.41
+43,Academic,Graduate Student,1_5 years,13,X-Phos,CsOPiv,DMAc,0.1,105,29.16
+43,Academic,Graduate Student,1_5 years,14,X-Phos,CsOAc,DMAc,0.1,90,84.17
+43,Academic,Graduate Student,1_5 years,15,X-Phos,CsOAc,DMAc,0.1,120,84.81
+43,Academic,Graduate Student,1_5 years,16,X-Phos,CsOAc,DMAc,0.057,120,88.41
+43,Academic,Graduate Student,1_5 years,17,X-Phos,CsOAc,DMAc,0.153,120,84.49
+43,Academic,Graduate Student,1_5 years,18,X-Phos,CsOAc,DMAc,0.153,105,84.48
+43,Academic,Graduate Student,1_5 years,19,X-Phos,CsOAc,DMAc,0.057,105,89.17
+43,Academic,Graduate Student,1_5 years,20,X-Phos,CsOAc,DMAc,0.153,90,86.14
+43,Academic,Graduate Student,1_5 years,21,X-Phos,CsOAc,DMAc,0.057,90,79.33
+43,Academic,Graduate Student,1_5 years,22,tBPh-CPhos,CsOAc,DMAc,0.057,105,42.43
+43,Academic,Graduate Student,1_5 years,23,BrettPhos,CsOAc,DMAc,0.057,105,1.85
+43,Academic,Graduate Student,1_5 years,24,JackiePhos,CsOAc,DMAc,0.057,105,71.97
+43,Academic,Graduate Student,1_5 years,25,P(fur)3,CsOAc,DMAc,0.057,105,44.25
+43,Academic,Graduate Student,1_5 years,26,PPh2Me,CsOAc,DMAc,0.057,105,20.41
+43,Academic,Graduate Student,1_5 years,27,GorlosPhos HBF4,CsOAc,DMAc,0.057,105,12.61
+43,Academic,Graduate Student,1_5 years,28,CgMe-PPh,CsOAc,DMAc,0.057,105,91.39
+43,Academic,Graduate Student,1_5 years,29,PPhMe2,CsOAc,DMAc,0.057,105,0.0
+43,Academic,Graduate Student,1_5 years,30,PPhtBu2,CsOAc,DMAc,0.057,105,0.0
+43,Academic,Graduate Student,1_5 years,31,CgMe-PPh,CsOAc,BuCN,0.057,105,67.85
+43,Academic,Graduate Student,1_5 years,32,CgMe-PPh,CsOAc,BuOAc,0.057,105,38.53
+43,Academic,Graduate Student,1_5 years,33,CgMe-PPh,CsOAc,p-Xylene,0.057,105,41.1
+43,Academic,Graduate Student,1_5 years,34,CgMe-PPh,CsOAc,DMAc,0.1,105,83.25
+43,Academic,Graduate Student,1_5 years,35,CgMe-PPh,CsOAc,DMAc,0.153,105,100.0
+44,Academic,Faculty,Above 10 years,1,JackiePhos,KOPiv,BuCN,0.1,120,16.47
+44,Academic,Faculty,Above 10 years,2,tBPh-CPhos,KOPiv,BuCN,0.1,120,6.44
+44,Academic,Faculty,Above 10 years,3,BrettPhos,KOPiv,BuCN,0.1,120,50.79
+44,Academic,Faculty,Above 10 years,4,CgMe-PPh,KOPiv,BuCN,0.1,120,70.51
+44,Academic,Faculty,Above 10 years,5,X-Phos,KOPiv,BuCN,0.1,120,50.93
+44,Academic,Faculty,Above 10 years,6,CgMe-PPh,CsOPiv,BuCN,0.1,120,71.57
+44,Academic,Faculty,Above 10 years,7,CgMe-PPh,KOPiv,BuCN,0.153,120,80.65
+44,Academic,Faculty,Above 10 years,8,CgMe-PPh,CsOPiv,BuCN,0.057,120,75.46
+44,Academic,Faculty,Above 10 years,9,CgMe-PPh,CsOPiv,BuCN,0.057,105,11.18
+44,Academic,Faculty,Above 10 years,10,CgMe-PPh,KOPiv,BuCN,0.153,105,69.2
+45,Academic,Postdoc,1_5 years,1,PCy3 HBF4,KOAc,DMAc,0.1,90,1.71
+45,Academic,Postdoc,1_5 years,2,PPh3,KOPiv,BuCN,0.057,105,6.78
+45,Academic,Postdoc,1_5 years,3,X-Phos,CsOAc,BuOAc,0.153,120,6.23
+45,Academic,Postdoc,1_5 years,4,JackiePhos,CsOPiv,p-Xylene,0.1,105,8.06
+45,Academic,Postdoc,1_5 years,5,P(fur)3,CsOAc,DMAc,0.1,105,45.21
+45,Academic,Postdoc,1_5 years,6,GorlosPhos HBF4,CsOAc,DMAc,0.1,105,19.97
+45,Academic,Postdoc,1_5 years,7,CgMe-PPh,CsOAc,DMAc,0.1,105,83.25
+45,Academic,Postdoc,1_5 years,8,PPhtBu2,CsOAc,DMAc,0.1,105,0.0
+45,Academic,Postdoc,1_5 years,9,BrettPhos,CsOAc,DMAc,0.1,105,4.74
+45,Academic,Postdoc,1_5 years,10,tBPh-CPhos,CsOAc,DMAc,0.1,105,29.31
+45,Academic,Postdoc,1_5 years,11,CgMe-PPh,KOAc,DMAc,0.1,105,80.38
+45,Academic,Postdoc,1_5 years,12,CgMe-PPh,KOPiv,DMAc,0.1,105,89.76
+45,Academic,Postdoc,1_5 years,13,CgMe-PPh,CsOAc,BuCN,0.1,105,82.33
+45,Academic,Postdoc,1_5 years,14,CgMe-PPh,CsOAc,BuOAc,0.1,105,45.01
+45,Academic,Postdoc,1_5 years,15,CgMe-PPh,CsOAc,p-Xylene,0.1,105,68.35
+45,Academic,Postdoc,1_5 years,16,CgMe-PPh,CsOPiv,DMAc,0.1,105,91.11
+45,Academic,Postdoc,1_5 years,17,CgMe-PPh,KOPiv,DMAc,0.057,105,90.39
+45,Academic,Postdoc,1_5 years,18,CgMe-PPh,KOPiv,DMAc,0.153,105,98.49
+45,Academic,Postdoc,1_5 years,19,CgMe-PPh,KOPiv,DMAc,0.1,90,55.7
+45,Academic,Postdoc,1_5 years,20,CgMe-PPh,KOPiv,DMAc,0.1,120,87.59
+45,Academic,Postdoc,1_5 years,21,CgMe-PPh,CsOPiv,DMAc,0.153,105,100.0
+45,Academic,Postdoc,1_5 years,22,CgMe-PPh,CsOPiv,DMAc,0.153,120,92.19
+45,Academic,Postdoc,1_5 years,23,CgMe-PPh,CsOAc,DMAc,0.153,105,100.0
+45,Academic,Postdoc,1_5 years,24,CgMe-PPh,KOAc,DMAc,0.153,105,87.0
+45,Academic,Postdoc,1_5 years,25,CgMe-PPh,CsOPiv,DMAc,0.057,105,91.06
+46,Academic,Graduate Student,1_5 years,1,BrettPhos,CsOPiv,DMAc,0.1,105,0.0
+46,Academic,Graduate Student,1_5 years,2,JackiePhos,CsOPiv,DMAc,0.1,105,0.0
+46,Academic,Graduate Student,1_5 years,3,X-Phos,CsOPiv,DMAc,0.1,105,29.16
+46,Academic,Graduate Student,1_5 years,4,PPh3,CsOPiv,DMAc,0.1,105,52.05
+46,Academic,Graduate Student,1_5 years,5,GorlosPhos HBF4,CsOPiv,DMAc,0.1,105,40.43
+46,Academic,Graduate Student,1_5 years,6,GorlosPhos HBF4,CsOPiv,BuCN,0.1,105,39.42
+46,Academic,Graduate Student,1_5 years,7,GorlosPhos HBF4,CsOPiv,BuOAc,0.1,105,20.63
+46,Academic,Graduate Student,1_5 years,8,GorlosPhos HBF4,CsOPiv,p-Xylene,0.1,105,9.89
+46,Academic,Graduate Student,1_5 years,9,GorlosPhos HBF4,CsOPiv,DMAc,0.057,105,24.03
+46,Academic,Graduate Student,1_5 years,10,GorlosPhos HBF4,CsOPiv,DMAc,0.153,105,76.34
+46,Academic,Graduate Student,1_5 years,11,GorlosPhos HBF4,CsOPiv,BuCN,0.153,105,29.82
+46,Academic,Graduate Student,1_5 years,12,GorlosPhos HBF4,CsOPiv,DMAc,0.153,90,23.23
+46,Academic,Graduate Student,1_5 years,13,GorlosPhos HBF4,CsOPiv,DMAc,0.153,120,54.83
+46,Academic,Graduate Student,1_5 years,14,GorlosPhos HBF4,KOPiv,DMAc,0.153,105,72.45
+46,Academic,Graduate Student,1_5 years,15,GorlosPhos HBF4,CsOAc,DMAc,0.153,105,59.83
+46,Academic,Graduate Student,1_5 years,16,BrettPhos,CsOPiv,DMAc,0.153,105,0.0
+46,Academic,Graduate Student,1_5 years,17,PPhtBu2,CsOPiv,DMAc,0.153,105,0.0
+46,Academic,Graduate Student,1_5 years,18,tBPh-CPhos,CsOPiv,DMAc,0.153,105,6.54
+46,Academic,Graduate Student,1_5 years,19,PCy3 HBF4,CsOPiv,DMAc,0.153,105,9.07
+46,Academic,Graduate Student,1_5 years,20,PPh3,CsOPiv,DMAc,0.153,105,45.28
+46,Academic,Graduate Student,1_5 years,21,X-Phos,CsOPiv,DMAc,0.153,105,40.06
+46,Academic,Graduate Student,1_5 years,22,P(fur)3,CsOPiv,DMAc,0.153,105,55.96
+46,Academic,Graduate Student,1_5 years,23,PPh2Me,CsOPiv,DMAc,0.153,105,0.0
+46,Academic,Graduate Student,1_5 years,24,JackiePhos,CsOPiv,DMAc,0.153,105,2.84
+46,Academic,Graduate Student,1_5 years,25,CgMe-PPh,CsOPiv,DMAc,0.153,105,100.0
+47,Academic,Postdoc,1_5 years,1,X-Phos,CsOPiv,DMAc,0.1,105,29.16
+47,Academic,Postdoc,1_5 years,2,X-Phos,KOAc,DMAc,0.1,105,65.37
+47,Academic,Postdoc,1_5 years,3,X-Phos,CsOPiv,p-Xylene,0.1,105,53.63
+47,Academic,Postdoc,1_5 years,4,BrettPhos,CsOPiv,DMAc,0.1,105,0.0
+47,Academic,Postdoc,1_5 years,5,P(fur)3,CsOPiv,DMAc,0.1,105,49.4
+47,Academic,Postdoc,1_5 years,6,P(fur)3,KOAc,p-Xylene,0.1,105,8.45
+47,Academic,Postdoc,1_5 years,7,P(fur)3,KOPiv,p-Xylene,0.1,105,19.32
+47,Academic,Postdoc,1_5 years,8,P(fur)3,KOAc,BuOAc,0.1,105,9.87
+47,Academic,Postdoc,1_5 years,9,JackiePhos,KOAc,p-Xylene,0.1,105,5.36
+47,Academic,Postdoc,1_5 years,10,CgMe-PPh,KOAc,p-Xylene,0.1,105,35.6
+47,Academic,Postdoc,1_5 years,11,CgMe-PPh,KOPiv,BuOAc,0.1,105,36.23
+47,Academic,Postdoc,1_5 years,12,CgMe-PPh,CsOAc,BuOAc,0.1,105,45.01
+47,Academic,Postdoc,1_5 years,13,CgMe-PPh,KOAc,DMAc,0.1,105,80.38
+47,Academic,Postdoc,1_5 years,14,GorlosPhos HBF4,KOAc,DMAc,0.1,105,13.11
+47,Academic,Postdoc,1_5 years,15,P(fur)3,KOAc,DMAc,0.1,105,41.9
+47,Academic,Postdoc,1_5 years,16,tBPh-CPhos,KOAc,DMAc,0.1,105,78.95
+47,Academic,Postdoc,1_5 years,17,PPhtBu2,KOAc,DMAc,0.1,105,0.0
+47,Academic,Postdoc,1_5 years,18,CgMe-PPh,CsOAc,DMAc,0.1,105,83.25
+47,Academic,Postdoc,1_5 years,19,CgMe-PPh,KOAc,BuCN,0.1,105,54.67
+47,Academic,Postdoc,1_5 years,20,CgMe-PPh,CsOPiv,BuCN,0.1,105,65.69
+47,Academic,Postdoc,1_5 years,21,CgMe-PPh,CsOPiv,DMAc,0.1,105,91.11
+47,Academic,Postdoc,1_5 years,22,tBPh-CPhos,CsOPiv,BuCN,0.1,105,5.41
+47,Academic,Postdoc,1_5 years,23,tBPh-CPhos,CsOAc,DMAc,0.1,105,29.31
+47,Academic,Postdoc,1_5 years,24,PCy3 HBF4,KOAc,DMAc,0.1,105,7.26
+47,Academic,Postdoc,1_5 years,25,JackiePhos,KOAc,DMAc,0.1,105,75.22
+47,Academic,Postdoc,1_5 years,26,CgMe-PPh,CsOPiv,DMAc,0.057,105,91.06
+47,Academic,Postdoc,1_5 years,27,CgMe-PPh,CsOPiv,DMAc,0.153,105,100.0
+47,Academic,Postdoc,1_5 years,28,CgMe-PPh,CsOPiv,DMAc,0.1,90,75.28
+47,Academic,Postdoc,1_5 years,29,CgMe-PPh,CsOPiv,DMAc,0.1,120,83.85
+47,Academic,Postdoc,1_5 years,30,CgMe-PPh,KOPiv,DMAc,0.1,105,89.76
+47,Academic,Postdoc,1_5 years,31,tBPh-CPhos,CsOPiv,DMAc,0.153,105,6.54
+47,Academic,Postdoc,1_5 years,32,tBPh-CPhos,KOAc,DMAc,0.153,105,57.33
+47,Academic,Postdoc,1_5 years,33,X-Phos,KOAc,DMAc,0.153,105,48.86
+47,Academic,Postdoc,1_5 years,34,X-Phos,CsOPiv,BuCN,0.1,105,68.53
+47,Academic,Postdoc,1_5 years,35,X-Phos,CsOPiv,BuOAc,0.1,105,59.92
+47,Academic,Postdoc,1_5 years,36,X-Phos,CsOAc,BuCN,0.1,105,83.83
+47,Academic,Postdoc,1_5 years,37,X-Phos,KOPiv,BuCN,0.1,105,56.14
+47,Academic,Postdoc,1_5 years,38,X-Phos,KOAc,BuCN,0.1,105,47.3
+47,Academic,Postdoc,1_5 years,39,X-Phos,KOAc,BuOAc,0.1,105,64.62
+47,Academic,Postdoc,1_5 years,40,X-Phos,KOPiv,DMAc,0.1,105,77.41
+47,Academic,Postdoc,1_5 years,41,X-Phos,CsOAc,DMAc,0.1,105,87.83
+47,Academic,Postdoc,1_5 years,42,X-Phos,CsOAc,BuCN,0.057,105,72.89
+47,Academic,Postdoc,1_5 years,43,X-Phos,CsOAc,BuCN,0.153,105,84.62
+47,Academic,Postdoc,1_5 years,44,X-Phos,CsOAc,BuCN,0.1,90,86.37
+47,Academic,Postdoc,1_5 years,45,X-Phos,CsOAc,BuCN,0.1,120,84.17
+47,Academic,Postdoc,1_5 years,46,X-Phos,CsOAc,DMAc,0.057,90,79.33
+47,Academic,Postdoc,1_5 years,47,X-Phos,CsOAc,DMAc,0.057,120,88.41
+47,Academic,Postdoc,1_5 years,48,X-Phos,CsOAc,DMAc,0.153,120,84.49
+47,Academic,Postdoc,1_5 years,49,X-Phos,CsOAc,DMAc,0.153,90,86.14
+47,Academic,Postdoc,1_5 years,50,X-Phos,CsOAc,BuCN,0.153,90,0.0
+47,Academic,Postdoc,1_5 years,51,X-Phos,CsOAc,BuCN,0.057,90,72.9
+47,Academic,Postdoc,1_5 years,52,X-Phos,CsOAc,DMAc,0.1,120,84.81
+47,Academic,Postdoc,1_5 years,53,X-Phos,CsOAc,DMAc,0.057,105,89.17
+47,Academic,Postdoc,1_5 years,54,X-Phos,KOPiv,DMAc,0.057,120,62.07
+47,Academic,Postdoc,1_5 years,55,X-Phos,CsOAc,BuOAc,0.057,120,7.02
+47,Academic,Postdoc,1_5 years,56,tBPh-CPhos,KOPiv,DMAc,0.1,105,28.64
+47,Academic,Postdoc,1_5 years,57,tBPh-CPhos,KOAc,BuCN,0.1,105,6.17
+47,Academic,Postdoc,1_5 years,58,tBPh-CPhos,KOAc,BuOAc,0.1,105,0.0
+47,Academic,Postdoc,1_5 years,59,tBPh-CPhos,KOAc,p-Xylene,0.1,105,6.39
+47,Academic,Postdoc,1_5 years,60,tBPh-CPhos,CsOPiv,p-Xylene,0.1,105,28.65
+47,Academic,Postdoc,1_5 years,61,tBPh-CPhos,KOAc,DMAc,0.057,105,68.71
+47,Academic,Postdoc,1_5 years,62,tBPh-CPhos,KOAc,DMAc,0.1,90,47.03
+47,Academic,Postdoc,1_5 years,63,tBPh-CPhos,KOAc,DMAc,0.1,120,82.09
+47,Academic,Postdoc,1_5 years,64,tBPh-CPhos,KOAc,DMAc,0.153,120,76.59
+47,Academic,Postdoc,1_5 years,65,tBPh-CPhos,KOAc,DMAc,0.057,90,57.27
+47,Academic,Postdoc,1_5 years,66,tBPh-CPhos,KOAc,DMAc,0.057,120,88.89
+47,Academic,Postdoc,1_5 years,67,PCy3 HBF4,CsOPiv,DMAc,0.1,105,8.85
+47,Academic,Postdoc,1_5 years,68,JackiePhos,CsOPiv,DMAc,0.1,105,0.0
+47,Academic,Postdoc,1_5 years,69,GorlosPhos HBF4,CsOPiv,DMAc,0.1,105,40.43
+47,Academic,Postdoc,1_5 years,70,PPhtBu2,CsOPiv,DMAc,0.1,105,0.0
+47,Academic,Postdoc,1_5 years,71,PPh2Me,CsOPiv,DMAc,0.1,105,4.3
+47,Academic,Postdoc,1_5 years,72,PPh2Me,KOAc,DMAc,0.1,105,8.23
+47,Academic,Postdoc,1_5 years,73,BrettPhos,KOAc,DMAc,0.1,105,5.47
+47,Academic,Postdoc,1_5 years,74,PPh2Me,KOAc,DMAc,0.1,105,8.23
+47,Academic,Postdoc,1_5 years,75,PPh2Me,CsOPiv,DMAc,0.1,105,4.3
+47,Academic,Postdoc,1_5 years,76,PPh3,CsOPiv,DMAc,0.1,105,52.05
+47,Academic,Postdoc,1_5 years,77,PPh3,KOAc,DMAc,0.1,105,28.15
+47,Academic,Postdoc,1_5 years,78,PPhMe2,KOAc,DMAc,0.1,105,0.0
+47,Academic,Postdoc,1_5 years,79,PPhMe2,CsOPiv,DMAc,0.1,105,0.0
+47,Academic,Postdoc,1_5 years,80,JackiePhos,CsOAc,DMAc,0.1,105,41.0
+47,Academic,Postdoc,1_5 years,81,CgMe-PPh,CsOAc,p-Xylene,0.1,105,68.35
+47,Academic,Postdoc,1_5 years,82,CgMe-PPh,KOPiv,p-Xylene,0.1,105,32.37
+47,Academic,Postdoc,1_5 years,83,CgMe-PPh,CsOPiv,p-Xylene,0.1,105,16.46
+47,Academic,Postdoc,1_5 years,84,CgMe-PPh,KOAc,BuOAc,0.1,105,41.35
+47,Academic,Postdoc,1_5 years,85,CgMe-PPh,CsOPiv,BuOAc,0.1,105,24.0
+47,Academic,Postdoc,1_5 years,86,CgMe-PPh,CsOPiv,p-Xylene,0.057,90,0.4
+47,Academic,Postdoc,1_5 years,87,CgMe-PPh,CsOPiv,p-Xylene,0.153,90,13.02
+47,Academic,Postdoc,1_5 years,88,CgMe-PPh,CsOPiv,p-Xylene,0.153,120,19.13
+47,Academic,Postdoc,1_5 years,89,CgMe-PPh,CsOPiv,p-Xylene,0.057,120,12.23
+47,Academic,Postdoc,1_5 years,90,JackiePhos,KOAc,DMAc,0.057,120,89.14
+47,Academic,Postdoc,1_5 years,91,X-Phos,CsOPiv,DMAc,0.153,105,40.06
+47,Academic,Postdoc,1_5 years,92,X-Phos,CsOPiv,DMAc,0.057,105,30.21
+47,Academic,Postdoc,1_5 years,93,X-Phos,CsOPiv,DMAc,0.1,90,22.94
+47,Academic,Postdoc,1_5 years,94,X-Phos,CsOPiv,DMAc,0.1,120,48.15
+47,Academic,Postdoc,1_5 years,95,X-Phos,CsOPiv,DMAc,0.057,120,38.48
+47,Academic,Postdoc,1_5 years,96,CgMe-PPh,CsOPiv,DMAc,0.153,120,92.19
+47,Academic,Postdoc,1_5 years,97,CgMe-PPh,CsOPiv,DMAc,0.153,90,84.03
+47,Academic,Postdoc,1_5 years,98,JackiePhos,CsOPiv,DMAc,0.1,120,13.46
+47,Academic,Postdoc,1_5 years,99,JackiePhos,CsOPiv,DMAc,0.057,105,9.52
+47,Academic,Postdoc,1_5 years,100,JackiePhos,CsOPiv,BuCN,0.057,120,11.26
+48,Pharma,Med Chemist,1_5 years,1,tBPh-CPhos,KOPiv,DMAc,0.1,105,28.64
+48,Pharma,Med Chemist,1_5 years,2,tBPh-CPhos,CsOPiv,DMAc,0.1,105,7.62
+48,Pharma,Med Chemist,1_5 years,3,GorlosPhos HBF4,CsOPiv,DMAc,0.1,120,45.17
+48,Pharma,Med Chemist,1_5 years,4,tBPh-CPhos,CsOPiv,DMAc,0.1,120,17.43
+48,Pharma,Med Chemist,1_5 years,5,tBPh-CPhos,KOPiv,DMAc,0.1,120,68.33
+48,Pharma,Med Chemist,1_5 years,6,GorlosPhos HBF4,KOPiv,DMAc,0.1,120,49.17
+48,Pharma,Med Chemist,1_5 years,7,PCy3 HBF4,KOPiv,DMAc,0.1,120,47.58
+48,Pharma,Med Chemist,1_5 years,8,CgMe-PPh,KOPiv,DMAc,0.1,120,87.59
+48,Pharma,Med Chemist,1_5 years,9,PPhtBu2,KOPiv,DMAc,0.1,120,28.53
+48,Pharma,Med Chemist,1_5 years,10,BrettPhos,KOPiv,DMAc,0.1,120,0.26
+49,Academic,Postdoc,1_5 years,1,BrettPhos,CsOPiv,BuOAc,0.1,105,27.48
+49,Academic,Postdoc,1_5 years,2,X-Phos,CsOPiv,BuOAc,0.1,105,59.92
+49,Academic,Postdoc,1_5 years,3,JackiePhos,CsOPiv,BuOAc,0.1,105,2.41
+49,Academic,Postdoc,1_5 years,4,tBPh-CPhos,CsOPiv,BuOAc,0.1,105,15.16
+49,Academic,Postdoc,1_5 years,5,GorlosPhos HBF4,CsOPiv,BuOAc,0.1,105,20.63
+49,Academic,Postdoc,1_5 years,6,PCy3 HBF4,CsOPiv,BuOAc,0.1,105,0.0
+49,Academic,Postdoc,1_5 years,7,PPhtBu2,CsOPiv,BuOAc,0.1,105,0.0
+49,Academic,Postdoc,1_5 years,8,P(fur)3,CsOPiv,BuOAc,0.1,105,14.51
+49,Academic,Postdoc,1_5 years,9,PPh2Me,CsOPiv,BuOAc,0.1,105,0.0
+49,Academic,Postdoc,1_5 years,10,CgMe-PPh,CsOPiv,BuOAc,0.1,105,24.0
+49,Academic,Postdoc,1_5 years,11,X-Phos,CsOAc,BuOAc,0.1,105,86.43
+49,Academic,Postdoc,1_5 years,12,X-Phos,KOPiv,BuOAc,0.1,105,48.25
+49,Academic,Postdoc,1_5 years,13,X-Phos,KOAc,BuOAc,0.1,105,64.62
+49,Academic,Postdoc,1_5 years,14,X-Phos,CsOPiv,BuCN,0.1,105,68.53
+49,Academic,Postdoc,1_5 years,15,X-Phos,CsOPiv,p-Xylene,0.1,105,53.63
+49,Academic,Postdoc,1_5 years,16,X-Phos,CsOAc,BuCN,0.1,105,83.83
+49,Academic,Postdoc,1_5 years,17,X-Phos,CsOAc,DMAc,0.1,105,87.83
+49,Academic,Postdoc,1_5 years,18,X-Phos,CsOAc,BuCN,0.1,90,86.37
+49,Academic,Postdoc,1_5 years,19,X-Phos,CsOAc,BuCN,0.1,120,84.17
+49,Academic,Postdoc,1_5 years,20,X-Phos,CsOAc,BuCN,0.057,105,72.89
+49,Academic,Postdoc,1_5 years,21,X-Phos,CsOAc,DMAc,0.153,105,84.48
+49,Academic,Postdoc,1_5 years,22,X-Phos,CsOAc,DMAc,0.153,90,86.14
+49,Academic,Postdoc,1_5 years,23,X-Phos,CsOAc,DMAc,0.153,120,84.49
+49,Academic,Postdoc,1_5 years,24,X-Phos,CsOAc,DMAc,0.1,90,84.17
+49,Academic,Postdoc,1_5 years,25,X-Phos,CsOAc,DMAc,0.1,120,84.81
