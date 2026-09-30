@@ -1303,6 +1303,68 @@ REGISTRY: dict[str, Dataset] = {
         "As wcs_naming (the archive's WCS_SIL_codes table, via jvosten/wcs).",
         "lang (1-110), name, iso639_3, family, country, n_speakers.",
     ),
+    # ---- examples (E78) ----
+    "kepler10_lc": Dataset(
+        "kepler10_llc.csv.gz",
+        "https://archive.stsci.edu/missions/kepler/lightcurves/0119/011904151/",
+        "NASA Kepler mission long-cadence light curves of Kepler-10 (KIC 11904151), Mikulski Archive for "
+        "Space Telescopes (MAST, STScI). NASA mission data, public (MAST asks users to acknowledge MAST and "
+        "the Kepler mission, funded by NASA's Science Mission Directorate). BUILT by "
+        "tools/build_e78_exoplanets.py from the 15 *_llc.fits files at the URL - keep the cached file.",
+        "One row per 29.4-minute cadence, all 15 quarters on the archive (Q0-Q17 minus Q8, Q12, Q16, when the "
+        "star fell on the failed CCD module 3): quarter, time (BKJD = BJD_TDB - 2454833, days), flux and "
+        "flux_err (PDCSAP flux: systematics-corrected aperture photometry, e-/s; NaN where missing), quality "
+        "(SAP_QUALITY bit mask, 0 = no flags). 53,029 rows.",
+    ),
+    "kepler10_archive": Dataset(
+        "kepler10_archive.csv",
+        "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+*+from+ps+where+hostname='Kepler-10'",
+        "NASA Exoplanet Archive, Planetary Systems (ps) table, TAP query (NASA Exoplanet Science Institute / "
+        "Caltech-IPAC; the Archive asks for the acknowledgement 'This research has made use of the NASA "
+        "Exoplanet Archive, which is operated by the California Institute of Technology, under contract with "
+        "NASA under the Exoplanet Exploration Program'). Queried 2026-09-30 by tools/build_e78_exoplanets.py.",
+        "One row per published solution for Kepler-10 b, c and d (48 rows; default_flag = 1 marks the "
+        "Archive's default): pl_orbper (days), pl_tranmid (BJD), pl_rade (Earth radii), pl_ratror (Rp/R*), "
+        "pl_imppar, pl_trandur (hours), pl_trandep (per cent), pl_ratdor (a/R*), pl_orbeccen, st_rad, st_mass, "
+        "st_dens (g/cm3) with errors, st_teff, st_logg, pl_refname (reference, HTML stripped), disc_year.",
+    ),
+    "borisov_astrometry": Dataset(
+        "borisov_mpc_obs.csv",
+        "https://data.minorplanetcenter.net/api/get-obs",
+        "IAU Minor Planet Center observations API (ADES fields), object 2I/Borisov (C/2019 Q4). MPC data "
+        "are public; the MPC asks for the acknowledgement 'This research has made use of data and/or "
+        "services provided by the International Astronomical Union's Minor Planet Center.' BUILT by "
+        "tools/build_e78_exoplanets.py (a POST-style JSON request) - keep the cached file.",
+        "1,513 optical positions from discovery (2019-08-30) to 2019-10-15 UTC, deprecated rows removed, from "
+        "88 observatories: obstime (ISO UTC), ra, dec (degrees, ICRF, as reported), stn (MPC observatory "
+        "code), mag, band, astcat (reference star catalogue), rmsra, rmsdec (arcsec, where reported), mode, "
+        "notes, and for the satellite NEOSSat (C53) its geocentric position: sys (ICRF_KM), pos1-pos3 (km).",
+    ),
+    "borisov_obscodes": Dataset(
+        "borisov_obscodes.csv",
+        "https://data.minorplanetcenter.net/api/obscodes",
+        "IAU Minor Planet Center observatory codes API (as borisov_astrometry).",
+        "The 88 observatory codes in borisov_astrometry: stn, longitude (degrees east), rhocosphi, "
+        "rhosinphi (geocentric parallax constants in Earth radii; blank for the satellite C53), name.",
+    ),
+    "borisov_horizons": Dataset(
+        "borisov_horizons.csv",
+        "https://ssd.jpl.nasa.gov/api/horizons.api",
+        "JPL Horizons ephemeris service (Solar System Dynamics group, JPL/Caltech; planetary ephemeris "
+        "DE441; 2I solution JPL#54). Public service; cite Giorgini et al. (1996) / JPL Horizons. Queried "
+        "2026-09-30 by tools/build_e78_exoplanets.py.",
+        "Geometric heliocentric state vectors (ICRF, au and au/day, TDB), 2019-08-29 to 2019-10-17: body "
+        "(earth hourly; jupiter and saturn system barycentres and 2I_jpl - JPL's own orbit of 2I, with "
+        "non-gravitational terms - every 6 h), jd_tdb, x, y, z, vx, vy, vz.",
+    ),
+    "borisov_sbdb": Dataset(
+        "borisov_sbdb.csv",
+        "https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=2I&full-prec=1",
+        "JPL Small-Body Database API (Solar System Dynamics group, JPL/Caltech), queried 2026-09-30.",
+        "JPL's published orbit of 2I/Borisov (solution 54, epoch JD 2458853.5 TDB): element, value, sigma, "
+        "units - e, a, q, i, om, w, ma, tp, n, the non-gravitational parameters A1-A3 and DT, and rows for "
+        "orbit_id, epoch, data_arc, first_obs, last_obs, n_obs_used, producer.",
+    ),
     # ---- examples (E71) ----
     "speed_acc": Dataset(
         "wagenmakers2008_speed_acc.csv",

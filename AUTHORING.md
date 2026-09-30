@@ -752,6 +752,19 @@ doubt run `uv run python -c "..."` to check:
     paired per-speaker differences. Importance sampling of one new speaker's 16 effects stayed usable to 40
     answers (ESS median 161-578 of 8,000, worst 8). A display colour per term from the argmax chip picks ties
     badly; use a P^8-weighted CIELAB mean. Builds in ~250 s at under 1.4 GB.
+  - **Transits and orbits (E78).** `pt.interp` builds a data x grid comparison matrix: 175k points x 265 nodes
+    used 2.9 GB and 230 ms per gradient; index a piecewise-uniform grid by hand (a few ms). Tabulate the
+    transit's blocked fraction in z per (k, u1, u2) instead of evaluating the quadrature at every supersampled
+    time. Integrate per-window polynomial baselines out analytically (projection with an orthonormal Q, window
+    sums as cumsum differences): 5,000 nuisance parameters for free. For Kepler-10b, 5 long-cadence sub-steps
+    were 2.5 ppm rms off (it matters with 1,500 transits); 11 were within 0.7 ppm. A single planet in
+    (log rho*, b) failed (12 divergences, r_hat 1.18); (log duration, b) plus target_accept 0.95 sampled
+    cleanly. Switch off start jitter for period/epoch offsets: one prior unit of jitter shifts the end transits
+    by 25-45 minutes. Short-arc orbit ranging on a rectangular (log rho, rho-dot) grid zoomed onto the wrong
+    nodes and reported e ~ 13 from a 10-day arc (truth 3.36): trace the ridge with a 5-parameter LM per
+    distance, then use a sheared grid of +-6 conditional sd. Pass the arc as a mask argument so JAX compiles
+    once. MPC's NEOSSat (C53) positions carry geocentric pos1-pos3 and it has no parallax constants. uv-run
+    Python fails TLS to ssd.jpl.nasa.gov here: `--with truststore`. Builds in ~340 s at ~2 GB.
   - **MRP (E36).** Group effects as plain `Normal` z plus a separate intercept (and a main
     effect plus its interaction) gave 28 divergences, 271 with r_hat 1.10 without state
     predictors; `pm.ZeroSumNormal` (`n_zerosum_axes=2` for interactions) gave 0. Non-centred

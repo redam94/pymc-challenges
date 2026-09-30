@@ -1,0 +1,89 @@
+stn,longitude,rhocosphi,rhosinphi,name
+069,24.4042,0.54925,0.83287,Baldone
+104,10.80375,0.719842,0.692040,San Marcello Pistoiese
+106,14.0711,0.69662,0.71519,Crni Vrh
+107,11.0030,0.70998,0.70186,Cavezzo
+118,17.2740,0.66558,0.74394,"Astronomical and Geophysical Observatory, Modra"
+121,36.93403,0.648856,0.758394,"Kharkiv University, Chuhuivskyi district Station"
+134,11.48245,0.631607,0.772773,Groszschwabhausen
+152,25.5633,0.57036,0.81868,Moletai Astronomical Observatory
+157,12.8117,0.74166,0.66864,Frasso Sabino
+160,10.84144,0.722651,0.688913,Castelmartini
+186,66.8821,0.77679,0.62781,Kitab
+204,8.76972,0.697648,0.714307,Schiaparelli Observatory
+213,2.38539,0.749843,0.659421,Observatorio Montcabre
+215,10.7328,0.67021,0.73981,Buchloe
+246,14.28476,0.659216,0.749664,Klet Observatory-KLENOT
+349,139.56622,0.810402,0.583916,Ageo
+367,133.1670,0.81504,0.57747,Yatsuka
+372,133.8276,0.83450,0.54920,Geisei
+461,19.89367,0.671543,0.738689,"University of Szeged, Piszkesteto Stn. (Konkoly)"
+470,13.32756,0.749268,0.660088,Ceccano
+511,5.7157,0.72140,0.69034,Haute Provence
+568,204.5278,0.94171,0.33725,Maunakea
+585,30.52462,0.640067,0.765748,Kyiv comet station
+586,0.1423,0.73358,0.67799,Pic du Midi
+587,9.22918,0.697459,0.714479,Sormano
+595,13.52578,0.696925,0.714749,Farra d\'Isonzo
+675,243.13746,0.836357,0.546831,Palomar Mountain
+679,244.5367,0.85792,0.51292,San Pedro Martir
+850,274.0802,0.81810,0.57333,"Cordell-Lorenz Observatory, Sewanee"
+954,343.4906,0.88148,0.47142,Teide Observatory
+970,0.493483,0.6204524,0.7816324,Chelmsford
+A29,10.6733,0.72369,0.68782,Santa Maria a Monte
+A71,15.4533,0.66486,0.74459,Stixendorf
+A77,5.64693,0.720583,0.691196,"Observatoire Chante-Perdrix, Dauban"
+A84,30.3333,0.80175,0.59632,TUBITAK National Observatory
+A98,30.2092,0.58214,0.81040,"Observatory Mazzarot-1, Baran\'"
+B49,2.11250,0.749498,0.659844,"Paus Observatory, Sabadell"
+B67,9.22419,0.685858,0.725582,"Sternwarte Mirasteilas, Falera"
+B74,1.10536,0.747550,0.662053,Santa Maria de Montmagastrell
+B96,4.31031,0.628378,0.775301,"Brixiis Observatory, Kruibeke"
+C10,3.42622,0.661039,0.747874,Maisoncelles
+C23,5.15439,0.628694,0.775052,Olmen
+C53,,,,NEOSSat
+C65,0.72965,0.743847,0.666488,Observatori Astronomic del Montsec
+C73,28.0325,0.70312,0.70870,Galati Observatory
+C77,7.4535,0.71589,0.69600,Bernezzo Observatory
+C95,5.71239,0.721406,0.690350,"SATINO Remote Observatory, Haute Provence"
+D35,120.8736,0.91818,0.39597,Lulin Observatory
+D95,141.0680,0.78035,0.62325,Kurihara
+F51,203.74409,0.936241,0.351543,"Pan-STARRS 1, Haleakala"
+F65,203.74250,0.936239,0.351538,Haleakala-Faulkes Telescope North
+G20,6.05989,0.727743,0.683615,Brignoles Observatory
+G40,343.49174,0.881470,0.471441,Slooh.com Canary Islands Observatory
+H06,254.47130,0.840712,0.540310,"iTelescope Observatory, Mayhill"
+H36,264.29345,0.780428,0.623229,"Sandlot Observatory, Scranton"
+I41,243.14022,0.836322,0.546875,Palomar Mountain--ZTF
+I81,356.20111,0.533510,0.842967,"Tarbatness Observatory, Portmahomack"
+I88,356.0823,0.79287,0.60753,Fuensanta de Martos
+J01,354.28450,0.739938,0.670609,"Observatorio Cielo Profundo, Leon"
+J04,343.488177,0.881471,0.471466,"ESA Optical Ground Station, Tenerife"
+J47,346.4440,0.87501,0.48260,Observatorio Nazaret
+J57,358.89083,0.767822,0.638840,Centro Astronomico Alto Turia 1
+J95,358.55301,0.624152,0.778715,Great Shefford
+K02,0.66761,0.622858,0.779718,"Eastwood Observatory, Leigh on Sea"
+K61,13.6026,0.64741,0.75967,Rokycany Observatory
+K63,10.46252,0.719536,0.692195,"G. Pascoli Observatory, Castelvecchio Pascoli (Before June 2023)"
+K74,10.2364,0.64667,0.76025,"Muensterschwarzach Observatory, Schwarzach"
+K96,16.75119,0.774870,0.630302,Savelli Observatory
+L01,13.74930,0.704742,0.707169,"Visnjan Observatory, Tican"
+L04,23.59640,0.685544,0.725675,"ROASTERR-1 Observatory, Cluj-Napoca"
+L06,9.25403,0.696280,0.715445,"Sormano 2 Observatory, Bellagio Via Lattea"
+L19,11.15258,0.716257,0.695653,"Osservatorio Felsina AAB, Montepastore"
+L51,34.0164,0.71169,0.70028,"MARGO, Nauchnyi"
+L54,22.88878,0.700704,0.711156,"Berthelot Observatory, Hunedoara"
+N50,78.96383,0.842176,0.538692,"Himalayan Chandra Telescope, IAO, Hanle"
+N55,80.02623,0.846497,0.532089,"Corona Borealis Observatory, Ngari, Tibet"
+Q11,137.52069,0.820236,0.570158,Shinshiro
+Q21,139.85335,0.804747,0.591654,Southern Utsunomiya
+T05,203.74299,0.936236,0.351547,"ATLAS-HKO, Haleakala"
+T08,204.42395,0.943290,0.332467,"ATLAS-MLO, Mauna Loa"
+U69,240.5870,0.79904,0.59962,"iTelescope SRO Observatory, Auberry"
+V16,251.10288,0.849510,0.526194,"Dark Sky New Mexico, Animas"
+W34,277.8453,0.81784,0.57360,"Squirrel Valley Observatory, Columbus"
+Z18,342.10811,0.877671,0.478415,"Gran Telescopio Canarias, Roque de los Muchachos"
+Z25,343.49031,0.881476,0.471450,"Artemis Observatory, Teide"
+Z53,352.1336,0.85645,0.51534,"TRAPPIST-North, Oukaimeden"
+Z80,359.62808,0.623054,0.779568,Northolt Branch Observatory
+Z84,357.4518400,0.79753002,0.60183011,Calar Alto-Schmidt
