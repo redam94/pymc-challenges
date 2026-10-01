@@ -1539,6 +1539,34 @@ REGISTRY: dict[str, Dataset] = {
         "Demographics of the 516 households: hhid, Income (US$ 1000s, bracket midpoints), Fs3_4 and Fs5 "
         "(family size 3-4, 5+), Fam_Size, college, whtcollar, retired (0/1).",
     ),
+    # ---- examples (E85) ----
+    "cj_cereal_incidence": Dataset(
+        "cj_cereal_incidence.csv",
+        "https://github.com/bradleyboehmke/completejourney/raw/master/data/transactions.rds",
+        "84.51, 'The Complete Journey' (2017 grocery transactions of 2,469 households at one retailer), "
+        "distributed as the R package completejourney (Boehmke, Davis & Delaney; CC0 1.0; the URL is its "
+        "transaction file). DERIVED by tools/build_e85_cereal.py - keep the cached file.",
+        "Half-year purchase incidence of cold cereals, the format panel providers deliver: household_id, half "
+        "(1 = weeks 1-26 of 2017, 2 = weeks 27-53) for every household with a shopping trip in that half, and "
+        "0/1 columns for 14 cereal products = manufacturer x segment (M194_family = manufacturer 194's "
+        "all-family cereals; manufacturers are anonymised; Store = the retailer's own brand; segments kids, "
+        "family, adult), 1 if bought at least once in the half.",
+    ),
+    "cj_activity": Dataset(
+        "cj_activity.csv",
+        "https://github.com/bradleyboehmke/completejourney/raw/master/data/transactions.rds",
+        "As `cj_cereal_incidence`. DERIVED by tools/build_e85_cereal.py - keep the cached file.",
+        "Shopping activity per household and half-year (all departments): household_id, half, trips "
+        "(distinct baskets), spend (US$).",
+    ),
+    "cj_demographics": Dataset(
+        "cj_demographics.csv",
+        "https://github.com/bradleyboehmke/completejourney/raw/master/data/demographics.rda",
+        "As `cj_cereal_incidence` (completejourney `demographics`, CC0). CONVERTED from .rda by "
+        "tools/build_e85_cereal.py - keep the cached file.",
+        "Demographics of 801 of the 2,469 households (bands as delivered): household_id, age, income, "
+        "home_ownership, marital_status, household_size, household_comp, kids_count.",
+    ),
     # ---- examples (E71) ----
     "speed_acc": Dataset(
         "wagenmakers2008_speed_acc.csv",

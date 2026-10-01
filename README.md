@@ -25,7 +25,7 @@ Using VS Code or another IDE instead? Point it at the interpreter in `.venv`.
 
 ```
 notebooks/
-  examples/      E01-E84  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
+  examples/      E01-E85  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
   challenges/    C01-C11  your workspace. Tasks, empty cells, hints on request.
   solutions/     C01-C11  full reference solutions, executed, with commentary.
 ```
@@ -132,11 +132,12 @@ correlation on a **graph** or a **tree**, learn the graph itself, or model many 
 | **E30** | Exchangeable partitions: Pólya urns, the Chinese restaurant process, Pitman-Yor and unseen species | *Moby-Dick* word tokens (Project Gutenberg); Barro Colorado Island 50-ha tree census | urn simulation and de Finetti limits, the EPPF checked by brute force, NUTS on (alpha, d) with no latent assignments, a stable log rising factorial, frequency-of-frequencies and Heaps-curve PPCs, exact held-out predictive from EPPF ratios, new-type predictions vs Good-Toulmin with a coverage study, a negative discount (finite species pool) with the pool size marginalised |
 | **E31** | The Indian buffet process: latent binary features | UCI optdigits handwritten digits (300 training / 200 test digits by other writers) | the IBP as a restaurant, stick-breaking and finite beta-Bernoulli, collapsed Gibbs in NumPy checked by brute-force enumeration, noise level vs alpha as the driver of K+, stuck chains and split-merge, label-free summaries, a truncated PyMC IBP with 2^K enumeration (and a collapse-to-empty trap), held-out half-digit completion vs probabilistic PCA |
 
-#### Media measurement and market structure (E32-E35, E45, E84)
+#### Media measurement and market structure (E32-E35, E45, E84-E85)
 
 One real open dataset (Conjura's multi-brand e-commerce MMM data, CC BY 4.0) and four
-questions a marketing team actually asks, plus (E84) a household scanner panel for the question of
-who competes with whom. Each ends with displays for people who decide,
+questions a marketing team actually asks, plus (E84-E85) household panels for the question of
+who competes with whom - from full purchase histories, and from the 6-month incidence tables and
+partial demographics that most studies actually get. Each ends with displays for people who decide,
 not people who model; the results are also exported for a single plain-language web page.
 
 | | Topic | Real data | Key techniques |
@@ -147,6 +148,7 @@ not people who model; the results are also exported for a single plain-language 
 | **E35** | Halo effects as Bayesian causal mediation: does Meta work through branded search? | Conjura MMM data: one UK clothing brand, weekly new customers, branded-search clicks, Meta/Google spend, UK + US | natural direct/indirect effects, joint mediator + outcome negative binomial model with adstock and saturation, counterfactual propagation from posterior draws (plug-in and Monte Carlo), product-of-coefficients check, "search as control" vs "search left out", replication in a second market, sensitivity analysis for mediator-outcome confounding, Sankey and stacked quantile-bar displays |
 | **E45** | One family for every response curve: a Weibull transform in JAX for media models | Conjura MMM data: a UK apparel brand, 180 weeks of new customers and Google + Meta spend | the saturation family as a prior, a normalised Weibull response $(1-e^{-cx^k})/(1-e^{-c})$ spanning power, concave and S-curves with a shape map and closed-form inflection, a float32-safe custom JAX function (`expm1` + series switch, double-`where`) with geometric adstock in `lax.scan` and unit tests, `vmap` + optax batch fits of 812 Hill curves and other standard transforms (and where the tails differ), translating a Hill prior into (k, c), `pytensor.wrap_jax` + `verify_grad`, fake-data check against Hill and logistic models, LOO on a real brand, marginal CAC via `vmap(grad)`, Numba+JAX-node vs whole-model JAX timing |
 | **E84** | Market structure analysis: who competes with whom? | Allenby & Rossi (1991) margarine scanner panel (bayesm): 516 households, 4,470 purchases of 10 products with all shelf prices | switching matrix and switching lift, IIA (logit diversion proportional to share), nested-logit tests of form vs brand vs tier hierarchies scored on held-out last purchases, factor-structured hierarchical logit as a choice map, rotation non-identifiability (r_hat 1.8 on loadings, identified Lambda Lambda^T) and Procrustes alignment, spurious state dependence, simulated-history PPC, diversion lift, market tree with posterior cluster support, clout and vulnerability, a Bayesian GUPPI merger screen |
+| **E85** | Market structure from purchase incidence: combining panel, activity and demographic data | 84.51 Complete Journey (CC0): household x 14 cereals 0/1 for Jan-Jun 2017 (2,391 households), shopping trips, demographics for a third, Jul-Dec as a test wave | co-purchase lift confounded by volume, Bernoulli-logit factor model ladder (activity, category propensity, centred-loading choice map), a naive map whose first axis is volume, demographics in the prior mean with a missing-data indicator (not missing at random), complete-case vs all households, next-wave household elpd, rotation-free shared-clientele matrix, manufacturer-vs-segment test, tree with posterior support, Lambda Gamma^T demographic effects and variance explained, trial-coupon targeting scored on real next-wave trials |
 
 #### State of the art, for everyone (E36-E38)
 

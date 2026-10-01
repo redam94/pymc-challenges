@@ -820,6 +820,14 @@ doubt run `uv run python -c "..."` to check:
     cleanly under nutpie in ~20 s, yet its loadings show r_hat 1.8 and ESS 6: rotation non-identifiability,
     not a sampling failure. Check `Lambda @ Lambda.T` (r_hat 1.03) and Procrustes-align draws for display.
     Delete fitted map idata you only need summaries of (each holds hh x product draws). ~180 s at 1.9 GB.
+  - **Incidence tables (E85).** A Bernoulli-logit factor model on a household x product 0/1 table spends its
+    first dimension on volume unless activity (log trips) and a household propensity are in the model and
+    the loadings are centred. Report rotation-free summaries (normalised `Lambda @ Lambda.T`, and
+    `Lambda @ Gamma.T` for covariate effects); generalised Procrustes for any map. Demographics for a third of
+    households went into the prior means with a missing indicator (households without them shop 3x less:
+    not MAR). Predicting a 2,340 x 14 next wave from 2,000 draws x 3 temporaries is ~1.5 GB: cap draws at
+    500 and `del` side fits after scoring. completejourney's rds/rda read with `rdata` via
+    `uv run --no-project --with rdata`. Eight fits; ~330 s at 2.5 GB.
   - **MRP (E36).** Group effects as plain `Normal` z plus a separate intercept (and a main
     effect plus its interaction) gave 28 divergences, 271 with r_hat 1.10 without state
     predictors; `pm.ZeroSumNormal` (`n_zerosum_axes=2` for interactions) gave 0. Non-centred
