@@ -814,6 +814,12 @@ doubt run `uv run python -c "..."` to check:
     Monotone increments across tau never cross but need nutpie `adaptation="low_rank"`. Sinh-arcsinh
     regression with mu, epsilon, log delta all linear: every draw divergent, r_hat 8 - parameterise by the
     median and switch off jitter. Natality `cig_3` is "unknown" for 76% of births before 28 weeks. ~245 s.
+  - **Market structure (E84).** A nested logit's normalised log-probabilities can go straight into
+    `pm.Categorical(logit_p=...)`; scoring it in NumPy over (draws, rows, products, nests) peaked at 2.6 GB -
+    chunk over draws. A factor-structured random-intercept logit (loadings centred over products) samples
+    cleanly under nutpie in ~20 s, yet its loadings show r_hat 1.8 and ESS 6: rotation non-identifiability,
+    not a sampling failure. Check `Lambda @ Lambda.T` (r_hat 1.03) and Procrustes-align draws for display.
+    Delete fitted map idata you only need summaries of (each holds hh x product draws). ~180 s at 1.9 GB.
   - **MRP (E36).** Group effects as plain `Normal` z plus a separate intercept (and a main
     effect plus its interaction) gave 28 divergences, 271 with r_hat 1.10 without state
     predictors; `pm.ZeroSumNormal` (`n_zerosum_axes=2` for interactions) gave 0. Non-centred

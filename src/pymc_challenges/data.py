@@ -1517,6 +1517,28 @@ REGISTRY: dict[str, Dataset] = {
         "(pre-pregnancy diabetes, gestational diabetes, gestational hypertension: Y/N/U), sex (M/F), combgest "
         "and oegest_comb (gestation in weeks, combined and obstetric estimate), dbwt (birth weight, grams).",
     ),
+    # ---- examples (E84) ----
+    "margarine": Dataset(
+        "margarine_purchases.csv",
+        "https://cran.r-project.org/src/contrib/Archive/bayesm/bayesm_3.1-6.tar.gz",
+        "Allenby & Rossi (1991), 'Quality perceptions and asymmetric switching between brands', "
+        "Marketing Science 10:185-205: an A.C. Nielsen scanner panel, distributed as `margarine` in the "
+        "R package bayesm (Rossi; GPL >= 2; the URL is its CRAN source tarball). CONVERTED from .rda by "
+        "tools/build_e84_margarine.py - keep the cached file.",
+        "4,470 margarine purchases by 516 households, in time order within household (no dates): hhid, "
+        "trip (1, 2, ... within household), choice (one of 10 products: Pk = Parkay, BB = Blue Bonnet, "
+        "Fl = Fleischmann's, Hse = the store's house brand, Gen = generic, Imp = Imperial, SS = Shedd's "
+        "Spread; _Stk = sticks, _Tub = tub), and price_<product>: the shelf price (US$ per pound) of every "
+        "product on that shopping trip.",
+    ),
+    "margarine_demos": Dataset(
+        "margarine_demos.csv",
+        "https://cran.r-project.org/src/contrib/Archive/bayesm/bayesm_3.1-6.tar.gz",
+        "As `margarine` (bayesm `margarine$demos`). CONVERTED by tools/build_e84_margarine.py - keep the "
+        "cached file.",
+        "Demographics of the 516 households: hhid, Income (US$ 1000s, bracket midpoints), Fs3_4 and Fs5 "
+        "(family size 3-4, 5+), Fam_Size, college, whtcollar, retired (0/1).",
+    ),
     # ---- examples (E71) ----
     "speed_acc": Dataset(
         "wagenmakers2008_speed_acc.csv",

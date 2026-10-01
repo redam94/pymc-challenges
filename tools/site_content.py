@@ -99,11 +99,14 @@ SERIES = [
     dict(key="partitions", range="E30–E31", title="Random partitions and random features", ids=_ids("E", 30, 31),
          intro="Exchangeable partitions and latent binary features: Pólya urns, Pitman–Yor processes and "
                "unseen species, and the Indian buffet process."),
-    dict(key="media", range="E32–E35, E45", title="Media measurement", ids=_ids("E", 32, 35) + ["E45"],
+    dict(key="media", range="E32–E35, E45, E84", title="Media measurement and market structure",
+         ids=_ids("E", 32, 35) + ["E45", "E84"],
          intro="One open multi-brand e-commerce dataset and five questions a marketing team actually asks: "
                "a custom likelihood for spend that chases demand, a hierarchical marketing-mix model with a "
                "budget decision, a synthetic control, causal mediation, and which shape of response curve "
-               "the data support (a Weibull transform written in JAX)."),
+               "the data support (a Weibull transform written in JAX). Plus a household scanner panel for "
+               "market structure: which margarines compete, read off a Bayesian choice map, and what that "
+               "means for a merger screen."),
     dict(key="everyone", range="E36–E41", title="State of the art, explained for everyone", ids=_ids("E", 36, 41),
          intro="Six model families used in practice today, each with a plain-language opening and a closing "
                "section of uncertainty displays for readers with no statistics: MRP, extreme-event attribution, "
@@ -114,7 +117,7 @@ SERIES = [
                "aggregation, binning and unusual plots."),
 ]
 SERIES_BY_KEY = {s["key"]: s for s in SERIES}
-RECENT = ["E83", "E82", "E81", "E80", "E79", "E78", "E77"]          # newest first, shown on the home page
+RECENT = ["E84", "E83", "E82", "E81", "E80", "E79", "E78"]          # newest first, shown on the home page
 
 
 def _link(ctx, eid, text=None):
@@ -366,6 +369,8 @@ def guide_page(ctx):
         ("A network of ties", "Latent-space and stochastic block models", f"{L('E21')}"),
         ("Who beat whom, or a whole finishing order", "Bradley-Terry, dynamic skills, Plackett-Luce", f"{L('E67')}"),
         ("A choice among alternatives", "Conditional and mixed logit; willingness to pay", f"{L('E68')}"),
+        ("Repeated purchases: who competes with whom", "Factor-structured hierarchical logit (a choice map)",
+         f"{L('E84')}"),
         ("A quick two-way choice and its response time", "Drift diffusion model (Wiener first-passage time)",
          f"{L('E71')}"),
         ("Shares of a whole, or counts split into parts", "Dirichlet, logistic-normal and Dirichlet-multinomial models",
