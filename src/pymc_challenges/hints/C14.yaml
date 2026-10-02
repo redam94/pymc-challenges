@@ -1,0 +1,219 @@
+title: "Small for gestational age: whose chart flags whom?"
+tasks:
+  task0:
+    title: Which gestational age? Which records?
+    hints:
+      - |
+        Two columns claim to be the same thing. Tabulate both, and their difference, and ask what a
+        "45-week" birth means in 2023. Then think about what a misdated term baby does to a chart when
+        it lands at 30 weeks, and what a misdated preterm baby does when it lands at 40. Finally: which
+        babies is the chart *for*? A cleaning rule that deletes them defeats the purpose.
+      - |
+        Drop `dbwt == 9999` and `99` weeks. Compare `combgest` and `oegest_comb`: `value_counts()` of
+        each, a histogram of their difference, and per week (at least 10 births) the 10th centile of
+        `dbwt` and the share of babies over 3 kg under each measure.
+
+        For implausible weight-for-age, a robust z-score of log weight within week and sex
+        (`(x - median) / (1.4826 * MAD)`) finds the outliers. Look at both tails before deciding which
+        side to trim: is a 1.2 kg baby at 39 weeks an error or a growth-restricted baby?
+      - |
+        ```python
+        known = raw[(raw.dbwt < 9999) & (raw.combgest < 99) & (raw.oegest_comb < 99)]
+        share_43 = np.mean(known.___ >= 43)
+        diff = known.combgest - known.oegest_comb
+        for col in ("combgest", "oegest_comb"):
+            q10 = known.groupby(col).dbwt.quantile(___)        # weekly 10th centile
+            heavy = known.groupby(col).dbwt.apply(lambda v: np.mean(v > ___))
+
+        lw = np.log(known.dbwt)
+        g = lw.groupby([known.oegest_comb, known.sex])
+        z = (lw - g.transform("median")) / g.transform(lambda v: 1.4826 * np.median(np.abs(v - np.median(v))))
+        suspicious = (z > 4) & (known.oegest_comb < ___)        # which side, and where?
+        ```
+    checks:
+      share_combgest_43plus:
+        what: share of births with known weight and gestation that combgest places at 43+ weeks, about 0.029 (a share, not a percentage)
+        range: [0.027, 0.031]
+
+  task1:
+    title: The quick chart
+    hints:
+      - |
+        Count the training births per week and sex before you trust any number. How many babies does it
+        take to estimate a 10th centile? What does an "empirical 10th centile" of seven babies mean?
+      - |
+        Loop over sex and week and take `np.quantile(..., 0.1)` of the training log weights. Plot on a log
+        scale (the preterm weeks are a factor of ten lighter). For the held-out check, flag each held-out
+        baby whose log weight is below its week-and-sex value, then average the flags within each
+        gestational-age band and sex. A binomial standard error `sqrt(0.1 * 0.9 / n)` tells you how far
+        from 10% a cell can be by chance.
+      - |
+        ```python
+        emp = np.full((2, N_WEEKS), np.nan)
+        for s in range(2):
+            for w in range(N_WEEKS):
+                v = y_tr[(sx_tr == s) & (wk_tr == w)]
+                emp[s, w] = np.quantile(v, ___) if len(v) else np.nan
+
+        flag = y_te < emp[___, ___]                      # one True/False per held-out baby
+        for a, b in [(24, 31), (32, 34), ...]:
+            m = test.week.between(a, b).to_numpy() & (sx_te == s)
+            print(a, b, s, m.sum(), flag[m].mean())
+        ```
+    checks:
+      q10_39_girls:
+        what: empirical 10th centile at 39 weeks for girls in the training births, about 2,880 g (grams, not log kg)
+        range: [2850, 2910]
+
+  task2:
+    title: A smooth chart that borrows strength
+    hints:
+      - |
+        Weeks are whole numbers, so "a smooth curve" can be 19 numbers whose second differences are small.
+        What prior says that? And how could a boy curve and a girl curve share almost everything?
+      - |
+        A second-order random walk on the weekly log 10th centile: `f` gets a vague prior per week, and a
+        `pm.Potential` adds `Normal(0, s_f)` log-densities of `D2 @ f`, with `D2 = np.diff(np.eye(19), 2,
+        axis=0)` and a learned `s_f` (think about how fast the weekly growth rate changes to set its prior
+        scale). The sexes: girls `f - h/2`, boys `f + h/2`, where `h` is a level plus a slow random walk with a
+        small step sd (non-centred via `pt.cumsum`).
+
+        Likelihood: `pm.AsymmetricLaplace("y", mu=q[sex, week], b=np.sqrt(tau * (1 - tau)) / sigma, q=tau,
+        observed=...)` - remember from E83 that PyMC's `b` is a rate, not the check-loss scale. The random-
+        walk and cumulative-sum structure makes neighbouring weeks strongly correlated: nutpie's
+        `nuts={"adaptation": "low_rank"}` helps.
+      - |
+        ```python
+        D2 = np.diff(np.eye(N_WEEKS), 2, axis=0)
+        with pm.Model(coords={"week": WEEKS, "sex": SEXES}) as m:
+            f = pm.Normal("f", 0.5, 1.0, dims="week")
+            s_f = pm.HalfNormal("s_f", ___)
+            pm.Potential("rw2", pm.logp(pm.Normal.dist(0.0, s_f), pt.as_tensor(D2) @ f).sum())
+            h0 = pm.Normal("h0", 0.0, 0.1)
+            s_h = pm.HalfNormal("s_h", ___)
+            walk = pt.cumsum(pm.Normal("h_z", 0.0, 1.0, dims="week"))
+            h = h0 + s_h * (walk - walk.mean())
+            q = pm.Deterministic("q", pt.stack([___, ___]), dims=("sex", "week"))
+            sigma = pm.HalfNormal("sigma", 0.2)
+            pm.AsymmetricLaplace("y", mu=q[sx_tr, wk_tr], b=___, q=0.1, observed=y_tr)
+            idata = pm.sample(nuts={"adaptation": "low_rank"}, random_seed=RANDOM_SEED)
+        ```
+    checks:
+      q10_40_girls:
+        what: posterior median 10th centile at 40 weeks for girls, about 2,980 g (grams)
+        range: [2920, 3040]
+      q10_40_boys:
+        what: posterior median 10th centile at 40 weeks for boys, about 3,085 g (grams)
+        range: [3020, 3150]
+
+  task3:
+    title: Can you trust the bands?
+    hints:
+      - |
+        Where can you get an honest measure of how much a weekly 10th centile moves from sample to sample,
+        without trusting any likelihood? Where is that measure itself trustworthy? And for the held-out
+        check: how big is the binomial noise of a held-out cell compared with the uncertainty of the curve?
+      - |
+        Bootstrap the training births (resample with replacement, a few hundred times) and recompute the
+        empirical 10th centile at 37-41 weeks for each sex; compare its sd with the posterior sd of the same
+        cells. For the held-out check, evaluate every posterior draw of the curve on the held-out babies of a
+        cell: the spread of those flag rates is the curve's uncertainty in "rate units"; add the binomial
+        variance `0.09 / n`.
+
+        Fix (E83): a generalised posterior, `pm.Potential("loss", -w * check_loss(y - mu).sum())`, whose
+        learning rate `w` is the asymmetric Laplace's `1 / sigma` times the (geometric mean) ratio of
+        posterior to bootstrap variance. Refit and compare - including the posterior of `s_f`.
+      - |
+        ```python
+        TERM = np.flatnonzero((WEEKS >= 37) & (WEEKS <= 41))
+        boot = np.empty((300, 2, len(TERM)))
+        for b in range(300):
+            i = rng.integers(0, N_TRAIN, N_TRAIN)
+            for s in range(2):
+                for j, w in enumerate(TERM):
+                    boot[b, s, j] = np.quantile(y_tr[i][(sx_tr[i] == s) & (wk_tr[i] == w)], 0.1)
+        ratio = q_draws[:, :, TERM].std(0) / boot.std(0)        # q_draws: (draws, sex, week)
+        sd_ratio = np.median(ratio)
+
+        var_ratio = np.exp(np.mean(np.log(ratio ** 2)))
+        w = var_ratio / ___                                      # posterior mean of sigma
+        r = y_tr - q[sx_tr, wk_tr]
+        pm.Potential("loss", -w * (r * (0.1 - (r < 0))).sum())    # replaces the AsymmetricLaplace
+        ```
+    checks:
+      sd_ratio_ald:
+        what: median over sex x weeks 37-41 of (asymmetric Laplace posterior sd / bootstrap sd) of the 10th centile, about 0.55
+        range: [0.4, 0.72]
+      sd_ratio_fixed:
+        what: the same ratio after your fix, about 0.85 (a little below 1 is expected, since the smooth chart borrows from neighbouring weeks)
+        range: [0.7, 1.2]
+
+  task4:
+    title: Charts for smokers and for gestational hypertension
+    hints:
+      - |
+        A conditional chart is the same model with shifts. On the log scale a shift is a percentage. Why
+        would hypertension in a baby born at 33 weeks mean something different from hypertension at 39 weeks?
+        And is the learning rate you calibrated on the *curve* automatically right for a *coefficient*?
+      - |
+        Add `X @ beta` to the mean, with columns smoker, hypertension, and hypertension x (week < 37), and
+        keep Task 3's learning rate. To check the coefficients' intervals, you need a classical estimate and a
+        bootstrap: quantile regression of log weight on one dummy per (sex, week) cell plus the three columns,
+        solved as a linear programme (E83's `rq_fn`, or `scipy.optimize.linprog`), resampled ~200 times.
+
+        For the comparison with E83: what does hypertension do to the *week* at which a baby is born?
+      - |
+        ```python
+        X_tr = pd.DataFrame({"smoker": train.smoker, "hyp": train.hyp,
+                             "hyp_preterm": train.hyp * (train.week < ___)})
+        # inside the model, after mu = q[sx, wk]:
+        beta = pm.Normal("beta", 0.0, 0.2, dims="cov")
+        mu = mu + pt.as_tensor(X_tr.to_numpy(float)) @ beta
+
+        smoking_pct = 100 * (np.exp(beta_draws[:, 0].mean()) - 1)
+
+        cell = sx_tr * N_WEEKS + wk_tr
+        Xq = np.column_stack([np.eye(2 * N_WEEKS)[cell], X_tr.to_numpy(float)])
+        Xq = Xq[:, Xq.sum(0) > 0]                                   # drop empty cells
+        b_hat = rq_fn(Xq, y_tr, 0.1)[-3:]                           # then bootstrap rows
+        ```
+    checks:
+      smoking_pct:
+        what: posterior mean change of the 10th centile for babies of smokers, in percent, about -5
+        range: [-8, -2.5]
+      hyp_term_pct:
+        what: posterior mean change of the 10th centile for hypertension at term, in percent, about -0.7 (with an interval that includes 0)
+        range: [-3, 1]
+
+  task5:
+    title: The decision
+    hints:
+      - |
+        A posterior draw of each chart flags each held-out baby or not. Count per draw. Then ask what a
+        conditional 10th centile does to the *total* number flagged - and who makes up the difference.
+      - |
+        Pair the draws of the two fits by index. For each pair, compute two flag vectors on the held-out
+        babies (population chart; conditional chart with each baby's own shifts). For the sampling of the
+        babies, weight them with `rng.dirichlet(np.ones(n))` (a Bayesian bootstrap), a fresh draw per pair.
+        Then: weighted share among smokers under each chart, the difference x 1000; babies flagged by one
+        chart but not the other, per 1000 births; and the net difference.
+
+        For the recommendation: what does a chart define as *normal* growth?
+      - |
+        ```python
+        for i, (sp, sc) in enumerate(zip(idx_pop, idx_cond)):
+            wts = rng.dirichlet(np.ones(len(y_te)))
+            f_pop = y_te < q_pop[sp][sx_te, wk_te]
+            f_cond = y_te < q_cond[sc][sx_te, wk_te] + X_te @ beta[sc]
+            fewer_smk[i] = 1000 * np.sum(wts[smk] * (___)) / wts[smk].sum()
+            off[i] = 1000 * np.sum(wts * (f_pop & ~f_cond))
+            on[i] = 1000 * np.sum(wts * (___))
+            net[i] = ___
+        ```
+    checks:
+      fewer_per_1000_smokers:
+        what: posterior mean of how many FEWER babies of smokers per 1000 are flagged under the conditional chart (a positive number), about 60
+        range: [35, 90]
+      net_per_1000_births:
+        what: posterior mean net change in flagged babies per 1000 births (conditional minus population), about 0
+        range: [-6, 6]

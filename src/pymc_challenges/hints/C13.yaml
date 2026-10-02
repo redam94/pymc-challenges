@@ -1,0 +1,250 @@
+title: "Scale-up from a partial screen: model the yields, then price the next experiment"
+tasks:
+  task0:
+    title: Look at the screen
+    hints:
+      - |
+        Count, do not just plot: how many yields are exactly 0? How many are positive but tiny?
+        Does anything reach 100? Then think about coverage: 60 reactions spread over 12 ligands x
+        4 solvents is about one reaction per combination - what can such data say about a
+        ligand x solvent interaction?
+      - |
+        `(y == 0).sum()`, `((y > 0) & (y < 1)).sum()`, a histogram with 2.5-point bins, and
+        `screen["ligand"].value_counts()`. For coverage, count the distinct `(ligand, solvent)`
+        pairs among the 60 rows with a `set` of tuples. A strip plot of yield by ligand, coloured
+        by solvent, shows both the ligand effect and the first hints of interactions.
+
+  task1:
+    title: A Gaussian ANOVA on raw yield
+    hints:
+      - |
+        Write the model as intercept + one zero-sum effect vector per factor, each with its own
+        scale. With only 3 levels for concentration and temperature, how well can 60 points pin
+        down those scales - and what does that mean for centred vs non-centred effects? For the
+        PPC, pick statistics that the Gaussian is *not* free to fit: the pile at zero, the maximum.
+      - |
+        `pm.ZeroSumNormal("z_f", sigma=1.0, dims=f)` times a `pm.HalfNormal` scale, indexed by
+        the level codes of the 60 screened rows. Raw-scale priors: effects of tens of points are
+        plausible (HalfNormal(20)). For the grid, push every posterior draw through all 1,728 rows
+        of `IDX` in NumPy (`post["e_ligand"].transpose("ligand", "sample").values[IDX[:, 0]]`),
+        add `sigma * standard_normal`, and take the share below 0 and the maximum per draw.
+      - |
+        ```python
+        with pm.Model(coords=COORDS) as naive:
+            mu = pm.Normal("a", 30.0, 20.0)
+            for j, f in enumerate(FACT):
+                s = pm.HalfNormal(f"s_{f}", ___)
+                e = pm.Deterministic(f"e_{f}", s * pm.ZeroSumNormal(f"z_{f}", sigma=1.0, dims=f), dims=f)
+                mu = mu + e[X[:, j]]
+            pm.Normal("y", mu, pm.HalfNormal("sigma", 20.0), observed=y)
+            idata = pm.sample(target_accept=0.95, random_seed=RANDOM_SEED)
+
+        post = az.extract(idata, num_samples=2000)
+        mu = post["a"].values[None, :] + sum(
+            post[f"e_{f}"].transpose(f, "sample").values[IDX[:, j]] for j, f in enumerate(FACT))
+        table = mu.T + post["sigma"].values[:, None] * rng.standard_normal(___)   # (draws, 1728)
+        share_negative = np.mean(table < 0)
+        best_achievable = np.median(table.max(axis=___))
+        ```
+    checks:
+      sigma:
+        what: posterior mean of the residual sd on the raw scale, about 17.5 yield points
+        range: [15.5, 20.0]
+      share_negative:
+        what: share of all predicted yields (draws x 1,728 conditions) below 0, about 0.22
+        range: [0.16, 0.28]
+      best_achievable:
+        what: posterior median of the largest predicted yield over the grid, about 113% (sic)
+        range: [105, 122]
+
+  task2:
+    title: A likelihood that knows what a yield is
+    hints:
+      - |
+        Two separate problems: the outcome is bounded, and a third of the reactions fail
+        outright. On which scale would "this ligand doubles the odds of conversion" be additive?
+        And is the difference between 0% and 0.3% something you want a model to explain?
+      - |
+        Model `logit(yield / 100)` as Normal, and treat the ends as **censored**: anything below
+        1% means "trace or nothing" (latent below `logit(0.01)`), anything above 99.5% means
+        "quantitative". `pm.Censored(pm.Normal.dist(mu, sigma), lower=..., upper=...,
+        observed=logit(np.clip(y, 1, 99.5) / 100))` does exactly that. A Tobit model on the raw
+        scale (censored at 0 and 100) also respects the bounds, but its noise has the same spread
+        at 85% as at 40% - remember that when you get to the decision.
+
+        Priors now live on the logit scale: an intercept Normal(-1, 1.5) puts a typical reaction
+        around 25%; effect scales HalfNormal(1.5). Check them with `pm.sample_prior_predictive`
+        transformed back with `expit`.
+      - |
+        ```python
+        Z_LO, Z_HI = logit(0.01), logit(0.995)
+        with pm.Model(coords=COORDS) as additive:
+            mu = pm.Normal("a", -1.0, 1.5)
+            for j, f in enumerate(FACT):
+                ...                                                   # as in Task 1, HalfNormal(1.5)
+            sigma = pm.HalfNormal("sigma", ___)
+            pm.Censored("y", pm.Normal.dist(mu, sigma), lower=___, upper=___,
+                        observed=logit(np.clip(y, 1.0, 99.5) / 100))
+            prior = pm.sample_prior_predictive(500)
+            idata = pm.sample(target_accept=0.95)
+            pm.sample_posterior_predictive(idata, extend_inferencedata=True)
+        rep = 100 * expit(az.extract(idata, group="posterior_predictive", var_names=["y"]).values.T)
+        share_trace = np.mean(rep < 1.0 + 1e-9)                       # censored draws sit at the bound
+        ```
+    checks:
+      sigma:
+        what: posterior mean of the residual sd on the LOGIT scale for the additive censored model, about 1.7
+        range: [1.45, 2.0]
+      share_trace:
+        what: share of posterior-predictive screen yields below 1%, about 0.27 (observed 0.30)
+        range: [0.22, 0.32]
+
+  task3:
+    title: Interactions from 60 reactions
+    hints:
+      - |
+        48 ligand x solvent effects from 60 reactions: almost all of what you learn about them
+        comes through their shared scale. When the data say little about a group of effects and
+        their scale together, what geometry does the posterior have - and which parameterisation
+        is built for that?
+      - |
+        `pm.ZeroSumNormal(..., dims=("ligand", "solvent"), n_zerosum_axes=2)` keeps rows and
+        columns summing to zero, so interactions do not duplicate main effects (E36). The centred
+        version `ZeroSumNormal(sigma=s)`, and the non-centred one (a unit `ZeroSumNormal` times
+        `s`) both struggle: plot `sigma` against each interaction scale. If two parameters trade off
+        because the data cannot tell them apart, no reparameterisation removes that - check r_hat and
+        ESS of what you will *use* (the latent mean at the promising conditions). Compare models with
+        `pm.compute_log_likelihood` + `az.compare` - both have the same censored likelihood, so
+        LOO is a fair comparison here (it would not be between the raw and logit models).
+      - |
+        ```python
+        for p, q in [(0, 2), (0, 1), (1, 2)]:
+            name, dims = f"{FACT[p]}_x_{FACT[q]}", (FACT[p], FACT[q])
+            s = pm.HalfNormal(f"s_{name}", 1.0)
+            e = pm.Deterministic(f"e_{name}", s * pm.ZeroSumNormal(
+                f"z_{name}", sigma=1.0, dims=dims, n_zerosum_axes=___), dims=dims)
+            mu = mu + e[X[:, p], X[:, q]]
+        ...
+        cmp = az.compare({"additive": idata_add, "interactions": idata_int}, round_to=1)
+        elpd_diff = cmp.loc["interactions", "elpd"] - cmp.loc["additive", "elpd"]
+        ```
+    checks:
+      s_ligand_solvent:
+        what: posterior mean of the ligand x solvent interaction scale (logit), about 1.05
+        range: [0.75, 1.35]
+      elpd_diff:
+        what: elpd(interactions) - elpd(additive), about +10 nats (with many Pareto k > 0.7)
+        range: [4, 18]
+
+  task4:
+    title: The whole grid
+    hints:
+      - |
+        "Probability that condition c is the best" is a statement about the *joint* posterior of
+        all 1,728 yields: in each posterior draw exactly one condition wins. What do you do with
+        the 60 you have already measured, and with draws that tie at 100%?
+      - |
+        From each posterior draw build one plausible table (latent mean + noise), overwrite the
+        screened conditions with their measured values, and take `argmax` per draw (on the logit
+        scale, where nothing ties); `np.bincount(argmax, minlength=1728) / n_draws` is P(best).
+        The maximum per draw on the yield scale is the best achievable yield. For the audit, the
+        sample CRPS is `mean|Y - y| - 0.5 mean|Y - Y'|` (sort the draws to compute the second
+        term in O(S log S)); compare 90% interval coverage overall and among conditions that are
+        truly at least 80%.
+      - |
+        ```python
+        lat = G["latent"].copy()                       # (draws, 1728), logit scale
+        lat[:, SCREEN] = logit(np.clip(y, 1, 99.5) / 100)
+        p_best = np.bincount(lat.argmax(axis=1), minlength=N) / len(lat)
+        yy = G["yield"].copy(); yy[:, SCREEN] = y
+        best_achievable = yy.max(axis=___)
+
+        def crps(draws, obs):
+            S = draws.shape[0]
+            s = np.sort(draws, 0)
+            w = (2 * np.arange(1, S + 1) - S - 1)[:, None]
+            return np.abs(draws - obs).mean(0) - (w * s).sum(0) / S**2
+        crps(G["yield"][:, CANDIDATES], TRUTH[CANDIDATES]).mean()
+        ```
+    checks:
+      p_best_top:
+        what: the largest P(best) of any condition under the interaction model, about 0.02
+        range: [0.01, 0.06]
+      p_reach_95:
+        what: posterior probability that some condition reaches 95% (interaction model), nearly 1
+        range: [0.9, 1.0]
+      crps:
+        what: mean CRPS (yield points) of the interaction model on the 1,668 held-out yields, about 7.9
+        range: [7.4, 8.6]
+
+  task5:
+    title: Commit now, or buy k more reactions?
+    hints:
+      - |
+        After the round, the plant gets the best *measured* condition. So the value of a batch is
+        the expected value of the maximum of its yields - not the sum of each reaction's expected
+        improvement. Which conditions make a good batch, and why might the posterior's noise term
+        matter more here than anywhere else?
+      - |
+        Use the grid draws: for a batch B, gain per draw = `max(0, max_{j in B} y_j - 91.1)`.
+        Build B greedily: start from the incumbent, add the unscreened condition that most raises
+        the mean of `max(current, y_c)` over draws, repeat to 48 (a Monte-Carlo q-EI). Nested
+        batches let you read off every k from one ordering. Then net = 5000 * gain - 1500 * k -
+        10000 * (k > 0), per draw: mean, interval, P(net > 0). Do the same with the Task 1 draws.
+      - |
+        ```python
+        cur = np.full(n_draws, 91.11); pool = list(CANDIDATES); batch = []
+        for _ in range(48):
+            score = np.maximum(yld[:, pool], cur[:, None]).mean(axis=0)
+            c = pool.pop(int(np.argmax(score)))
+            batch.append(c); cur = np.maximum(cur, yld[:, c])
+        for k in [0, 4, 8, 12, 16, 24, 32, 48]:
+            g = np.maximum(yld[:, batch[:k]].max(axis=1) - 91.11, 0) if k else np.zeros(n_draws)
+            net = 5000 * g - 1500 * k - 10000 * (k > 0)
+            print(k, g.mean(), net.mean(), np.mean(net > ___))
+        ```
+    checks:
+      expected_gain_8:
+        what: expected gain (yield points) of the best 8-reaction batch under the interaction model, about 5.8
+        range: [4.8, 6.8]
+      best_k:
+        what: the k with the highest expected net value under the interaction model - a small round (4 or 8)
+        range: [4, 8]
+      p_pays:
+        what: P(net value > 0) at the recommended k (at k = 8 if the recommendation is 0), about 0.7
+        range: [0.55, 0.85]
+
+  task6:
+    title: Replay the decision
+    hints:
+      - |
+        Wrap everything from the screen to the recommended k in one function of the screen's
+        seed. Then ask two different questions: did the recommendations make money on average,
+        and was each model's *predicted* gain distribution honest about the realised one?
+      - |
+        For each seed: draw 60 conditions, fit both models, build the batch, take the recommended
+        k, and record the expected net value and the realised net value from `TRUTH`. A PIT value
+        is `mean(g_draws < g_true) + 0.5 * mean(g_draws == g_true)` (the mid-rank handles the
+        point mass at a gain of 0). PITs near 0 mean the model promised more than it delivered.
+        Six screens x two models is about two minutes; `del` each idata.
+      - |
+        ```python
+        def pipeline(seed):
+            scr = np.sort(np.random.default_rng(seed).choice(N, 60, replace=False))
+            ys, Xs, inc = TRUTH[scr], IDX[scr], TRUTH[scr].max()
+            cand = np.setdiff1d(np.arange(N), scr)
+            for scale, pairs in [("raw", ()), ("logit", PAIRS)]:
+                yld = ___                                     # fit on (Xs, ys), grid draws
+                batch = greedy_batch(yld, 48, inc, cand)
+                ...                                           # value table, k*, realised, PIT
+        ```
+    checks:
+      mean_pit_logit:
+        what: mean PIT of the realised gain under the interaction model over screens 1-6, about 0.8 (conservative)
+        range: [0.6, 0.97]
+      realised_naive:
+        what: mean realised net value ($ thousands) of the Gaussian model's recommendations, about 16
+        range: [0, 35]
+      realised_logit:
+        what: mean realised net value ($ thousands) of the interaction model's recommendations, about 45
+        range: [30, 60]

@@ -1,0 +1,212 @@
+title: "Crosswinds at Santa Barbara: when can a student fly solo?"
+tasks:
+  task0:
+    title: Look at the data
+    hints:
+      - |
+        A wind report of "direction 0, speed 0" and a report of "direction 360, speed 12" are very
+        different things. Count the values each column takes, and look at the speed whenever the
+        direction is empty. For the roses: the sea breeze is a speed regime as much as a direction.
+      - |
+        `train.sknt.value_counts().sort_index()` and `train.drct.value_counts()`; the speeds of
+        `train[train.drct.isna() & (train.sknt > 0)]`. For roses, polar axes with north up and
+        clockwise (`ax.set_theta_zero_location("N")`, `ax.set_theta_direction(-1)`), one bar per
+        10-degree bin, one panel per speed class for reports between 12:00 and 16:00. Draw the
+        runway line through the centre so you can see which winds are across it.
+
+  task1:
+    title: The crosswind, and what the raw data can say
+    hints:
+      - |
+        Split the wind vector into a component along the runway and one across it. Which reference
+        direction do METAR reports use, and which does the runway's *name* use? For calms and for
+        variable winds, ask what the largest possible crosswind is.
+      - |
+        Crosswind = speed x |sin(direction - runway heading)|, with both angles TRUE. The other
+        runway end adds 180 degrees, which only flips the sign of the sine. Calm: 0. Variable
+        (missing direction, speed > 0): use the speed itself as a worst case - and notice that it
+        never matters at these speeds. Then `pivot_table(index="month", columns="hour",
+        values="exceed")` and print the number of reports and of exceedances per cell.
+      - |
+        ```python
+        def crosswind(df, heading):
+            xw = df.sknt * np.abs(np.sin(np.deg2rad(df.drct - ___)))
+            return xw.where(df.drct.notna(), ___)        # calm gives 0 automatically
+
+        train["xw"] = crosswind(train, 89.0)
+        train["exceed"] = train.xw > ___
+        exceed_true = train.exceed.mean()
+        exceed_magnetic = (crosswind(train, ___) > 8).mean()
+        ```
+    checks:
+      exceed_true:
+        what: share of ALL 2021-2022 reports with more than 8 kt of crosswind on the TRUE runway heading 089, about 0.024
+        range: [0.020, 0.026]
+      exceed_magnetic:
+        what: the same share computed (wrongly) with the magnetic heading 075, about 0.034
+        range: [0.031, 0.040]
+
+  task2:
+    title: The obvious model, speed and direction separately
+    hints:
+      - |
+        A calm is "speed below about 3 knots", and a report of 7 knots is "between 6.5 and 7.5".
+        What kind of likelihood describes an observation that is only known to lie in an
+        interval? For the direction: 36 reported values, more than one lobe at some hours. And
+        when every observation in a group shares the same predictors, what do you actually need
+        to keep from the group?
+      - |
+        Speed: log S ~ Normal(m, sigma) with m and log sigma linear in harmonic features of hour
+        (several daily harmonics) and month; the likelihood of a report s >= 3 is
+        Phi((log(s + 0.5) - m) / sigma) - Phi((log(s - 0.5) - m) / sigma), of a calm
+        Phi((log 2.5 - m) / sigma). Use `pm.logcdf(pm.Normal.dist(), z)` and
+        `pm.math.logdiffexp`, weighted by the count of reports per (month, hour, speed).
+
+        Direction: a categorical over the 36 bins with logits sum_k a_k cos(k theta) + b_k sin(k theta),
+        each a_k, b_k linear in the features (K = 1 is E81's canonical von Mises; take K = 3). The
+        log-likelihood of a cell is sum_j count_j * logit_j - N * logsumexp(logits): concave,
+        cheap, and it handles the 10-degree rounding exactly.
+
+        Combine per (month, hour) and posterior draw: P(exceed) = sum over speeds and bins of
+        P(speed) P(bin) 1[speed |sin(bin - 89)| > 8]. Compare with the observed rate per hour.
+      - |
+        ```python
+        with pm.Model() as speed_model:
+            a = pm.Normal("a", 0, ___, shape=P)
+            b = pm.Normal("b", 0, ___, shape=P)
+            m = 1.5 + pt.dot(F_sp, a)
+            sigma = pt.exp(pt.dot(F_sp, b))
+            lcdf_hi = pm.logcdf(pm.Normal.dist(), (log_hi - m) / sigma)
+            lcdf_lo = pm.logcdf(pm.Normal.dist(), (log_lo - m) / sigma)
+            ll = pt.switch(s_rep == 0, ___, pm.math.logdiffexp(lcdf_hi, lcdf_lo))
+            pm.Potential("ll", pt.sum(counts * ll))
+
+        basis = np.concatenate([np.stack([np.cos(k * TH), np.sin(k * TH)]) for k in range(1, K + 1)])
+        with pm.Model() as direction_model:
+            W = pm.Normal("W", 0, ___, shape=(P, 2 * K))
+            logits = pt.dot(pt.dot(F_cells, W), basis)                    # (cells, 36)
+            pm.Potential("ll", pt.sum(Y * logits) - pt.sum(___ * pt.logsumexp(logits, axis=1)))
+
+        exc = np.einsum("csv,csd,vd->cs", p_speed, p_dir, (XW_GRID > 8).astype(float))
+        ```
+    checks:
+      calm_0700:
+        what: predicted share of calm reports at 07:53, averaged over months, about 0.49 (observed 0.57)
+        range: [0.40, 0.60]
+      exceed_afternoon_indep:
+        what: exceedance rate the INDEPENDENT model predicts for 11:00-15:59, averaged over months, about 0.10 (observed about 0.03)
+        range: [0.07, 0.14]
+
+  task3:
+    title: Let the direction depend on the speed
+    hints:
+      - |
+        Write the joint distribution of speed and direction as p(speed) x p(direction | speed).
+        Which conditional did Task 0 show you? Then ask what a crosswind limit is a question about:
+        the bulk of the direction distribution, or its shoulders at high speed?
+      - |
+        Add the standardised log speed, its square and their products with the leading hour and
+        month harmonics to the direction model's features, and refit on counts per (month, hour,
+        speed, bin). Fit it with K = 1 (a von Mises) and with K = 3. For prediction, compute per
+        cell and speed q = P(crosswind > 8 | speed) from the direction probabilities, then sum
+        P(speed) q over speeds. For the diagnosis, overlay the predicted rose for strong
+        (13 kt and more) afternoon winds on the observed one.
+      - |
+        ```python
+        def features_speed(hour, month, speed):
+            F = harmonics(hour, month)
+            zs = (np.log(speed) - ___) / ___
+            return np.column_stack([F, zs[:, None] * F[:, :7], zs ** 2, (zs ** 2)[:, None] * F[:, 1:3]])
+
+        q = np.zeros((n_cells, n_draws, 41))
+        for v in range(9, 41):                                     # 8 kt or less can never exceed
+            p = dir_probs(features_speed(cells.hour, cells.month, np.full(n_cells, v)), W, K)
+            q[:, :, v] = (p * (XW_GRID[v] > 8)).sum(___)
+        exc = (p_speed * q).sum(-1)
+        ```
+    checks:
+      exceed_afternoon_vm:
+        what: 11:00-15:59 exceedance rate with a single von Mises conditional on speed, about 0.10 (still far too high)
+        range: [0.06, 0.13]
+      exceed_afternoon_flex:
+        what: the same with the flexible (K = 3 log-Fourier) direction model conditional on speed, about 0.03
+        range: [0.02, 0.04]
+
+  task4:
+    title: Is the model honest about 2023?
+    hints:
+      - |
+        A predictive interval for a month's share has to include the noise of the reports, not
+        just the uncertainty in the probabilities. Then compare, in 2021-2022, how many DAYS have
+        at least one bad hour with what independent hours would give.
+      - |
+        Simulate each 2023 daytime report as a Bernoulli draw with its cell probability, per
+        posterior draw, and take the monthly share; count months inside the 5-95% range. For the
+        clustering, expected share of days with at least one exceedance = mean over days of
+        1 - prod(1 - p_h). The extension: a Bernoulli regression on the daytime reports with
+        the climatological logit as an offset, an intercept, and a random effect per day
+        (non-centred). Simulate a new day effect per day of 2023 for the check.
+      - |
+        ```python
+        with pm.Model() as day_layer:
+            c = pm.Normal("c", 0, 1.5)
+            sigma_day = pm.HalfNormal("sigma_day", ___)
+            u = pm.Normal("u", 0, 1, shape=n_days)
+            pm.Bernoulli("y", logit_p=offset + c + ___ * u[day_code], observed=exceed)
+            idata_day = pm.sample(var_names=["c", "sigma_day"])
+
+        # 2023, one month: lc (draws, reports) = climatological logits + c
+        u = rng.normal(size=(n_draws, n_days_in_month)) * sigma_day[:, None]
+        share = (rng.random(lc.shape) < special.expit(lc + u[:, ___])).mean(1)
+        ```
+    checks:
+      covered_iid:
+        what: number of 2023 months (of 12) whose daytime exceedance share lies inside the i.i.d. model's 90% predictive interval, about 6
+        range: [4, 9]
+      covered_day:
+        what: the same count with day-level random effects, 11 or 12
+        range: [10, 12]
+      sigma_day:
+        what: posterior mean of the day-effect sd on the logit scale, about 2.2
+        range: [1.6, 2.8]
+
+  task5:
+    title: The schedule
+    hints:
+      - |
+        Two hours of the same day share their weather. With the day effect, what is the
+        probability that both reports of a window are within the limit? Then think about what the
+        instructor can act on: a ranking, the probability that the ranking is right, and the size
+        of the difference.
+      - |
+        Given the day effect u, P(window) = (1 - p1(u)) (1 - p2(u)); average over u ~ N(0, 1)
+        with Gauss-Hermite nodes (`np.polynomial.hermite_e.hermegauss`, weights normalised), for
+        each posterior draw, month and window start 8..16. Average over months for the yearly
+        figure; P(best) = share of draws in which a window has the highest average. Cancellations
+        of 20 bookings: Binomial(20, 1 - P(window)) per draw. For 6 knots, recompute q with the
+        new limit from the same posterior and refit the small day layer.
+      - |
+        ```python
+        x, w = np.polynomial.hermite_e.hermegauss(30)
+        w = w / w.sum()
+        for mo in range(1, 13):
+            for j, h0 in enumerate(range(8, 17)):
+                l1 = logit_clim[cell(mo, h0)][:, None] + c[:, None] + sigma_day[:, None] * x
+                l2 = ___
+                pw[mo - 1, j] = ((1 - special.expit(l1)) * (1 - special.expit(l2)) * w).sum(___)
+        year = pw.mean(0)                                  # (windows, draws)
+        p_best = np.bincount(year.argmax(0), minlength=9) / year.shape[1]
+        ```
+    checks:
+      p_default:
+        what: year-average probability that the recommended window (08:00-10:00) is flyable under the 8-kt rule, about 0.965
+        range: [0.95, 0.98]
+      p_best_default:
+        what: posterior probability that 08:00-10:00 is the best of the nine windows, about 1
+        range: [0.85, 1.0]
+      cancel_march:
+        what: expected cancellations of 20 March bookings in that window, about 1.1
+        range: [0.6, 1.7]
+      p_default_first:
+        what: year-average probability that 08:00-10:00 is flyable under the 6-kt first-solo rule, about 0.84
+        range: [0.78, 0.90]

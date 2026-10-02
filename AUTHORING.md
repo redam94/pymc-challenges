@@ -916,6 +916,19 @@ doubt run `uv run python -c "..."` to check:
   - **Checking animations.** Headless Chrome `--screenshot` can hang on a `to_jshtml()` page;
     decode the base64 frames from the output HTML and look at a few instead; strip every
     non-base64 character (escaped backslash-newlines) before decoding.
+  - **Challenges C12-C15.** Hints YAML: PyYAML reads `-1.0e9` as a string (write `-1.0e+9`) and
+    an unquoted colon in a `what:` text breaks parsing. Fitting on counts per covariate cell
+    gives the same posterior as per-row data when features depend only on the cell (C12: 60 s
+    -> 10 s). 10-degree-rounded directions as a 36-bin categorical with Fourier log-probabilities
+    is an exact likelihood with no Bessel functions. Censored models: code the truth the same
+    way before checking coverage, and take "P(best)" argmax on the latent scale (draws tie at
+    the bound and argmax picks the first). With ~1 observation per interaction cell there is a
+    noise-vs-interaction ridge that non-centring does not fix: judge r_hat/ESS on predictions.
+    A centred MvNormal hierarchy (516 x 10, C15) under nutpie: 0 divergences but r_hat 1.08,
+    ESS 33 - no warning from divergences; non-centring 94 s -> 21 s. IIA's exactly proportional
+    substitution holds only at one common price vector. `rq_fn` goes singular with one dummy
+    per sparse cell. Pairing draws from two independent posteriors inflates "switch" counts
+    (net is unaffected). A held-out flag-rate check has little power against too-narrow bands.
 - Available and worth using where they fit: `pm.ZeroSumNormal`, `pm.Censored`,
   `pm.Truncated`, `pm.CustomDist`, `pm.Mixture`, `pm.NormalMixture`, `pm.OrderedLogistic`,
   `pm.LKJCholeskyCov`, `pm.GaussianRandomWalk`, `pm.AR`, `pm.gp.HSGP`, `pm.gp.HSGPPeriodic`,

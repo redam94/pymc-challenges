@@ -1,0 +1,241 @@
+title: "Should Parkay run a promotion?"
+tasks:
+  task0:
+    title: Look at Parkay's prices
+    hints:
+      - |
+        A model learns its price coefficient from price *variation*. Where is the Parkay stick price
+        most of the time, and how far below that does it go? Then ask which way the raw share
+        comparison could be biased: what else tends to happen on a deal trip?
+      - |
+        Histogram `df["price_Pk_Stk"]` with the regular price and the promotion price
+        (`0.8 * REG[STK]`) marked. Group the trips into price bands with `pd.cut` and compute, per
+        band, the share of purchases that are Parkay stick and Parkay tub, with binomial standard
+        errors `sqrt(p (1 - p) / n)`.
+      - |
+        ```python
+        pk = df["price_Pk_Stk"]
+        df["band"] = pd.cut(pk, [0, 0.32, 0.47, 0.55, 1.0])
+        band = df.groupby("band", observed=True).agg(
+            n=("y", "size"),
+            stk=("y", lambda s: (s == ___).mean()),
+            tub=("y", lambda s: (s == ___).mean()))
+        share_promo = (df.loc[pk <= 0.47, "y"] == STK).mean()
+        share_regular = (df.loc[pk >= ___, "y"] == STK).mean()
+        ```
+    checks:
+      share_promo:
+        what: share of purchases that are Parkay stick on trips where it costs at most $0.47, about 0.71
+        range: [0.70, 0.72]
+      share_regular:
+        what: share of purchases that are Parkay stick on trips where it costs at least $0.55, about 0.26
+        range: [0.25, 0.27]
+
+  task1:
+    title: The pooled logit
+    hints:
+      - |
+        A purchase is one choice among 10 products, with the prices of all 10 on that trip. What
+        happens to choice probabilities if you add the same number to every product's utility - so
+        how many intercepts can you estimate? For the source of the gain, write down the logit's
+        ratio of two products' probabilities and ask what a third product's price does to it.
+      - |
+        Utility `V[i, j] = alpha[j] + beta * price[i, j]` with `alpha` fixed at 0 for Parkay sticks,
+        and `pm.Categorical("y", logit_p=V, observed=y)` (the softmax is done for you). Elasticity of
+        product k's share with respect to its own price in a logit: `beta * p_k * (1 - s_k)`.
+
+        For the promotion, compute choice probabilities at the regular price vector `REG` and with
+        `REG[STK]` multiplied by 0.8 (`scipy.special.softmax` over the product axis, for every
+        posterior draw). The share of the gain coming from product j is
+        `-(s1[j] - s0[j]) / (s1[STK] - s0[STK])`; compare it with `s0[j] / (1 - s0[STK])`.
+      - |
+        ```python
+        with pm.Model(coords={"alt": PRODUCTS[1:]}) as pooled:
+            a = pm.Normal("alpha", 0, 2, dims="alt")
+            alpha = pt.concatenate([pt.zeros(1), a])
+            beta = pm.Normal("beta", ___, ___)
+            V = alpha + beta * X_tr                       # (purchases, 10)
+            pm.Categorical("y", logit_p=___, observed=y_tr)
+            idata_pool = pm.sample(random_seed=RANDOM_SEED)
+
+        post = az.extract(idata_pool, var_names=["alpha", "beta"])
+        A = np.concatenate([np.zeros((post.sizes["sample"], 1)),
+                            post["alpha"].transpose("sample", ...).to_numpy()], axis=1)
+        b = post["beta"].to_numpy()
+        X1 = REG.copy(); X1[STK] *= 0.8
+        s0 = special.softmax(A + b[:, None] * REG, axis=-1)
+        s1 = special.softmax(A + b[:, None] * ___, axis=-1)
+        ```
+    checks:
+      beta:
+        what: posterior median of the pooled price coefficient, about -6.4 per $ per lb
+        range: [-7.0, -5.8]
+      gain_pp:
+        what: Parkay stick share gain from the 20% cut at regular prices, about 18 percentage points
+        range: [16.5, 19.5]
+
+  task2:
+    title: Households have their own tastes
+    hints:
+      - |
+        Each household has about eight purchases. How well can eight purchases pin down ten
+        household coefficients - and what does that do to the joint posterior of those coefficients
+        and their population spread? A price sensitivity that must be positive for everybody
+        suggests a scale on which to put the population distribution.
+      - |
+        Stack the 9 intercepts and the LOG price sensitivity into one 10-vector per household,
+        `theta_h ~ MvNormal(mu, Sigma)`, with `pm.LKJCholeskyCov(..., compute_corr=True)` for Sigma
+        and `b_h = -exp(theta_h[-1])`. Index by household: `V = A[hh] + b[hh, None] * X`.
+
+        The direct form (`pm.MvNormal("theta", mu, chol=chol, dims=("hh", "coef"))`) is the centred
+        parameterisation: look at r_hat, ESS and tree depth of the sds. The non-centred form is
+        `theta = mu + z @ chol.T` with `z ~ Normal(0, 1)`. For the held-out score, for every test
+        purchase average its probability over posterior draws (log-mean-exp of the log
+        probabilities) using that household's own `theta`, then sum; the standard error of a
+        difference is `sqrt(n) * std(pointwise difference)`.
+      - |
+        ```python
+        with pm.Model(coords=coords) as hier:
+            a = pm.Normal("alpha", 0, 2, dims="alt")
+            mu_b = pm.Normal("mu_b", ___, 1.0)                 # mean LOG price sensitivity
+            chol, _, _ = pm.LKJCholeskyCov("chol", n=10, eta=2.0,
+                                           sd_dist=pm.HalfNormal.dist(___), compute_corr=True)
+            mu = pt.concatenate([a, mu_b[None]])
+            z = pm.Normal("z", 0, 1, dims=("hh", "coef"))
+            theta = pm.Deterministic("theta", mu + z @ ___, dims=("hh", "coef"))
+            A = pt.concatenate([pt.zeros((H, 1)), theta[:, :-1]], axis=1)
+            b = -pt.exp(theta[:, -1])
+            pm.Categorical("y", logit_p=A[hh_tr] + b[hh_tr, None] * X_tr, observed=y_tr)
+            idata_hier = pm.sample(random_seed=RANDOM_SEED)
+
+        # held-out: th = draws of theta (S, H, 10)
+        V = A_draws[:, hh_te] + b_draws[:, hh_te, None] * X_te
+        lp = (V - special.logsumexp(V, -1, keepdims=True))[:, np.arange(len(y_te)), y_te]
+        pointwise = special.logsumexp(lp, 0) - np.log(___)
+        ```
+    checks:
+      median_beta:
+        what: price coefficient of the median household, -exp(posterior median of mu_b), about -9 per $ per lb
+        range: [-10.5, -7.5]
+      price_sd:
+        what: posterior median of the sd of LOG price sensitivity across households, about 0.40
+        range: [0.30, 0.52]
+      elpd_gain:
+        what: held-out log predictive density of the hierarchical model minus the pooled one (no lag in either), about 260 nats
+        range: [215.0, 305.0]
+
+  task3:
+    title: Loyalty
+    hints:
+      - |
+        If households simply have stable tastes, which products will follow which in their
+        purchase histories - even with no habit at all? Which of the two models can tell "same
+        product because same household" from "same product because bought last time"?
+      - |
+        Add `gamma * last` to the utilities, where `last` is a (purchases, 10) one-hot matrix of the
+        previous purchase (`np.eye(J)[train["prev"].astype(int)]`). Compare gamma between the
+        pooled and the hierarchical model as `exp(gamma)`, the odds ratio. Compare the posterior
+        means of `chol_stds` with and without the lag, and add both lag models to the held-out
+        comparison.
+      - |
+        ```python
+        last_tr = np.eye(J)[train["prev"].astype(int).to_numpy()]
+        # inside each model:
+        gamma = pm.Normal("gamma", 0, 2)
+        V = ___ + gamma * last_tr
+        # afterwards
+        gamma_pooled = np.median(az.extract(idata_pool_lag, var_names="gamma"))
+        gamma_hier = np.median(az.extract(idata_hier_lag, var_names=___))
+        ```
+    checks:
+      gamma_pooled:
+        what: posterior median of the previous-purchase effect in the pooled logit, about 1.8 (odds x6)
+        range: [1.65, 1.95]
+      gamma_hier:
+        what: posterior median of the previous-purchase effect in the hierarchical logit, about 0.4 (odds x1.5)
+        range: [0.25, 0.60]
+
+  task4:
+    title: Simulate the promotion
+    hints:
+      - |
+        With a previous-purchase effect, a promoted purchase changes the household's state for the
+        next trip, which changes the trip after, and so on. For one household and one posterior
+        draw that is a Markov chain over the 10 products. What is its transition matrix at regular
+        prices?
+      - |
+        Promotion trip: per draw and household, probabilities `P0` (regular prices) and `P1` (stick
+        cut), using each household's latest purchase as its state. Transition matrix
+        `Q[s, h, k, j] = softmax_j(A[s, h, j] + b[s, h] * REG[j] + gamma[s] * (j == k))`. Then
+        propagate both: `q <- einsum("shk,shkj->shj", q, Q)` six times, and average `q1 - q0`
+        over households. Use a few hundred draws: Q is draws x households x 10 x 10.
+
+        Product j's share of the gain is `-(s1[j] - s0[j]) / (s1[STK] - s0[STK])`; IIA would give
+        `s0[j] / (1 - s0[STK])`. Their ratio is the product's "lift"; cannibalisation is the Parkay
+        tub entry.
+      - |
+        ```python
+        state = np.eye(J)[df.groupby("hh")["y"].last().sort_index().to_numpy()]   # (H, J)
+        V0 = A + b[..., None] * REG + g[:, None, None] * state                    # (S, H, J)
+        V1 = A + b[..., None] * X1 + g[:, None, None] * ___
+        P0, P1 = special.softmax(V0, -1), special.softmax(V1, -1)
+        Q = special.softmax(A[:, :, None, :] + b[:, :, None, None] * REG
+                            + g[:, None, None, None] * np.eye(J), axis=-1)       # (S, H, from, to)
+        q0, q1, carry = P0, P1, []
+        for _ in range(6):
+            q0 = np.einsum("shk,shkj->shj", q0, Q)
+            q1 = np.einsum("shk,shkj->shj", ___, Q)
+            carry.append((q1 - q0).mean(1))
+        ```
+    checks:
+      gain_pp:
+        what: Parkay stick share gain on the promotion trip under the hierarchical + lag model, about 18.4 points
+        range: [16.8, 20.0]
+      cannibalised:
+        what: fraction of the stick gain taken from Parkay tub (hierarchical + lag), about 0.07
+        range: [0.055, 0.085]
+      bb_lift:
+        what: Blue Bonnet stick's share of the gain divided by its IIA share-proportional share (hierarchical + lag), about 1.4
+        range: [1.2, 1.65]
+      carry_pooled:
+        what: extra Parkay (stick + tub) purchases per household over the next 6 trips, pooled + lag model, about 0.14
+        range: [0.12, 0.16]
+      carry_hier:
+        what: the same under the hierarchical + lag model, about 0.02
+        range: [0.01, 0.03]
+
+  task5:
+    title: Does it pay?
+    hints:
+      - |
+        Write the profit change per category purchase as three pieces: what the extra stick pounds
+        earn, what the cut gives away on EVERY promoted pound (including those that would have been
+        sold anyway), and what the lost tub pounds cost. Then add the carry-over pounds at
+        regular margins. Do it per posterior draw - the probability that it pays is a fraction of
+        draws.
+      - |
+        Per draw: `d_stk` and `d_tub` = change in share on the promotion trip plus the summed
+        carry-over. Profit = `VOLUME * (MARGIN_STK * d_stk + MARGIN_TUB * d_tub - 0.2 * REG[STK] *
+        s1[STK])`. Setting it to zero and solving for the stick margin gives the break-even margin.
+        For the depth curve, rerun the simulation for depths 0.05 ... 0.30.
+      - |
+        ```python
+        def profit(r, depth=0.2):
+            d_stk = r["s1"][:, STK] - r["s0"][:, STK] + r["carry"][:, :, STK].sum(1)
+            d_tub = r["s1"][:, TUB] - r["s0"][:, TUB] + r["carry"][:, :, TUB].sum(1)
+            cost = depth * REG[STK] * ___
+            return VOLUME * (MARGIN_STK * d_stk + MARGIN_TUB * d_tub - cost)
+
+        breakeven = (0.2 * REG[STK] * r["s1"][:, STK] - MARGIN_TUB * d_tub) / ___
+        p_pays = (profit(r) > 0).mean()
+        ```
+    checks:
+      profit:
+        what: posterior median incremental profit of the 20% promotion (hierarchical + lag), about -3300 US$
+        range: [-4000.0, -2600.0]
+      p_pays:
+        what: posterior probability that the 20% promotion pays (hierarchical + lag), essentially 0
+        range: [0.0, 0.05]
+      breakeven_margin:
+        what: posterior median break-even stick margin (hierarchical + lag), about $0.33 per lb
+        range: [0.305, 0.36]

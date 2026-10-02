@@ -26,8 +26,8 @@ Using VS Code or another IDE instead? Point it at the interpreter in `.venv`.
 ```
 notebooks/
   examples/      E01-E85  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
-  challenges/    C01-C11  your workspace. Tasks, empty cells, hints on request.
-  solutions/     C01-C11  full reference solutions, executed, with commentary.
+  challenges/    C01-C15  your workspace. Tasks, empty cells, hints on request.
+  solutions/     C01-C15  full reference solutions, executed, with commentary.
 ```
 
 1. Work through the **examples** first if you are new to PyMC 6 - the API has moved
@@ -287,6 +287,10 @@ Most "my model will not sample" problems are data problems. These are the craft 
 | **C09** | Does job training work? | LaLonde NSW experiment + CPS | 4 | g-computation with `pm.do`; find out why a confident, clean-sampling estimate is wrong; compare with the experimental benchmark |
 | **C10** | Who draws fouls in the NBA? | Last Two Minute reports 2015-21 | 5 | fit an item-response model with ~1500 player effects; repair a colleague's broken model; measure (not assume) what reparameterising buys; rank with uncertainty |
 | **C11** | Who needs the second drug? | ACTG 175 HIV trial (zidovudine vs zidovudine + didanosine) | 5 | build a Dirichlet-process mixture of regressions; take apart a colleague's convincing "responder" analysis; let covariates choose the subgroups and find out what LOO cannot tell you; turn conditional effects into a treatment rule |
+| **C12** | Crosswinds at Santa Barbara | SBA airport hourly METARs 2021-23 (IEM) | 4 | turn wind reports into a solo-flight schedule; find out why two models that each pass their own checks combine into a confident wrong answer; check calibration on a held-out year; pick a default time window with uncertainty |
+| **C13** | Scale-up from a partial screen | Shields et al. (2021) direct-arylation screen, 60 of 1728 reactions | 4 | model bounded yields from a small random screen; predict the whole grid and P(best); decide whether another round of experiments pays, then audit model and decision against the full table |
+| **C14** | Small for gestational age: whose chart flags whom? | US natality 2023 (NCHS, 20k-birth sample) | 4 | choose a gestational age and clean without deleting the babies the chart is for; smooth a sparse preterm tail; find out whether your bands mean what they say; turn two charts into "babies per 1000 flagged" and a recommendation |
+| **C15** | Should Parkay run a promotion? | Margarine scanner panel (Allenby & Rossi 1991, bayesm) | 4 | price a 20% promotion with a household-level choice model; find out what a pooled model quietly assumes about cannibalisation and loyalty; score models on held-out purchases; turn the posterior into a profit distribution and a go/no-go |
 
 Roughly in order of difficulty, but they are independent - pick what is closest to your work.
 The descriptions are deliberately vague about *what* goes wrong: finding out is the challenge.
