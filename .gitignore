@@ -26,3 +26,9 @@ reports/posteriors.duckdb
 # Website build output (tools/build_site.py)
 _site/
 .DS_Store
+
+# Results of large notebooks (src/pymc_challenges/bigrun.py): only small JSON goes in git
+results/**
+!results/**/
+!results/**/*.json
+!results/**/*.json.sha256
