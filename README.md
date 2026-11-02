@@ -29,7 +29,7 @@ for every notebook, so this is optional. Later syncs drop it unless you repeat t
 
 ```
 notebooks/
-  examples/      E01-E86, E89  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
+  examples/      E01-E87, E89  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
   challenges/    C01-C15  your workspace. Tasks, empty cells, hints on request.
   solutions/     C01-C15  full reference solutions, executed, with commentary.
 ```
@@ -273,6 +273,14 @@ What a GPU actually speeds up in Bayesian sampling, measured on one large spatia
 | | Topic | Data | Key techniques |
 |---|---|---|---|
 | **E86** | GPU ensembles: ChEES-HMC and MEADS on a forest of 20,000 cells | Barro Colorado Island *Beilschmiedia pendula*: 3,604 mapped trees with elevation and slope (`spatstat.data`; Hubbell & Foster 1983) | log-Gaussian Cox process with four latent fields on a Kronecker HSGP basis, spatially varying effects, blackjax ChEES and MEADS, GPU vs CPU timing by chains, size and precision, float32 checks, ensemble stragglers, NUTS baseline |
+
+#### Pricing a model before you buy it (E87)
+
+What will a big model cost, and does it change the decision? The notebook tests a two-hour quote for a row-level model of 14 million rows of US flights. It runs on 2 cores and under 3 GB, in about 12-13 minutes, with no GPU: every GPU number is a stored table. The row-level model is priced and never fitted, and the middle model is fitted on one unnamed carrier, so it makes no national claim about that model.
+
+| | Topic | Data | Key techniques |
+|---|---|---|---|
+| **E87** | Pricing a model: should a charity buy a flight-level forecast? | BTS Reporting Carrier On-Time Performance 2024-2025 (14,080,680 rows, kept as 494,547 flight x month cells and one month of rows, with integer codes and no names); the stakeholder is fictional | price = rate x gradients + memory + precision, an iso-cost map, GPU and CPU rates by cost shape, a gather and scatter timed on real indices, float32 spacing and a VRAM grid, a rung ladder from persistence and a conjugate beta-binomial to a hierarchical beta-binomial under nutpie, redrawing the month in a forecast, a rung rule fixed before any score was read, slopegraph of ranks, writing a price someone can check |
 
 #### Value of information on a map (E89)
 

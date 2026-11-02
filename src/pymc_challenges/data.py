@@ -1577,6 +1577,34 @@ REGISTRY: dict[str, Dataset] = {
         "Demographics of 801 of the 2,469 households (bands as delivered): household_id, age, income, "
         "home_ownership, marital_status, household_size, household_comp, kids_count.",
     ),
+    # ---- examples (E87) ----
+    "e87_flights": Dataset(
+        "e87_flights.npz",
+        "https://transtats.bts.gov/DatabaseInfo.asp?QO_VQ=EFD",
+        "US DOT Bureau of Transportation Statistics, TranStats, Reporting Carrier On-Time Performance "
+        "(1987-present), the 24 monthly files of 2024-2025. No licence or terms were found for this table, "
+        "so only re-coded tables are kept, one of them row-level for one month. DERIVED by tools/build_e87_data.py --tables - keep the "
+        "cached file. No endorsement by BTS or DOT is implied.",
+        "NumPy archive, not a table: open data.path() with np.load. One row per eligible flight x month "
+        "cell, 494,547 in all: cell_flight, cell_month (0 is 2024-01), cell_n (operations, 10 or more), "
+        "cell_late (more than 30 minutes late at arrival, or cancelled). One row per flight, 128,423: "
+        "flight_carrier, flight_origin, flight_dest (most-used airports). A flight is a cluster of "
+        "departures in the sense of 14 CFR 399.81(c), linked across months as the build script describes, "
+        "not an official flight. Carrier, airport and flight codes are shuffled integers, with no labels, "
+        "scheduled times or flight numbers. That removes names, not identity: anyone with the public files "
+        "can match the codes back. `notice` holds the source notice.",
+    ),
+    "e87_month_rows": Dataset(
+        "e87_month_rows.npz",
+        "https://transtats.bts.gov/DatabaseInfo.asp?QO_VQ=EFD",
+        "As `e87_flights`: one month, 2024-01. DERIVED by tools/build_e87_data.py --tables - keep the cached "
+        "file. No endorsement by BTS or DOT is implied.",
+        "NumPy archive, not a table: open data.path() with np.load. 547,271 rows in the file's own order, so "
+        "anyone with the public file can match the codes back: y (late or cancelled), day, carrier, origin, "
+        "dest, flight, tail, as integers with no names. Flight and tail "
+        "codes run by first appearance in the file. Tail 0 and any other tail code are not aircraft "
+        "registrations; rows with no tail share one code. `notice` holds the source notice.",
+    ),
     # ---- examples (E89) ----
     "e89_sites": Dataset(
         "e89_sites.csv",

@@ -120,6 +120,10 @@ SERIES = [
          intro="What a GPU actually speeds up in Bayesian sampling, measured on a 24,810-parameter spatial model of "
                "a tropical forest: ChEES-HMC and MEADS against a well-configured NUTS baseline, by chain count, "
                "problem size and precision, with the failures that an ensemble of chains can hide."),
+    dict(key="pricing", range="E87", title="Pricing a model before you buy it", ids=["E87"],
+         intro="A contractor quotes two hours on a GPU for a row-level model of 14 million rows of US flights. Stored "
+               "GPU timings and a CPU run on 2 cores test that quote, and held-out forecasts on one unnamed carrier ask "
+               "whether a bigger model changes a watch list. It teaches how to write a price someone can check."),
     dict(key="voi", range="E89", title="Value of information on a map", ids=["E89"],
          intro="Where should the next air monitors go? A marginal Gaussian process over real EPA PM2.5 data, exact "
                "county conditionals and closed-form value of information show that a map of uncertainty and a map "
@@ -127,7 +131,7 @@ SERIES = [
                "fixed list."),
 ]
 SERIES_BY_KEY = {s["key"]: s for s in SERIES}
-RECENT = ["E89", "E86", "E85", "E84", "E83", "E82", "E81"]          # newest first, shown on the home page
+RECENT = ["E87", "E89", "E86", "E85", "E84", "E83", "E82"]          # newest first, shown on the home page
 
 
 def _link(ctx, eid, text=None):
@@ -389,6 +393,8 @@ def guide_page(ctx):
          f"{L('E82')}, {L('C13')}"),
         ("Where to measure next, on a map", "A marginal Gaussian process and the expected value of sample information",
          f"{L('E89')}"),
+        ("What a big model will cost, and whether to buy it", "Timed gradients, a price table and a rung-by-rung held-out test",
+         f"{L('E87')}"),
         ("A centile, not the mean (growth charts, thresholds)", "Bayesian quantile regression with calibration checks",
          f"{L('E83')}, {L('C14')}"),
         ("A quick two-way choice and its response time", "Drift diffusion model (Wiener first-passage time)",

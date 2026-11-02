@@ -191,8 +191,8 @@ solution. Every check must be exercised by an `assert h.check(...)` in a solutio
   `nuts_sampler="pymc"` for PyMC's own NUTS. Divergence counts differ between the two, so
   say which sampler a claim refers to.
 - **Runtime budget: a solution or example should execute in under ~6 minutes** on a reader's
-  8-core laptop, not just on this machine: E86's GPU path and E89 (three fits, about 15 minutes on 2
-  cores) are the stated exceptions. Subsample
+  8-core laptop, not just on this machine: E86's GPU path, E89 (three fits, about 15 minutes on 2
+  cores) and E87 (about 13 minutes on 2 cores) are the stated exceptions. Subsample
   large data (and say so) rather than blow the budget.
 - matplotlib for custom figures; ArviZ for diagnostics. End plotting cells with `;`.
 - Plain ASCII hyphens in prose are fine; keep lines under ~100 characters.

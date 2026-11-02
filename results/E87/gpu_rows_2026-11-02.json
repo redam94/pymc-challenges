@@ -1,0 +1,175 @@
+{
+  "date": "2026-11-02",
+  "gpu_job_seconds_total": 19.85048895800719,
+  "labels": "all measured: one process per job, on cores 1,2, float32, through gpu_lock",
+  "note": "Rows 2 and 3 and the month of rows on the GPU, added while building the notebook.",
+  "row2": {
+    "health_end": {
+      "machine_checks": 1,
+      "offline_cpus": [
+        10,
+        26
+      ]
+    },
+    "max_gpu_c": 55.0,
+    "max_tctl_c": 44.6,
+    "part": "row2",
+    "rows": [
+      {
+        "chains": 8,
+        "compile_s": 2.6841923500032863,
+        "device": "cuda:0",
+        "dtype": "float32",
+        "finite": true,
+        "ms_per_chain": 0.015835250451345928,
+        "run_ms": 0.12668200361076742
+      },
+      {
+        "chains": 32,
+        "compile_s": 2.9369785800008685,
+        "device": "cuda:0",
+        "dtype": "float32",
+        "finite": true,
+        "ms_per_chain": 0.005210374865782796,
+        "run_ms": 0.16673199570504948
+      },
+      {
+        "chains": 128,
+        "compile_s": 4.423151050003071,
+        "device": "cuda:0",
+        "dtype": "float32",
+        "finite": true,
+        "ms_per_chain": 0.002328703146758926,
+        "run_ms": 0.2980740027851425
+      }
+    ],
+    "shape": {
+      "d": 48,
+      "rows": 17379
+    },
+    "started": "03:07:55",
+    "vram": {
+      "device": "cuda:0",
+      "in_use_gb": 0.0031080245971679688,
+      "limit_gb": 16.564453125,
+      "peak_gb": 0.0892176628112793
+    },
+    "wall_s": 11.271828007003933
+  },
+  "row3": {
+    "health_end": {
+      "machine_checks": 1,
+      "offline_cpus": [
+        10,
+        26
+      ]
+    },
+    "max_gpu_c": 56.0,
+    "max_tctl_c": 42.0,
+    "part": "row3",
+    "rows": [
+      {
+        "chains": 8,
+        "compile_s": 0.652021894005884,
+        "device": "cuda:0",
+        "dtype": "float32",
+        "finite": true,
+        "ms_per_chain": 7.852466250369616,
+        "run_ms": 62.81973000295693
+      },
+      {
+        "chains": 32,
+        "compile_s": 0.6545623299971339,
+        "device": "cuda:0",
+        "dtype": "float32",
+        "finite": true,
+        "ms_per_chain": 1.9574355312670377,
+        "run_ms": 62.63793700054521
+      },
+      {
+        "chains": 128,
+        "compile_s": 0.6691301270038821,
+        "device": "cuda:0",
+        "dtype": "float32",
+        "finite": true,
+        "ms_per_chain": 0.4917464921732062,
+        "run_ms": 62.943550998170394
+      }
+    ],
+    "shape": {
+      "days": 5000
+    },
+    "started": "03:08:43",
+    "vram": {
+      "device": "cuda:0",
+      "in_use_gb": 3.7670135498046875e-05,
+      "limit_gb": 16.564453125,
+      "peak_gb": 0.06283855438232422
+    },
+    "wall_s": 4.473371036998287
+  },
+  "row5_month": {
+    "health_end": {
+      "machine_checks": 1,
+      "offline_cpus": [
+        10,
+        26
+      ]
+    },
+    "max_gpu_c": 56.0,
+    "max_tctl_c": 43.5,
+    "month_file": [
+      {
+        "chains": 8,
+        "compile_s": 0.6919071579977754,
+        "device": "cuda:0",
+        "dtype": "float32",
+        "finite": true,
+        "ms_per_chain": 0.340503625011479,
+        "run_ms": 2.724029000091832
+      },
+      {
+        "chains": 32,
+        "compile_s": 0.7278973180000321,
+        "device": "cuda:0",
+        "dtype": "float32",
+        "finite": true,
+        "ms_per_chain": 0.1937883437221899,
+        "run_ms": 6.201226999110077
+      }
+    ],
+    "month_sorted": [
+      {
+        "chains": 8,
+        "compile_s": 0.5746494780032663,
+        "device": "cuda:0",
+        "dtype": "float32",
+        "finite": true,
+        "ms_per_chain": 0.33248975069000153,
+        "run_ms": 2.6599180055200122
+      },
+      {
+        "chains": 32,
+        "compile_s": 0.6548158819932723,
+        "device": "cuda:0",
+        "dtype": "float32",
+        "finite": true,
+        "ms_per_chain": 0.19319990610711102,
+        "run_ms": 6.182396995427553
+      }
+    ],
+    "part": "row5_month",
+    "shape": {
+      "d": 65218,
+      "rows": 547271
+    },
+    "started": "03:10:18",
+    "vram": {
+      "device": "cuda:0",
+      "in_use_gb": 0.0,
+      "limit_gb": 16.564453125,
+      "peak_gb": 0.23458290100097656
+    },
+    "wall_s": 4.10528991400497
+  }
+}
