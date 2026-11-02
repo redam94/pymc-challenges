@@ -1,0 +1,4930 @@
+{
+  "p5": {
+    "bands": {
+      "CM High evening": {
+        "cell_mean_w": 14.12556111260235,
+        "events": 5,
+        "hours": 30,
+        "mean_w": 13.227209636357745,
+        "median_home_sd_w": 43.95508718909764,
+        "se_event_w": 2.1019645157476807,
+        "se_home_w": 4.196996826568973,
+        "se_w": 4.196996826568973
+      },
+      "CM High other": {
+        "mean_w": 0.0,
+        "median_home_sd_w": 300.0,
+        "se_home_w": 0.0,
+        "se_w": 0.0
+      },
+      "CM Low": {
+        "cell_mean_w": 1.2209535918787378,
+        "events": 10,
+        "hours": 90,
+        "mean_w": 1.0102620442606822,
+        "median_home_sd_w": 25.452173181527886,
+        "se_event_w": 3.917302175587068,
+        "se_home_w": 2.197710661406111,
+        "se_w": 3.917302175587068
+      },
+      "SF High day": {
+        "cell_mean_w": 2.389872664459183,
+        "events": 4,
+        "hours": 24,
+        "mean_w": 1.351637613529684,
+        "median_home_sd_w": 49.15635037828183,
+        "se_event_w": 4.10692524057588,
+        "se_home_w": 3.194356555551494,
+        "se_w": 4.10692524057588
+      },
+      "SF High evening": {
+        "cell_mean_w": -6.127405271211237,
+        "events": 4,
+        "hours": 18,
+        "mean_w": -6.131799516898815,
+        "median_home_sd_w": 55.65336480760403,
+        "se_event_w": 10.58516111419648,
+        "se_home_w": 4.414065278608942,
+        "se_w": 10.58516111419648
+      },
+      "SF High morning": {
+        "cell_mean_w": 6.297143452310804,
+        "events": 6,
+        "hours": 27,
+        "mean_w": 5.918805077922255,
+        "median_home_sd_w": 45.70470990953645,
+        "se_event_w": 2.1817132343915873,
+        "se_home_w": 2.094895725342769,
+        "se_w": 2.1817132343915873
+      },
+      "SF High night": {
+        "cell_mean_w": 3.005008255927156,
+        "events": 7,
+        "hours": 33,
+        "mean_w": 3.1792560050714047,
+        "median_home_sd_w": 41.49230550796588,
+        "se_event_w": 6.216764736078012,
+        "se_home_w": 1.554201812224742,
+        "se_w": 6.216764736078012
+      },
+      "SF Low day": {
+        "cell_mean_w": 1.6539603533123608,
+        "events": 9,
+        "hours": 45,
+        "mean_w": 1.2353825814270665,
+        "median_home_sd_w": 35.87102068426401,
+        "se_event_w": 2.4900586652577497,
+        "se_home_w": 2.370319465203645,
+        "se_w": 2.4900586652577497
+      },
+      "SF Low evening": {
+        "cell_mean_w": -0.9239889690162458,
+        "events": 10,
+        "hours": 45,
+        "mean_w": -0.1510385783615553,
+        "median_home_sd_w": 35.824508649228704,
+        "se_event_w": 2.6926981746040863,
+        "se_home_w": 3.060675471237683,
+        "se_w": 3.060675471237683
+      },
+      "SF Low morning": {
+        "cell_mean_w": -0.1426254789741876,
+        "events": 7,
+        "hours": 30,
+        "mean_w": -0.3633653120627336,
+        "median_home_sd_w": 43.65768904890777,
+        "se_event_w": 3.132649385675259,
+        "se_home_w": 2.047179282133861,
+        "se_w": 3.132649385675259
+      },
+      "SF Low night": {
+        "cell_mean_w": 0.46323408643219466,
+        "events": 8,
+        "hours": 39,
+        "mean_w": 0.37914963157062487,
+        "median_home_sd_w": 38.49744450571772,
+        "se_event_w": 6.0076390950019976,
+        "se_home_w": 1.6974010571634652,
+        "se_w": 6.0076390950019976
+      }
+    },
+    "cells": [
+      {
+        "day": "2013-07-19",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 2.0
+      },
+      {
+        "day": "2013-07-22",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -6.3
+      },
+      {
+        "day": "2013-07-31",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -8.6
+      },
+      {
+        "day": "2013-08-06",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -1.3
+      },
+      {
+        "day": "2013-08-09",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -5.1
+      },
+      {
+        "day": "2013-08-25",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 5.7
+      },
+      {
+        "day": "2013-08-28",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -2.9
+      },
+      {
+        "day": "2013-09-08",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -2.4
+      },
+      {
+        "day": "2013-09-29",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 10.5
+      },
+      {
+        "day": "2013-10-13",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 15.3
+      },
+      {
+        "day": "2013-10-20",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 20.4
+      },
+      {
+        "day": "2013-11-21",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": 21.4
+      },
+      {
+        "day": "2013-11-26",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 15.4
+      },
+      {
+        "day": "2013-11-27",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 11.7
+      },
+      {
+        "day": "2013-12-01",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": 18.8
+      },
+      {
+        "day": "2013-12-04",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": -4.4
+      },
+      {
+        "day": "2013-12-15",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 7.8
+      },
+      {
+        "day": "2013-12-22",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -7.0
+      },
+      {
+        "day": "2013-12-28",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -27.7
+      }
+    ],
+    "dummy_seconds": 1.1,
+    "homes": 963,
+    "m1_seconds": 0.7,
+    "seasons": {
+      "CM High evening bst": {
+        "events": 2,
+        "mean_w": 17.87192907624667,
+        "sd_between_w": 3.594825683465246
+      },
+      "CM High evening gmt": {
+        "events": 3,
+        "mean_w": 11.627982470172801,
+        "sd_between_w": 3.7853719600155955
+      },
+      "SF High evening bst": {
+        "events": 2,
+        "mean_w": 7.649540990362306,
+        "sd_between_w": 5.9924573701144945
+      },
+      "SF High evening gmt": {
+        "events": 2,
+        "mean_w": -19.90435153278478,
+        "sd_between_w": 16.441331116948458
+      },
+      "SF Low evening bst": {
+        "events": 7,
+        "mean_w": -3.655844265661504,
+        "sd_between_w": 4.574690063561537
+      },
+      "SF Low evening gmt": {
+        "events": 3,
+        "mean_w": 6.5886130967582135,
+        "sd_between_w": 15.689254760077787
+      }
+    }
+  },
+  "p5_local": {
+    "bands": {
+      "CM High evening": {
+        "cell_mean_w": 5.129403281156326,
+        "events": 5,
+        "hours": 30,
+        "mean_w": 4.851624525802101,
+        "median_home_sd_w": 43.6695860209188,
+        "se_event_w": 1.398545607211777,
+        "se_home_w": 3.8877474274285575,
+        "se_w": 3.8877474274285575
+      },
+      "CM High other": {
+        "mean_w": 0.0,
+        "median_home_sd_w": 300.0,
+        "se_home_w": 0.0,
+        "se_w": 0.0
+      },
+      "CM Low": {
+        "cell_mean_w": 3.0667704604626045,
+        "events": 10,
+        "hours": 90,
+        "mean_w": 2.893010051297886,
+        "median_home_sd_w": 25.360780786421227,
+        "se_event_w": 2.71837090013606,
+        "se_home_w": 1.9334137072737232,
+        "se_w": 2.71837090013606
+      },
+      "SF High day": {
+        "cell_mean_w": 0.341678725487236,
+        "events": 4,
+        "hours": 24,
+        "mean_w": 0.08652071822636605,
+        "median_home_sd_w": 48.549632893916986,
+        "se_event_w": 4.203481549248328,
+        "se_home_w": 3.0737036743916035,
+        "se_w": 4.203481549248328
+      },
+      "SF High evening": {
+        "cell_mean_w": -6.733208196520485,
+        "events": 4,
+        "hours": 18,
+        "mean_w": -6.411809982982064,
+        "median_home_sd_w": 55.35638221578321,
+        "se_event_w": 11.07778256136703,
+        "se_home_w": 4.4746062216030875,
+        "se_w": 11.07778256136703
+      },
+      "SF High morning": {
+        "cell_mean_w": 4.465514647925459,
+        "events": 6,
+        "hours": 27,
+        "mean_w": 4.46801064122537,
+        "median_home_sd_w": 45.21820598754257,
+        "se_event_w": 2.9316391910172115,
+        "se_home_w": 2.1041448182324616,
+        "se_w": 2.9316391910172115
+      },
+      "SF High night": {
+        "cell_mean_w": 4.29508523509077,
+        "events": 7,
+        "hours": 33,
+        "mean_w": 4.409610081985913,
+        "median_home_sd_w": 41.11459741189612,
+        "se_event_w": 1.6644813458002412,
+        "se_home_w": 1.5424943492075789,
+        "se_w": 1.6644813458002412
+      },
+      "SF Low day": {
+        "cell_mean_w": -0.32323634396395984,
+        "events": 9,
+        "hours": 45,
+        "mean_w": -0.6084662148800796,
+        "median_home_sd_w": 35.54791126744033,
+        "se_event_w": 2.4668660568600336,
+        "se_home_w": 2.2938547011889017,
+        "se_w": 2.4668660568600336
+      },
+      "SF Low evening": {
+        "cell_mean_w": 0.03357099505415628,
+        "events": 10,
+        "hours": 45,
+        "mean_w": 0.7437714670767435,
+        "median_home_sd_w": 36.004760491799566,
+        "se_event_w": 2.0171931279791164,
+        "se_home_w": 2.8102579592217793,
+        "se_w": 2.8102579592217793
+      },
+      "SF Low morning": {
+        "cell_mean_w": -0.07307599518740426,
+        "events": 7,
+        "hours": 30,
+        "mean_w": -0.050849050980745984,
+        "median_home_sd_w": 43.06952148494651,
+        "se_event_w": 3.4569399692006675,
+        "se_home_w": 2.0962453597671926,
+        "se_w": 3.4569399692006675
+      },
+      "SF Low night": {
+        "cell_mean_w": 4.3536923832631285,
+        "events": 8,
+        "hours": 39,
+        "mean_w": 4.222616993841721,
+        "median_home_sd_w": 38.068479807273754,
+        "se_event_w": 1.9524142052370257,
+        "se_home_w": 1.5691883350667764,
+        "se_w": 1.9524142052370257
+      }
+    },
+    "cells": [
+      {
+        "day": "2013-07-19",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 6.4
+      },
+      {
+        "day": "2013-07-22",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -1.2
+      },
+      {
+        "day": "2013-07-31",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -5.0
+      },
+      {
+        "day": "2013-08-06",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 1.8
+      },
+      {
+        "day": "2013-08-09",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -0.6
+      },
+      {
+        "day": "2013-08-25",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 6.2
+      },
+      {
+        "day": "2013-08-28",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 0.0
+      },
+      {
+        "day": "2013-09-08",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -2.4
+      },
+      {
+        "day": "2013-09-29",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 8.9
+      },
+      {
+        "day": "2013-10-13",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 5.0
+      },
+      {
+        "day": "2013-10-20",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 9.9
+      },
+      {
+        "day": "2013-11-21",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": 11.1
+      },
+      {
+        "day": "2013-11-26",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 4.9
+      },
+      {
+        "day": "2013-11-27",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 1.1
+      },
+      {
+        "day": "2013-12-01",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": 13.6
+      },
+      {
+        "day": "2013-12-04",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": -4.8
+      },
+      {
+        "day": "2013-12-15",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 4.7
+      },
+      {
+        "day": "2013-12-22",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -9.3
+      },
+      {
+        "day": "2013-12-28",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -29.9
+      }
+    ],
+    "dummy_seconds": 1.4,
+    "homes": 963,
+    "m1_seconds": 0.9,
+    "seasons": {
+      "CM High evening bst": {
+        "events": 2,
+        "mean_w": 7.4584830331676795,
+        "sd_between_w": 3.414400406355703
+      },
+      "CM High evening gmt": {
+        "events": 3,
+        "mean_w": 3.576683446482089,
+        "sd_between_w": 2.1654589047906523
+      },
+      "SF High evening bst": {
+        "events": 2,
+        "mean_w": 8.093918964493879,
+        "sd_between_w": 1.7519965720586372
+      },
+      "SF High evening gmt": {
+        "events": 2,
+        "mean_w": -21.560335357534846,
+        "sd_between_w": 17.7951845235715
+      },
+      "SF Low evening bst": {
+        "events": 7,
+        "mean_w": -0.513397734702524,
+        "sd_between_w": 3.546489911703091
+      },
+      "SF Low evening gmt": {
+        "events": 3,
+        "mean_w": 1.5377350018850278,
+        "sd_between_w": 12.577117859346185
+      }
+    }
+  },
+  "p5_local_no28dec": {
+    "bands": {
+      "CM High evening": {
+        "cell_mean_w": 5.126017451340869,
+        "events": 5,
+        "hours": 30,
+        "mean_w": 4.6440352841780586,
+        "median_home_sd_w": 43.55286141919309,
+        "se_event_w": 1.3943229910810553,
+        "se_home_w": 3.8840277410977433,
+        "se_w": 3.8840277410977433
+      },
+      "CM High other": {
+        "mean_w": 0.0,
+        "median_home_sd_w": 300.0,
+        "se_home_w": 0.0,
+        "se_w": 0.0
+      },
+      "CM Low": {
+        "cell_mean_w": 2.8800521996428734,
+        "events": 10,
+        "hours": 90,
+        "mean_w": 2.745084692846615,
+        "median_home_sd_w": 25.29597208454599,
+        "se_event_w": 2.7770876082123968,
+        "se_home_w": 1.9318011697196344,
+        "se_w": 2.7770876082123968
+      },
+      "SF High day": {
+        "cell_mean_w": 0.2210537252924336,
+        "events": 4,
+        "hours": 24,
+        "mean_w": -0.03730585446098015,
+        "median_home_sd_w": 48.47770354398473,
+        "se_event_w": 4.291938802812079,
+        "se_home_w": 3.0749394785854647,
+        "se_w": 4.291938802812079
+      },
+      "SF High evening": {
+        "cell_mean_w": 4.88054466474353,
+        "events": 3,
+        "hours": 12,
+        "mean_w": 1.4122514839549911,
+        "median_home_sd_w": 66.40012442693006,
+        "se_event_w": 3.889768985980413,
+        "se_home_w": 4.644246526356166,
+        "se_w": 4.644246526356166
+      },
+      "SF High morning": {
+        "cell_mean_w": 4.419695254695062,
+        "events": 6,
+        "hours": 27,
+        "mean_w": 4.424783224019217,
+        "median_home_sd_w": 45.04758689715965,
+        "se_event_w": 2.940500527167849,
+        "se_home_w": 2.1058720127562838,
+        "se_w": 2.940500527167849
+      },
+      "SF High night": {
+        "cell_mean_w": 5.465067422085472,
+        "events": 6,
+        "hours": 27,
+        "mean_w": 5.342636149258319,
+        "median_home_sd_w": 45.16649000486027,
+        "se_event_w": 1.5501404405879082,
+        "se_home_w": 1.5139002347754658,
+        "se_w": 1.5501404405879082
+      },
+      "SF Low day": {
+        "cell_mean_w": -0.25620192594982694,
+        "events": 9,
+        "hours": 45,
+        "mean_w": -0.5517360285765287,
+        "median_home_sd_w": 35.42551937237488,
+        "se_event_w": 2.487695943639195,
+        "se_home_w": 2.293670453399003,
+        "se_w": 2.487695943639195
+      },
+      "SF Low evening": {
+        "cell_mean_w": 0.042949431263874516,
+        "events": 10,
+        "hours": 45,
+        "mean_w": 0.6165808019464332,
+        "median_home_sd_w": 35.92323079479133,
+        "se_event_w": 2.018006190839047,
+        "se_home_w": 2.818433523359068,
+        "se_w": 2.818433523359068
+      },
+      "SF Low morning": {
+        "cell_mean_w": -0.05684948470221063,
+        "events": 7,
+        "hours": 30,
+        "mean_w": -0.05929503194848458,
+        "median_home_sd_w": 42.90983862486698,
+        "se_event_w": 3.464980656806813,
+        "se_home_w": 2.0971475716297774,
+        "se_w": 3.464980656806813
+      },
+      "SF Low night": {
+        "cell_mean_w": 4.331736052127312,
+        "events": 8,
+        "hours": 39,
+        "mean_w": 4.155110031610147,
+        "median_home_sd_w": 37.96934390686046,
+        "se_event_w": 1.9354560836636268,
+        "se_home_w": 1.5647376514775817,
+        "se_w": 1.9354560836636268
+      }
+    },
+    "cells": [
+      {
+        "day": "2013-07-19",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 6.5
+      },
+      {
+        "day": "2013-07-22",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -1.2
+      },
+      {
+        "day": "2013-07-31",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -5.0
+      },
+      {
+        "day": "2013-08-06",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 1.8
+      },
+      {
+        "day": "2013-08-09",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -0.6
+      },
+      {
+        "day": "2013-08-25",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 6.4
+      },
+      {
+        "day": "2013-08-28",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 0.1
+      },
+      {
+        "day": "2013-09-08",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -2.3
+      },
+      {
+        "day": "2013-09-29",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 8.9
+      },
+      {
+        "day": "2013-10-13",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 5.0
+      },
+      {
+        "day": "2013-10-20",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 9.9
+      },
+      {
+        "day": "2013-11-21",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": 11.1
+      },
+      {
+        "day": "2013-11-26",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 5.0
+      },
+      {
+        "day": "2013-11-27",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 1.1
+      },
+      {
+        "day": "2013-12-01",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": 13.5
+      },
+      {
+        "day": "2013-12-04",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": -4.8
+      },
+      {
+        "day": "2013-12-15",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 4.7
+      },
+      {
+        "day": "2013-12-22",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -9.3
+      }
+    ],
+    "dummy_seconds": 1.4,
+    "homes": 963,
+    "m1_seconds": 0.9,
+    "seasons": {
+      "CM High evening bst": {
+        "events": 2,
+        "mean_w": 7.445295705049221,
+        "sd_between_w": 3.416399240894309
+      },
+      "CM High evening gmt": {
+        "events": 3,
+        "mean_w": 3.5798319488686343,
+        "sd_between_w": 2.154156010546396
+      },
+      "SF High evening bst": {
+        "events": 2,
+        "mean_w": 8.102108210927197,
+        "sd_between_w": 1.7513196640353104
+      },
+      "SF High evening gmt": {
+        "events": 1,
+        "mean_w": -4.784145973807474,
+        "sd_between_w": null
+      },
+      "SF Low evening bst": {
+        "events": 7,
+        "mean_w": -0.47855607066381045,
+        "sd_between_w": 3.5788635355095604
+      },
+      "SF Low evening gmt": {
+        "events": 3,
+        "mean_w": 1.4770895615650081,
+        "sd_between_w": 12.548470518519588
+      }
+    }
+  },
+  "p5_no28dec": {
+    "bands": {
+      "CM High evening": {
+        "cell_mean_w": 13.980494845508208,
+        "events": 5,
+        "hours": 30,
+        "mean_w": 12.883796709097687,
+        "median_home_sd_w": 43.88806544765264,
+        "se_event_w": 2.117132834993011,
+        "se_home_w": 4.18484509384879,
+        "se_w": 4.18484509384879
+      },
+      "CM High other": {
+        "mean_w": 0.0,
+        "median_home_sd_w": 300.0,
+        "se_home_w": 0.0,
+        "se_w": 0.0
+      },
+      "CM Low": {
+        "cell_mean_w": 0.9937359283335827,
+        "events": 10,
+        "hours": 90,
+        "mean_w": 0.7872076494211462,
+        "median_home_sd_w": 25.4372152210857,
+        "se_event_w": 3.925695288664406,
+        "se_home_w": 2.1973435370160246,
+        "se_w": 3.925695288664406
+      },
+      "SF High day": {
+        "cell_mean_w": 2.1965208524943893,
+        "events": 4,
+        "hours": 24,
+        "mean_w": 1.2224723211168846,
+        "median_home_sd_w": 48.838625934061135,
+        "se_event_w": 4.145275969547603,
+        "se_home_w": 3.1936241816760145,
+        "se_w": 4.145275969547603
+      },
+      "SF High evening": {
+        "cell_mean_w": 4.579018185232201,
+        "events": 3,
+        "hours": 12,
+        "mean_w": 1.0995963055711069,
+        "median_home_sd_w": 66.9743500877406,
+        "se_event_w": 4.590226490480253,
+        "se_home_w": 4.476618839590666,
+        "se_w": 4.590226490480253
+      },
+      "SF High morning": {
+        "cell_mean_w": 6.183844186189003,
+        "events": 6,
+        "hours": 27,
+        "mean_w": 5.834960251793128,
+        "median_home_sd_w": 45.63244020515007,
+        "se_event_w": 2.171539988469912,
+        "se_home_w": 2.0967869195182525,
+        "se_w": 2.171539988469912
+      },
+      "SF High night": {
+        "cell_mean_w": 9.34282667833824,
+        "events": 6,
+        "hours": 27,
+        "mean_w": 8.920415705506288,
+        "median_home_sd_w": 45.496068548530715,
+        "se_event_w": 1.1204256550031466,
+        "se_home_w": 1.7243777110422855,
+        "se_w": 1.7243777110422855
+      },
+      "SF Low day": {
+        "cell_mean_w": 1.5982457557266758,
+        "events": 9,
+        "hours": 45,
+        "mean_w": 1.1874643327757133,
+        "median_home_sd_w": 35.81464839082547,
+        "se_event_w": 2.4901588447040095,
+        "se_home_w": 2.3689625618622108,
+        "se_w": 2.4901588447040095
+      },
+      "SF Low evening": {
+        "cell_mean_w": -0.8980679721197714,
+        "events": 10,
+        "hours": 45,
+        "mean_w": -0.16714348636749618,
+        "median_home_sd_w": 35.75744097261799,
+        "se_event_w": 2.668202181740743,
+        "se_home_w": 3.0644143593036772,
+        "se_w": 3.0644143593036772
+      },
+      "SF Low morning": {
+        "cell_mean_w": -0.1516699426435738,
+        "events": 7,
+        "hours": 30,
+        "mean_w": -0.3846837236397172,
+        "median_home_sd_w": 43.52781423378985,
+        "se_event_w": 3.122302233180171,
+        "se_home_w": 2.0479045497995085,
+        "se_w": 3.122302233180171
+      },
+      "SF Low night": {
+        "cell_mean_w": 0.4269145432256529,
+        "events": 8,
+        "hours": 39,
+        "mean_w": 0.37379455065651357,
+        "median_home_sd_w": 38.411414295799815,
+        "se_event_w": 6.020455098346326,
+        "se_home_w": 1.697016484566755,
+        "se_w": 6.020455098346326
+      }
+    },
+    "cells": [
+      {
+        "day": "2013-07-19",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 2.1
+      },
+      {
+        "day": "2013-07-22",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -6.2
+      },
+      {
+        "day": "2013-07-31",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -8.5
+      },
+      {
+        "day": "2013-08-06",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -1.2
+      },
+      {
+        "day": "2013-08-09",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -5.0
+      },
+      {
+        "day": "2013-08-25",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 5.9
+      },
+      {
+        "day": "2013-08-28",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -2.8
+      },
+      {
+        "day": "2013-09-08",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -2.3
+      },
+      {
+        "day": "2013-09-29",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 10.4
+      },
+      {
+        "day": "2013-10-13",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 15.2
+      },
+      {
+        "day": "2013-10-20",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 20.3
+      },
+      {
+        "day": "2013-11-21",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": 21.3
+      },
+      {
+        "day": "2013-11-26",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 15.2
+      },
+      {
+        "day": "2013-11-27",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 11.6
+      },
+      {
+        "day": "2013-12-01",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": 18.3
+      },
+      {
+        "day": "2013-12-04",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": -4.6
+      },
+      {
+        "day": "2013-12-15",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 7.6
+      },
+      {
+        "day": "2013-12-22",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -7.1
+      }
+    ],
+    "dummy_seconds": 1.1,
+    "homes": 963,
+    "m1_seconds": 0.7,
+    "seasons": {
+      "CM High evening bst": {
+        "events": 2,
+        "mean_w": 17.754418226982832,
+        "sd_between_w": 3.5927512819590586
+      },
+      "CM High evening gmt": {
+        "events": 3,
+        "mean_w": 11.46454592452512,
+        "sd_between_w": 3.8250604406089304
+      },
+      "SF High evening bst": {
+        "events": 2,
+        "mean_w": 7.624287933321083,
+        "sd_between_w": 5.868260498377812
+      },
+      "SF High evening gmt": {
+        "events": 1,
+        "mean_w": -4.556791059034447,
+        "sd_between_w": null
+      },
+      "SF Low evening bst": {
+        "events": 7,
+        "mean_w": -3.537803481428297,
+        "sd_between_w": 4.595412222006098
+      },
+      "SF Low evening gmt": {
+        "events": 3,
+        "mean_w": 6.361204678478674,
+        "sd_between_w": 15.623160764876733
+      }
+    }
+  },
+  "p5_over25": false,
+  "p5_passes": false,
+  "p6": {
+    "bands": {
+      "CM High evening": {
+        "cell_mean_w": -48.056806605867216,
+        "events": 17,
+        "hours": 102,
+        "mean_w": -48.37817248868046,
+        "median_home_sd_w": 25.5734379949749,
+        "se_event_w": 1.873835346284076,
+        "se_home_w": 3.88517342753402,
+        "se_w": 3.88517342753402
+      },
+      "CM High other": {
+        "cell_mean_w": -46.768094380311126,
+        "events": 3,
+        "hours": 10,
+        "mean_w": -46.22084506475279,
+        "median_home_sd_w": 77.23185528643748,
+        "se_event_w": 3.7125404528898915,
+        "se_home_w": 4.93945132400131,
+        "se_w": 4.93945132400131
+      },
+      "CM Low": {
+        "cell_mean_w": 19.59188717984683,
+        "events": 40,
+        "hours": 368,
+        "mean_w": 19.416387390049827,
+        "median_home_sd_w": 13.552843218072763,
+        "se_event_w": 3.5323663464673847,
+        "se_home_w": 2.4155044912436727,
+        "se_w": 3.5323663464673847
+      },
+      "SF High day": {
+        "cell_mean_w": -41.44551748410452,
+        "events": 15,
+        "hours": 72,
+        "mean_w": -41.48702553847291,
+        "median_home_sd_w": 30.09553271378315,
+        "se_event_w": 4.113492316719307,
+        "se_home_w": 2.755937948175748,
+        "se_w": 4.113492316719307
+      },
+      "SF High evening": {
+        "cell_mean_w": -41.38157904447833,
+        "events": 15,
+        "hours": 72,
+        "mean_w": -41.13522024343452,
+        "median_home_sd_w": 30.107802803145212,
+        "se_event_w": 3.7634166891230736,
+        "se_home_w": 2.8070622132998206,
+        "se_w": 3.7634166891230736
+      },
+      "SF High morning": {
+        "cell_mean_w": -28.89688322019688,
+        "events": 12,
+        "hours": 54,
+        "mean_w": -29.595615032554967,
+        "median_home_sd_w": 34.66446749299742,
+        "se_event_w": 4.099810602697506,
+        "se_home_w": 2.296306256264081,
+        "se_w": 4.099810602697506
+      },
+      "SF High night": {
+        "cell_mean_w": -7.924354739291747,
+        "events": 12,
+        "hours": 54,
+        "mean_w": -8.084319457011539,
+        "median_home_sd_w": 34.72396973818844,
+        "se_event_w": 5.851731472188983,
+        "se_home_w": 1.268635317336174,
+        "se_w": 5.851731472188983
+      },
+      "SF Low day": {
+        "cell_mean_w": 55.46091439729035,
+        "events": 15,
+        "hours": 72,
+        "mean_w": 54.494980067931735,
+        "median_home_sd_w": 30.159252704908138,
+        "se_event_w": 8.561296387227944,
+        "se_home_w": 3.7057878719382544,
+        "se_w": 8.561296387227944
+      },
+      "SF Low evening": {
+        "cell_mean_w": 34.92571882531106,
+        "events": 15,
+        "hours": 72,
+        "mean_w": 34.136188918053584,
+        "median_home_sd_w": 30.124354476540564,
+        "se_event_w": 7.371922783545612,
+        "se_home_w": 3.5066038446264898,
+        "se_w": 7.371922783545612
+      },
+      "SF Low morning": {
+        "cell_mean_w": 39.11345145265585,
+        "events": 12,
+        "hours": 54,
+        "mean_w": 37.98947599406327,
+        "median_home_sd_w": 34.717115352261565,
+        "se_event_w": 9.2968112582814,
+        "se_home_w": 2.9262656884813794,
+        "se_w": 9.2968112582814
+      },
+      "SF Low night": {
+        "cell_mean_w": 17.11062647190583,
+        "events": 12,
+        "hours": 54,
+        "mean_w": 17.90554853052736,
+        "median_home_sd_w": 34.81144936357045,
+        "se_event_w": 6.048380628479123,
+        "se_home_w": 2.12050348832599,
+        "se_w": 6.048380628479123
+      }
+    },
+    "cells": [
+      {
+        "day": "2013-01-19",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -53.5
+      },
+      {
+        "day": "2013-01-20",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -57.9
+      },
+      {
+        "day": "2013-01-28",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 33.1
+      },
+      {
+        "day": "2013-02-05",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 99.0
+      },
+      {
+        "day": "2013-02-11",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": -67.8
+      },
+      {
+        "day": "2013-02-20",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -52.3
+      },
+      {
+        "day": "2013-02-21",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -40.0
+      },
+      {
+        "day": "2013-02-27",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -56.4
+      },
+      {
+        "day": "2013-03-16",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -37.2
+      },
+      {
+        "day": "2013-03-17",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -50.2
+      },
+      {
+        "day": "2013-03-27",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -52.3
+      },
+      {
+        "day": "2013-03-28",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -58.6
+      },
+      {
+        "day": "2013-04-05",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -51.9
+      },
+      {
+        "day": "2013-04-13",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -42.0
+      },
+      {
+        "day": "2013-04-23",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -38.5
+      },
+      {
+        "day": "2013-04-26",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 20.3
+      },
+      {
+        "day": "2013-05-01",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -47.1
+      },
+      {
+        "day": "2013-05-02",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -38.7
+      },
+      {
+        "day": "2013-05-08",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -49.8
+      },
+      {
+        "day": "2013-05-13",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -50.3
+      },
+      {
+        "day": "2013-05-18",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -41.3
+      },
+      {
+        "day": "2013-05-29",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 36.3
+      },
+      {
+        "day": "2013-06-03",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -46.1
+      },
+      {
+        "day": "2013-06-07",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -37.5
+      },
+      {
+        "day": "2013-06-13",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -48.8
+      },
+      {
+        "day": "2013-06-17",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -35.2
+      },
+      {
+        "day": "2013-06-18",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 27.6
+      },
+      {
+        "day": "2013-07-19",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -32.9
+      },
+      {
+        "day": "2013-07-22",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 3.7
+      },
+      {
+        "day": "2013-07-31",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 10.9
+      },
+      {
+        "day": "2013-08-06",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 28.9
+      },
+      {
+        "day": "2013-08-09",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 47.5
+      },
+      {
+        "day": "2013-08-25",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 46.8
+      },
+      {
+        "day": "2013-08-28",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 28.1
+      },
+      {
+        "day": "2013-09-08",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 42.3
+      },
+      {
+        "day": "2013-09-29",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -30.0
+      },
+      {
+        "day": "2013-10-13",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -48.2
+      },
+      {
+        "day": "2013-10-20",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -45.9
+      },
+      {
+        "day": "2013-11-21",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": 60.7
+      },
+      {
+        "day": "2013-11-26",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -47.2
+      },
+      {
+        "day": "2013-11-27",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -50.0
+      },
+      {
+        "day": "2013-12-01",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": 73.0
+      },
+      {
+        "day": "2013-12-04",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": -38.8
+      },
+      {
+        "day": "2013-12-15",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -37.4
+      },
+      {
+        "day": "2013-12-22",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 6.2
+      },
+      {
+        "day": "2013-12-28",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -8.4
+      },
+      {
+        "day": "2013-03-29",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -62.0
+      }
+    ],
+    "dummy_seconds": 3.6,
+    "homes": 1088,
+    "m1_seconds": 1.2,
+    "seasons": {
+      "CM High evening bst": {
+        "events": 5,
+        "mean_w": -43.67186893089759,
+        "sd_between_w": 4.718319850327127
+      },
+      "CM High evening gmt": {
+        "events": 12,
+        "mean_w": -49.883863970437886,
+        "sd_between_w": 8.145362305059585
+      },
+      "SF High evening bst": {
+        "events": 11,
+        "mean_w": -42.04863112478819,
+        "sd_between_w": 7.627412857284575
+      },
+      "SF High evening gmt": {
+        "events": 4,
+        "mean_w": -39.38042280354875,
+        "sd_between_w": 25.87853473291141
+      },
+      "SF Low evening bst": {
+        "events": 10,
+        "mean_w": 26.743739185484383,
+        "sd_between_w": 14.67218335911511
+      },
+      "SF Low evening gmt": {
+        "events": 5,
+        "mean_w": 51.289678104964416,
+        "sd_between_w": 35.913806068620296
+      }
+    }
+  },
+  "p6_2013only": {
+    "bands": {
+      "CM High evening": {
+        "cell_mean_w": -39.382145044179,
+        "events": 17,
+        "hours": 102,
+        "mean_w": -39.49110186008517,
+        "median_home_sd_w": 25.25672482727364,
+        "se_event_w": 1.9639383296720274,
+        "se_home_w": 3.5339058370358396,
+        "se_w": 3.5339058370358396
+      },
+      "CM High other": {
+        "cell_mean_w": -40.28349200384774,
+        "events": 3,
+        "hours": 10,
+        "mean_w": -40.60690164771146,
+        "median_home_sd_w": 75.99583635993709,
+        "se_event_w": 3.525386131320456,
+        "se_home_w": 4.763770814956791,
+        "se_w": 4.763770814956791
+      },
+      "CM Low": {
+        "cell_mean_w": 23.157901021243347,
+        "events": 40,
+        "hours": 368,
+        "mean_w": 23.07063647389382,
+        "median_home_sd_w": 13.408655863768042,
+        "se_event_w": 3.6997734639323094,
+        "se_home_w": 2.0873179385609,
+        "se_w": 3.6997734639323094
+      },
+      "SF High day": {
+        "cell_mean_w": -35.83567197906062,
+        "events": 15,
+        "hours": 72,
+        "mean_w": -36.097832613126194,
+        "median_home_sd_w": 29.55410936192151,
+        "se_event_w": 4.215933285282091,
+        "se_home_w": 2.4975333433719755,
+        "se_w": 4.215933285282091
+      },
+      "SF High evening": {
+        "cell_mean_w": -32.09860284246311,
+        "events": 15,
+        "hours": 72,
+        "mean_w": -31.625759253486528,
+        "median_home_sd_w": 29.54852595595762,
+        "se_event_w": 3.8471246131014034,
+        "se_home_w": 2.519563222308914,
+        "se_w": 3.8471246131014034
+      },
+      "SF High morning": {
+        "cell_mean_w": -24.378957404208997,
+        "events": 12,
+        "hours": 54,
+        "mean_w": -25.250839681007065,
+        "median_home_sd_w": 34.052003646708144,
+        "se_event_w": 4.095452699679052,
+        "se_home_w": 2.090147647029936,
+        "se_w": 4.095452699679052
+      },
+      "SF High night": {
+        "cell_mean_w": -6.84573109192881,
+        "events": 12,
+        "hours": 54,
+        "mean_w": -5.8832024792905235,
+        "median_home_sd_w": 34.130520187918236,
+        "se_event_w": 5.877506168432511,
+        "se_home_w": 1.182433019288761,
+        "se_w": 5.877506168432511
+      },
+      "SF Low day": {
+        "cell_mean_w": 60.931284134794055,
+        "events": 15,
+        "hours": 72,
+        "mean_w": 60.00397119804262,
+        "median_home_sd_w": 29.594858243073364,
+        "se_event_w": 8.52470228836487,
+        "se_home_w": 3.8021546591587274,
+        "se_w": 8.52470228836487
+      },
+      "SF Low evening": {
+        "cell_mean_w": 43.93052876983484,
+        "events": 15,
+        "hours": 72,
+        "mean_w": 43.66807249194184,
+        "median_home_sd_w": 29.62883074560481,
+        "se_event_w": 7.267375689756916,
+        "se_home_w": 3.46146296912527,
+        "se_w": 7.267375689756916
+      },
+      "SF Low morning": {
+        "cell_mean_w": 43.74125651928591,
+        "events": 12,
+        "hours": 54,
+        "mean_w": 42.80561529398239,
+        "median_home_sd_w": 34.044742978513646,
+        "se_event_w": 9.291803933658374,
+        "se_home_w": 2.948124079302663,
+        "se_w": 9.291803933658374
+      },
+      "SF Low night": {
+        "cell_mean_w": 18.164883553212064,
+        "events": 12,
+        "hours": 54,
+        "mean_w": 20.127084939729638,
+        "median_home_sd_w": 34.204151503832634,
+        "se_event_w": 6.150476290816478,
+        "se_home_w": 2.0953055293894405,
+        "se_w": 6.150476290816478
+      }
+    },
+    "cells": [
+      {
+        "day": "2013-01-19",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -44.5
+      },
+      {
+        "day": "2013-01-20",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -49.1
+      },
+      {
+        "day": "2013-01-28",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 40.8
+      },
+      {
+        "day": "2013-02-05",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 106.8
+      },
+      {
+        "day": "2013-02-11",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": -60.5
+      },
+      {
+        "day": "2013-02-20",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -44.3
+      },
+      {
+        "day": "2013-02-21",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -32.3
+      },
+      {
+        "day": "2013-02-27",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -48.6
+      },
+      {
+        "day": "2013-03-16",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -27.3
+      },
+      {
+        "day": "2013-03-17",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -40.6
+      },
+      {
+        "day": "2013-03-27",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -44.6
+      },
+      {
+        "day": "2013-03-28",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -50.5
+      },
+      {
+        "day": "2013-04-05",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -43.7
+      },
+      {
+        "day": "2013-04-13",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -31.5
+      },
+      {
+        "day": "2013-04-23",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -29.1
+      },
+      {
+        "day": "2013-04-26",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 29.4
+      },
+      {
+        "day": "2013-05-01",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -37.8
+      },
+      {
+        "day": "2013-05-02",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -29.3
+      },
+      {
+        "day": "2013-05-08",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -40.6
+      },
+      {
+        "day": "2013-05-13",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -41.2
+      },
+      {
+        "day": "2013-05-18",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -28.6
+      },
+      {
+        "day": "2013-05-29",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 45.4
+      },
+      {
+        "day": "2013-06-03",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -36.5
+      },
+      {
+        "day": "2013-06-07",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -27.8
+      },
+      {
+        "day": "2013-06-13",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -39.2
+      },
+      {
+        "day": "2013-06-17",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -25.7
+      },
+      {
+        "day": "2013-06-18",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 37.2
+      },
+      {
+        "day": "2013-07-19",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -23.6
+      },
+      {
+        "day": "2013-07-22",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 13.3
+      },
+      {
+        "day": "2013-07-31",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 20.4
+      },
+      {
+        "day": "2013-08-06",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 38.4
+      },
+      {
+        "day": "2013-08-09",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 57.3
+      },
+      {
+        "day": "2013-08-25",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 55.8
+      },
+      {
+        "day": "2013-08-28",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 37.1
+      },
+      {
+        "day": "2013-09-08",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 51.0
+      },
+      {
+        "day": "2013-09-29",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -20.2
+      },
+      {
+        "day": "2013-10-13",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -38.9
+      },
+      {
+        "day": "2013-10-20",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -36.5
+      },
+      {
+        "day": "2013-11-21",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": 68.4
+      },
+      {
+        "day": "2013-11-26",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -39.8
+      },
+      {
+        "day": "2013-11-27",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -42.5
+      },
+      {
+        "day": "2013-12-01",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": 83.5
+      },
+      {
+        "day": "2013-12-04",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": -31.7
+      },
+      {
+        "day": "2013-12-15",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -28.5
+      },
+      {
+        "day": "2013-12-22",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 15.1
+      },
+      {
+        "day": "2013-12-28",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 0.7
+      },
+      {
+        "day": "2013-03-29",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -53.9
+      }
+    ],
+    "dummy_seconds": 3.4,
+    "homes": 1088,
+    "m1_seconds": 1.0,
+    "seasons": {
+      "CM High evening bst": {
+        "events": 5,
+        "mean_w": -34.310404572714084,
+        "sd_between_w": 4.738533644590592
+      },
+      "CM High evening gmt": {
+        "events": 12,
+        "mean_w": -41.49537024062271,
+        "sd_between_w": 8.405098091718926
+      },
+      "SF High evening bst": {
+        "events": 11,
+        "mean_w": -32.34806148671926,
+        "sd_between_w": 8.00548843301623
+      },
+      "SF High evening gmt": {
+        "events": 4,
+        "mean_w": -31.350226909694648,
+        "sd_between_w": 26.58029177045208
+      },
+      "SF Low evening bst": {
+        "events": 10,
+        "mean_w": 36.065703511494974,
+        "sd_between_w": 14.56991974054557
+      },
+      "SF Low evening gmt": {
+        "events": 5,
+        "mean_w": 59.66017928651456,
+        "sd_between_w": 35.89065977296387
+      }
+    }
+  },
+  "p6_95": {
+    "bands": {
+      "CM High evening": {
+        "cell_mean_w": -48.593293959925745,
+        "events": 17,
+        "hours": 102,
+        "mean_w": -48.200008974492434,
+        "median_home_sd_w": 25.321934575385583,
+        "se_event_w": 1.6219254633128029,
+        "se_home_w": 3.8811014990656036,
+        "se_w": 3.8811014990656036
+      },
+      "CM High other": {
+        "cell_mean_w": -44.896833796272674,
+        "events": 3,
+        "hours": 10,
+        "mean_w": -45.595966454559935,
+        "median_home_sd_w": 77.15571485634507,
+        "se_event_w": 2.16937077277059,
+        "se_home_w": 5.116179617198466,
+        "se_w": 5.116179617198466
+      },
+      "CM Low": {
+        "cell_mean_w": 20.020692784083323,
+        "events": 40,
+        "hours": 368,
+        "mean_w": 19.626000324791754,
+        "median_home_sd_w": 13.418429638314432,
+        "se_event_w": 3.591574238899232,
+        "se_home_w": 2.3995532922044562,
+        "se_w": 3.591574238899232
+      },
+      "SF High day": {
+        "cell_mean_w": -41.94988817270562,
+        "events": 15,
+        "hours": 72,
+        "mean_w": -41.784259533752106,
+        "median_home_sd_w": 29.839573501447816,
+        "se_event_w": 4.0008111147407215,
+        "se_home_w": 2.8049219979266344,
+        "se_w": 4.0008111147407215
+      },
+      "SF High evening": {
+        "cell_mean_w": -42.357333955700454,
+        "events": 15,
+        "hours": 72,
+        "mean_w": -41.698990338837675,
+        "median_home_sd_w": 29.846717722354505,
+        "se_event_w": 3.8213727755202056,
+        "se_home_w": 2.8732762437217043,
+        "se_w": 3.8213727755202056
+      },
+      "SF High morning": {
+        "cell_mean_w": -29.309141632374754,
+        "events": 12,
+        "hours": 54,
+        "mean_w": -29.470001573778788,
+        "median_home_sd_w": 34.39033156738893,
+        "se_event_w": 4.401072843277478,
+        "se_home_w": 2.345102614494462,
+        "se_w": 4.401072843277478
+      },
+      "SF High night": {
+        "cell_mean_w": -6.972438835374222,
+        "events": 12,
+        "hours": 54,
+        "mean_w": -6.273229226611742,
+        "median_home_sd_w": 34.31900204266236,
+        "se_event_w": 5.772113199457671,
+        "se_home_w": 1.2476956376881252,
+        "se_w": 5.772113199457671
+      },
+      "SF Low day": {
+        "cell_mean_w": 57.6567917707505,
+        "events": 15,
+        "hours": 72,
+        "mean_w": 56.34836574082371,
+        "median_home_sd_w": 29.84495881674847,
+        "se_event_w": 8.689433159387981,
+        "se_home_w": 3.838283761894176,
+        "se_w": 8.689433159387981
+      },
+      "SF Low evening": {
+        "cell_mean_w": 37.1860730777397,
+        "events": 15,
+        "hours": 72,
+        "mean_w": 36.35430130116398,
+        "median_home_sd_w": 29.859651462309568,
+        "se_event_w": 7.614413098947218,
+        "se_home_w": 3.565155838804309,
+        "se_w": 7.614413098947218
+      },
+      "SF Low morning": {
+        "cell_mean_w": 40.51060279320236,
+        "events": 12,
+        "hours": 54,
+        "mean_w": 38.95747689747283,
+        "median_home_sd_w": 34.34275339336231,
+        "se_event_w": 9.190621256328336,
+        "se_home_w": 2.991049378783269,
+        "se_w": 9.190621256328336
+      },
+      "SF Low night": {
+        "cell_mean_w": 17.27388657705999,
+        "events": 12,
+        "hours": 54,
+        "mean_w": 17.755929730542693,
+        "median_home_sd_w": 34.318296648100336,
+        "se_event_w": 6.154463018227786,
+        "se_home_w": 2.0980677785901403,
+        "se_w": 6.154463018227786
+      }
+    },
+    "cells": [
+      {
+        "day": "2013-01-19",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -52.9
+      },
+      {
+        "day": "2013-01-20",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -54.6
+      },
+      {
+        "day": "2013-01-28",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 35.5
+      },
+      {
+        "day": "2013-02-05",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 103.1
+      },
+      {
+        "day": "2013-02-11",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": -68.5
+      },
+      {
+        "day": "2013-02-20",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -55.8
+      },
+      {
+        "day": "2013-02-21",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -43.3
+      },
+      {
+        "day": "2013-02-27",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -60.7
+      },
+      {
+        "day": "2013-03-16",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -41.8
+      },
+      {
+        "day": "2013-03-17",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -44.9
+      },
+      {
+        "day": "2013-03-27",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -52.2
+      },
+      {
+        "day": "2013-03-28",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -58.7
+      },
+      {
+        "day": "2013-04-05",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -49.8
+      },
+      {
+        "day": "2013-04-13",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -45.0
+      },
+      {
+        "day": "2013-04-23",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -38.7
+      },
+      {
+        "day": "2013-04-26",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 21.3
+      },
+      {
+        "day": "2013-05-01",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -50.0
+      },
+      {
+        "day": "2013-05-02",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -40.5
+      },
+      {
+        "day": "2013-05-08",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -50.6
+      },
+      {
+        "day": "2013-05-13",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -50.5
+      },
+      {
+        "day": "2013-05-18",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -42.1
+      },
+      {
+        "day": "2013-05-29",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 38.2
+      },
+      {
+        "day": "2013-06-03",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -47.0
+      },
+      {
+        "day": "2013-06-07",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -34.9
+      },
+      {
+        "day": "2013-06-13",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -49.3
+      },
+      {
+        "day": "2013-06-17",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -37.2
+      },
+      {
+        "day": "2013-06-18",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 27.1
+      },
+      {
+        "day": "2013-07-19",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -32.5
+      },
+      {
+        "day": "2013-07-22",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 6.8
+      },
+      {
+        "day": "2013-07-31",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 13.4
+      },
+      {
+        "day": "2013-08-06",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 32.1
+      },
+      {
+        "day": "2013-08-09",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 50.7
+      },
+      {
+        "day": "2013-08-25",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 48.9
+      },
+      {
+        "day": "2013-08-28",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 28.4
+      },
+      {
+        "day": "2013-09-08",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 43.9
+      },
+      {
+        "day": "2013-09-29",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -31.9
+      },
+      {
+        "day": "2013-10-13",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -48.5
+      },
+      {
+        "day": "2013-10-20",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -46.5
+      },
+      {
+        "day": "2013-11-21",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": 65.7
+      },
+      {
+        "day": "2013-11-26",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -47.1
+      },
+      {
+        "day": "2013-11-27",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -50.7
+      },
+      {
+        "day": "2013-12-01",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": 79.8
+      },
+      {
+        "day": "2013-12-04",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": -38.8
+      },
+      {
+        "day": "2013-12-15",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -39.4
+      },
+      {
+        "day": "2013-12-22",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 6.5
+      },
+      {
+        "day": "2013-12-28",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -10.0
+      },
+      {
+        "day": "2013-03-29",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -60.6
+      }
+    ],
+    "dummy_seconds": 3.4,
+    "homes": 1032,
+    "m1_seconds": 1.1,
+    "seasons": {
+      "CM High evening bst": {
+        "events": 5,
+        "mean_w": -44.820099766688344,
+        "sd_between_w": 4.978223459715721
+      },
+      "CM High evening gmt": {
+        "events": 12,
+        "mean_w": -50.165458207107996,
+        "sd_between_w": 6.846090246684736
+      },
+      "SF High evening bst": {
+        "events": 11,
+        "mean_w": -42.65857539657645,
+        "sd_between_w": 7.453276594184737
+      },
+      "SF High evening gmt": {
+        "events": 4,
+        "mean_w": -41.45360963307248,
+        "sd_between_w": 26.198335370432552
+      },
+      "SF Low evening bst": {
+        "events": 10,
+        "mean_w": 28.548779182679723,
+        "sd_between_w": 14.674452512981615
+      },
+      "SF Low evening gmt": {
+        "events": 5,
+        "mean_w": 54.460660867859666,
+        "sd_between_w": 37.829767668103266
+      }
+    }
+  },
+  "p6_local": {
+    "bands": {
+      "CM High evening": {
+        "cell_mean_w": -45.11701601955718,
+        "events": 17,
+        "hours": 102,
+        "mean_w": -44.56091432968532,
+        "median_home_sd_w": 25.514678294811887,
+        "se_event_w": 3.765896026702353,
+        "se_home_w": 3.5679159019013014,
+        "se_w": 3.765896026702353
+      },
+      "CM High other": {
+        "cell_mean_w": -48.28747166764582,
+        "events": 3,
+        "hours": 10,
+        "mean_w": -42.437087488721986,
+        "median_home_sd_w": 75.4425684687361,
+        "se_event_w": 7.211075281859987,
+        "se_home_w": 4.599142570638265,
+        "se_w": 7.211075281859987
+      },
+      "CM Low": {
+        "cell_mean_w": 24.092986409197835,
+        "events": 40,
+        "hours": 368,
+        "mean_w": 24.528418421303822,
+        "median_home_sd_w": 13.507701329938074,
+        "se_event_w": 3.1123069456256442,
+        "se_home_w": 1.9586626339202395,
+        "se_w": 3.1123069456256442
+      },
+      "SF High day": {
+        "cell_mean_w": -37.75069488798039,
+        "events": 15,
+        "hours": 72,
+        "mean_w": -37.21647611505884,
+        "median_home_sd_w": 29.961884830405726,
+        "se_event_w": 4.91466366670539,
+        "se_home_w": 2.3875612327943427,
+        "se_w": 4.91466366670539
+      },
+      "SF High evening": {
+        "cell_mean_w": -29.463248441073482,
+        "events": 15,
+        "hours": 72,
+        "mean_w": -29.647873041647102,
+        "median_home_sd_w": 29.89260780304006,
+        "se_event_w": 4.2280033890223985,
+        "se_home_w": 2.3741624273659663,
+        "se_w": 4.2280033890223985
+      },
+      "SF High morning": {
+        "cell_mean_w": -25.29248290708598,
+        "events": 12,
+        "hours": 54,
+        "mean_w": -25.81895405808826,
+        "median_home_sd_w": 33.87215253477477,
+        "se_event_w": 4.355746202587114,
+        "se_home_w": 2.0131849071519943,
+        "se_w": 4.355746202587114
+      },
+      "SF High night": {
+        "cell_mean_w": -8.328698007290821,
+        "events": 12,
+        "hours": 54,
+        "mean_w": -8.240925413854217,
+        "median_home_sd_w": 34.187592681683114,
+        "se_event_w": 2.4378583356754686,
+        "se_home_w": 1.132769110520419,
+        "se_w": 2.4378583356754686
+      },
+      "SF Low day": {
+        "cell_mean_w": 62.503788408971786,
+        "events": 15,
+        "hours": 72,
+        "mean_w": 61.53466490469335,
+        "median_home_sd_w": 29.825410104077985,
+        "se_event_w": 8.125935077670317,
+        "se_home_w": 3.832562980112292,
+        "se_w": 8.125935077670317
+      },
+      "SF Low evening": {
+        "cell_mean_w": 42.68080475211241,
+        "events": 15,
+        "hours": 72,
+        "mean_w": 42.512090348386415,
+        "median_home_sd_w": 29.680023842490023,
+        "se_event_w": 6.714505052725942,
+        "se_home_w": 3.291833688842771,
+        "se_w": 6.714505052725942
+      },
+      "SF Low morning": {
+        "cell_mean_w": 44.174872636093475,
+        "events": 12,
+        "hours": 54,
+        "mean_w": 43.23309371509789,
+        "median_home_sd_w": 33.89274189866108,
+        "se_event_w": 9.015980407082163,
+        "se_home_w": 2.9516060835886337,
+        "se_w": 9.015980407082163
+      },
+      "SF Low night": {
+        "cell_mean_w": 15.923724817362844,
+        "events": 12,
+        "hours": 54,
+        "mean_w": 17.06131323729794,
+        "median_home_sd_w": 34.06751413810528,
+        "se_event_w": 4.177414622774444,
+        "se_home_w": 1.9512575984096334,
+        "se_w": 4.177414622774444
+      }
+    },
+    "cells": [
+      {
+        "day": "2013-01-19",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -62.5
+      },
+      {
+        "day": "2013-01-20",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -66.5
+      },
+      {
+        "day": "2013-01-28",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 24.4
+      },
+      {
+        "day": "2013-02-05",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 96.6
+      },
+      {
+        "day": "2013-02-11",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": -69.8
+      },
+      {
+        "day": "2013-02-20",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -55.0
+      },
+      {
+        "day": "2013-02-21",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -43.0
+      },
+      {
+        "day": "2013-02-27",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -59.0
+      },
+      {
+        "day": "2013-03-16",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -43.7
+      },
+      {
+        "day": "2013-03-17",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -56.4
+      },
+      {
+        "day": "2013-03-27",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -58.0
+      },
+      {
+        "day": "2013-03-28",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -64.7
+      },
+      {
+        "day": "2013-04-05",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -33.7
+      },
+      {
+        "day": "2013-04-13",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -25.0
+      },
+      {
+        "day": "2013-04-23",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -21.5
+      },
+      {
+        "day": "2013-04-26",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 37.5
+      },
+      {
+        "day": "2013-05-01",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -31.1
+      },
+      {
+        "day": "2013-05-02",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -22.8
+      },
+      {
+        "day": "2013-05-08",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -33.9
+      },
+      {
+        "day": "2013-05-13",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -34.3
+      },
+      {
+        "day": "2013-05-18",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -26.2
+      },
+      {
+        "day": "2013-05-29",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 52.4
+      },
+      {
+        "day": "2013-06-03",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -31.8
+      },
+      {
+        "day": "2013-06-07",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -23.4
+      },
+      {
+        "day": "2013-06-13",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -34.6
+      },
+      {
+        "day": "2013-06-17",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -20.9
+      },
+      {
+        "day": "2013-06-18",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 41.8
+      },
+      {
+        "day": "2013-07-19",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -18.4
+      },
+      {
+        "day": "2013-07-22",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 17.9
+      },
+      {
+        "day": "2013-07-31",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 24.7
+      },
+      {
+        "day": "2013-08-06",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 34.3
+      },
+      {
+        "day": "2013-08-09",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 52.2
+      },
+      {
+        "day": "2013-08-25",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 50.3
+      },
+      {
+        "day": "2013-08-28",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 32.0
+      },
+      {
+        "day": "2013-09-08",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 56.1
+      },
+      {
+        "day": "2013-09-29",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -16.3
+      },
+      {
+        "day": "2013-10-13",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -36.6
+      },
+      {
+        "day": "2013-10-20",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -35.0
+      },
+      {
+        "day": "2013-11-21",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": 73.9
+      },
+      {
+        "day": "2013-11-26",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -34.2
+      },
+      {
+        "day": "2013-11-27",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -36.9
+      },
+      {
+        "day": "2013-12-01",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": 80.9
+      },
+      {
+        "day": "2013-12-04",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": -30.7
+      },
+      {
+        "day": "2013-12-15",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -31.2
+      },
+      {
+        "day": "2013-12-22",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 12.4
+      },
+      {
+        "day": "2013-12-28",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -2.5
+      },
+      {
+        "day": "2013-03-29",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -67.9
+      }
+    ],
+    "dummy_seconds": 6.4,
+    "homes": 1088,
+    "m1_seconds": 2.0,
+    "seasons": {
+      "CM High evening bst": {
+        "events": 5,
+        "mean_w": -29.419340941834143,
+        "sd_between_w": 6.914730064995747
+      },
+      "CM High evening gmt": {
+        "events": 12,
+        "mean_w": -51.65771396860844,
+        "sd_between_w": 13.214279077040858
+      },
+      "SF High evening bst": {
+        "events": 11,
+        "mean_w": -26.876859141734105,
+        "sd_between_w": 6.848931978795705
+      },
+      "SF High evening gmt": {
+        "events": 4,
+        "mean_w": -37.222416339091616,
+        "sd_between_w": 30.226746862815613
+      },
+      "SF Low evening bst": {
+        "events": 10,
+        "mean_w": 37.66904973025555,
+        "sd_between_w": 12.885047287565005
+      },
+      "SF Low evening gmt": {
+        "events": 5,
+        "mean_w": 52.70431479582613,
+        "sd_between_w": 36.95633267165854
+      }
+    }
+  },
+  "p6_local_2013_no28dec": {
+    "bands": {
+      "CM High evening": {
+        "cell_mean_w": -44.698469452153276,
+        "events": 17,
+        "hours": 102,
+        "mean_w": -44.1608779224649,
+        "median_home_sd_w": 25.10254914635117,
+        "se_event_w": 3.710288824510842,
+        "se_home_w": 3.5554535324958625,
+        "se_w": 3.710288824510842
+      },
+      "CM High other": {
+        "cell_mean_w": -46.29263318994111,
+        "events": 3,
+        "hours": 10,
+        "mean_w": -41.1660918422552,
+        "median_home_sd_w": 74.66931548443168,
+        "se_event_w": 7.218207770959611,
+        "se_home_w": 4.58814273465886,
+        "se_w": 7.218207770959611
+      },
+      "CM Low": {
+        "cell_mean_w": 24.221772602453946,
+        "events": 40,
+        "hours": 368,
+        "mean_w": 24.60194254713962,
+        "median_home_sd_w": 13.334667266235577,
+        "se_event_w": 3.1639981297522466,
+        "se_home_w": 1.9499364663203917,
+        "se_w": 3.1639981297522466
+      },
+      "SF High day": {
+        "cell_mean_w": -37.7765883724943,
+        "events": 15,
+        "hours": 72,
+        "mean_w": -37.26780083466881,
+        "median_home_sd_w": 29.538663180705463,
+        "se_event_w": 4.845538328182122,
+        "se_home_w": 2.3884109475160202,
+        "se_w": 4.845538328182122
+      },
+      "SF High evening": {
+        "cell_mean_w": -31.675630353161278,
+        "events": 14,
+        "hours": 66,
+        "mean_w": -31.780938490045962,
+        "median_home_sd_w": 30.70521668029168,
+        "se_event_w": 3.8830305324895655,
+        "se_home_w": 2.436431572069841,
+        "se_w": 3.8830305324895655
+      },
+      "SF High morning": {
+        "cell_mean_w": -25.340133625864237,
+        "events": 12,
+        "hours": 54,
+        "mean_w": -25.96865574540261,
+        "median_home_sd_w": 33.47262825696068,
+        "se_event_w": 4.241325447041581,
+        "se_home_w": 2.022632743714417,
+        "se_w": 4.241325447041581
+      },
+      "SF High night": {
+        "cell_mean_w": -8.778859301313274,
+        "events": 11,
+        "hours": 48,
+        "mean_w": -8.500891646013388,
+        "median_home_sd_w": 35.68387859776623,
+        "se_event_w": 2.656975389150552,
+        "se_home_w": 1.165906726363951,
+        "se_w": 2.656975389150552
+      },
+      "SF Low day": {
+        "cell_mean_w": 62.4983240189933,
+        "events": 15,
+        "hours": 72,
+        "mean_w": 61.60342641923235,
+        "median_home_sd_w": 29.412557899883694,
+        "se_event_w": 8.145349120632337,
+        "se_home_w": 3.8314369324621214,
+        "se_w": 8.145349120632337
+      },
+      "SF Low evening": {
+        "cell_mean_w": 42.80157378150153,
+        "events": 15,
+        "hours": 72,
+        "mean_w": 42.71187961472721,
+        "median_home_sd_w": 29.345332856645605,
+        "se_event_w": 6.725381167112807,
+        "se_home_w": 3.294940109987,
+        "se_w": 6.725381167112807
+      },
+      "SF Low morning": {
+        "cell_mean_w": 44.39630317260179,
+        "events": 12,
+        "hours": 54,
+        "mean_w": 43.549469763544614,
+        "median_home_sd_w": 33.36615298575021,
+        "se_event_w": 9.09875119237803,
+        "se_home_w": 2.954178349458429,
+        "se_w": 9.09875119237803
+      },
+      "SF Low night": {
+        "cell_mean_w": 15.913248332276435,
+        "events": 12,
+        "hours": 54,
+        "mean_w": 17.062495667754973,
+        "median_home_sd_w": 33.57197409150691,
+        "se_event_w": 4.174217557909719,
+        "se_home_w": 1.9514627512110254,
+        "se_w": 4.174217557909719
+      }
+    },
+    "cells": [
+      {
+        "day": "2013-01-19",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -60.6
+      },
+      {
+        "day": "2013-01-20",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -64.0
+      },
+      {
+        "day": "2013-01-28",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 24.2
+      },
+      {
+        "day": "2013-02-05",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 96.4
+      },
+      {
+        "day": "2013-02-11",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": -68.6
+      },
+      {
+        "day": "2013-02-20",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -55.6
+      },
+      {
+        "day": "2013-02-21",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -43.2
+      },
+      {
+        "day": "2013-02-27",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -59.3
+      },
+      {
+        "day": "2013-03-16",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -43.1
+      },
+      {
+        "day": "2013-03-17",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -55.3
+      },
+      {
+        "day": "2013-03-27",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -57.8
+      },
+      {
+        "day": "2013-03-28",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -65.2
+      },
+      {
+        "day": "2013-04-05",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -32.6
+      },
+      {
+        "day": "2013-04-13",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -23.7
+      },
+      {
+        "day": "2013-04-23",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -22.9
+      },
+      {
+        "day": "2013-04-26",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 36.6
+      },
+      {
+        "day": "2013-05-01",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -31.3
+      },
+      {
+        "day": "2013-05-02",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -23.2
+      },
+      {
+        "day": "2013-05-08",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -34.1
+      },
+      {
+        "day": "2013-05-13",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -34.2
+      },
+      {
+        "day": "2013-05-18",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -24.3
+      },
+      {
+        "day": "2013-05-29",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 52.5
+      },
+      {
+        "day": "2013-06-03",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -32.1
+      },
+      {
+        "day": "2013-06-07",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -24.1
+      },
+      {
+        "day": "2013-06-13",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -34.9
+      },
+      {
+        "day": "2013-06-17",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -21.2
+      },
+      {
+        "day": "2013-06-18",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 41.5
+      },
+      {
+        "day": "2013-07-19",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -18.7
+      },
+      {
+        "day": "2013-07-22",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 18.0
+      },
+      {
+        "day": "2013-07-31",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 24.7
+      },
+      {
+        "day": "2013-08-06",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 34.0
+      },
+      {
+        "day": "2013-08-09",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 51.3
+      },
+      {
+        "day": "2013-08-25",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 50.1
+      },
+      {
+        "day": "2013-08-28",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 32.0
+      },
+      {
+        "day": "2013-09-08",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 55.8
+      },
+      {
+        "day": "2013-09-29",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -14.7
+      },
+      {
+        "day": "2013-10-13",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -34.7
+      },
+      {
+        "day": "2013-10-20",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -33.5
+      },
+      {
+        "day": "2013-11-21",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": 75.0
+      },
+      {
+        "day": "2013-11-26",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -34.1
+      },
+      {
+        "day": "2013-11-27",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -37.0
+      },
+      {
+        "day": "2013-12-01",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": 84.7
+      },
+      {
+        "day": "2013-12-04",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": -31.2
+      },
+      {
+        "day": "2013-12-15",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -30.0
+      },
+      {
+        "day": "2013-12-22",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 13.7
+      },
+      {
+        "day": "2013-03-29",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -68.4
+      }
+    ],
+    "dummy_seconds": 5.0,
+    "homes": 1088,
+    "m1_seconds": 1.4,
+    "seasons": {
+      "CM High evening bst": {
+        "events": 5,
+        "mean_w": -29.13329538899227,
+        "sd_between_w": 5.678656771438324
+      },
+      "CM High evening gmt": {
+        "events": 12,
+        "mean_w": -51.18395864513703,
+        "sd_between_w": 13.140214160457175
+      },
+      "SF High evening bst": {
+        "events": 11,
+        "mean_w": -26.582170649003437,
+        "sd_between_w": 7.08527816304706
+      },
+      "SF High evening gmt": {
+        "events": 3,
+        "mean_w": -54.59619902187154,
+        "sd_between_w": 19.494959403676067
+      },
+      "SF Low evening bst": {
+        "events": 10,
+        "mean_w": 37.43115363614044,
+        "sd_between_w": 12.769147904633511
+      },
+      "SF Low evening gmt": {
+        "events": 5,
+        "mean_w": 53.542414072223686,
+        "sd_between_w": 37.32147361525351
+      }
+    }
+  },
+  "p6_local_2013only": {
+    "bands": {
+      "CM High evening": {
+        "cell_mean_w": -44.70028603085443,
+        "events": 17,
+        "hours": 102,
+        "mean_w": -44.20902698249107,
+        "median_home_sd_w": 25.090505452573186,
+        "se_event_w": 3.710931522203968,
+        "se_home_w": 3.5580092341289222,
+        "se_w": 3.710931522203968
+      },
+      "CM High other": {
+        "cell_mean_w": -46.23861538072663,
+        "events": 3,
+        "hours": 10,
+        "mean_w": -41.10211807343135,
+        "median_home_sd_w": 74.67338017860992,
+        "se_event_w": 7.176607261968437,
+        "se_home_w": 4.589109731102879,
+        "se_w": 7.176607261968437
+      },
+      "CM Low": {
+        "cell_mean_w": 24.222490786320183,
+        "events": 40,
+        "hours": 368,
+        "mean_w": 24.611647573516365,
+        "median_home_sd_w": 13.334625341457382,
+        "se_event_w": 3.164124731396045,
+        "se_home_w": 1.9502648050017415,
+        "se_w": 3.164124731396045
+      },
+      "SF High day": {
+        "cell_mean_w": -37.76731407573843,
+        "events": 15,
+        "hours": 72,
+        "mean_w": -37.2621513624254,
+        "median_home_sd_w": 29.54026250458423,
+        "se_event_w": 4.842234786727316,
+        "se_home_w": 2.388728570128422,
+        "se_w": 4.842234786727316
+      },
+      "SF High evening": {
+        "cell_mean_w": -29.18049520177162,
+        "events": 15,
+        "hours": 72,
+        "mean_w": -29.35040140901302,
+        "median_home_sd_w": 29.47064823299938,
+        "se_event_w": 4.3015674802770025,
+        "se_home_w": 2.3719022082825867,
+        "se_w": 4.3015674802770025
+      },
+      "SF High morning": {
+        "cell_mean_w": -25.33799799664484,
+        "events": 12,
+        "hours": 54,
+        "mean_w": -25.961040942069275,
+        "median_home_sd_w": 33.45635049647976,
+        "se_event_w": 4.240884229511332,
+        "se_home_w": 2.0219853013149587,
+        "se_w": 4.240884229511332
+      },
+      "SF High night": {
+        "cell_mean_w": -8.24040679532043,
+        "events": 12,
+        "hours": 54,
+        "mean_w": -8.152485701528045,
+        "median_home_sd_w": 33.76203651764932,
+        "se_event_w": 2.3918197492555544,
+        "se_home_w": 1.131372083581103,
+        "se_w": 2.3918197492555544
+      },
+      "SF Low day": {
+        "cell_mean_w": 62.49846233373593,
+        "events": 15,
+        "hours": 72,
+        "mean_w": 61.600429197711975,
+        "median_home_sd_w": 29.42283912713091,
+        "se_event_w": 8.148919910945013,
+        "se_home_w": 3.83129866314904,
+        "se_w": 8.148919910945013
+      },
+      "SF Low evening": {
+        "cell_mean_w": 42.80440195077779,
+        "events": 15,
+        "hours": 72,
+        "mean_w": 42.67196396056879,
+        "median_home_sd_w": 29.363070079238103,
+        "se_event_w": 6.724375396318387,
+        "se_home_w": 3.293661370251755,
+        "se_w": 6.724375396318387
+      },
+      "SF Low morning": {
+        "cell_mean_w": 44.395713302213146,
+        "events": 12,
+        "hours": 54,
+        "mean_w": 43.54937816588103,
+        "median_home_sd_w": 33.35277120932606,
+        "se_event_w": 9.09950669640171,
+        "se_home_w": 2.953972163052547,
+        "se_w": 9.09950669640171
+      },
+      "SF Low night": {
+        "cell_mean_w": 15.917941688018722,
+        "events": 12,
+        "hours": 54,
+        "mean_w": 17.056547039069034,
+        "median_home_sd_w": 33.5773209371535,
+        "se_event_w": 4.177081145838264,
+        "se_home_w": 1.9498720828849607,
+        "se_w": 4.177081145838264
+      }
+    },
+    "cells": [
+      {
+        "day": "2013-01-19",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -60.6
+      },
+      {
+        "day": "2013-01-20",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -64.0
+      },
+      {
+        "day": "2013-01-28",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 24.2
+      },
+      {
+        "day": "2013-02-05",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 96.4
+      },
+      {
+        "day": "2013-02-11",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": -68.7
+      },
+      {
+        "day": "2013-02-20",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -55.6
+      },
+      {
+        "day": "2013-02-21",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -43.2
+      },
+      {
+        "day": "2013-02-27",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -59.3
+      },
+      {
+        "day": "2013-03-16",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -43.1
+      },
+      {
+        "day": "2013-03-17",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -55.3
+      },
+      {
+        "day": "2013-03-27",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -57.8
+      },
+      {
+        "day": "2013-03-28",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -65.2
+      },
+      {
+        "day": "2013-04-05",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -32.6
+      },
+      {
+        "day": "2013-04-13",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -23.7
+      },
+      {
+        "day": "2013-04-23",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -22.9
+      },
+      {
+        "day": "2013-04-26",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 36.6
+      },
+      {
+        "day": "2013-05-01",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -31.3
+      },
+      {
+        "day": "2013-05-02",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -23.2
+      },
+      {
+        "day": "2013-05-08",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -34.1
+      },
+      {
+        "day": "2013-05-13",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -34.2
+      },
+      {
+        "day": "2013-05-18",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -24.4
+      },
+      {
+        "day": "2013-05-29",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 52.5
+      },
+      {
+        "day": "2013-06-03",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -32.1
+      },
+      {
+        "day": "2013-06-07",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -24.1
+      },
+      {
+        "day": "2013-06-13",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -34.9
+      },
+      {
+        "day": "2013-06-17",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -21.2
+      },
+      {
+        "day": "2013-06-18",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 41.5
+      },
+      {
+        "day": "2013-07-19",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -18.7
+      },
+      {
+        "day": "2013-07-22",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 18.0
+      },
+      {
+        "day": "2013-07-31",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 24.7
+      },
+      {
+        "day": "2013-08-06",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 34.0
+      },
+      {
+        "day": "2013-08-09",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 51.3
+      },
+      {
+        "day": "2013-08-25",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 50.2
+      },
+      {
+        "day": "2013-08-28",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 32.0
+      },
+      {
+        "day": "2013-09-08",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 55.9
+      },
+      {
+        "day": "2013-09-29",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -14.7
+      },
+      {
+        "day": "2013-10-13",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -34.7
+      },
+      {
+        "day": "2013-10-20",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -33.5
+      },
+      {
+        "day": "2013-11-21",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": 74.9
+      },
+      {
+        "day": "2013-11-26",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -34.1
+      },
+      {
+        "day": "2013-11-27",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -37.0
+      },
+      {
+        "day": "2013-12-01",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": 84.6
+      },
+      {
+        "day": "2013-12-04",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": -31.2
+      },
+      {
+        "day": "2013-12-15",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -30.0
+      },
+      {
+        "day": "2013-12-22",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 13.7
+      },
+      {
+        "day": "2013-12-28",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -1.6
+      },
+      {
+        "day": "2013-03-29",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -68.4
+      }
+    ],
+    "dummy_seconds": 5.0,
+    "homes": 1088,
+    "m1_seconds": 1.4,
+    "seasons": {
+      "CM High evening bst": {
+        "events": 5,
+        "mean_w": -29.132807432014793,
+        "sd_between_w": 5.688730148382091
+      },
+      "CM High evening gmt": {
+        "events": 12,
+        "mean_w": -51.18673544703759,
+        "sd_between_w": 13.141359437844761
+      },
+      "SF High evening bst": {
+        "events": 11,
+        "mean_w": -26.59112886404215,
+        "sd_between_w": 7.08387780738778
+      },
+      "SF High evening gmt": {
+        "events": 4,
+        "mean_w": -36.94859421496002,
+        "sd_between_w": 30.237060803003757
+      },
+      "SF Low evening bst": {
+        "events": 10,
+        "mean_w": 37.44472799057509,
+        "sd_between_w": 12.797546216759597
+      },
+      "SF Low evening gmt": {
+        "events": 5,
+        "mean_w": 53.523749871183185,
+        "sd_between_w": 37.296354476551144
+      }
+    }
+  },
+  "p6_no28dec": {
+    "bands": {
+      "CM High evening": {
+        "cell_mean_w": -48.05926083022005,
+        "events": 17,
+        "hours": 102,
+        "mean_w": -48.3420107540861,
+        "median_home_sd_w": 25.51282530842481,
+        "se_event_w": 1.8740078463513985,
+        "se_home_w": 3.8832991673390085,
+        "se_w": 3.8832991673390085
+      },
+      "CM High other": {
+        "cell_mean_w": -46.81517651340485,
+        "events": 3,
+        "hours": 10,
+        "mean_w": -46.258582465328864,
+        "median_home_sd_w": 77.28210141032599,
+        "se_event_w": 3.752822568305245,
+        "se_home_w": 4.938214030508897,
+        "se_w": 4.938214030508897
+      },
+      "CM Low": {
+        "cell_mean_w": 19.58352886266688,
+        "events": 40,
+        "hours": 368,
+        "mean_w": 19.417193704692295,
+        "median_home_sd_w": 13.52067635717814,
+        "se_event_w": 3.5311623718279255,
+        "se_home_w": 2.4149694737552494,
+        "se_w": 3.5311623718279255
+      },
+      "SF High day": {
+        "cell_mean_w": -41.466788545570004,
+        "events": 15,
+        "hours": 72,
+        "mean_w": -41.51574235117412,
+        "median_home_sd_w": 30.05236855095438,
+        "se_event_w": 4.116821825195333,
+        "se_home_w": 2.755997787382518,
+        "se_w": 4.116821825195333
+      },
+      "SF High evening": {
+        "cell_mean_w": -44.37668928583051,
+        "events": 14,
+        "hours": 66,
+        "mean_w": -43.91976500156972,
+        "median_home_sd_w": 31.236509811556832,
+        "se_event_w": 2.5901920996424073,
+        "se_home_w": 2.9223253922208596,
+        "se_w": 2.9223253922208596
+      },
+      "SF High morning": {
+        "cell_mean_w": -28.89965460707104,
+        "events": 12,
+        "hours": 54,
+        "mean_w": -29.602000991347534,
+        "median_home_sd_w": 34.606178861651536,
+        "se_event_w": 4.100790237969956,
+        "se_home_w": 2.2959687526977586,
+        "se_w": 4.100790237969956
+      },
+      "SF High night": {
+        "cell_mean_w": -6.4453251738974995,
+        "events": 11,
+        "hours": 48,
+        "mean_w": -6.548414211133255,
+        "median_home_sd_w": 36.7064814578169,
+        "se_event_w": 6.352879221448902,
+        "se_home_w": 1.3589588963241737,
+        "se_w": 6.352879221448902
+      },
+      "SF Low day": {
+        "cell_mean_w": 55.44564864105474,
+        "events": 15,
+        "hours": 72,
+        "mean_w": 54.473040603829816,
+        "median_home_sd_w": 30.123244529855484,
+        "se_event_w": 8.558644502658467,
+        "se_home_w": 3.705540037489056,
+        "se_w": 8.558644502658467
+      },
+      "SF Low evening": {
+        "cell_mean_w": 34.92331308388337,
+        "events": 15,
+        "hours": 72,
+        "mean_w": 34.1118784082781,
+        "median_home_sd_w": 30.065546786391145,
+        "se_event_w": 7.371850987568499,
+        "se_home_w": 3.505780558000679,
+        "se_w": 7.371850987568499
+      },
+      "SF Low morning": {
+        "cell_mean_w": 39.11392887521348,
+        "events": 12,
+        "hours": 54,
+        "mean_w": 37.98929210505936,
+        "median_home_sd_w": 34.698259636682934,
+        "se_event_w": 9.296456433391672,
+        "se_home_w": 2.9264069634244656,
+        "se_w": 9.296456433391672
+      },
+      "SF Low night": {
+        "cell_mean_w": 17.107038170378125,
+        "events": 12,
+        "hours": 54,
+        "mean_w": 17.909276678250507,
+        "median_home_sd_w": 34.81047672547453,
+        "se_event_w": 6.047890331695592,
+        "se_home_w": 2.12015928137385,
+        "se_w": 6.047890331695592
+      }
+    },
+    "cells": [
+      {
+        "day": "2013-01-19",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -53.6
+      },
+      {
+        "day": "2013-01-20",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -57.9
+      },
+      {
+        "day": "2013-01-28",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 33.1
+      },
+      {
+        "day": "2013-02-05",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 99.0
+      },
+      {
+        "day": "2013-02-11",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": -67.8
+      },
+      {
+        "day": "2013-02-20",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -52.3
+      },
+      {
+        "day": "2013-02-21",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -40.0
+      },
+      {
+        "day": "2013-02-27",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -56.4
+      },
+      {
+        "day": "2013-03-16",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -37.2
+      },
+      {
+        "day": "2013-03-17",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -50.2
+      },
+      {
+        "day": "2013-03-27",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -52.3
+      },
+      {
+        "day": "2013-03-28",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -58.6
+      },
+      {
+        "day": "2013-04-05",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -51.9
+      },
+      {
+        "day": "2013-04-13",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -42.0
+      },
+      {
+        "day": "2013-04-23",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -38.5
+      },
+      {
+        "day": "2013-04-26",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 20.3
+      },
+      {
+        "day": "2013-05-01",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -47.1
+      },
+      {
+        "day": "2013-05-02",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -38.7
+      },
+      {
+        "day": "2013-05-08",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -49.8
+      },
+      {
+        "day": "2013-05-13",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -50.3
+      },
+      {
+        "day": "2013-05-18",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -41.3
+      },
+      {
+        "day": "2013-05-29",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 36.3
+      },
+      {
+        "day": "2013-06-03",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -46.1
+      },
+      {
+        "day": "2013-06-07",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -37.5
+      },
+      {
+        "day": "2013-06-13",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -48.8
+      },
+      {
+        "day": "2013-06-17",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -35.2
+      },
+      {
+        "day": "2013-06-18",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 27.6
+      },
+      {
+        "day": "2013-07-19",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -32.9
+      },
+      {
+        "day": "2013-07-22",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 3.7
+      },
+      {
+        "day": "2013-07-31",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 10.9
+      },
+      {
+        "day": "2013-08-06",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 28.9
+      },
+      {
+        "day": "2013-08-09",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 47.5
+      },
+      {
+        "day": "2013-08-25",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 46.8
+      },
+      {
+        "day": "2013-08-28",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 28.1
+      },
+      {
+        "day": "2013-09-08",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 42.2
+      },
+      {
+        "day": "2013-09-29",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -30.0
+      },
+      {
+        "day": "2013-10-13",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -48.2
+      },
+      {
+        "day": "2013-10-20",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -45.9
+      },
+      {
+        "day": "2013-11-21",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": 60.7
+      },
+      {
+        "day": "2013-11-26",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -47.2
+      },
+      {
+        "day": "2013-11-27",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -50.0
+      },
+      {
+        "day": "2013-12-01",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": 73.1
+      },
+      {
+        "day": "2013-12-04",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": -38.8
+      },
+      {
+        "day": "2013-12-15",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -37.4
+      },
+      {
+        "day": "2013-12-22",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 6.2
+      },
+      {
+        "day": "2013-03-29",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -62.0
+      }
+    ],
+    "dummy_seconds": 3.6,
+    "homes": 1088,
+    "m1_seconds": 1.2,
+    "seasons": {
+      "CM High evening bst": {
+        "events": 5,
+        "mean_w": -43.67218881431417,
+        "sd_between_w": 4.720256577636115
+      },
+      "CM High evening gmt": {
+        "events": 12,
+        "mean_w": -49.88720750351416,
+        "sd_between_w": 8.145195513827785
+      },
+      "SF High evening bst": {
+        "events": 11,
+        "mean_w": -42.04482532937182,
+        "sd_between_w": 7.6279350475758685
+      },
+      "SF High evening gmt": {
+        "events": 3,
+        "mean_w": -54.87007708989459,
+        "sd_between_w": 14.591199045998254
+      },
+      "SF Low evening bst": {
+        "events": 10,
+        "mean_w": 26.738160423573753,
+        "sd_between_w": 14.65772915758749
+      },
+      "SF Low evening gmt": {
+        "events": 5,
+        "mean_w": 51.2936184045026,
+        "sd_between_w": 35.92139290251398
+      }
+    }
+  },
+  "p6_no29mar": {
+    "bands": {
+      "CM High evening": {
+        "cell_mean_w": -47.18883075920135,
+        "events": 16,
+        "hours": 96,
+        "mean_w": -47.42604437334747,
+        "median_home_sd_w": 26.334676041902558,
+        "se_event_w": 1.7674948537654829,
+        "se_home_w": 3.8147342492139913,
+        "se_w": 3.8147342492139913
+      },
+      "CM High other": {
+        "cell_mean_w": -46.741777605047446,
+        "events": 3,
+        "hours": 10,
+        "mean_w": -46.185243585570326,
+        "median_home_sd_w": 77.18983952892484,
+        "se_event_w": 3.7287301608924395,
+        "se_home_w": 4.941509151552143,
+        "se_w": 4.941509151552143
+      },
+      "CM Low": {
+        "cell_mean_w": 20.234569759408704,
+        "events": 38,
+        "hours": 350,
+        "mean_w": 20.0386653461727,
+        "median_home_sd_w": 13.881340725365833,
+        "se_event_w": 3.6194520274334305,
+        "se_home_w": 2.4145546036756227,
+        "se_w": 3.6194520274334305
+      },
+      "SF High day": {
+        "cell_mean_w": -41.44549856014435,
+        "events": 15,
+        "hours": 72,
+        "mean_w": -41.46051935077193,
+        "median_home_sd_w": 30.091304837866108,
+        "se_event_w": 4.114381926222257,
+        "se_home_w": 2.7547624943555595,
+        "se_w": 4.114381926222257
+      },
+      "SF High evening": {
+        "cell_mean_w": -41.3815687737292,
+        "events": 15,
+        "hours": 72,
+        "mean_w": -41.131913852326306,
+        "median_home_sd_w": 30.104672672303863,
+        "se_event_w": 3.763831142159146,
+        "se_home_w": 2.807535719485552,
+        "se_w": 3.763831142159146
+      },
+      "SF High morning": {
+        "cell_mean_w": -28.90535208938657,
+        "events": 12,
+        "hours": 54,
+        "mean_w": -29.58022508624569,
+        "median_home_sd_w": 34.66923768795097,
+        "se_event_w": 4.098531163240544,
+        "se_home_w": 2.2971824305800608,
+        "se_w": 4.098531163240544
+      },
+      "SF High night": {
+        "cell_mean_w": -7.925115229858161,
+        "events": 12,
+        "hours": 54,
+        "mean_w": -8.155549794307541,
+        "median_home_sd_w": 34.71969492346286,
+        "se_event_w": 5.851398964531679,
+        "se_home_w": 1.2689762973956251,
+        "se_w": 5.851398964531679
+      },
+      "SF Low day": {
+        "cell_mean_w": 55.460031935527695,
+        "events": 15,
+        "hours": 72,
+        "mean_w": 54.52193280531351,
+        "median_home_sd_w": 30.147635383581868,
+        "se_event_w": 8.561645061692051,
+        "se_home_w": 3.706551641254646,
+        "se_w": 8.561645061692051
+      },
+      "SF Low evening": {
+        "cell_mean_w": 34.92396232348668,
+        "events": 15,
+        "hours": 72,
+        "mean_w": 34.135516387570824,
+        "median_home_sd_w": 30.12110894171101,
+        "se_event_w": 7.371578008668028,
+        "se_home_w": 3.507160761982367,
+        "se_w": 7.371578008668028
+      },
+      "SF Low morning": {
+        "cell_mean_w": 39.11134378186193,
+        "events": 12,
+        "hours": 54,
+        "mean_w": 38.01214208731805,
+        "median_home_sd_w": 34.70821017847121,
+        "se_event_w": 9.297097887038923,
+        "se_home_w": 2.9266816927965404,
+        "se_w": 9.297097887038923
+      },
+      "SF Low night": {
+        "cell_mean_w": 17.108949937886145,
+        "events": 12,
+        "hours": 54,
+        "mean_w": 17.878396904196205,
+        "median_home_sd_w": 34.801943303594044,
+        "se_event_w": 6.048068127080645,
+        "se_home_w": 2.1206522831910504,
+        "se_w": 6.048068127080645
+      }
+    },
+    "cells": [
+      {
+        "day": "2013-01-19",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -53.5
+      },
+      {
+        "day": "2013-01-20",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -57.9
+      },
+      {
+        "day": "2013-01-28",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 33.1
+      },
+      {
+        "day": "2013-02-05",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 99.0
+      },
+      {
+        "day": "2013-02-11",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": -67.8
+      },
+      {
+        "day": "2013-02-20",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -52.3
+      },
+      {
+        "day": "2013-02-21",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -40.0
+      },
+      {
+        "day": "2013-02-27",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -56.4
+      },
+      {
+        "day": "2013-03-16",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -37.2
+      },
+      {
+        "day": "2013-03-17",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -50.2
+      },
+      {
+        "day": "2013-03-27",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -52.3
+      },
+      {
+        "day": "2013-03-28",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -58.6
+      },
+      {
+        "day": "2013-04-05",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -51.9
+      },
+      {
+        "day": "2013-04-13",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -42.0
+      },
+      {
+        "day": "2013-04-23",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -38.5
+      },
+      {
+        "day": "2013-04-26",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 20.3
+      },
+      {
+        "day": "2013-05-01",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -47.1
+      },
+      {
+        "day": "2013-05-02",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -38.7
+      },
+      {
+        "day": "2013-05-08",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -49.8
+      },
+      {
+        "day": "2013-05-13",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -50.3
+      },
+      {
+        "day": "2013-05-18",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -41.3
+      },
+      {
+        "day": "2013-05-29",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 36.3
+      },
+      {
+        "day": "2013-06-03",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -46.1
+      },
+      {
+        "day": "2013-06-07",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -37.5
+      },
+      {
+        "day": "2013-06-13",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -48.8
+      },
+      {
+        "day": "2013-06-17",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -35.2
+      },
+      {
+        "day": "2013-06-18",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 27.6
+      },
+      {
+        "day": "2013-07-19",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "bst",
+        "w": -32.9
+      },
+      {
+        "day": "2013-07-22",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 3.7
+      },
+      {
+        "day": "2013-07-31",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 10.9
+      },
+      {
+        "day": "2013-08-06",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 28.9
+      },
+      {
+        "day": "2013-08-09",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 47.5
+      },
+      {
+        "day": "2013-08-25",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 46.8
+      },
+      {
+        "day": "2013-08-28",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "bst",
+        "w": 28.1
+      },
+      {
+        "day": "2013-09-08",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "bst",
+        "w": 42.3
+      },
+      {
+        "day": "2013-09-29",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -30.0
+      },
+      {
+        "day": "2013-10-13",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -48.2
+      },
+      {
+        "day": "2013-10-20",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "bst",
+        "w": -45.9
+      },
+      {
+        "day": "2013-11-21",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": 60.7
+      },
+      {
+        "day": "2013-11-26",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -47.2
+      },
+      {
+        "day": "2013-11-27",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -50.0
+      },
+      {
+        "day": "2013-12-01",
+        "effect": "SF Low evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": 73.0
+      },
+      {
+        "day": "2013-12-04",
+        "effect": "SF High evening",
+        "hours": 3,
+        "season": "gmt",
+        "w": -38.8
+      },
+      {
+        "day": "2013-12-15",
+        "effect": "CM High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -37.4
+      },
+      {
+        "day": "2013-12-22",
+        "effect": "SF Low evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": 6.2
+      },
+      {
+        "day": "2013-12-28",
+        "effect": "SF High evening",
+        "hours": 6,
+        "season": "gmt",
+        "w": -8.4
+      }
+    ],
+    "dummy_seconds": 3.5,
+    "homes": 1088,
+    "m1_seconds": 1.2,
+    "seasons": {
+      "CM High evening bst": {
+        "events": 5,
+        "mean_w": -43.67234888358967,
+        "sd_between_w": 4.718189697770914
+      },
+      "CM High evening gmt": {
+        "events": 11,
+        "mean_w": -48.78723161175211,
+        "sd_between_w": 7.555077205410102
+      },
+      "SF High evening bst": {
+        "events": 11,
+        "mean_w": -42.048329029525945,
+        "sd_between_w": 7.628997819855521
+      },
+      "SF High evening gmt": {
+        "events": 4,
+        "mean_w": -39.38128800633897,
+        "sd_between_w": 25.886268170226046
+      },
+      "SF Low evening bst": {
+        "events": 10,
+        "mean_w": 26.74276123422589,
+        "sd_between_w": 14.668673581362517
+      },
+      "SF Low evening gmt": {
+        "events": 5,
+        "mean_w": 51.28636450200825,
+        "sd_between_w": 35.91266819771894
+      }
+    }
+  },
+  "p6_passes": true
+}

@@ -1659,6 +1659,44 @@ REGISTRY: dict[str, Dataset] = {
         "epa_comparison (agreement summaries only, no site values) and paired_method (each method family "
         "against FRM on the same site and day in the crop, as a mean log ratio over sites).",
     ),
+    # ---- examples (E91) ----
+    "e91_hours": Dataset(
+        "e91_hours.npz",
+        "https://data.london.gov.uk/dataset/smartmeter-energy-consumption-data-in-london-households-vqm0d",
+        "UK Power Networks, Low Carbon London, SmartMeter Energy Consumption Data in London Households, London "
+        "Datastore, CC BY 4.0, with the 2013 dynamic time-of-use tariff file. Changed: half-hourly readings "
+        "aggregated and joined to the price calendar. DERIVED by tools/build_e91_data.py table - keep the cached "
+        "file. No endorsement by UK Power Networks is implied.",
+        "NumPy archive, not a table: open data.path() with np.load. One value per hour from 2012-07-01 00:00 GMT, "
+        "14,591 hours, meters read as gmt_end: fleet_kw (mean of the 1,088 ToU homes with at least 50% of 2013), "
+        "fleet_homes, panel_kw (mean of the Std homes with at least 80% of the window), panel_homes, effect "
+        "(number into `effects`, -1 for no event), cell (event-cell number, -1 for none), out_of_baseline "
+        "(the owner's excluded days), placebo_effect and placebo_out (the same for the calendar moved back 364 "
+        "days). Group means only, no home appears.",
+    ),
+    "e91_event_table": Dataset(
+        "e91_event_table.npz",
+        "https://data.london.gov.uk/dataset/smartmeter-energy-consumption-data-in-london-households-vqm0d",
+        "As `e91_hours`: fitted in closed form from each home's readings. DERIVED by tools/build_e91_data.py table "
+        "- keep the cached file. No endorsement by UK Power Networks is implied.",
+        "NumPy archive, not a table: open data.path() with np.load. Whole W as int16, -32768 where a home has no "
+        "reading in a cell. local_w and plan_w: 1,088 homes x 168 event cells, each home's response under the 2013 "
+        "month x band baseline and under the whole-window baseline. SF columns come from fits with the CM hours left "
+        "out, because the pre-trial placebo barred CM from the estimate. A cell is one event in one time band, described "
+        "by cell_day, cell_effect, cell_hours, cell_start_hour, cell_event_hours, cell_season, cell_event. "
+        "placebo_w: 963 homes x 70 cells of the calendar moved back to 2012, described by the placebo_* columns. "
+        "sigma_w and placebo_sigma_w: each home's residual sd. pre_mean_w and pre_evening_w: mean load in Jul-Dec "
+        "2012. homes and placebo_homes: the public anonymous LCLid numbers, nothing else about a home.",
+    ),
+    "lcl_small": Dataset(
+        "lcl_small.npz",
+        "https://data.london.gov.uk/dataset/smartmeter-energy-consumption-data-in-london-households-vqm0d",
+        "As `e91_hours`: a subset of the published readings. DERIVED by tools/build_e91_data.py small - keep the "
+        "cached file. No endorsement by UK Power Networks is implied.",
+        "NumPy archive, not a table: open data.path() with np.load. wh: 200 ToU homes x 14,591 hours from "
+        "2012-07-01 00:00 GMT, energy in Wh as uint16, 65535 where a half-hour is missing. homes: public anonymous "
+        "LCLid numbers, chosen by a hash of the id among homes with at least 95% of 2013. tou, clock, first_hour.",
+    ),
     # ---- examples (E71) ----
     "speed_acc": Dataset(
         "wagenmakers2008_speed_acc.csv",

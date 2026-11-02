@@ -1,0 +1,1239 @@
+{
+  "all_low_days": [
+    {
+      "contrast_w": -2.8,
+      "contrast_z": -0.31,
+      "day": "2013-02-07",
+      "daytime_w": 53.3,
+      "daytime_z": 6.46,
+      "evening_w": 56.1,
+      "evening_z": 5.01,
+      "file_class": "all_low",
+      "in_table": false,
+      "season": "gmt",
+      "weekday": "Thursday"
+    },
+    {
+      "contrast_w": 81.2,
+      "contrast_z": 7.53,
+      "day": "2013-03-29",
+      "daytime_w": 18.6,
+      "daytime_z": 2.33,
+      "evening_w": -62.6,
+      "evening_z": -5.46,
+      "file_class": "all_low",
+      "in_table": true,
+      "season": "gmt",
+      "weekday": "Friday"
+    },
+    {
+      "contrast_w": 38.1,
+      "contrast_z": 4.87,
+      "day": "2013-05-03",
+      "daytime_w": 24.5,
+      "daytime_z": 3.88,
+      "evening_w": -13.6,
+      "evening_z": -1.6,
+      "file_class": "all_low",
+      "in_table": true,
+      "season": "bst",
+      "weekday": "Friday"
+    },
+    {
+      "contrast_w": -0.0,
+      "contrast_z": 0.04,
+      "day": "2013-06-20",
+      "daytime_w": 23.2,
+      "daytime_z": 3.69,
+      "evening_w": 23.3,
+      "evening_z": 2.57,
+      "file_class": "all_low",
+      "in_table": false,
+      "season": "bst",
+      "weekday": "Thursday"
+    },
+    {
+      "contrast_w": 0.8,
+      "contrast_z": 0.02,
+      "day": "2013-12-19",
+      "daytime_w": 46.3,
+      "daytime_z": 5.63,
+      "evening_w": 45.5,
+      "evening_z": 4.08,
+      "file_class": "all_low",
+      "in_table": false,
+      "season": "gmt",
+      "weekday": "Thursday"
+    }
+  ],
+  "clock": "gmt_end",
+  "days_clearing_evening_z3": [
+    "2013-03-29"
+  ],
+  "disputed": [
+    {
+      "contrast_w": 81.2,
+      "contrast_z": 7.53,
+      "day": "2013-03-29",
+      "daytime_w": 18.6,
+      "daytime_z": 2.33,
+      "evening_w": -62.6,
+      "evening_z": -5.46,
+      "file_class": "all_low",
+      "in_table": true,
+      "season": "gmt",
+      "weekday": "Friday"
+    },
+    {
+      "contrast_w": 38.1,
+      "contrast_z": 4.87,
+      "day": "2013-05-03",
+      "daytime_w": 24.5,
+      "daytime_z": 3.88,
+      "evening_w": -13.6,
+      "evening_z": -1.6,
+      "file_class": "all_low",
+      "in_table": true,
+      "season": "bst",
+      "weekday": "Friday"
+    },
+    {
+      "contrast_w": 10.8,
+      "contrast_z": 0.96,
+      "day": "2013-11-19",
+      "daytime_w": 2.1,
+      "daytime_z": 0.38,
+      "evening_w": -8.7,
+      "evening_z": -0.71,
+      "file_class": "both",
+      "in_table": false,
+      "season": "gmt",
+      "weekday": "Tuesday"
+    },
+    {
+      "contrast_w": -2.6,
+      "contrast_z": -0.3,
+      "day": "2013-12-06",
+      "daytime_w": -5.9,
+      "daytime_z": -0.58,
+      "evening_w": -3.2,
+      "evening_z": -0.22,
+      "file_class": "both",
+      "in_table": false,
+      "season": "gmt",
+      "weekday": "Friday"
+    },
+    {
+      "contrast_w": 21.0,
+      "contrast_z": 1.91,
+      "day": "2013-12-08",
+      "daytime_w": 9.3,
+      "daytime_z": 1.23,
+      "evening_w": -11.8,
+      "evening_z": -0.98,
+      "file_class": "both",
+      "in_table": false,
+      "season": "gmt",
+      "weekday": "Sunday"
+    },
+    {
+      "contrast_w": 9.5,
+      "contrast_z": 0.83,
+      "day": "2013-12-10",
+      "daytime_w": -3.0,
+      "daytime_z": -0.23,
+      "evening_w": -12.5,
+      "evening_z": -1.04,
+      "file_class": "both",
+      "in_table": false,
+      "season": "gmt",
+      "weekday": "Tuesday"
+    },
+    {
+      "contrast_w": -4.3,
+      "contrast_z": -0.46,
+      "day": "2013-12-21",
+      "daytime_w": 2.3,
+      "daytime_z": 0.39,
+      "evening_w": 6.5,
+      "evening_z": 0.64,
+      "file_class": "both",
+      "in_table": false,
+      "season": "gmt",
+      "weekday": "Saturday"
+    },
+    {
+      "contrast_w": -10.1,
+      "contrast_z": -1.0,
+      "day": "2013-12-27",
+      "daytime_w": 6.7,
+      "daytime_z": 0.91,
+      "evening_w": 16.8,
+      "evening_z": 1.54,
+      "file_class": "both",
+      "in_table": false,
+      "season": "gmt",
+      "weekday": "Friday"
+    }
+  ],
+  "n_null_days": 245,
+  "null_median_sd_w": {
+    "contrast": {
+      "bst": [
+        -0.3029486309307252,
+        7.8756703504396155
+      ],
+      "gmt": [
+        0.6041070966027187,
+        10.701081408263317
+      ]
+    },
+    "daytime": {
+      "bst": [
+        -0.06401275666329376,
+        6.322755952305233
+      ],
+      "gmt": [
+        -1.0199014217874731,
+        8.411138972406864
+      ]
+    },
+    "evening": {
+      "bst": [
+        0.5467445805359414,
+        8.844208588484628
+      ],
+      "gmt": [
+        -0.685290878527686,
+        11.332499048864005
+      ]
+    }
+  },
+  "passes": false,
+  "sf_runs": [
+    {
+      "band": "Low",
+      "day": "2013-01-04",
+      "season": "gmt",
+      "slots": 6,
+      "start": "14:00",
+      "w_in_price_direction": 182.0,
+      "z": 13.34
+    },
+    {
+      "band": "High",
+      "day": "2013-01-07",
+      "season": "gmt",
+      "slots": 6,
+      "start": "23:00",
+      "w_in_price_direction": 27.0,
+      "z": 2.44
+    },
+    {
+      "band": "Low",
+      "day": "2013-01-10",
+      "season": "gmt",
+      "slots": 6,
+      "start": "02:00",
+      "w_in_price_direction": 30.7,
+      "z": 3.06
+    },
+    {
+      "band": "High",
+      "day": "2013-01-11",
+      "season": "gmt",
+      "slots": 6,
+      "start": "11:00",
+      "w_in_price_direction": 81.8,
+      "z": 5.65
+    },
+    {
+      "band": "High",
+      "day": "2013-01-13",
+      "season": "gmt",
+      "slots": 12,
+      "start": "05:00",
+      "w_in_price_direction": 53.8,
+      "z": 6.63
+    },
+    {
+      "band": "High",
+      "day": "2013-01-16",
+      "season": "gmt",
+      "slots": 6,
+      "start": "23:00",
+      "w_in_price_direction": 38.3,
+      "z": 3.47
+    },
+    {
+      "band": "Low",
+      "day": "2013-01-25",
+      "season": "gmt",
+      "slots": 12,
+      "start": "05:00",
+      "w_in_price_direction": 90.7,
+      "z": 11.18
+    },
+    {
+      "band": "Low",
+      "day": "2013-01-28",
+      "season": "gmt",
+      "slots": 24,
+      "start": "11:00",
+      "w_in_price_direction": 57.4,
+      "z": 6.12
+    },
+    {
+      "band": "High",
+      "day": "2013-02-03",
+      "season": "gmt",
+      "slots": 6,
+      "start": "11:00",
+      "w_in_price_direction": 116.6,
+      "z": 8.05
+    },
+    {
+      "band": "Low",
+      "day": "2013-02-05",
+      "season": "gmt",
+      "slots": 12,
+      "start": "17:00",
+      "w_in_price_direction": 99.3,
+      "z": 8.71
+    },
+    {
+      "band": "High",
+      "day": "2013-02-11",
+      "season": "gmt",
+      "slots": 6,
+      "start": "17:00",
+      "w_in_price_direction": 79.9,
+      "z": 5.8
+    },
+    {
+      "band": "High",
+      "day": "2013-02-15",
+      "season": "gmt",
+      "slots": 6,
+      "start": "05:00",
+      "w_in_price_direction": 18.6,
+      "z": 2.38
+    },
+    {
+      "band": "High",
+      "day": "2013-02-17",
+      "season": "gmt",
+      "slots": 12,
+      "start": "23:00",
+      "w_in_price_direction": 8.9,
+      "z": 0.89
+    },
+    {
+      "band": "High",
+      "day": "2013-02-26",
+      "season": "gmt",
+      "slots": 24,
+      "start": "05:00",
+      "w_in_price_direction": 51.2,
+      "z": 6.07
+    },
+    {
+      "band": "High",
+      "day": "2013-02-27",
+      "season": "gmt",
+      "slots": 12,
+      "start": "17:00",
+      "w_in_price_direction": 61.4,
+      "z": 5.39
+    },
+    {
+      "band": "Low",
+      "day": "2013-02-28",
+      "season": "gmt",
+      "slots": 6,
+      "start": "08:00",
+      "w_in_price_direction": 106.0,
+      "z": 8.94
+    },
+    {
+      "band": "Low",
+      "day": "2013-03-01",
+      "season": "gmt",
+      "slots": 6,
+      "start": "23:00",
+      "w_in_price_direction": 34.4,
+      "z": 3.12
+    },
+    {
+      "band": "Low",
+      "day": "2013-03-07",
+      "season": "gmt",
+      "slots": 6,
+      "start": "05:00",
+      "w_in_price_direction": 62.0,
+      "z": 7.92
+    },
+    {
+      "band": "High",
+      "day": "2013-03-08",
+      "season": "gmt",
+      "slots": 6,
+      "start": "14:00",
+      "w_in_price_direction": 28.8,
+      "z": 2.11
+    },
+    {
+      "band": "High",
+      "day": "2013-03-14",
+      "season": "gmt",
+      "slots": 6,
+      "start": "05:00",
+      "w_in_price_direction": 19.2,
+      "z": 2.46
+    },
+    {
+      "band": "High",
+      "day": "2013-03-19",
+      "season": "gmt",
+      "slots": 6,
+      "start": "14:00",
+      "w_in_price_direction": 27.0,
+      "z": 1.98
+    },
+    {
+      "band": "High",
+      "day": "2013-04-05",
+      "season": "bst",
+      "slots": 6,
+      "start": "20:00",
+      "w_in_price_direction": 44.3,
+      "z": 5.01
+    },
+    {
+      "band": "High",
+      "day": "2013-04-08",
+      "season": "bst",
+      "slots": 6,
+      "start": "11:00",
+      "w_in_price_direction": 40.2,
+      "z": 3.92
+    },
+    {
+      "band": "High",
+      "day": "2013-04-11",
+      "season": "bst",
+      "slots": 6,
+      "start": "02:00",
+      "w_in_price_direction": 12.4,
+      "z": 1.74
+    },
+    {
+      "band": "High",
+      "day": "2013-04-13",
+      "season": "bst",
+      "slots": 12,
+      "start": "17:00",
+      "w_in_price_direction": 29.0,
+      "z": 3.27
+    },
+    {
+      "band": "Low",
+      "day": "2013-04-16",
+      "season": "bst",
+      "slots": 12,
+      "start": "05:00",
+      "w_in_price_direction": 52.5,
+      "z": 9.08
+    },
+    {
+      "band": "Low",
+      "day": "2013-04-21",
+      "season": "bst",
+      "slots": 6,
+      "start": "11:00",
+      "w_in_price_direction": 102.2,
+      "z": 9.96
+    },
+    {
+      "band": "Low",
+      "day": "2013-04-26",
+      "season": "bst",
+      "slots": 6,
+      "start": "20:00",
+      "w_in_price_direction": 39.8,
+      "z": 4.5
+    },
+    {
+      "band": "Low",
+      "day": "2013-04-27",
+      "season": "bst",
+      "slots": 6,
+      "start": "14:00",
+      "w_in_price_direction": 53.3,
+      "z": 5.3
+    },
+    {
+      "band": "High",
+      "day": "2013-05-08",
+      "season": "bst",
+      "slots": 24,
+      "start": "11:00",
+      "w_in_price_direction": 22.7,
+      "z": 2.95
+    },
+    {
+      "band": "High",
+      "day": "2013-05-13",
+      "season": "bst",
+      "slots": 12,
+      "start": "17:00",
+      "w_in_price_direction": 36.0,
+      "z": 4.06
+    },
+    {
+      "band": "High",
+      "day": "2013-05-18",
+      "season": "bst",
+      "slots": 6,
+      "start": "17:00",
+      "w_in_price_direction": 22.9,
+      "z": 2.05
+    },
+    {
+      "band": "High",
+      "day": "2013-05-25",
+      "season": "bst",
+      "slots": 6,
+      "start": "08:00",
+      "w_in_price_direction": 50.1,
+      "z": 5.64
+    },
+    {
+      "band": "Low",
+      "day": "2013-05-29",
+      "season": "bst",
+      "slots": 24,
+      "start": "17:00",
+      "w_in_price_direction": 28.7,
+      "z": 4.25
+    },
+    {
+      "band": "High",
+      "day": "2013-06-03",
+      "season": "bst",
+      "slots": 24,
+      "start": "11:00",
+      "w_in_price_direction": 29.9,
+      "z": 3.89
+    },
+    {
+      "band": "High",
+      "day": "2013-06-07",
+      "season": "bst",
+      "slots": 24,
+      "start": "17:00",
+      "w_in_price_direction": 10.7,
+      "z": 1.59
+    },
+    {
+      "band": "High",
+      "day": "2013-06-08",
+      "season": "bst",
+      "slots": 24,
+      "start": "05:00",
+      "w_in_price_direction": 21.8,
+      "z": 3.47
+    },
+    {
+      "band": "Low",
+      "day": "2013-06-12",
+      "season": "bst",
+      "slots": 12,
+      "start": "11:00",
+      "w_in_price_direction": 61.0,
+      "z": 7.03
+    },
+    {
+      "band": "High",
+      "day": "2013-06-13",
+      "season": "bst",
+      "slots": 6,
+      "start": "17:00",
+      "w_in_price_direction": 34.8,
+      "z": 3.12
+    },
+    {
+      "band": "Low",
+      "day": "2013-06-15",
+      "season": "bst",
+      "slots": 24,
+      "start": "05:00",
+      "w_in_price_direction": 35.0,
+      "z": 5.58
+    },
+    {
+      "band": "High",
+      "day": "2013-06-17",
+      "season": "bst",
+      "slots": 24,
+      "start": "11:00",
+      "w_in_price_direction": 24.6,
+      "z": 3.2
+    },
+    {
+      "band": "Low",
+      "day": "2013-06-18",
+      "season": "bst",
+      "slots": 12,
+      "start": "17:00",
+      "w_in_price_direction": 42.4,
+      "z": 4.78
+    },
+    {
+      "band": "High",
+      "day": "2013-06-19",
+      "season": "bst",
+      "slots": 6,
+      "start": "14:00",
+      "w_in_price_direction": 10.0,
+      "z": 0.99
+    },
+    {
+      "band": "Low",
+      "day": "2013-06-27",
+      "season": "bst",
+      "slots": 6,
+      "start": "02:00",
+      "w_in_price_direction": 14.8,
+      "z": 2.07
+    },
+    {
+      "band": "High",
+      "day": "2013-06-30",
+      "season": "bst",
+      "slots": 12,
+      "start": "11:00",
+      "w_in_price_direction": 35.5,
+      "z": 4.09
+    },
+    {
+      "band": "Low",
+      "day": "2013-07-03",
+      "season": "bst",
+      "slots": 12,
+      "start": "23:00",
+      "w_in_price_direction": 22.4,
+      "z": 3.33
+    },
+    {
+      "band": "Low",
+      "day": "2013-07-05",
+      "season": "bst",
+      "slots": 6,
+      "start": "05:00",
+      "w_in_price_direction": 30.5,
+      "z": 5.64
+    },
+    {
+      "band": "Low",
+      "day": "2013-07-12",
+      "season": "bst",
+      "slots": 12,
+      "start": "11:00",
+      "w_in_price_direction": 39.7,
+      "z": 4.58
+    },
+    {
+      "band": "High",
+      "day": "2013-07-14",
+      "season": "bst",
+      "slots": 12,
+      "start": "05:00",
+      "w_in_price_direction": 10.5,
+      "z": 1.82
+    },
+    {
+      "band": "High",
+      "day": "2013-07-19",
+      "season": "bst",
+      "slots": 6,
+      "start": "20:00",
+      "w_in_price_direction": 18.9,
+      "z": 2.14
+    },
+    {
+      "band": "Low",
+      "day": "2013-07-22",
+      "season": "bst",
+      "slots": 24,
+      "start": "11:00",
+      "w_in_price_direction": 21.2,
+      "z": 2.75
+    },
+    {
+      "band": "Low",
+      "day": "2013-07-25",
+      "season": "bst",
+      "slots": 6,
+      "start": "02:00",
+      "w_in_price_direction": 7.1,
+      "z": 0.99
+    },
+    {
+      "band": "Low",
+      "day": "2013-07-25",
+      "season": "bst",
+      "slots": 6,
+      "start": "08:00",
+      "w_in_price_direction": 25.5,
+      "z": 2.87
+    },
+    {
+      "band": "High",
+      "day": "2013-07-27",
+      "season": "bst",
+      "slots": 12,
+      "start": "11:00",
+      "w_in_price_direction": 30.3,
+      "z": 3.49
+    },
+    {
+      "band": "High",
+      "day": "2013-07-30",
+      "season": "bst",
+      "slots": 6,
+      "start": "05:00",
+      "w_in_price_direction": 5.4,
+      "z": 1.0
+    },
+    {
+      "band": "Low",
+      "day": "2013-07-31",
+      "season": "bst",
+      "slots": 24,
+      "start": "11:00",
+      "w_in_price_direction": 32.8,
+      "z": 4.27
+    },
+    {
+      "band": "Low",
+      "day": "2013-08-06",
+      "season": "bst",
+      "slots": 12,
+      "start": "17:00",
+      "w_in_price_direction": 38.3,
+      "z": 4.32
+    },
+    {
+      "band": "Low",
+      "day": "2013-08-09",
+      "season": "bst",
+      "slots": 6,
+      "start": "17:00",
+      "w_in_price_direction": 58.3,
+      "z": 5.23
+    },
+    {
+      "band": "Low",
+      "day": "2013-08-13",
+      "season": "bst",
+      "slots": 6,
+      "start": "14:00",
+      "w_in_price_direction": 51.4,
+      "z": 5.11
+    },
+    {
+      "band": "High",
+      "day": "2013-08-17",
+      "season": "bst",
+      "slots": 6,
+      "start": "23:00",
+      "w_in_price_direction": -3.4,
+      "z": -0.44
+    },
+    {
+      "band": "High",
+      "day": "2013-08-18",
+      "season": "bst",
+      "slots": 6,
+      "start": "08:00",
+      "w_in_price_direction": 22.8,
+      "z": 2.56
+    },
+    {
+      "band": "Low",
+      "day": "2013-08-25",
+      "season": "bst",
+      "slots": 6,
+      "start": "20:00",
+      "w_in_price_direction": 54.5,
+      "z": 6.17
+    },
+    {
+      "band": "Low",
+      "day": "2013-08-28",
+      "season": "bst",
+      "slots": 24,
+      "start": "17:00",
+      "w_in_price_direction": 24.4,
+      "z": 3.61
+    },
+    {
+      "band": "High",
+      "day": "2013-09-01",
+      "season": "bst",
+      "slots": 6,
+      "start": "08:00",
+      "w_in_price_direction": 22.1,
+      "z": 2.48
+    },
+    {
+      "band": "Low",
+      "day": "2013-09-02",
+      "season": "bst",
+      "slots": 12,
+      "start": "05:00",
+      "w_in_price_direction": 38.6,
+      "z": 6.67
+    },
+    {
+      "band": "High",
+      "day": "2013-09-04",
+      "season": "bst",
+      "slots": 6,
+      "start": "02:00",
+      "w_in_price_direction": 1.7,
+      "z": 0.23
+    },
+    {
+      "band": "Low",
+      "day": "2013-09-08",
+      "season": "bst",
+      "slots": 6,
+      "start": "20:00",
+      "w_in_price_direction": 47.2,
+      "z": 5.34
+    },
+    {
+      "band": "Low",
+      "day": "2013-09-13",
+      "season": "bst",
+      "slots": 6,
+      "start": "11:00",
+      "w_in_price_direction": 75.7,
+      "z": 7.38
+    },
+    {
+      "band": "High",
+      "day": "2013-09-16",
+      "season": "bst",
+      "slots": 12,
+      "start": "23:00",
+      "w_in_price_direction": 2.9,
+      "z": 0.43
+    },
+    {
+      "band": "Low",
+      "day": "2013-09-17",
+      "season": "bst",
+      "slots": 12,
+      "start": "23:00",
+      "w_in_price_direction": 16.5,
+      "z": 2.46
+    },
+    {
+      "band": "High",
+      "day": "2013-09-29",
+      "season": "bst",
+      "slots": 24,
+      "start": "17:00",
+      "w_in_price_direction": 9.8,
+      "z": 1.45
+    },
+    {
+      "band": "Low",
+      "day": "2013-10-06",
+      "season": "bst",
+      "slots": 6,
+      "start": "23:00",
+      "w_in_price_direction": 50.3,
+      "z": 6.43
+    },
+    {
+      "band": "Low",
+      "day": "2013-10-11",
+      "season": "bst",
+      "slots": 6,
+      "start": "11:00",
+      "w_in_price_direction": 76.4,
+      "z": 7.45
+    },
+    {
+      "band": "High",
+      "day": "2013-10-15",
+      "season": "bst",
+      "slots": 12,
+      "start": "11:00",
+      "w_in_price_direction": 39.2,
+      "z": 4.51
+    },
+    {
+      "band": "High",
+      "day": "2013-10-16",
+      "season": "bst",
+      "slots": 12,
+      "start": "05:00",
+      "w_in_price_direction": 31.8,
+      "z": 5.5
+    },
+    {
+      "band": "Low",
+      "day": "2013-10-17",
+      "season": "bst",
+      "slots": 24,
+      "start": "05:00",
+      "w_in_price_direction": 24.3,
+      "z": 3.86
+    },
+    {
+      "band": "High",
+      "day": "2013-10-18",
+      "season": "bst",
+      "slots": 12,
+      "start": "23:00",
+      "w_in_price_direction": 15.4,
+      "z": 2.3
+    },
+    {
+      "band": "High",
+      "day": "2013-10-31",
+      "season": "gmt",
+      "slots": 6,
+      "start": "02:00",
+      "w_in_price_direction": -3.4,
+      "z": -0.34
+    },
+    {
+      "band": "Low",
+      "day": "2013-10-31",
+      "season": "gmt",
+      "slots": 6,
+      "start": "05:00",
+      "w_in_price_direction": 37.4,
+      "z": 4.78
+    },
+    {
+      "band": "Low",
+      "day": "2013-11-03",
+      "season": "gmt",
+      "slots": 12,
+      "start": "11:00",
+      "w_in_price_direction": 88.7,
+      "z": 8.02
+    },
+    {
+      "band": "Low",
+      "day": "2013-11-05",
+      "season": "gmt",
+      "slots": 24,
+      "start": "05:00",
+      "w_in_price_direction": 50.1,
+      "z": 5.94
+    },
+    {
+      "band": "High",
+      "day": "2013-11-14",
+      "season": "gmt",
+      "slots": 24,
+      "start": "05:00",
+      "w_in_price_direction": 26.8,
+      "z": 3.18
+    },
+    {
+      "band": "Low",
+      "day": "2013-11-21",
+      "season": "gmt",
+      "slots": 6,
+      "start": "17:00",
+      "w_in_price_direction": 69.7,
+      "z": 5.06
+    },
+    {
+      "band": "Low",
+      "day": "2013-11-29",
+      "season": "gmt",
+      "slots": 12,
+      "start": "23:00",
+      "w_in_price_direction": 0.1,
+      "z": 0.01
+    },
+    {
+      "band": "Low",
+      "day": "2013-12-01",
+      "season": "gmt",
+      "slots": 6,
+      "start": "17:00",
+      "w_in_price_direction": 92.8,
+      "z": 6.73
+    },
+    {
+      "band": "High",
+      "day": "2013-12-04",
+      "season": "gmt",
+      "slots": 6,
+      "start": "20:00",
+      "w_in_price_direction": 34.6,
+      "z": 2.76
+    },
+    {
+      "band": "Low",
+      "day": "2013-12-12",
+      "season": "gmt",
+      "slots": 6,
+      "start": "23:00",
+      "w_in_price_direction": 49.7,
+      "z": 4.5
+    },
+    {
+      "band": "Low",
+      "day": "2013-12-22",
+      "season": "gmt",
+      "slots": 24,
+      "start": "17:00",
+      "w_in_price_direction": 9.6,
+      "z": 1.07
+    },
+    {
+      "band": "Low",
+      "day": "2013-12-26",
+      "season": "gmt",
+      "slots": 6,
+      "start": "08:00",
+      "w_in_price_direction": -1.7,
+      "z": -0.14
+    },
+    {
+      "band": "High",
+      "day": "2013-12-28",
+      "season": "gmt",
+      "slots": 24,
+      "start": "17:00",
+      "w_in_price_direction": 0.0,
+      "z": 0.0
+    }
+  ],
+  "undisputed_evening_cm": [
+    {
+      "contrast_w": 125.0,
+      "contrast_z": 11.62,
+      "day": "2013-01-19",
+      "daytime_w": 49.4,
+      "daytime_z": 5.99,
+      "evening_w": -75.6,
+      "evening_z": -6.61,
+      "file_class": "both",
+      "in_table": true,
+      "season": "gmt",
+      "weekday": "Saturday"
+    },
+    {
+      "contrast_w": 119.8,
+      "contrast_z": 11.14,
+      "day": "2013-01-20",
+      "daytime_w": 36.8,
+      "daytime_z": 4.5,
+      "evening_w": -83.0,
+      "evening_z": -7.26,
+      "file_class": "both",
+      "in_table": true,
+      "season": "gmt",
+      "weekday": "Sunday"
+    },
+    {
+      "contrast_w": 103.0,
+      "contrast_z": 9.57,
+      "day": "2013-02-20",
+      "daytime_w": 48.6,
+      "daytime_z": 5.9,
+      "evening_w": -54.4,
+      "evening_z": -4.74,
+      "file_class": "both",
+      "in_table": true,
+      "season": "gmt",
+      "weekday": "Wednesday"
+    },
+    {
+      "contrast_w": 61.9,
+      "contrast_z": 5.72,
+      "day": "2013-02-21",
+      "daytime_w": 15.5,
+      "daytime_z": 1.97,
+      "evening_w": -46.3,
+      "evening_z": -4.03,
+      "file_class": "both",
+      "in_table": true,
+      "season": "gmt",
+      "weekday": "Thursday"
+    },
+    {
+      "contrast_w": 93.7,
+      "contrast_z": 8.7,
+      "day": "2013-03-16",
+      "daytime_w": 55.3,
+      "daytime_z": 6.7,
+      "evening_w": -38.4,
+      "evening_z": -3.32,
+      "file_class": "both",
+      "in_table": true,
+      "season": "gmt",
+      "weekday": "Saturday"
+    },
+    {
+      "contrast_w": 103.1,
+      "contrast_z": 9.58,
+      "day": "2013-03-17",
+      "daytime_w": 45.6,
+      "daytime_z": 5.55,
+      "evening_w": -57.4,
+      "evening_z": -5.01,
+      "file_class": "both",
+      "in_table": true,
+      "season": "gmt",
+      "weekday": "Sunday"
+    },
+    {
+      "contrast_w": 85.0,
+      "contrast_z": 7.89,
+      "day": "2013-03-27",
+      "daytime_w": 20.8,
+      "daytime_z": 2.59,
+      "evening_w": -64.2,
+      "evening_z": -5.61,
+      "file_class": "both",
+      "in_table": true,
+      "season": "gmt",
+      "weekday": "Wednesday"
+    },
+    {
+      "contrast_w": 78.0,
+      "contrast_z": 7.23,
+      "day": "2013-03-28",
+      "daytime_w": 13.4,
+      "daytime_z": 1.71,
+      "evening_w": -64.6,
+      "evening_z": -5.64,
+      "file_class": "both",
+      "in_table": true,
+      "season": "gmt",
+      "weekday": "Thursday"
+    },
+    {
+      "contrast_w": 38.3,
+      "contrast_z": 4.9,
+      "day": "2013-04-23",
+      "daytime_w": 20.1,
+      "daytime_z": 3.19,
+      "evening_w": -18.2,
+      "evening_z": -2.12,
+      "file_class": "both",
+      "in_table": true,
+      "season": "bst",
+      "weekday": "Tuesday"
+    },
+    {
+      "contrast_w": 45.8,
+      "contrast_z": 5.85,
+      "day": "2013-05-01",
+      "daytime_w": 17.4,
+      "daytime_z": 2.76,
+      "evening_w": -28.4,
+      "evening_z": -3.27,
+      "file_class": "both",
+      "in_table": true,
+      "season": "bst",
+      "weekday": "Wednesday"
+    },
+    {
+      "contrast_w": 39.4,
+      "contrast_z": 5.04,
+      "day": "2013-05-02",
+      "daytime_w": 19.2,
+      "daytime_z": 3.04,
+      "evening_w": -20.2,
+      "evening_z": -2.35,
+      "file_class": "both",
+      "in_table": true,
+      "season": "bst",
+      "weekday": "Thursday"
+    },
+    {
+      "contrast_w": 79.2,
+      "contrast_z": 10.09,
+      "day": "2013-10-13",
+      "daytime_w": 34.1,
+      "daytime_z": 5.4,
+      "evening_w": -45.1,
+      "evening_z": -5.16,
+      "file_class": "both",
+      "in_table": true,
+      "season": "bst",
+      "weekday": "Sunday"
+    },
+    {
+      "contrast_w": 68.8,
+      "contrast_z": 8.77,
+      "day": "2013-10-20",
+      "daytime_w": 28.4,
+      "daytime_z": 4.5,
+      "evening_w": -40.4,
+      "evening_z": -4.63,
+      "file_class": "both",
+      "in_table": true,
+      "season": "bst",
+      "weekday": "Sunday"
+    },
+    {
+      "contrast_w": 93.6,
+      "contrast_z": 8.69,
+      "day": "2013-11-26",
+      "daytime_w": 50.5,
+      "daytime_z": 6.13,
+      "evening_w": -43.1,
+      "evening_z": -3.75,
+      "file_class": "both",
+      "in_table": true,
+      "season": "gmt",
+      "weekday": "Tuesday"
+    },
+    {
+      "contrast_w": 75.7,
+      "contrast_z": 7.01,
+      "day": "2013-11-27",
+      "daytime_w": 32.8,
+      "daytime_z": 4.03,
+      "evening_w": -42.8,
+      "evening_z": -3.72,
+      "file_class": "both",
+      "in_table": true,
+      "season": "gmt",
+      "weekday": "Wednesday"
+    },
+    {
+      "contrast_w": 84.1,
+      "contrast_z": 7.8,
+      "day": "2013-12-15",
+      "daytime_w": 58.6,
+      "daytime_z": 7.08,
+      "evening_w": -25.5,
+      "evening_z": -2.19,
+      "file_class": "both",
+      "in_table": true,
+      "season": "gmt",
+      "weekday": "Sunday"
+    }
+  ],
+  "windows": {
+    "daytime": "05:00-17:00 wall",
+    "evening": "17:00-23:00 wall"
+  }
+}

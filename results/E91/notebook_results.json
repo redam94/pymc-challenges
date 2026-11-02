@@ -1,0 +1,208 @@
+{
+  "delivery": {
+    "100,000": {
+      "CM winter, 2013 month x band: NOT randomised, outside every headline range": 0.811,
+      "SF winter, 2013 month x band, all 4 winter events": 0.424,
+      "SF winter, 2013 month x band, without 28 Dec": 0.851,
+      "SF winter, day spread borrowed from 17 CM evenings: NOT randomised, outside every headline range": 0.403,
+      "SF winter, own day spread, all 4": 0.462,
+      "SF winter, own day spread, without 28 Dec": 0.675,
+      "SF winter, whole window, all 4 winter events": 0.494,
+      "SF winter, whole window, without 28 Dec": 0.903
+    },
+    "200,000": {
+      "CM winter, 2013 month x band: NOT randomised, outside every headline range": 0.998,
+      "SF winter, 2013 month x band, all 4 winter events": 0.911,
+      "SF winter, 2013 month x band, without 28 Dec": 0.998,
+      "SF winter, day spread borrowed from 17 CM evenings: NOT randomised, outside every headline range": 0.95,
+      "SF winter, own day spread, all 4": 0.722,
+      "SF winter, own day spread, without 28 Dec": 0.886,
+      "SF winter, whole window, all 4 winter events": 0.966,
+      "SF winter, whole window, without 28 Dec": 0.999
+    },
+    "50,000": {
+      "CM winter, 2013 month x band: NOT randomised, outside every headline range": 0.003,
+      "SF winter, 2013 month x band, all 4 winter events": 0.006,
+      "SF winter, 2013 month x band, without 28 Dec": 0.004,
+      "SF winter, day spread borrowed from 17 CM evenings: NOT randomised, outside every headline range": 0.001,
+      "SF winter, own day spread, all 4": 0.096,
+      "SF winter, own day spread, without 28 Dec": 0.096,
+      "SF winter, whole window, all 4 winter events": 0.001,
+      "SF winter, whole window, without 28 Dec": 0.001
+    }
+  },
+  "fits": {
+    "2013 month x band, all 4 winter events": {
+      "5%": -51.914,
+      "95%": -26.336,
+      "SF summer": -26.825,
+      "SF winter": -39.456,
+      "divergences": 0.0,
+      "max r_hat": 1.007,
+      "tau_e": 11.126,
+      "tau_e 5%": 5.194,
+      "tau_e 95%": 19.115
+    },
+    "2013 month x band, without 28 Dec": {
+      "5%": -61.111,
+      "95%": -39.885,
+      "SF summer": -26.894,
+      "SF winter": -50.505,
+      "divergences": 0.0,
+      "max r_hat": 1.003,
+      "tau_e": 5.288,
+      "tau_e 5%": 0.781,
+      "tau_e 95%": 11.879
+    },
+    "whole window, all 4 winter events": {
+      "5%": -53.045,
+      "95%": -30.695,
+      "SF summer": -42.215,
+      "SF winter": -41.784,
+      "divergences": 0.0,
+      "max r_hat": 1.007,
+      "tau_e": 7.236,
+      "tau_e 5%": 1.1,
+      "tau_e 95%": 15.046
+    },
+    "whole window, without 28 Dec": {
+      "5%": -62.847,
+      "95%": -41.037,
+      "SF summer": -42.409,
+      "SF winter": -52.176,
+      "divergences": 0.0,
+      "max r_hat": 1.005,
+      "tau_e": 3.901,
+      "tau_e 5%": 0.396,
+      "tau_e 95%": 10.004
+    }
+  },
+  "outside_every_headline_range": [
+    "SF winter, day spread borrowed from 17 CM evenings: NOT randomised, outside every headline range",
+    "CM winter, 2013 month x band: NOT randomised, outside every headline range"
+  ],
+  "student_t_demo": {
+    "divergences": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "home": [
+      48,
+      478,
+      673,
+      1015,
+      1414,
+      1704,
+      2075,
+      2232,
+      2536,
+      2845,
+      3111,
+      3259,
+      3489,
+      3771,
+      4035,
+      4422,
+      4687,
+      4956,
+      5164,
+      5352
+    ],
+    "max r_hat": [
+      1.017,
+      1.013,
+      1.009,
+      1.01,
+      1.007,
+      1.734,
+      1.009,
+      1.013,
+      1.01,
+      1.012,
+      1.012,
+      1.01,
+      1.011,
+      1.009,
+      1.013,
+      1.01,
+      1.532,
+      1.01,
+      1.012,
+      1.008
+    ],
+    "nu": [
+      2.001,
+      2.002,
+      2.016,
+      2.006,
+      2.001,
+      2.002,
+      2.002,
+      2.365,
+      2.003,
+      2.009,
+      2.002,
+      2.002,
+      2.006,
+      2.017,
+      2.002,
+      2.012,
+      2.001,
+      2.005,
+      2.079,
+      2.002
+    ]
+  },
+  "targeting": {
+    "all_homes_w": -29.1,
+    "held_out_w": -64.6,
+    "pre_trial_all_w": -29.2,
+    "pre_trial_top_w": -46.4,
+    "same_events_w": -141.3
+  },
+  "ways_of_counting": {
+    "adding a new evening's v": [
+      0.006,
+      0.424,
+      0.911
+    ],
+    "adding uncertainty in mu": [
+      0.0,
+      0.383,
+      0.985
+    ],
+    "counting homes": [
+      0.0,
+      0.421,
+      1.0
+    ],
+    "the 4 evenings at face value": [
+      0.0,
+      0.5,
+      0.75
+    ],
+    "winter with its own day spread": [
+      0.096,
+      0.462,
+      0.722
+    ]
+  }
+}

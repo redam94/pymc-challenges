@@ -129,9 +129,14 @@ SERIES = [
                "county conditionals and closed-form value of information show that a map of uncertainty and a map "
                "of decision value are different maps, on one 19-state crop, with a band of sites rather than a "
                "fixed list."),
+    dict(key="price-signal", range="E91", title="A price signal and a substation", ids=["E91"],
+         intro="How many homes for how many kilowatts, on the night? Real London smart meters from a trial where homes "
+               "chose the tariff but Supply-Following event days were randomised, and only those days carry the "
+               "estimate. A closed-form fleet carries the answer, a robust model misreads the sum on two of three "
+               "bands, and four winter evenings, not a thousand homes, set the limit."),
 ]
 SERIES_BY_KEY = {s["key"]: s for s in SERIES}
-RECENT = ["E87", "E89", "E86", "E85", "E84", "E83", "E82"]          # newest first, shown on the home page
+RECENT = ["E91", "E87", "E89", "E86", "E85", "E84", "E83"]          # newest first, shown on the home page
 
 
 def _link(ctx, eid, text=None):
@@ -393,6 +398,8 @@ def guide_page(ctx):
          f"{L('E82')}, {L('C13')}"),
         ("Where to measure next, on a map", "A marginal Gaussian process and the expected value of sample information",
          f"{L('E89')}"),
+        ("A sum over many homes on one shared day (load, delivery)", "A closed-form fleet, event means and a day-level model",
+         f"{L('E91')}"),
         ("What a big model will cost, and whether to buy it", "Timed gradients, a price table and a rung-by-rung held-out test",
          f"{L('E87')}"),
         ("A centile, not the mean (growth charts, thresholds)", "Bayesian quantile regression with calibration checks",

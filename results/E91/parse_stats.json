@@ -1,0 +1,1851 @@
+{
+  "Small LCL Data/LCL-June2015v2_0.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 688,
+    "null": 29,
+    "off_grid": 29,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.69
+  },
+  "Small LCL Data/LCL-June2015v2_1.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 691,
+    "null": 27,
+    "off_grid": 27,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.63
+  },
+  "Small LCL Data/LCL-June2015v2_10.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 691,
+    "null": 30,
+    "off_grid": 30,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.69
+  },
+  "Small LCL Data/LCL-June2015v2_100.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 678,
+    "null": 33,
+    "off_grid": 33,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.67
+  },
+  "Small LCL Data/LCL-June2015v2_101.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 691,
+    "null": 31,
+    "off_grid": 31,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.62
+  },
+  "Small LCL Data/LCL-June2015v2_102.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 699,
+    "null": 29,
+    "off_grid": 29,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.68
+  },
+  "Small LCL Data/LCL-June2015v2_103.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 680,
+    "null": 29,
+    "off_grid": 29,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.63
+  },
+  "Small LCL Data/LCL-June2015v2_104.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 673,
+    "null": 30,
+    "off_grid": 30,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.67
+  },
+  "Small LCL Data/LCL-June2015v2_105.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 667,
+    "null": 28,
+    "off_grid": 28,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.59
+  },
+  "Small LCL Data/LCL-June2015v2_106.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 676,
+    "null": 26,
+    "off_grid": 26,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.62
+  },
+  "Small LCL Data/LCL-June2015v2_107.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 677,
+    "null": 26,
+    "off_grid": 26,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.6
+  },
+  "Small LCL Data/LCL-June2015v2_108.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 676,
+    "null": 27,
+    "off_grid": 27,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.62
+  },
+  "Small LCL Data/LCL-June2015v2_109.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 694,
+    "null": 36,
+    "off_grid": 36,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.57
+  },
+  "Small LCL Data/LCL-June2015v2_11.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 698,
+    "null": 30,
+    "off_grid": 30,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.64
+  },
+  "Small LCL Data/LCL-June2015v2_110.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 698,
+    "null": 37,
+    "off_grid": 37,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.6
+  },
+  "Small LCL Data/LCL-June2015v2_111.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 697,
+    "null": 34,
+    "off_grid": 34,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.63
+  },
+  "Small LCL Data/LCL-June2015v2_112.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 688,
+    "null": 31,
+    "off_grid": 31,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.62
+  },
+  "Small LCL Data/LCL-June2015v2_113.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 689,
+    "null": 30,
+    "off_grid": 30,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.63
+  },
+  "Small LCL Data/LCL-June2015v2_114.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 692,
+    "null": 32,
+    "off_grid": 32,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.67
+  },
+  "Small LCL Data/LCL-June2015v2_115.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 684,
+    "null": 28,
+    "off_grid": 28,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.62
+  },
+  "Small LCL Data/LCL-June2015v2_116.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 688,
+    "null": 27,
+    "off_grid": 27,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.66
+  },
+  "Small LCL Data/LCL-June2015v2_117.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 675,
+    "null": 27,
+    "off_grid": 27,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.64
+  },
+  "Small LCL Data/LCL-June2015v2_118.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 678,
+    "null": 29,
+    "off_grid": 29,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.67
+  },
+  "Small LCL Data/LCL-June2015v2_119.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 680,
+    "null": 28,
+    "off_grid": 28,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.63
+  },
+  "Small LCL Data/LCL-June2015v2_12.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 679,
+    "null": 31,
+    "off_grid": 31,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.68
+  },
+  "Small LCL Data/LCL-June2015v2_120.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 685,
+    "null": 29,
+    "off_grid": 29,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.67
+  },
+  "Small LCL Data/LCL-June2015v2_121.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 682,
+    "null": 34,
+    "off_grid": 34,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.62
+  },
+  "Small LCL Data/LCL-June2015v2_122.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 685,
+    "null": 37,
+    "off_grid": 37,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.65
+  },
+  "Small LCL Data/LCL-June2015v2_123.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 686,
+    "null": 33,
+    "off_grid": 33,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.61
+  },
+  "Small LCL Data/LCL-June2015v2_124.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 687,
+    "null": 28,
+    "off_grid": 28,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 2.27
+  },
+  "Small LCL Data/LCL-June2015v2_125.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 692,
+    "null": 28,
+    "off_grid": 28,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.68
+  },
+  "Small LCL Data/LCL-June2015v2_126.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 696,
+    "null": 28,
+    "off_grid": 28,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.6
+  },
+  "Small LCL Data/LCL-June2015v2_127.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 678,
+    "null": 29,
+    "off_grid": 29,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.66
+  },
+  "Small LCL Data/LCL-June2015v2_128.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 677,
+    "null": 28,
+    "off_grid": 28,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.59
+  },
+  "Small LCL Data/LCL-June2015v2_129.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 678,
+    "null": 30,
+    "off_grid": 30,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.62
+  },
+  "Small LCL Data/LCL-June2015v2_13.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 675,
+    "null": 31,
+    "off_grid": 31,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.69
+  },
+  "Small LCL Data/LCL-June2015v2_130.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 685,
+    "null": 28,
+    "off_grid": 28,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.65
+  },
+  "Small LCL Data/LCL-June2015v2_131.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 701,
+    "null": 32,
+    "off_grid": 32,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.6
+  },
+  "Small LCL Data/LCL-June2015v2_132.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 687,
+    "null": 31,
+    "off_grid": 31,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.56
+  },
+  "Small LCL Data/LCL-June2015v2_133.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 671,
+    "null": 31,
+    "off_grid": 31,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.61
+  },
+  "Small LCL Data/LCL-June2015v2_134.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 691,
+    "null": 33,
+    "off_grid": 33,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 148703,
+      "ToU": 851297
+    },
+    "seconds": 1.66
+  },
+  "Small LCL Data/LCL-June2015v2_135.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 685,
+    "null": 27,
+    "off_grid": 27,
+    "rows": 1000000,
+    "rows_by_group": {
+      "ToU": 1000000
+    },
+    "seconds": 1.59
+  },
+  "Small LCL Data/LCL-June2015v2_136.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 686,
+    "null": 30,
+    "off_grid": 30,
+    "rows": 1000000,
+    "rows_by_group": {
+      "ToU": 1000000
+    },
+    "seconds": 1.63
+  },
+  "Small LCL Data/LCL-June2015v2_137.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 692,
+    "null": 31,
+    "off_grid": 31,
+    "rows": 1000000,
+    "rows_by_group": {
+      "ToU": 1000000
+    },
+    "seconds": 1.57
+  },
+  "Small LCL Data/LCL-June2015v2_138.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 678,
+    "null": 31,
+    "off_grid": 31,
+    "rows": 1000000,
+    "rows_by_group": {
+      "ToU": 1000000
+    },
+    "seconds": 1.62
+  },
+  "Small LCL Data/LCL-June2015v2_139.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 679,
+    "null": 32,
+    "off_grid": 32,
+    "rows": 1000000,
+    "rows_by_group": {
+      "ToU": 1000000
+    },
+    "seconds": 1.58
+  },
+  "Small LCL Data/LCL-June2015v2_14.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 680,
+    "null": 31,
+    "off_grid": 31,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.73
+  },
+  "Small LCL Data/LCL-June2015v2_140.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 688,
+    "null": 32,
+    "off_grid": 32,
+    "rows": 1000000,
+    "rows_by_group": {
+      "ToU": 1000000
+    },
+    "seconds": 1.63
+  },
+  "Small LCL Data/LCL-June2015v2_141.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 693,
+    "null": 33,
+    "off_grid": 33,
+    "rows": 1000000,
+    "rows_by_group": {
+      "ToU": 1000000
+    },
+    "seconds": 1.57
+  },
+  "Small LCL Data/LCL-June2015v2_142.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 700,
+    "null": 34,
+    "off_grid": 34,
+    "rows": 1000000,
+    "rows_by_group": {
+      "ToU": 1000000
+    },
+    "seconds": 1.61
+  },
+  "Small LCL Data/LCL-June2015v2_143.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 677,
+    "null": 34,
+    "off_grid": 34,
+    "rows": 1000000,
+    "rows_by_group": {
+      "ToU": 1000000
+    },
+    "seconds": 1.58
+  },
+  "Small LCL Data/LCL-June2015v2_144.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 682,
+    "null": 34,
+    "off_grid": 34,
+    "rows": 1000000,
+    "rows_by_group": {
+      "ToU": 1000000
+    },
+    "seconds": 1.59
+  },
+  "Small LCL Data/LCL-June2015v2_145.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 691,
+    "null": 33,
+    "off_grid": 33,
+    "rows": 1000000,
+    "rows_by_group": {
+      "ToU": 1000000
+    },
+    "seconds": 1.61
+  },
+  "Small LCL Data/LCL-June2015v2_146.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 700,
+    "null": 34,
+    "off_grid": 34,
+    "rows": 1000000,
+    "rows_by_group": {
+      "ToU": 1000000
+    },
+    "seconds": 1.62
+  },
+  "Small LCL Data/LCL-June2015v2_147.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 683,
+    "null": 37,
+    "off_grid": 37,
+    "rows": 1000000,
+    "rows_by_group": {
+      "ToU": 1000000
+    },
+    "seconds": 1.57
+  },
+  "Small LCL Data/LCL-June2015v2_148.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 679,
+    "null": 32,
+    "off_grid": 32,
+    "rows": 1000000,
+    "rows_by_group": {
+      "ToU": 1000000
+    },
+    "seconds": 1.63
+  },
+  "Small LCL Data/LCL-June2015v2_149.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 690,
+    "null": 32,
+    "off_grid": 32,
+    "rows": 1000000,
+    "rows_by_group": {
+      "ToU": 1000000
+    },
+    "seconds": 1.56
+  },
+  "Small LCL Data/LCL-June2015v2_15.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 686,
+    "null": 32,
+    "off_grid": 32,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.66
+  },
+  "Small LCL Data/LCL-June2015v2_150.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 693,
+    "null": 34,
+    "off_grid": 34,
+    "rows": 1000000,
+    "rows_by_group": {
+      "ToU": 1000000
+    },
+    "seconds": 1.63
+  },
+  "Small LCL Data/LCL-June2015v2_151.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 694,
+    "null": 32,
+    "off_grid": 32,
+    "rows": 1000000,
+    "rows_by_group": {
+      "ToU": 1000000
+    },
+    "seconds": 1.59
+  },
+  "Small LCL Data/LCL-June2015v2_152.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 690,
+    "null": 35,
+    "off_grid": 35,
+    "rows": 1000000,
+    "rows_by_group": {
+      "ToU": 1000000
+    },
+    "seconds": 1.63
+  },
+  "Small LCL Data/LCL-June2015v2_153.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 700,
+    "null": 35,
+    "off_grid": 35,
+    "rows": 1000000,
+    "rows_by_group": {
+      "ToU": 1000000
+    },
+    "seconds": 1.61
+  },
+  "Small LCL Data/LCL-June2015v2_154.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 685,
+    "null": 42,
+    "off_grid": 42,
+    "rows": 1000000,
+    "rows_by_group": {
+      "ToU": 1000000
+    },
+    "seconds": 1.63
+  },
+  "Small LCL Data/LCL-June2015v2_155.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 691,
+    "null": 41,
+    "off_grid": 41,
+    "rows": 1000000,
+    "rows_by_group": {
+      "ToU": 1000000
+    },
+    "seconds": 1.61
+  },
+  "Small LCL Data/LCL-June2015v2_156.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 707,
+    "null": 42,
+    "off_grid": 42,
+    "rows": 1000000,
+    "rows_by_group": {
+      "ToU": 1000000
+    },
+    "seconds": 1.71
+  },
+  "Small LCL Data/LCL-June2015v2_157.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 686,
+    "null": 40,
+    "off_grid": 40,
+    "rows": 1000000,
+    "rows_by_group": {
+      "ToU": 1000000
+    },
+    "seconds": 1.6
+  },
+  "Small LCL Data/LCL-June2015v2_158.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 682,
+    "null": 34,
+    "off_grid": 34,
+    "rows": 1000000,
+    "rows_by_group": {
+      "ToU": 1000000
+    },
+    "seconds": 1.61
+  },
+  "Small LCL Data/LCL-June2015v2_159.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 683,
+    "null": 32,
+    "off_grid": 32,
+    "rows": 1000000,
+    "rows_by_group": {
+      "ToU": 1000000
+    },
+    "seconds": 1.77
+  },
+  "Small LCL Data/LCL-June2015v2_16.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 697,
+    "null": 31,
+    "off_grid": 31,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.71
+  },
+  "Small LCL Data/LCL-June2015v2_160.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 677,
+    "null": 29,
+    "off_grid": 29,
+    "rows": 1000000,
+    "rows_by_group": {
+      "ToU": 1000000
+    },
+    "seconds": 1.61
+  },
+  "Small LCL Data/LCL-June2015v2_161.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 694,
+    "null": 35,
+    "off_grid": 35,
+    "rows": 1000000,
+    "rows_by_group": {
+      "ToU": 1000000
+    },
+    "seconds": 1.64
+  },
+  "Small LCL Data/LCL-June2015v2_162.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 691,
+    "null": 31,
+    "off_grid": 31,
+    "rows": 1000000,
+    "rows_by_group": {
+      "ToU": 1000000
+    },
+    "seconds": 1.64
+  },
+  "Small LCL Data/LCL-June2015v2_163.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 680,
+    "null": 29,
+    "off_grid": 29,
+    "rows": 1000000,
+    "rows_by_group": {
+      "ToU": 1000000
+    },
+    "seconds": 1.63
+  },
+  "Small LCL Data/LCL-June2015v2_164.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 686,
+    "null": 32,
+    "off_grid": 32,
+    "rows": 1000000,
+    "rows_by_group": {
+      "ToU": 1000000
+    },
+    "seconds": 1.66
+  },
+  "Small LCL Data/LCL-June2015v2_165.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 691,
+    "null": 30,
+    "off_grid": 30,
+    "rows": 1000000,
+    "rows_by_group": {
+      "ToU": 1000000
+    },
+    "seconds": 1.65
+  },
+  "Small LCL Data/LCL-June2015v2_166.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 685,
+    "null": 29,
+    "off_grid": 29,
+    "rows": 1000000,
+    "rows_by_group": {
+      "ToU": 1000000
+    },
+    "seconds": 1.65
+  },
+  "Small LCL Data/LCL-June2015v2_167.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 633,
+    "null": 31,
+    "off_grid": 31,
+    "rows": 932474,
+    "rows_by_group": {
+      "ToU": 932474
+    },
+    "seconds": 1.49
+  },
+  "Small LCL Data/LCL-June2015v2_17.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 700,
+    "null": 33,
+    "off_grid": 33,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.66
+  },
+  "Small LCL Data/LCL-June2015v2_18.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 694,
+    "null": 31,
+    "off_grid": 31,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.73
+  },
+  "Small LCL Data/LCL-June2015v2_19.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 675,
+    "null": 31,
+    "off_grid": 31,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.65
+  },
+  "Small LCL Data/LCL-June2015v2_2.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 694,
+    "null": 26,
+    "off_grid": 26,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.74
+  },
+  "Small LCL Data/LCL-June2015v2_20.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 673,
+    "null": 32,
+    "off_grid": 32,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.68
+  },
+  "Small LCL Data/LCL-June2015v2_21.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 673,
+    "null": 32,
+    "off_grid": 32,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.69
+  },
+  "Small LCL Data/LCL-June2015v2_22.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 681,
+    "null": 31,
+    "off_grid": 31,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.68
+  },
+  "Small LCL Data/LCL-June2015v2_23.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 682,
+    "null": 32,
+    "off_grid": 32,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.67
+  },
+  "Small LCL Data/LCL-June2015v2_24.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 682,
+    "null": 32,
+    "off_grid": 32,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.73
+  },
+  "Small LCL Data/LCL-June2015v2_25.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 684,
+    "null": 33,
+    "off_grid": 33,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.67
+  },
+  "Small LCL Data/LCL-June2015v2_26.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 688,
+    "null": 33,
+    "off_grid": 33,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.67
+  },
+  "Small LCL Data/LCL-June2015v2_27.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 687,
+    "null": 34,
+    "off_grid": 34,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.64
+  },
+  "Small LCL Data/LCL-June2015v2_28.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 693,
+    "null": 33,
+    "off_grid": 33,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.66
+  },
+  "Small LCL Data/LCL-June2015v2_29.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 694,
+    "null": 33,
+    "off_grid": 33,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.6
+  },
+  "Small LCL Data/LCL-June2015v2_3.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 685,
+    "null": 27,
+    "off_grid": 27,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.66
+  },
+  "Small LCL Data/LCL-June2015v2_30.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 692,
+    "null": 34,
+    "off_grid": 34,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.64
+  },
+  "Small LCL Data/LCL-June2015v2_31.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 699,
+    "null": 33,
+    "off_grid": 33,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.67
+  },
+  "Small LCL Data/LCL-June2015v2_32.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 700,
+    "null": 34,
+    "off_grid": 34,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.67
+  },
+  "Small LCL Data/LCL-June2015v2_33.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 702,
+    "null": 36,
+    "off_grid": 36,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.65
+  },
+  "Small LCL Data/LCL-June2015v2_34.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 703,
+    "null": 34,
+    "off_grid": 34,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.7
+  },
+  "Small LCL Data/LCL-June2015v2_35.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 702,
+    "null": 32,
+    "off_grid": 32,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.67
+  },
+  "Small LCL Data/LCL-June2015v2_36.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 682,
+    "null": 35,
+    "off_grid": 35,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.67
+  },
+  "Small LCL Data/LCL-June2015v2_37.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 674,
+    "null": 34,
+    "off_grid": 34,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.64
+  },
+  "Small LCL Data/LCL-June2015v2_38.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 677,
+    "null": 32,
+    "off_grid": 32,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.68
+  },
+  "Small LCL Data/LCL-June2015v2_39.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 677,
+    "null": 33,
+    "off_grid": 33,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.66
+  },
+  "Small LCL Data/LCL-June2015v2_4.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 673,
+    "null": 28,
+    "off_grid": 28,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.75
+  },
+  "Small LCL Data/LCL-June2015v2_40.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 679,
+    "null": 34,
+    "off_grid": 34,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.69
+  },
+  "Small LCL Data/LCL-June2015v2_41.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 681,
+    "null": 34,
+    "off_grid": 34,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.65
+  },
+  "Small LCL Data/LCL-June2015v2_42.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 683,
+    "null": 34,
+    "off_grid": 34,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.66
+  },
+  "Small LCL Data/LCL-June2015v2_43.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 686,
+    "null": 33,
+    "off_grid": 33,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.62
+  },
+  "Small LCL Data/LCL-June2015v2_44.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 688,
+    "null": 34,
+    "off_grid": 34,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.68
+  },
+  "Small LCL Data/LCL-June2015v2_45.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 692,
+    "null": 33,
+    "off_grid": 33,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.68
+  },
+  "Small LCL Data/LCL-June2015v2_46.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 693,
+    "null": 35,
+    "off_grid": 35,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.65
+  },
+  "Small LCL Data/LCL-June2015v2_47.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 696,
+    "null": 35,
+    "off_grid": 35,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.63
+  },
+  "Small LCL Data/LCL-June2015v2_48.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 697,
+    "null": 35,
+    "off_grid": 35,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.65
+  },
+  "Small LCL Data/LCL-June2015v2_49.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 697,
+    "null": 35,
+    "off_grid": 35,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.61
+  },
+  "Small LCL Data/LCL-June2015v2_5.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 680,
+    "null": 26,
+    "off_grid": 26,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.67
+  },
+  "Small LCL Data/LCL-June2015v2_50.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 700,
+    "null": 36,
+    "off_grid": 36,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.65
+  },
+  "Small LCL Data/LCL-June2015v2_51.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 702,
+    "null": 34,
+    "off_grid": 34,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.61
+  },
+  "Small LCL Data/LCL-June2015v2_52.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 699,
+    "null": 35,
+    "off_grid": 35,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.61
+  },
+  "Small LCL Data/LCL-June2015v2_53.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 672,
+    "null": 35,
+    "off_grid": 35,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.58
+  },
+  "Small LCL Data/LCL-June2015v2_54.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 674,
+    "null": 36,
+    "off_grid": 36,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.59
+  },
+  "Small LCL Data/LCL-June2015v2_55.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 679,
+    "null": 32,
+    "off_grid": 32,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.64
+  },
+  "Small LCL Data/LCL-June2015v2_56.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 678,
+    "null": 33,
+    "off_grid": 33,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.6
+  },
+  "Small LCL Data/LCL-June2015v2_57.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 680,
+    "null": 32,
+    "off_grid": 32,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.63
+  },
+  "Small LCL Data/LCL-June2015v2_58.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 682,
+    "null": 33,
+    "off_grid": 33,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.59
+  },
+  "Small LCL Data/LCL-June2015v2_59.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 685,
+    "null": 32,
+    "off_grid": 32,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.6
+  },
+  "Small LCL Data/LCL-June2015v2_6.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 683,
+    "null": 27,
+    "off_grid": 27,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.66
+  },
+  "Small LCL Data/LCL-June2015v2_60.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 683,
+    "null": 33,
+    "off_grid": 33,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.56
+  },
+  "Small LCL Data/LCL-June2015v2_61.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 689,
+    "null": 34,
+    "off_grid": 34,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.59
+  },
+  "Small LCL Data/LCL-June2015v2_62.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 695,
+    "null": 36,
+    "off_grid": 36,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.6
+  },
+  "Small LCL Data/LCL-June2015v2_63.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 696,
+    "null": 35,
+    "off_grid": 35,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.53
+  },
+  "Small LCL Data/LCL-June2015v2_64.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 693,
+    "null": 35,
+    "off_grid": 35,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.6
+  },
+  "Small LCL Data/LCL-June2015v2_65.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 690,
+    "null": 32,
+    "off_grid": 32,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.6
+  },
+  "Small LCL Data/LCL-June2015v2_66.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 691,
+    "null": 32,
+    "off_grid": 32,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.56
+  },
+  "Small LCL Data/LCL-June2015v2_67.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 696,
+    "null": 32,
+    "off_grid": 32,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.59
+  },
+  "Small LCL Data/LCL-June2015v2_68.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 697,
+    "null": 32,
+    "off_grid": 32,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.6
+  },
+  "Small LCL Data/LCL-June2015v2_69.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 696,
+    "null": 34,
+    "off_grid": 34,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.59
+  },
+  "Small LCL Data/LCL-June2015v2_7.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 686,
+    "null": 27,
+    "off_grid": 27,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.67
+  },
+  "Small LCL Data/LCL-June2015v2_70.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 695,
+    "null": 34,
+    "off_grid": 34,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.62
+  },
+  "Small LCL Data/LCL-June2015v2_71.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 689,
+    "null": 34,
+    "off_grid": 34,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.61
+  },
+  "Small LCL Data/LCL-June2015v2_72.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 687,
+    "null": 35,
+    "off_grid": 35,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.62
+  },
+  "Small LCL Data/LCL-June2015v2_73.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 693,
+    "null": 36,
+    "off_grid": 36,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.57
+  },
+  "Small LCL Data/LCL-June2015v2_74.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 701,
+    "null": 33,
+    "off_grid": 33,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.61
+  },
+  "Small LCL Data/LCL-June2015v2_75.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 704,
+    "null": 33,
+    "off_grid": 33,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.6
+  },
+  "Small LCL Data/LCL-June2015v2_76.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 701,
+    "null": 33,
+    "off_grid": 33,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.6
+  },
+  "Small LCL Data/LCL-June2015v2_77.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 699,
+    "null": 38,
+    "off_grid": 38,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.6
+  },
+  "Small LCL Data/LCL-June2015v2_78.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 709,
+    "null": 41,
+    "off_grid": 41,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.65
+  },
+  "Small LCL Data/LCL-June2015v2_79.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 681,
+    "null": 41,
+    "off_grid": 41,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.6
+  },
+  "Small LCL Data/LCL-June2015v2_8.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 688,
+    "null": 27,
+    "off_grid": 27,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.7
+  },
+  "Small LCL Data/LCL-June2015v2_80.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 678,
+    "null": 40,
+    "off_grid": 40,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.61
+  },
+  "Small LCL Data/LCL-June2015v2_81.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 681,
+    "null": 44,
+    "off_grid": 44,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.56
+  },
+  "Small LCL Data/LCL-June2015v2_82.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 687,
+    "null": 41,
+    "off_grid": 41,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.59
+  },
+  "Small LCL Data/LCL-June2015v2_83.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 689,
+    "null": 43,
+    "off_grid": 43,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.6
+  },
+  "Small LCL Data/LCL-June2015v2_84.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 697,
+    "null": 42,
+    "off_grid": 42,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.6
+  },
+  "Small LCL Data/LCL-June2015v2_85.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 697,
+    "null": 43,
+    "off_grid": 43,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.62
+  },
+  "Small LCL Data/LCL-June2015v2_86.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 702,
+    "null": 42,
+    "off_grid": 42,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.64
+  },
+  "Small LCL Data/LCL-June2015v2_87.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 707,
+    "null": 43,
+    "off_grid": 43,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.64
+  },
+  "Small LCL Data/LCL-June2015v2_88.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 712,
+    "null": 43,
+    "off_grid": 43,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.64
+  },
+  "Small LCL Data/LCL-June2015v2_89.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 680,
+    "null": 43,
+    "off_grid": 43,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.61
+  },
+  "Small LCL Data/LCL-June2015v2_9.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 688,
+    "null": 29,
+    "off_grid": 29,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.67
+  },
+  "Small LCL Data/LCL-June2015v2_90.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 677,
+    "null": 42,
+    "off_grid": 42,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.65
+  },
+  "Small LCL Data/LCL-June2015v2_91.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 684,
+    "null": 44,
+    "off_grid": 44,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.61
+  },
+  "Small LCL Data/LCL-June2015v2_92.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 692,
+    "null": 36,
+    "off_grid": 36,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.66
+  },
+  "Small LCL Data/LCL-June2015v2_93.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 691,
+    "null": 35,
+    "off_grid": 35,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.66
+  },
+  "Small LCL Data/LCL-June2015v2_94.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 690,
+    "null": 36,
+    "off_grid": 36,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.64
+  },
+  "Small LCL Data/LCL-June2015v2_95.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 670,
+    "null": 34,
+    "off_grid": 34,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.63
+  },
+  "Small LCL Data/LCL-June2015v2_96.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 672,
+    "null": 33,
+    "off_grid": 33,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.66
+  },
+  "Small LCL Data/LCL-June2015v2_97.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 675,
+    "null": 33,
+    "off_grid": 33,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.66
+  },
+  "Small LCL Data/LCL-June2015v2_98.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 678,
+    "null": 33,
+    "off_grid": 33,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.68
+  },
+  "Small LCL Data/LCL-June2015v2_99.csv": {
+    "conflicting_slots": 0,
+    "exact_duplicates": 678,
+    "null": 35,
+    "off_grid": 35,
+    "rows": 1000000,
+    "rows_by_group": {
+      "Std": 1000000
+    },
+    "seconds": 1.63
+  }
+}

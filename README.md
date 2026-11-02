@@ -29,7 +29,7 @@ for every notebook, so this is optional. Later syncs drop it unless you repeat t
 
 ```
 notebooks/
-  examples/      E01-E87, E89  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
+  examples/      E01-E87, E89, E91  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
   challenges/    C01-C15  your workspace. Tasks, empty cells, hints on request.
   solutions/     C01-C15  full reference solutions, executed, with commentary.
 ```
@@ -289,6 +289,14 @@ Where should the next air monitors go? Uncertainty and decision value turn out t
 | | Topic | Data | Key techniques |
 |---|---|---|---|
 | **E89** | Where should the next air monitors go? | EPA AirData daily PM2.5 2023-2025 (419 sites in 19 states, superseded T640 series removed) and Census 2024 county populations | marginal Matern GP with known measurement error, exact county conditionals, closed-form EVSI checked by brute force, lazy greedy site selection, simulated joint value against summed gains, a search that lets county means move, a paired-instrument refit, split-half stability, alternative objectives, a band of sites rather than a ranked list, county maps with no GIS library |
+
+#### A price signal and a substation (E91)
+
+How many homes does it take to have a stated chance of a stated cut on the night? Nobody randomised who took the tariff, but Supply-Following event days were randomised, and a winter evening has only four of them. The notebook runs on 2 cores and about 1 GB, in about 3 minutes, at its small rung only: a reduced delivery estimate, reported as a range on the randomised evenings alone, because the pre-trial placebo failed, ending on "run a local trial first".
+
+| | Topic | Data | Key techniques |
+|---|---|---|---|
+| **E91** | The price signal and the substation: how many homes for how many kilowatts? | Low Carbon London smart meters from UK Power Networks (London Datastore, CC BY 4.0; 1,088 tariff homes as a home x event table and 200 homes hourly) and the 2013 price file; the planner and substation are fictional | what was and was not randomised, naive group difference against a within-home closed-form fleet, a meter-clock failure, balance, placebo and benchmark gates, why a Student-t location misses a sum (quantile shift function), a Gaussian day-level model on randomised evenings with shared and own spreads, delivery curves and a planner's contour map, counting evenings instead of homes, cross-fitted targeting, ranking on earlier load, block-mean carpets, funnels and calendar rasters in plain matplotlib |
 
 ### Data work (D-series)
 

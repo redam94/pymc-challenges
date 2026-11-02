@@ -1,0 +1,1380 @@
+{
+  "day_counts": {
+    "all_low": 5,
+    "both": 25,
+    "none": 246,
+    "single": 90
+  },
+  "disputed_days": [
+    "2013-03-29",
+    "2013-05-03",
+    "2013-11-19",
+    "2013-12-06",
+    "2013-12-08",
+    "2013-12-10",
+    "2013-12-21",
+    "2013-12-27"
+  ],
+  "events": [
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-01-04",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-01-04T14:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-01-07",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-01-07T23:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-01-09",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-01-10T02:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-01-11",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-01-11T11:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-01-13",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-01-13T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-01-16",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-01-16T23:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-01-19",
+      "disputed": false,
+      "slots": 24,
+      "start_wall": "2013-01-19T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "both",
+      "day": "2013-01-19",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-01-19T17:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-01-19",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-01-19T23:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-01-20",
+      "disputed": false,
+      "slots": 24,
+      "start_wall": "2013-01-20T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "both",
+      "day": "2013-01-20",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-01-20T17:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-01-20",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-01-20T23:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-01-25",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-01-25T05:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-01-28",
+      "disputed": false,
+      "slots": 24,
+      "start_wall": "2013-01-28T11:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-01-29",
+      "disputed": false,
+      "slots": 4,
+      "start_wall": "2013-01-29T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "both",
+      "day": "2013-01-29",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-01-29T07:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-01-29",
+      "disputed": false,
+      "slots": 38,
+      "start_wall": "2013-01-29T10:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-02-03",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-02-03T11:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-02-05",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-02-05T17:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "all_low",
+      "day": "2013-02-07",
+      "disputed": false,
+      "slots": 48,
+      "start_wall": "2013-02-07T05:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-02-09",
+      "disputed": false,
+      "slots": 10,
+      "start_wall": "2013-02-09T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "both",
+      "day": "2013-02-09",
+      "disputed": false,
+      "slots": 8,
+      "start_wall": "2013-02-09T10:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-02-09",
+      "disputed": false,
+      "slots": 30,
+      "start_wall": "2013-02-09T14:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-02-11",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-02-11T17:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-02-15",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-02-15T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-02-17",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-02-17T23:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-02-20",
+      "disputed": false,
+      "slots": 24,
+      "start_wall": "2013-02-20T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "both",
+      "day": "2013-02-20",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-02-20T17:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-02-20",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-02-20T23:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-02-21",
+      "disputed": false,
+      "slots": 24,
+      "start_wall": "2013-02-21T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "both",
+      "day": "2013-02-21",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-02-21T17:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-02-21",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-02-21T23:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-02-26",
+      "disputed": false,
+      "slots": 24,
+      "start_wall": "2013-02-26T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-02-27",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-02-27T17:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-02-28",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-02-28T08:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-03-01",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-03-01T23:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-03-07",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-03-07T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-03-08",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-03-08T14:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-03-14",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-03-14T05:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-03-16",
+      "disputed": false,
+      "slots": 24,
+      "start_wall": "2013-03-16T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "both",
+      "day": "2013-03-16",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-03-16T17:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-03-16",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-03-16T23:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-03-17",
+      "disputed": false,
+      "slots": 24,
+      "start_wall": "2013-03-17T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "both",
+      "day": "2013-03-17",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-03-17T17:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-03-17",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-03-17T23:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-03-19",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-03-19T14:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-03-21",
+      "disputed": false,
+      "slots": 4,
+      "start_wall": "2013-03-21T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "both",
+      "day": "2013-03-21",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-03-21T07:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-03-21",
+      "disputed": false,
+      "slots": 38,
+      "start_wall": "2013-03-21T10:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-03-27",
+      "disputed": false,
+      "slots": 24,
+      "start_wall": "2013-03-27T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "both",
+      "day": "2013-03-27",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-03-27T17:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-03-27",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-03-27T23:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-03-28",
+      "disputed": false,
+      "slots": 24,
+      "start_wall": "2013-03-28T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "both",
+      "day": "2013-03-28",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-03-28T17:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-03-28",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-03-28T23:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "all_low",
+      "day": "2013-03-29",
+      "disputed": true,
+      "slots": 48,
+      "start_wall": "2013-03-29T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-04-05",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-04-05T20:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-04-08",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-04-08T11:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-04-10",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-04-11T02:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-04-13",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-04-13T17:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-04-16",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-04-16T05:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-04-21",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-04-21T11:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-04-23",
+      "disputed": false,
+      "slots": 24,
+      "start_wall": "2013-04-23T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "both",
+      "day": "2013-04-23",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-04-23T17:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-04-23",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-04-23T23:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-04-26",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-04-26T20:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-04-27",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-04-27T14:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-05-01",
+      "disputed": false,
+      "slots": 24,
+      "start_wall": "2013-05-01T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "both",
+      "day": "2013-05-01",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-05-01T17:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-05-01",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-05-01T23:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-05-02",
+      "disputed": false,
+      "slots": 24,
+      "start_wall": "2013-05-02T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "both",
+      "day": "2013-05-02",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-05-02T17:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-05-02",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-05-02T23:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "all_low",
+      "day": "2013-05-03",
+      "disputed": true,
+      "slots": 48,
+      "start_wall": "2013-05-03T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-05-08",
+      "disputed": false,
+      "slots": 24,
+      "start_wall": "2013-05-08T11:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-05-13",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-05-13T17:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-05-18",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-05-18T17:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-05-25",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-05-25T08:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-05-29",
+      "disputed": false,
+      "slots": 24,
+      "start_wall": "2013-05-29T17:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-06-03",
+      "disputed": false,
+      "slots": 24,
+      "start_wall": "2013-06-03T11:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-06-07",
+      "disputed": false,
+      "slots": 24,
+      "start_wall": "2013-06-07T17:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-06-08",
+      "disputed": false,
+      "slots": 24,
+      "start_wall": "2013-06-08T05:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-06-12",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-06-12T11:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-06-13",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-06-13T17:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-06-15",
+      "disputed": false,
+      "slots": 24,
+      "start_wall": "2013-06-15T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-06-17",
+      "disputed": false,
+      "slots": 24,
+      "start_wall": "2013-06-17T11:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-06-18",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-06-18T17:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-06-19",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-06-19T14:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "all_low",
+      "day": "2013-06-20",
+      "disputed": false,
+      "slots": 48,
+      "start_wall": "2013-06-20T05:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-06-26",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-06-27T02:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-06-30",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-06-30T11:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-07-03",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-07-03T23:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-07-05",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-07-05T05:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-07-12",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-07-12T11:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-07-14",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-07-14T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-07-19",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-07-19T20:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-07-22",
+      "disputed": false,
+      "slots": 24,
+      "start_wall": "2013-07-22T11:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-07-24",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-07-25T02:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-07-25",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-07-25T08:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-07-27",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-07-27T11:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-07-30",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-07-30T05:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-07-31",
+      "disputed": false,
+      "slots": 24,
+      "start_wall": "2013-07-31T11:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-08-06",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-08-06T17:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-08-09",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-08-09T17:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-08-13",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-08-13T14:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-08-17",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-08-17T23:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-08-18",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-08-18T08:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-08-25",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-08-25T20:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-08-28",
+      "disputed": false,
+      "slots": 24,
+      "start_wall": "2013-08-28T17:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-09-01",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-09-01T08:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-09-02",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-09-02T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-09-03",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-09-04T02:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-09-08",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-09-08T20:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-09-13",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-09-13T11:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-09-16",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-09-16T23:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-09-17",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-09-17T23:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-09-29",
+      "disputed": false,
+      "slots": 24,
+      "start_wall": "2013-09-29T17:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-10-06",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-10-06T23:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-10-11",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-10-11T11:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-10-13",
+      "disputed": false,
+      "slots": 24,
+      "start_wall": "2013-10-13T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "both",
+      "day": "2013-10-13",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-10-13T17:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-10-13",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-10-13T23:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-10-15",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-10-15T11:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-10-16",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-10-16T05:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-10-17",
+      "disputed": false,
+      "slots": 24,
+      "start_wall": "2013-10-17T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-10-18",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-10-18T23:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-10-20",
+      "disputed": false,
+      "slots": 24,
+      "start_wall": "2013-10-20T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "both",
+      "day": "2013-10-20",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-10-20T17:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-10-20",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-10-20T23:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-10-30",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-10-31T02:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-10-31",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-10-31T05:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-11-03",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-11-03T11:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-11-05",
+      "disputed": false,
+      "slots": 24,
+      "start_wall": "2013-11-05T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-11-14",
+      "disputed": false,
+      "slots": 24,
+      "start_wall": "2013-11-14T05:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-11-19",
+      "disputed": true,
+      "slots": 24,
+      "start_wall": "2013-11-19T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "both",
+      "day": "2013-11-19",
+      "disputed": true,
+      "slots": 12,
+      "start_wall": "2013-11-19T17:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-11-19",
+      "disputed": true,
+      "slots": 12,
+      "start_wall": "2013-11-19T23:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-11-21",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-11-21T17:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-11-26",
+      "disputed": false,
+      "slots": 24,
+      "start_wall": "2013-11-26T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "both",
+      "day": "2013-11-26",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-11-26T17:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-11-26",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-11-26T23:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-11-27",
+      "disputed": false,
+      "slots": 24,
+      "start_wall": "2013-11-27T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "both",
+      "day": "2013-11-27",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-11-27T17:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-11-27",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-11-27T23:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-11-29",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-11-29T23:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-12-01",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-12-01T17:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-12-04",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-12-04T20:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-12-06",
+      "disputed": true,
+      "slots": 24,
+      "start_wall": "2013-12-06T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "both",
+      "day": "2013-12-06",
+      "disputed": true,
+      "slots": 12,
+      "start_wall": "2013-12-06T17:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-12-06",
+      "disputed": true,
+      "slots": 12,
+      "start_wall": "2013-12-06T23:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-12-08",
+      "disputed": true,
+      "slots": 24,
+      "start_wall": "2013-12-08T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "both",
+      "day": "2013-12-08",
+      "disputed": true,
+      "slots": 12,
+      "start_wall": "2013-12-08T17:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-12-08",
+      "disputed": true,
+      "slots": 12,
+      "start_wall": "2013-12-08T23:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-12-10",
+      "disputed": true,
+      "slots": 24,
+      "start_wall": "2013-12-10T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "both",
+      "day": "2013-12-10",
+      "disputed": true,
+      "slots": 12,
+      "start_wall": "2013-12-10T17:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-12-10",
+      "disputed": true,
+      "slots": 12,
+      "start_wall": "2013-12-10T23:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-12-12",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-12-12T23:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-12-15",
+      "disputed": false,
+      "slots": 24,
+      "start_wall": "2013-12-15T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "both",
+      "day": "2013-12-15",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-12-15T17:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-12-15",
+      "disputed": false,
+      "slots": 12,
+      "start_wall": "2013-12-15T23:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "all_low",
+      "day": "2013-12-19",
+      "disputed": false,
+      "slots": 48,
+      "start_wall": "2013-12-19T05:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-12-21",
+      "disputed": true,
+      "slots": 24,
+      "start_wall": "2013-12-21T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "both",
+      "day": "2013-12-21",
+      "disputed": true,
+      "slots": 12,
+      "start_wall": "2013-12-21T17:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-12-21",
+      "disputed": true,
+      "slots": 12,
+      "start_wall": "2013-12-21T23:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-12-22",
+      "disputed": false,
+      "slots": 24,
+      "start_wall": "2013-12-22T17:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "single",
+      "day": "2013-12-26",
+      "disputed": false,
+      "slots": 6,
+      "start_wall": "2013-12-26T08:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-12-27",
+      "disputed": true,
+      "slots": 24,
+      "start_wall": "2013-12-27T05:00:00"
+    },
+    {
+      "band": "High",
+      "class": "both",
+      "day": "2013-12-27",
+      "disputed": true,
+      "slots": 12,
+      "start_wall": "2013-12-27T17:00:00"
+    },
+    {
+      "band": "Low",
+      "class": "both",
+      "day": "2013-12-27",
+      "disputed": true,
+      "slots": 12,
+      "start_wall": "2013-12-27T23:00:00"
+    },
+    {
+      "band": "High",
+      "class": "single",
+      "day": "2013-12-28",
+      "disputed": false,
+      "slots": 24,
+      "start_wall": "2013-12-28T17:00:00"
+    }
+  ]
+}

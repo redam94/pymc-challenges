@@ -1,0 +1,37 @@
+{
+  "calendar_rule": "29 Mar reinstated; 3 May and six file-only days out; all-Low days out of baseline; 28 Dec kept",
+  "clock": "gmt_end",
+  "data_fingerprint": {
+    "tariffs_sha256": "8a2eff6dcb737aee96cfa6c357d2947604d7f812896405c2ab5f98433d2cb150",
+    "zip_bytes": 795722689,
+    "zip_sha256": "149a6a9c43c622fd0a14b7d11be055665317d3018d9fb7e1043bd51420bfaea5"
+  },
+  "files": {
+    "calendar.json": "bfcf2d74245b92f90414f5849df9368c6bb0da4e11b02901774679276d13c1fa",
+    "fetch.json": "7ba42145263e1d7ee33c0cf033e51165bf976fc86a01d728ccae34e3651e29cd",
+    "parse_stats.json": "09c8eb3718a05baff8f407d8cf81375f7b088726e39545a38bba70d7ea19ee98",
+    "pilot_balance.json": "1fa072cfe54a7ecf91863cbf1150fe34b241efc31a2e5d7f308d67cca39bff39",
+    "pilot_calendar.json": "c26b802ae293d481aeabbd75964bda3aaa5d3447cd67ff3c6ad728370d690847",
+    "pilot_clock.json": "8c3747020f10fb26937419c5f3824ab027a6b125b7d62feb66b402eab9f323db",
+    "pilot_counts.json": "170dc87797cf9bd7caf04c64e96477fe2eb4fa27a76d250499a42d741375647b",
+    "pilot_fit.json": "e379aea7d821e110fb56c89bb01a11607c2e32c1b531b6b739873b8a06923723",
+    "pilot_fit_diagnosis.json": "50bc37adacbd83aa5883cc7341897f7a6d486b1dcca2ae0c0575da7ae7674467",
+    "pilot_gates.json": "8a1ad39740f0b133b513927e021adafda2b590d6c24b300dc41763b56639fbbb",
+    "pilot_mean_location.json": "f7952d00b3de9907f91865d2e3b86328fe6ab960b83e7224f748fa1db7c7a7eb",
+    "pilot_placebo_benchmark.json": "7afada39d1573e574fb63b9408fb39a16e0106194c5986e063e5a701927e2ebd",
+    "pilot_sbc_smoke.json": "2b070420ee13166e59dc61cb1a0cfcbff9af02177eff5dee5e049b95ff904d6b",
+    "pilot_with_data.json": "f10e06253e6e636395e979afa31491b5fc6d3fe37c6322670e7bd623744571e8",
+    "proto_m4_gaussian.json": "0769679df97101231c11da6f3dd62e71aa3a982aa50a789f13b1a06f5f8eedcc"
+  },
+  "finished": "2026-11-02T14:46:48Z",
+  "git_hash": "4aee16b77029-dirty",
+  "hardware": "2 cores, CPU only",
+  "notebook": "E91",
+  "started": "2026-11-02T14:06:18Z",
+  "versions": {
+    "numpy": "2.5.3",
+    "nutpie": "0.16.11",
+    "pandas": "3.0.6",
+    "pymc": "6.3.2"
+  }
+}

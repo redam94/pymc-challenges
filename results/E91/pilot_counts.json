@@ -1,0 +1,76 @@
+{
+  "across_member_conflicts": 0,
+  "across_members": 0,
+  "cells_in_grid": 167811461,
+  "clock_change_days": {
+    "2013-03-30": {
+      "homes_at_00:00_to_03:00": [
+        5402,
+        5407,
+        5407,
+        5407,
+        5407,
+        5407,
+        5407
+      ],
+      "on_grid_slots_with_data": 48
+    },
+    "2013-03-31": {
+      "homes_at_00:00_to_03:00": [
+        5407,
+        5402,
+        5403,
+        5403,
+        5403,
+        5403,
+        5403
+      ],
+      "on_grid_slots_with_data": 48
+    },
+    "2013-10-26": {
+      "homes_at_00:00_to_03:00": [
+        5190,
+        5187,
+        5187,
+        5187,
+        5187,
+        5187,
+        5187
+      ],
+      "on_grid_slots_with_data": 48
+    },
+    "2013-10-27": {
+      "homes_at_00:00_to_03:00": [
+        5187,
+        5190,
+        5190,
+        5189,
+        5190,
+        5190,
+        5190
+      ],
+      "on_grid_slots_with_data": 48
+    }
+  },
+  "conflicting_slots": 0,
+  "exact_duplicates": 115453,
+  "first_slot": "2011-11-23 09:00:00",
+  "homes": 5561,
+  "homes_95pct_2013": {
+    "std": 4034,
+    "tou": 1032
+  },
+  "homes_std": 4438,
+  "homes_tou": 1123,
+  "last_slot": "2014-02-28 00:00:00",
+  "null": 5560,
+  "off_grid": 5560,
+  "passes": true,
+  "rows": 167932474,
+  "rows_by_group": {
+    "Std": 134148703,
+    "ToU": 33783771
+  },
+  "rows_vs_extrapolated": 0.00019,
+  "zip_members": 168
+}

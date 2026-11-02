@@ -1,0 +1,88 @@
+[
+  {
+    "stage": "fetch",
+    "at": "2026-11-02T00:40:59Z",
+    "zip_bytes": 795722689,
+    "zip_sha256": "149a6a9c43c622fd0a14b7d11be055665317d3018d9fb7e1043bd51420bfaea5",
+    "tariffs_sha256": "8a2eff6dcb737aee96cfa6c357d2947604d7f812896405c2ab5f98433d2cb150"
+  },
+  {
+    "stage": "calendar",
+    "at": "2026-11-02T00:41:28Z",
+    "events": 170
+  },
+  {
+    "stage": "parse",
+    "at": "2026-11-02T00:47:21Z",
+    "members": 168
+  },
+  {
+    "stage": "pilot_counts",
+    "at": "2026-11-02T00:56:25Z",
+    "passes": true
+  },
+  {
+    "stage": "pilot_clock",
+    "at": "2026-11-02T00:56:27Z",
+    "passes": true,
+    "peaks": {
+      "gmt": 1,
+      "bst": -1
+    }
+  },
+  {
+    "stage": "pilot_calendar",
+    "at": "2026-11-02T00:56:48Z",
+    "passes": false,
+    "clear": [
+      "2013-03-29"
+    ]
+  },
+  {
+    "stage": "pilot_balance",
+    "at": "2026-11-02T14:46:48Z",
+    "passes": true
+  },
+  {
+    "stage": "pilot_placebo",
+    "at": "2026-11-02T14:46:48Z",
+    "passes": false,
+    "over_25": false
+  },
+  {
+    "stage": "pilot_benchmark",
+    "at": "2026-11-02T14:46:48Z",
+    "passes": true
+  },
+  {
+    "stage": "pilot_with_data",
+    "at": "2026-11-02T14:46:48Z",
+    "passes": true
+  },
+  {
+    "stage": "pilot_fit",
+    "at": "2026-11-02T14:46:48Z",
+    "passes": false
+  },
+  {
+    "stage": "pilot_mean_location",
+    "at": "2026-11-02T14:46:48Z",
+    "passes": false
+  },
+  {
+    "stage": "pilot_sbc_smoke",
+    "at": "2026-11-02T14:46:48Z",
+    "passes": true
+  },
+  {
+    "stage": "tables",
+    "at": "2026-11-02T17:07:42Z",
+    "homes": 1088,
+    "cells": 168,
+    "placebo_homes": 963,
+    "placebo_cells": 70,
+    "panel_homes": 4090,
+    "hours_bytes": 116859,
+    "table_bytes": 653539
+  }
+]
