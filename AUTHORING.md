@@ -191,7 +191,8 @@ solution. Every check must be exercised by an `assert h.check(...)` in a solutio
   `nuts_sampler="pymc"` for PyMC's own NUTS. Divergence counts differ between the two, so
   say which sampler a claim refers to.
 - **Runtime budget: a solution or example should execute in under ~6 minutes** on a reader's
-  8-core laptop, not just on this machine: E86's GPU path is the one stated exception. Subsample
+  8-core laptop, not just on this machine: E86's GPU path and E89 (three fits, about 15 minutes on 2
+  cores) are the stated exceptions. Subsample
   large data (and say so) rather than blow the budget.
 - matplotlib for custom figures; ArviZ for diagnostics. End plotting cells with `;`.
 - Plain ASCII hyphens in prose are fine; keep lines under ~100 characters.
@@ -982,6 +983,26 @@ doubt run `uv run python -c "..."` to check:
     check that keeps a fitted fine field is in-sample: redraw its z. A fine-scale Matern 1/2 needs many modes:
     Matern 3/2 at 64 x 128 pushed its lengthscale below the resolution. ~10 min at 4.9 GB on the GPU path; ~5.5
     min at 1.7 GB on 8 CPU cores, plain install.
+  - **Air quality data and value of information (E89).** AQS writes Event Type as the string `None`: read
+    with `keep_default_na=False`, or a filter keeps 4% of the rows. Daily PM2.5 holds the original T640 series
+    (methods 236, 238) beside the corrected one under other POCs, about 1.1 ug/m3 high: drop them, never take a
+    maximum over POCs, and rebuild annual means from daily files, because the 2023 annual rows say `Multiple
+    Methods Used` and keep the old data. Assigning a frame through `df.loc[idx, cols] = other[cols2]` aligns on
+    column names and wrote all NaN with no error: use `.to_numpy()`. **`import arviz` leaves a lazy stub in
+    `sys.modules["jax"]`, and Matplotlib's first plot tests that entry, which imports all of JAX** (291 modules)
+    in a notebook that never uses it: `sys.modules.pop("jax", None)` after the imports. `"jax" in sys.modules`
+    proves nothing; look for `jax.` submodules. An exact county covariance is `K - H'H`: store `H`, the prior
+    part is a formula (0.5 against 1.9 GB here). Reading all of `H` per candidate is bandwidth-bound, so build
+    the candidate-by-undecided block once and keep picks as a low-rank factor: a run no longer consumes the
+    covariance, and draw subsets are views. Greedy gains after round one hold each draw's mean fixed, so their
+    sum overstated the simulated joint value of a set by 1.7-2.4x: simulate readings jointly, nested through the
+    lower Cholesky factor, or size-to-size steps drown in independent noise. Fixed means also bend the picks: a
+    county near 0.5 keeps drawing them. Let each county's mean move by a variance that adds per pick, and the same
+    data gave a list worth a fifth more. A method term learned across sites can be confounded with siting: check it
+    against same-site, same-day pairs. On a GP with a
+    nugget a monitored county keeps a real P(above): 89% of the people at risk were in monitored counties, so
+    check where a value lands before saying what a shortlist buys. State borders need no GIS:
+    an edge used by two groups of counties, or by one county only, is a border.
 - Available and worth using where they fit: `pm.ZeroSumNormal`, `pm.Censored`,
   `pm.Truncated`, `pm.CustomDist`, `pm.Mixture`, `pm.NormalMixture`, `pm.OrderedLogistic`,
   `pm.LKJCholeskyCov`, `pm.GaussianRandomWalk`, `pm.AR`, `pm.gp.HSGP`, `pm.gp.HSGPPeriodic`,

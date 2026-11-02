@@ -1,0 +1,16 @@
+{
+  "added_after_seeing_results": true,
+  "rows": {
+    "all_valid_sites": {
+      "agree": 0.9432624113475178,
+      "passes": true,
+      "sites": 282
+    },
+    "gate_no_concurred_events": {
+      "agree": 0.978021978021978,
+      "passes": true,
+      "sites": 91
+    }
+  },
+  "threshold": 0.9
+}

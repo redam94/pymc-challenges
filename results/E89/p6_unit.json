@@ -1,0 +1,47 @@
+{
+  "one_draw": {
+    "brute": 1114808.4317735513,
+    "closed_16": 1114587.2438026955,
+    "closed_64": 1120830.7868261226,
+    "counties": 25,
+    "draws": 1,
+    "se": 15715.836290681875,
+    "sims": 20000,
+    "within_2_se": true,
+    "z": -0.014074209400290343
+  },
+  "real_small_top_candidate": {
+    "brute": 112086.1822,
+    "closed_16": 112065.30429494753,
+    "closed_64": 113564.49157922994,
+    "counties": 150,
+    "draws": 100,
+    "se": 6390.320371142961,
+    "sims": 20000,
+    "within_2_se": true,
+    "z": -0.003267113984885653
+  },
+  "runtime": {
+    "blas_env": "1",
+    "cores": [
+      1,
+      2
+    ],
+    "cuda_mapped": false,
+    "jax_executed": false,
+    "jax_in_sys_modules_literal": false,
+    "jax_module_type": "NoneType",
+    "max_rss_gb": 1.265552
+  },
+  "two_regimes": {
+    "brute": 2751038.268589812,
+    "closed_16": 2761220.156759027,
+    "closed_64": 2764039.6824893355,
+    "counties": 25,
+    "draws": 40,
+    "se": 23906.01936247245,
+    "sims": 20000,
+    "within_2_se": true,
+    "z": 0.42591315663361917
+  }
+}

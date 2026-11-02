@@ -1,0 +1,23 @@
+{
+  "best_value_people": 114975.23507592827,
+  "candidates": 1238,
+  "conditionals_s": null,
+  "ell_km": 294.5050917382831,
+  "mean_local_counties": 283.27382875605815,
+  "radius_ell": 3.0,
+  "runtime": {
+    "blas_env": "1",
+    "cores": [
+      1
+    ],
+    "cuda_mapped": false,
+    "jax_executed": false,
+    "jax_in_sys_modules_literal": false,
+    "jax_module_type": "NoneType",
+    "max_rss_gb": 1.127184
+  },
+  "seconds": 9.56932698899982,
+  "share_of_counties_undecided": 0.3198697068403909,
+  "workers": 1,
+  "wrong_calls_now_people": 11231660.0
+}

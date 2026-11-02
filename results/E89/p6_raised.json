@@ -1,0 +1,64 @@
+{
+  "added_check": "``within_100_km`` is an added check, not a plan gate: the share of one half's picks with a pick\n    of the other half within 100 km, which is what a band of sites would claim.",
+  "main_vs_drop_200_draws": {
+    "counties_changing_side_of_0.5": 6,
+    "note": "p_above is after the 20 picks, so both sides carry the mean-held-fixed step",
+    "p_mean_abs_change": 0.010075895823122127,
+    "p_p99_abs_change": 0.1366639888286591,
+    "top20_overlap": 12,
+    "within_100_km": 1.0
+  },
+  "raises": {
+    "A_100_per_half": {
+      "conditionals_s": [
+        9.295790165000653,
+        9.287879614003032
+      ],
+      "gain_sum": [
+        2466348.1959793773,
+        2159242.51836974
+      ],
+      "max_rss_gb": 1.176768,
+      "overlap": 19,
+      "wall_s": [
+        11.341676162999647,
+        11.035073204002401
+      ],
+      "within_100_km": 1.0
+    },
+    "B_200_per_half": {
+      "conditionals_s": [
+        18.630385356998886,
+        18.42538363499989
+      ],
+      "gain_sum": [
+        1647016.2526353202,
+        1934409.3383600023
+      ],
+      "max_rss_gb": 2.0975,
+      "overlap": 17,
+      "wall_s": [
+        23.770952765000402,
+        22.81905838500097
+      ],
+      "within_100_km": 0.9
+    },
+    "C_100_per_half_32_nodes": {
+      "conditionals_s": [
+        null,
+        null
+      ],
+      "gain_sum": [
+        2450968.6999031045,
+        2182544.897038266
+      ],
+      "max_rss_gb": 1.138112,
+      "overlap": 18,
+      "wall_s": [
+        19.427574951998395,
+        18.601376621998497
+      ],
+      "within_100_km": 1.0
+    }
+  }
+}

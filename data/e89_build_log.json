@@ -1,0 +1,58 @@
+{
+ "sources": {
+  "daily_88101_2023.zip": "4b40502e8147419643a1120c666c4aa952633094f21f65475844172bcc78833b",
+  "daily_88101_2024.zip": "409c2d884935bd0a4099d640b7c526ecb0af1d3aac049697e34c2f9f69dbe91d",
+  "daily_88101_2025.zip": "cc8cb80bcc0317705202d12a472918438b8bee60316f54777d6f748c58ac2661",
+  "aqs_monitors.zip": "e8325216d4ec5df462a23c201e6ffa1176b2fce363c9f6b0e3f18ce6ad958525",
+  "co-est2024-alldata.csv": "abcc8720d669e793bbfdcd440eeec37a78db3b452adbe4ccd1eadf7c72b522b9",
+  "CenPop2020_Mean_CO.txt": "4f754a3bda9714e5820d73bfac44ef1dab2b8c371f6c136305474cda7a752014"
+ },
+ "log": {
+  "2023": {
+   "rows": 847162,
+   "rows_after_border_sites": 845857,
+   "rows_one_hour": 393980,
+   "rows_original_t640": 87507,
+   "rows_event_excluded": 139,
+   "rows_kept": 364231,
+   "site_days": 305856,
+   "sites": 1012,
+   "site_days_negative": 1310
+  },
+  "2024": {
+   "rows": 740924,
+   "rows_after_border_sites": 740194,
+   "rows_one_hour": 342510,
+   "rows_original_t640": 4727,
+   "rows_event_excluded": 17,
+   "rows_kept": 392940,
+   "site_days": 328013,
+   "sites": 1032,
+   "site_days_negative": 1151
+  },
+  "2025": {
+   "rows": 758834,
+   "rows_after_border_sites": 758200,
+   "rows_one_hour": 351425,
+   "rows_original_t640": 3289,
+   "rows_event_excluded": 102,
+   "rows_kept": 403384,
+   "site_days": 335298,
+   "sites": 1038,
+   "site_days_negative": 1419
+  },
+  "sites_in_window": 1057,
+  "sites_by_complete_years": {
+   "1": 78,
+   "2": 96,
+   "3": 883
+  },
+  "counties_on_polygon_centre": [],
+  "county_location": "population",
+  "counties_without_population": [],
+  "counties": 3108,
+  "counties_unmonitored": 2468,
+  "counties_registered_only": 16,
+  "conus_sites_without_density": []
+ }
+}

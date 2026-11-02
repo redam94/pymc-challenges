@@ -29,7 +29,7 @@ for every notebook, so this is optional. Later syncs drop it unless you repeat t
 
 ```
 notebooks/
-  examples/      E01-E86  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
+  examples/      E01-E86, E89  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
   challenges/    C01-C15  your workspace. Tasks, empty cells, hints on request.
   solutions/     C01-C15  full reference solutions, executed, with commentary.
 ```
@@ -273,6 +273,14 @@ What a GPU actually speeds up in Bayesian sampling, measured on one large spatia
 | | Topic | Data | Key techniques |
 |---|---|---|---|
 | **E86** | GPU ensembles: ChEES-HMC and MEADS on a forest of 20,000 cells | Barro Colorado Island *Beilschmiedia pendula*: 3,604 mapped trees with elevation and slope (`spatstat.data`; Hubbell & Foster 1983) | log-Gaussian Cox process with four latent fields on a Kronecker HSGP basis, spatially varying effects, blackjax ChEES and MEADS, GPU vs CPU timing by chains, size and precision, float32 checks, ensemble stragglers, NUTS baseline |
+
+#### Value of information on a map (E89)
+
+Where should the next air monitors go? Uncertainty and decision value turn out to be different maps. The notebook runs one 19-state crop on 2 cores and under 3 GB, in about 15 minutes, and makes no national claim.
+
+| | Topic | Data | Key techniques |
+|---|---|---|---|
+| **E89** | Where should the next air monitors go? | EPA AirData daily PM2.5 2023-2025 (419 sites in 19 states, superseded T640 series removed) and Census 2024 county populations | marginal Matern GP with known measurement error, exact county conditionals, closed-form EVSI checked by brute force, lazy greedy site selection, simulated joint value against summed gains, a search that lets county means move, a paired-instrument refit, split-half stability, alternative objectives, a band of sites rather than a ranked list, county maps with no GIS library |
 
 ### Data work (D-series)
 

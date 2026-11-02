@@ -1,0 +1,37 @@
+{
+  "1_at_once": {
+    "evals": 200,
+    "median_ms": 7.955091001349501,
+    "min_ms": 7.7022469995426945,
+    "p90_ms": 8.132450200355379
+  },
+  "2_at_once": {
+    "evals": 400,
+    "median_ms": 18.386480998742627,
+    "min_ms": 12.022158000036143,
+    "p90_ms": 25.19180810159014
+  },
+  "blas_threads": 2,
+  "c": 1.5,
+  "compile_s": 5.483645578002324,
+  "logp_at_start": -6691.750995811693,
+  "modes": [
+    80,
+    50
+  ],
+  "n_dim": 4018,
+  "points": 4138,
+  "runtime": {
+    "blas_env": "2",
+    "cores": [
+      1,
+      2
+    ],
+    "cuda_mapped": false,
+    "floatX": "float64",
+    "jax_executed": false,
+    "jax_in_sys_modules_literal": false,
+    "jax_module_type": "NoneType",
+    "max_rss_gb": 0.60136
+  }
+}

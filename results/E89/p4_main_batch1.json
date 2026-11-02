@@ -1,0 +1,29 @@
+{
+  "adaptation": "nutpie default (diag)",
+  "batch": 1,
+  "chains": 2,
+  "compile_s": 13.141962391000561,
+  "cpu_s": 140.15909599999998,
+  "divergences": 0,
+  "divergences_warmup": 2,
+  "draws": 500,
+  "gradients_draws": 6836,
+  "gradients_warmup": 7182,
+  "runtime": {
+    "blas_env": "1",
+    "cores": [
+      1,
+      2
+    ],
+    "cuda_mapped": false,
+    "floatX": "float64",
+    "jax_executed": false,
+    "jax_in_sys_modules_literal": true,
+    "jax_module_type": "_LazyModule",
+    "max_rss_gb": 0.594544
+  },
+  "sample_s": 65.14318508699944,
+  "sites": 419,
+  "tag": "main",
+  "tune": 400
+}

@@ -1,0 +1,53 @@
+{
+  "one_draw": {
+    "brute": 1109821.2265138873,
+    "closed_16": 1114587.2438026955,
+    "closed_64": 1120830.7868261226,
+    "control_brute": 1111447.138576884,
+    "control_se": 11441.410056822071,
+    "counties": 25,
+    "draws": 1,
+    "se": 11059.007174501789,
+    "sims": 40000,
+    "within_2_se": true,
+    "z": 0.4309624918046005
+  },
+  "real_small_top_candidate": {
+    "brute": 114881.28795,
+    "closed_16": 112065.30429494753,
+    "closed_64": 113564.49157922994,
+    "control_brute": -134803.935925,
+    "control_se": 6921.711117474402,
+    "counties": 150,
+    "draws": 100,
+    "se": 4531.878726225451,
+    "sims": 40000,
+    "within_2_se": true,
+    "z": -0.6213722443093405
+  },
+  "runtime": {
+    "blas_env": "1",
+    "cores": [
+      1,
+      2
+    ],
+    "cuda_mapped": false,
+    "jax_executed": false,
+    "jax_in_sys_modules_literal": false,
+    "jax_module_type": "NoneType",
+    "max_rss_gb": 1.265724
+  },
+  "two_regimes": {
+    "brute": 2762262.769887824,
+    "closed_16": 2761220.156759027,
+    "closed_64": 2764039.6824893355,
+    "control_brute": 2762637.3260870297,
+    "control_se": 16812.046747842647,
+    "counties": 25,
+    "draws": 40,
+    "se": 16797.452327350416,
+    "sims": 40000,
+    "within_2_se": true,
+    "z": -0.0620697179833348
+  }
+}

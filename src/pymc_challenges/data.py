@@ -1577,6 +1577,60 @@ REGISTRY: dict[str, Dataset] = {
         "Demographics of 801 of the 2,469 households (bands as delivered): household_id, age, income, "
         "home_ownership, marital_status, household_size, household_comp, kids_count.",
     ),
+    # ---- examples (E89) ----
+    "e89_sites": Dataset(
+        "e89_sites.csv",
+        "https://aqs.epa.gov/aqsweb/airdata/download_files.html",
+        "US EPA Air Quality System, AirData pre-generated daily files for FRM/FEM PM2.5 (parameter 88101), "
+        "2023-2025, and the AQS monitor list. DERIVED by tools/build_e89_data.py, which downloads the "
+        "AirData files and records their checksums in e89_build_log.json - keep the cached file.",
+        "One row per monitoring site with at least one complete clean year in 2023-25, after dropping the "
+        "superseded T640 series (methods 236, 238) and rows with Event Type Excluded: site (AQS id), mean "
+        "(window mean, ug/m3), n_years, days, year_sd, event_days, has_2023/24/25, var_mean and var_log "
+        "(sampling variance of the mean and of its log, from the schedule), log_mean, share_FRM, share_T640, "
+        "share_BAM, share_other (share of monitor-days), Latitude, Longitude, conus, small_crop, first_year, "
+        "scale (AQS measurement scale), fips, x_km, y_km (Albers), log_density (county people per km2). "
+        "NOT an official design value, though close: see `e89_checks`.",
+        {"dtype": {"site": str, "fips": str}},
+    ),
+    "e89_counties": Dataset(
+        "e89_counties.csv",
+        "https://www2.census.gov/programs-surveys/popest/datasets/2020-2024/counties/totals/",
+        "US Census Bureau: Vintage 2024 county population estimates and 2020 centres of population, with "
+        "county areas from `us_counties_geojson`. DERIVED by tools/build_e89_data.py - keep the cached file.",
+        "One row per county in the contiguous US (3,108): fips, area_km2, lon, lat (population centre), "
+        "state, county, population (2024; Connecticut's eight old counties use 2020), x_km, y_km (Albers), "
+        "log_density, monitored (has a site in `e89_sites`), small_crop (in the 19-state crop), "
+        "registered_only (a registered monitor that reported no data).",
+        {"dtype": {"fips": str}},
+    ),
+    "e89_t640_pairs": Dataset(
+        "e89_t640_pairs.csv",
+        "https://aqs.epa.gov/aqsweb/airdata/download_files.html",
+        "As `e89_sites`, from the 2023 daily file before filtering; EPA's PM2.5 data advisory of 26 August "
+        "2024 explains the two series. DERIVED by tools/build_e89_data.py - keep the cached file.",
+        "One row per site and pair of methods: site, days both series report, original and corrected "
+        "(means over those days, ug/m3), pair (236 vs 736 or 238 vs 738).",
+        {"dtype": {"site": str}},
+    ),
+    "e89_ribbon": Dataset(
+        "e89_ribbon.csv",
+        "https://aqs.epa.gov/aqsweb/airdata/download_files.html",
+        "As `e89_sites`. DERIVED by tools/build_e89_data.py - keep the cached file.",
+        "Share of site-days above 35 ug/m3 across all US sites: day (of the year), columns 0-24 (equal "
+        "latitude bands from 24 to 50 N; empty where no site reported), year (2023-2025).",
+    ),
+    "e89_checks": Dataset(
+        "e89_checks.json",
+        "https://www.epa.gov/air-trends/air-quality-design-values",
+        "Summaries from E89's pilots: EPA's 2023-2025 design-value workbook (retrieved by EPA on 2 June 2026) "
+        "against these window means, and thinned schedules from the daily files. Written by "
+        "tools/build_e89_data.py - keep the cached file.",
+        "JSON, not a table: open data.path() with json. Keys: excluded_sites (window sites with no workbook "
+        "row and an exclusion covering the annual standard), excluded_rule, schedule_error (by year), "
+        "epa_comparison (agreement summaries only, no site values) and paired_method (each method family "
+        "against FRM on the same site and day in the crop, as a mean log ratio over sites).",
+    ),
     # ---- examples (E71) ----
     "speed_acc": Dataset(
         "wagenmakers2008_speed_acc.csv",
@@ -1626,8 +1680,8 @@ def load(name: str) -> pd.DataFrame:
     p = path(name)
     if p.suffix == ".hdf5":
         raise ValueError(f"{name!r} is an HDF5 file, not a table: open data.path({name!r}) with h5py.")
-    if p.suffix == ".geojson":
-        raise ValueError(f"{name!r} is GeoJSON, not a table: open data.path({name!r}) with json.")
+    if p.suffix in (".geojson", ".json"):
+        raise ValueError(f"{name!r} is JSON, not a table: open data.path({name!r}) with json.")
     return pd.read_csv(p, **REGISTRY[name].read_kwargs)
 
 

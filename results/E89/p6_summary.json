@@ -1,0 +1,50 @@
+{
+  "added_checks": [
+    "joint value of picks",
+    "size of gain rises"
+  ],
+  "dropped_sites_lazy_top20_vs_main": 11,
+  "first_round_pick_same": true,
+  "first_round_s": {
+    "full": 4.970251374001236,
+    "lazy_2ell": 3.0619880279991776
+  },
+  "full_gains_sum": 1589434.1188007253,
+  "gain_rises": {
+    "pairs": 23090,
+    "ratio_p50_p99_max": [
+      1.0001983245011687,
+      1.0188173075096718,
+      1.8128948240801315
+    ],
+    "rose": 17429,
+    "rose_by_over_10pct": 4,
+    "rose_by_over_1pct": 1300,
+    "share": 0.7548289302728454
+  },
+  "greedy_gain_sum_top5": 522710.74714428186,
+  "halves_top20_full": 12,
+  "halves_top20_lazy": 12,
+  "joint_value_of_full_top20": {
+    "after_mean": 10013479.67633844,
+    "joint_value": 1218180.1411901508,
+    "se": 67984.60066714323,
+    "sims": 300,
+    "wrong_calls_before": 11231659.81752859
+  },
+  "joint_value_of_full_top5": {
+    "after_mean": 10659981.327332545,
+    "joint_value": 571678.4901960455,
+    "se": 46372.023397563484,
+    "sims": 300,
+    "wrong_calls_before": 11231659.81752859
+  },
+  "lazy_gains_sum": 1589434.1188007253,
+  "lazy_vs_full_top20": 20,
+  "two_ell_vs_three_ell_lazy_top20": 20,
+  "wall_s": {
+    "full": 98.0127450559994,
+    "lazy": 11.79588721500113,
+    "lazy_2ell": 8.558965650001483
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "added_check": true,
+  "by_draw_set": {
+    "d100": {
+      "first": 114975.23507592827,
+      "first_pick": "Delaware County, Ohio",
+      "sum": 1589434.1188007253
+    },
+    "d100even": {
+      "first": 157689.20271007158,
+      "first_pick": "Delaware County, Ohio",
+      "sum": 2159242.51836974
+    },
+    "d100odd": {
+      "first": 163621.9899954535,
+      "first_pick": "Delaware County, Ohio",
+      "sum": 2466348.1959793773
+    },
+    "d200": {
+      "first": 159280.04488418996,
+      "first_pick": "Delaware County, Ohio",
+      "sum": 2284170.345802933
+    },
+    "d200even": {
+      "first": 149587.6653915923,
+      "first_pick": "Delaware County, Ohio",
+      "sum": 1934409.3383600023
+    },
+    "d200odd": {
+      "first": 141704.55562706664,
+      "first_pick": "Delaware County, Ohio",
+      "sum": 1647016.2526353202
+    },
+    "d50even": {
+      "first": 120816.40191080049,
+      "first_pick": "Delaware County, Ohio",
+      "sum": 1522448.4107534136
+    },
+    "d50odd": {
+      "first": 132240.98944788054,
+      "first_pick": "Livingston County, Michigan",
+      "sum": 1760159.3043459961
+    }
+  },
+  "draws": 200,
+  "first_gain": 159280.04488418996,
+  "gain_sum_20": 2284170.345802933,
+  "gain_sum_5": 704664.2232951503,
+  "joint_20": {
+    "after_mean": 9829113.595184272,
+    "joint_value": 1083090.5661735032,
+    "se": 84014.64219773744,
+    "sims": 300,
+    "wrong_calls_before": 10912204.161357775
+  },
+  "joint_5": {
+    "after_mean": 10361241.472055905,
+    "joint_value": 550962.6893018708,
+    "se": 63256.365872634844,
+    "sims": 300,
+    "wrong_calls_before": 10912204.161357775
+  },
+  "wrong_calls_now": 10912204.0
+}

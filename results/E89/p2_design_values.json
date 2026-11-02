@@ -1,0 +1,88 @@
+{
+  "all_valid_sites": {
+    "agree_9.05": 0.9804878048780488,
+    "agree_9.05_dv_8_10": 0.9432624113475178,
+    "disagree": 16,
+    "disagree_we_above": 14,
+    "max_abs": 1.3205412028193884,
+    "mean_signed": 0.04336382848733455,
+    "median_abs": 0.03312170096361555,
+    "p90_abs": 0.22162337982691172,
+    "p99_abs": 0.899004902135231,
+    "sites": 820,
+    "sites_dv_8_10": 282
+  },
+  "frm_and_t640_mixed": {
+    "agree_9.05": 0.9567099567099567,
+    "agree_9.05_dv_8_10": 0.9173553719008265,
+    "disagree": 10,
+    "disagree_we_above": 10,
+    "max_abs": 1.1883132413748339,
+    "mean_signed": 0.10753734108124509,
+    "median_abs": 0.07556814374285459,
+    "p90_abs": 0.44641757223594425,
+    "p99_abs": 1.0355884883536433,
+    "sites": 231,
+    "sites_dv_8_10": 121
+  },
+  "gate_no_concurred_events": {
+    "agree_9.05": 0.9948186528497409,
+    "agree_9.05_dv_8_10": 0.978021978021978,
+    "disagree": 2,
+    "disagree_we_above": 2,
+    "max_abs": 0.9283512891043726,
+    "mean_signed": 0.025291370519592096,
+    "median_abs": 0.029278318272073278,
+    "p90_abs": 0.1531970312122919,
+    "p99_abs": 0.63946937967092,
+    "passes": true,
+    "sites": 386,
+    "sites_dv_8_10": 91
+  },
+  "invalid": 209,
+  "invalid_with_our_three_years": 41,
+  "one_family_no_concurred": {
+    "agree_9.05": 1.0,
+    "agree_9.05_dv_8_10": 1.0,
+    "disagree": 0,
+    "disagree_we_above": 0,
+    "max_abs": 0.6521925780448736,
+    "mean_signed": -0.001984770092722787,
+    "median_abs": 0.024841905373570228,
+    "p90_abs": 0.04628687631510573,
+    "p99_abs": 0.23367228986153724,
+    "sites": 245,
+    "sites_dv_8_10": 52
+  },
+  "one_method_family": {
+    "agree_9.05": 0.9916142557651991,
+    "agree_9.05_dv_8_10": 0.9705882352941176,
+    "disagree": 4,
+    "disagree_we_above": 3,
+    "max_abs": 1.3205412028193884,
+    "mean_signed": 0.005771183873142674,
+    "median_abs": 0.027151731561209758,
+    "p90_abs": 0.0489363507326921,
+    "p99_abs": 0.3750279482258518,
+    "sites": 477,
+    "sites_dv_8_10": 136
+  },
+  "sha256": "9932b97c11f0a15cc7c44a9d1789440b776197e6c1823adef0928cdf730cc89b",
+  "sites_with_concurred_events": 492,
+  "unrounded_epa_means": {
+    "median_abs": 8.881784197001252e-15,
+    "p90_abs": 0.20897198721420362
+  },
+  "valid": 839,
+  "valid_by_our_complete_years": {
+    "1": 6,
+    "2": 13,
+    "3": 820
+  },
+  "valid_not_in_window": 0,
+  "window_only": 41,
+  "window_only_conus": 40,
+  "workbook": "pm25_designvalues_2023_2025_final_06_12_26.xlsx",
+  "workbook_only": 32,
+  "workbook_sites": 1048
+}

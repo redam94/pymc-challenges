@@ -120,9 +120,14 @@ SERIES = [
          intro="What a GPU actually speeds up in Bayesian sampling, measured on a 24,810-parameter spatial model of "
                "a tropical forest: ChEES-HMC and MEADS against a well-configured NUTS baseline, by chain count, "
                "problem size and precision, with the failures that an ensemble of chains can hide."),
+    dict(key="voi", range="E89", title="Value of information on a map", ids=["E89"],
+         intro="Where should the next air monitors go? A marginal Gaussian process over real EPA PM2.5 data, exact "
+               "county conditionals and closed-form value of information show that a map of uncertainty and a map "
+               "of decision value are different maps, on one 19-state crop, with a band of sites rather than a "
+               "fixed list."),
 ]
 SERIES_BY_KEY = {s["key"]: s for s in SERIES}
-RECENT = ["E86", "E85", "E84", "E83", "E82", "E81", "E80"]          # newest first, shown on the home page
+RECENT = ["E89", "E86", "E85", "E84", "E83", "E82", "E81"]          # newest first, shown on the home page
 
 
 def _link(ctx, eid, text=None):
@@ -382,6 +387,8 @@ def guide_page(ctx):
          f"{L('E81')}, {L('C12')}"),
         ("Which experiment to run next", "Gaussian-process / bounded-yield surrogates and the value of information",
          f"{L('E82')}, {L('C13')}"),
+        ("Where to measure next, on a map", "A marginal Gaussian process and the expected value of sample information",
+         f"{L('E89')}"),
         ("A centile, not the mean (growth charts, thresholds)", "Bayesian quantile regression with calibration checks",
          f"{L('E83')}, {L('C14')}"),
         ("A quick two-way choice and its response time", "Drift diffusion model (Wiener first-passage time)",

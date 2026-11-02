@@ -1,0 +1,1001 @@
+{
+  "jobs": [
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 44.0
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 44.75
+      },
+      "blas_threads": 1,
+      "cores": "3",
+      "max_tctl": 45.0,
+      "name": "cand",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 1.8
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 51.25
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 48.375
+      },
+      "blas_threads": 1,
+      "cores": "3",
+      "max_tctl": 51.25,
+      "name": "ex31",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 10.0
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 43.25
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 38.5
+      },
+      "blas_threads": 1,
+      "cores": "1",
+      "max_tctl": 43.25,
+      "name": "excluded",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 2.4
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 45.75
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 45.375
+      },
+      "blas_threads": 1,
+      "cores": "1,2",
+      "max_tctl": 45.875,
+      "name": "g_drop",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 19.4
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 46.25
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 45.75
+      },
+      "blas_threads": 1,
+      "cores": "1,2",
+      "max_tctl": 48.0,
+      "name": "g_even",
+      "status": "ok",
+      "tctl_samples": 2,
+      "wall_s": 50.8
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 45.25
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 45.625
+      },
+      "blas_threads": 1,
+      "cores": "1,2",
+      "max_tctl": 45.75,
+      "name": "g_even_l",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 7.4
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 46.25
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 44.75
+      },
+      "blas_threads": 1,
+      "cores": "1,2",
+      "max_tctl": 47.875,
+      "name": "g_full2",
+      "status": "ok",
+      "tctl_samples": 3,
+      "wall_s": 62.2
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 45.5
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 39.5
+      },
+      "blas_threads": 1,
+      "cores": "1,2",
+      "max_tctl": 47.875,
+      "name": "g_full3",
+      "status": "ok",
+      "tctl_samples": 4,
+      "wall_s": 99.6
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 44.625
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 45.125
+      },
+      "blas_threads": 1,
+      "cores": "1,2",
+      "max_tctl": 45.25,
+      "name": "g_lazy2",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 10.4
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 45.0
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 45.5
+      },
+      "blas_threads": 1,
+      "cores": "1,2",
+      "max_tctl": 45.625,
+      "name": "g_lazy3",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 13.4
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 45.75
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 39.875
+      },
+      "blas_threads": 1,
+      "cores": "1,2",
+      "max_tctl": 47.875,
+      "name": "g_odd",
+      "status": "ok",
+      "tctl_samples": 2,
+      "wall_s": 53.8
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 45.625
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 46.25
+      },
+      "blas_threads": 1,
+      "cores": "1,2",
+      "max_tctl": 46.25,
+      "name": "g_odd_l",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 7.4
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 43.0
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 38.625
+      },
+      "blas_threads": 1,
+      "cores": "1,2",
+      "max_tctl": 43.0,
+      "name": "jaxstub",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 6.4
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 42.5
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 38.125
+      },
+      "blas_threads": 1,
+      "cores": "1,2",
+      "max_tctl": 42.5,
+      "name": "jaxstub2",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 7.4
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 44.5
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 38.625
+      },
+      "blas_threads": 2,
+      "cores": "1,2",
+      "max_tctl": 44.5,
+      "name": "joint200",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 9.4
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 42.75
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 43.375
+      },
+      "blas_threads": 1,
+      "cores": "1",
+      "max_tctl": 44.0,
+      "name": "p2extra",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 1.4
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 47.0
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 38.0
+      },
+      "blas_threads": 1,
+      "cores": "1",
+      "max_tctl": 47.0,
+      "name": "p3_1t",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 28.4
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 47.375
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 45.875
+      },
+      "blas_threads": 1,
+      "cores": "1,2",
+      "max_tctl": 47.375,
+      "name": "p3_1t_along",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 27.4
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 45.875
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 40.25
+      },
+      "blas_threads": 2,
+      "cores": "1,2",
+      "max_tctl": 46.25,
+      "name": "p3_2t",
+      "status": "ok",
+      "tctl_samples": 2,
+      "wall_s": 42.8
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 47.0
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 38.375
+      },
+      "blas_threads": 1,
+      "cores": "1,2",
+      "max_tctl": 50.875,
+      "name": "p4_b0",
+      "status": "ok",
+      "tctl_samples": 3,
+      "wall_s": 84.3
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 47.625
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 41.375
+      },
+      "blas_threads": 1,
+      "cores": "1,2",
+      "max_tctl": 50.375,
+      "name": "p4_b1",
+      "status": "ok",
+      "tctl_samples": 3,
+      "wall_s": 81.3
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 47.5
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 41.125
+      },
+      "blas_threads": 1,
+      "cores": "1,2",
+      "max_tctl": 50.625,
+      "name": "p4_drop0",
+      "status": "ok",
+      "tctl_samples": 3,
+      "wall_s": 75.3
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 47.375
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 47.375
+      },
+      "blas_threads": 1,
+      "cores": "1,2",
+      "max_tctl": 50.875,
+      "name": "p4_drop1",
+      "status": "ok",
+      "tctl_samples": 3,
+      "wall_s": 75.3
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 46.125
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 47.375
+      },
+      "blas_threads": 1,
+      "cores": "1",
+      "max_tctl": 47.5,
+      "name": "p4_dropsum",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 1.4
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 45.875
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 40.0
+      },
+      "blas_threads": 1,
+      "cores": "1,2",
+      "max_tctl": 49.625,
+      "name": "p4_smoke",
+      "status": "failed, exit 1",
+      "tctl_samples": 2,
+      "wall_s": 46.8
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 45.25
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 47.5
+      },
+      "blas_threads": 1,
+      "cores": "1",
+      "max_tctl": 47.625,
+      "name": "p4_sum",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 2.4
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 50.25
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 39.25
+      },
+      "blas_threads": 2,
+      "cores": "1,2",
+      "max_tctl": 53.75,
+      "name": "p5_raise",
+      "status": "ok",
+      "tctl_samples": 2,
+      "wall_s": 31.8
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 46.25
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 41.25
+      },
+      "blas_threads": 2,
+      "cores": "1,2",
+      "max_tctl": 46.25,
+      "name": "p5_table",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 6.4
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 44.125
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 46.25
+      },
+      "blas_threads": 1,
+      "cores": "1",
+      "max_tctl": 46.5,
+      "name": "p5_time1",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 14.4
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 43.375
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 42.375
+      },
+      "blas_threads": 1,
+      "cores": "1",
+      "max_tctl": 43.625,
+      "name": "p5_time80",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 10.4
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 42.875
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 43.875
+      },
+      "blas_threads": 2,
+      "cores": "1,2",
+      "max_tctl": 44.25,
+      "name": "p5_time80_2",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 13.4
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 44.125
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 44.875
+      },
+      "blas_threads": 1,
+      "cores": "1",
+      "max_tctl": 45.5,
+      "name": "p6_raised",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 1.4
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 44.75
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 39.625
+      },
+      "blas_threads": 1,
+      "cores": "1",
+      "max_tctl": 44.75,
+      "name": "p6_round1",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 11.4
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 45.125
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 43.375
+      },
+      "blas_threads": 1,
+      "cores": "1,2",
+      "max_tctl": 45.125,
+      "name": "p6_round2",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 16.4
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 44.875
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 44.875
+      },
+      "blas_threads": 1,
+      "cores": "1",
+      "max_tctl": 45.375,
+      "name": "p6_round2ell",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 7.4
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 44.5
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 45.75
+      },
+      "blas_threads": 2,
+      "cores": "1,2",
+      "max_tctl": 45.75,
+      "name": "p6_sum",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 5.4
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 44.25
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 44.5
+      },
+      "blas_threads": 2,
+      "cores": "1,2",
+      "max_tctl": 44.75,
+      "name": "p6_sum2",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 5.4
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 43.875
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 44.875
+      },
+      "blas_threads": 1,
+      "cores": "1,2",
+      "max_tctl": 45.0,
+      "name": "p6_unit",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 13.4
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 44.5
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 38.5
+      },
+      "blas_threads": 1,
+      "cores": "1,2",
+      "max_tctl": 46.375,
+      "name": "p6_unit2",
+      "status": "ok",
+      "tctl_samples": 2,
+      "wall_s": 31.8
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 43.625
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 44.625
+      },
+      "blas_threads": 2,
+      "cores": "1,2",
+      "max_tctl": 44.875,
+      "name": "p7",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 1.4
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 42.625
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 43.0
+      },
+      "blas_threads": 2,
+      "cores": "1,2",
+      "max_tctl": 43.375,
+      "name": "prior",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 1.4
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 44.5
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 44.0
+      },
+      "blas_threads": 1,
+      "cores": "1,2",
+      "max_tctl": 44.75,
+      "name": "r_a_e",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 22.4
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 43.875
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 38.5
+      },
+      "blas_threads": 1,
+      "cores": "1,2",
+      "max_tctl": 43.875,
+      "name": "r_a_o",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 23.4
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 44.625
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 44.875
+      },
+      "blas_threads": 1,
+      "cores": "1,2",
+      "max_tctl": 47.375,
+      "name": "r_b_e",
+      "status": "ok",
+      "tctl_samples": 2,
+      "wall_s": 43.9
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 44.75
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 44.875
+      },
+      "blas_threads": 1,
+      "cores": "1,2",
+      "max_tctl": 47.5,
+      "name": "r_b_o",
+      "status": "ok",
+      "tctl_samples": 2,
+      "wall_s": 44.9
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 44.75
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 44.0
+      },
+      "blas_threads": 1,
+      "cores": "1,2",
+      "max_tctl": 44.75,
+      "name": "r_c_e",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 20.4
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 43.75
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 44.625
+      },
+      "blas_threads": 1,
+      "cores": "1,2",
+      "max_tctl": 44.875,
+      "name": "r_c_o",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 22.4
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 44.625
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 45.125
+      },
+      "blas_threads": 1,
+      "cores": "1,2",
+      "max_tctl": 47.125,
+      "name": "r_drop",
+      "status": "ok",
+      "tctl_samples": 2,
+      "wall_s": 37.8
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 46.25
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 38.0
+      },
+      "blas_threads": 1,
+      "cores": "1,2",
+      "max_tctl": 48.0,
+      "name": "r_full200",
+      "status": "ok",
+      "tctl_samples": 7,
+      "wall_s": 191.1
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 45.125
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 41.375
+      },
+      "blas_threads": 1,
+      "cores": "1,2",
+      "max_tctl": 47.5,
+      "name": "r_main",
+      "status": "ok",
+      "tctl_samples": 2,
+      "wall_s": 43.9
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 44.5
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 37.75
+      },
+      "blas_threads": 1,
+      "cores": "1,2",
+      "max_tctl": 44.5,
+      "name": "smoke_final",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 6.4
+    },
+    {
+      "after": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 43.375
+      },
+      "before": {
+        "machine_checks": 1,
+        "offline": "10,26",
+        "tctl": 39.625
+      },
+      "blas_threads": 1,
+      "cores": "1,2",
+      "max_tctl": 43.375,
+      "name": "whojax",
+      "status": "ok",
+      "tctl_samples": 1,
+      "wall_s": 6.4
+    }
+  ],
+  "machine_checks_after": [
+    1
+  ],
+  "max_tctl_c": 53.75,
+  "max_wall_s": 191.1,
+  "note": "Latest record per job name; a job rerun after a failure overwrites its record. Tctl, offline CPUs and machine checks sampled every 30 s and before and after.",
+  "offline_after": [
+    "10,26"
+  ]
+}

@@ -9,8 +9,10 @@ Run levels, set with ``PYMC_CHALLENGES_RUN``:
 
 A notebook starts with::
 
-    level = run_level(needs=dict(ram_gb=40, vram_gb=18, disk_gb=50))
+    level = run_level(needs=dict(ram_gb=40, vram_gb=16, disk_gb=50))
     store = Store("E87")
+    if level == "replay":
+        store.restore()  # arrays are not in git: says so, and what to do, if they are not here
     if level == "full" and not store.done("warmup"):
         ...
         store.save_array("warmup_positions", positions)
@@ -24,6 +26,11 @@ that ``sha256sum -c`` can read; sidecars rather than one shared table so that a 
 write chunks at once. A crash between a file and its sidecar makes that file fail its checksum,
 which a load refuses and ``pending`` recomputes, so it costs work and never gives a wrong answer.
 
+Only small JSON goes in git, so on a fresh clone the manifest and summaries are here and the arrays
+are not. ``Store.restore`` brings back a copy from
+``~/.cache/pymc-challenges/results/<notebook id>/`` (or any folder), checked against the manifest;
+without one it raises ``ResultsMissing``, whose message says what to do. Downloads and other large files also go under ``CACHE_DIR``, not in git.
+
 Importing this module does not import JAX or start CUDA; the pilot helpers import JAX when called.
 It does load NumPy (so does the package), so set ``OPENBLAS_NUM_THREADS=1`` before
 ``import pymc_challenges`` in any notebook that runs nutpie: BLAS oversubscription slowed E86's
@@ -33,6 +40,7 @@ baseline about 2.7x.
 from __future__ import annotations
 
 import glob
+import contextlib
 import hashlib
 import importlib.metadata
 import importlib.util
@@ -41,6 +49,7 @@ import os
 import re
 import shutil
 import subprocess
+import sys
 import tempfile
 import time
 from pathlib import Path
@@ -48,8 +57,12 @@ from pathlib import Path
 import numpy as np
 
 RESULTS_DIR = Path(__file__).resolve().parents[2] / "results"
+CACHE_DIR = Path.home() / ".cache" / "pymc-challenges"  # downloads, anything too big for git
+RESTORE_DIR = CACHE_DIR / "results"  # where Store.restore looks: <notebook id>/ under here
+GPU_LOCK = CACHE_DIR / "gpu.lock"
+CPU_OFFLINE = Path("/sys/devices/system/cpu/offline")
 LEVELS = ("read", "replay", "small", "full")
-LABELS = ("measured", "estimated", "extrapolated")
+LABELS = ("measured", "estimated", "extrapolated")  # the only labels a number may carry
 CUDA_HOST_GB = 2.0  # host memory CUDA costs (measured in E86)
 JAX_VRAM_FRACTION = 0.75  # JAX's default share of VRAM
 TMP_SUFFIX = ".tmp"
@@ -62,6 +75,10 @@ class PreflightError(RuntimeError):
 
 class ChecksumError(RuntimeError):
     """A stored file does not match its checksum."""
+
+
+class ResultsMissing(RuntimeError):
+    """Results a level needs are not on this machine; the message says what to do."""
 
 
 # Run levels and preflight -----------------------------------------------------------------------
@@ -80,7 +97,9 @@ def run_level(needs=None, env=None):
         if needs is None:
             raise PreflightError("A full run must state its needs: "
                                  "run_level(needs=dict(ram_gb=..., vram_gb=..., disk_gb=...)).")
-        preflight(**needs)
+        have = preflight(**needs)
+        print(f"Preflight: offline CPUs {have['offline_cpus']}, "
+              f"machine-check records this boot {have['machine_checks']} (None means unknown)")
     return level
 
 
@@ -93,48 +112,171 @@ def gpu_present():
             and bool(glob.glob("/dev/nvidia[0-9]*") or glob.glob("/dev/dxg")))
 
 
+def _jax_if_loaded():
+    """JAX if something has really imported it, else None, without importing it.
+
+    ``sys.modules["jax"]`` alone is not enough: arviz leaves a lazy stub there, and touching any
+    attribute of the stub imports all of JAX and maps the CUDA library. A real import has also
+    loaded ``jax.numpy``; the stub has not.
+    """
+    return sys.modules.get("jax") if "jax.numpy" in sys.modules else None
+
+
+def _nvidia_smi_memory():
+    """(total, free, reserved) VRAM of the first GPU in GB as nvidia-smi sees them, or None.
+
+    ``reserved`` is what the driver keeps for itself; 0 if not reported. CUDA's total leaves it out.
+    """
+    if not (exe := shutil.which("nvidia-smi")):
+        return None
+    try:
+        out = subprocess.run([exe, "--query-gpu=memory.total,memory.free,memory.reserved",
+                              "--format=csv,noheader,nounits"],
+                             capture_output=True, text=True, timeout=10, check=True).stdout
+        total, free, *rest = out.splitlines()[0].split(",")
+        total, free = float(total) / 1024, float(free) / 1024
+    except (OSError, subprocess.SubprocessError, ValueError, IndexError):
+        return None
+    try:
+        reserved = float(rest[0]) / 1024
+    except (ValueError, IndexError):
+        reserved = 0.0
+    return total, free, reserved
+
+
+def _jax_gpu_stats(start=False):
+    """JAX's allocator statistics for the first GPU, or None. Starts CUDA only if ``start``."""
+    if not gpu_present():
+        return None
+    try:
+        if start:
+            import jax
+        elif (jax := _jax_if_loaded()) is None:
+            return None
+        else:
+            from jax._src.xla_bridge import backends_are_initialized  # no public way to ask
+
+            if not backends_are_initialized():
+                return None
+        return jax.devices("gpu")[0].memory_stats() or None
+    except (ImportError, AttributeError, RuntimeError):
+        return None
+
+
 def gpu_memory():
     """VRAM of the first GPU in GB, or None if unknown. JAX is the last resort: it starts CUDA.
 
-    ``usable_gb`` allows for what JAX will take, by default 75% of the total, whatever is free.
+    ``usable_gb`` is what JAX can still give this process. Before CUDA starts that is its share of
+    the total less the driver's reserve, by default 75%, or what is free if less. On an RTX 3090 Ti
+    that gives JAX's real ``bytes_limit`` of 16.56 GiB (measured), not 75% of 22.49. Once JAX has
+    started CUDA, nvidia-smi counts JAX's own pool as taken, so the answer comes from JAX instead
+    (``source`` is "jax"): ``bytes_limit`` is already JAX's share, so no fraction is applied, and
+    ``free_gb`` is the same as ``usable_gb``. Without nvidia-smi, ``total_gb`` is only JAX's limit,
+    not the size of the card.
     """
-    total = free = None
-    source = "nvidia-smi"
-    if exe := shutil.which("nvidia-smi"):
-        try:
-            out = subprocess.run([exe, "--query-gpu=memory.total,memory.free",
-                                  "--format=csv,noheader,nounits"],
-                                 capture_output=True, text=True, timeout=10, check=True).stdout
-            total, free = (float(x) / 1024 for x in out.splitlines()[0].split(","))
-        except (OSError, subprocess.SubprocessError, ValueError, IndexError):
-            total = free = None
-    if total is None and gpu_present():
-        import jax
-
-        source = "jax"
-        try:
-            stats = jax.devices("gpu")[0].memory_stats() or {}
-            total = stats["bytes_limit"] / 1024**3
-            free = total - stats.get("bytes_in_use", 0) / 1024**3
-        except (RuntimeError, KeyError):
-            return None
-    if total is None:
+    smi = _nvidia_smi_memory()
+    stats = _jax_gpu_stats(start=smi is None) or {}
+    if "bytes_limit" in stats:
+        limit = stats["bytes_limit"] / 1024**3
+        pool = stats.get("pool_bytes", stats["bytes_limit"]) / 1024**3  # taken from the card so far
+        growth = limit - pool
+        if smi:
+            growth = min(growth, smi[1])
+        usable = max(0.0, pool - stats.get("bytes_in_use", 0) / 1024**3 + growth)
+        return {"total_gb": smi[0] if smi else limit, "free_gb": usable, "usable_gb": usable,
+                "source": "jax"}
+    if smi is None:
         return None
+    total, free, reserved = smi
     if os.environ.get("XLA_PYTHON_CLIENT_ALLOCATOR") == "platform":
         fraction = 1.0
     else:
         fraction = float(os.environ.get("XLA_PYTHON_CLIENT_MEM_FRACTION", JAX_VRAM_FRACTION))
-    return {"total_gb": total, "free_gb": free, "usable_gb": min(free, fraction * total),
-            "source": source}
+    return {"total_gb": total, "free_gb": free, "usable_gb": min(free, fraction * (total - reserved)),
+            "source": "nvidia-smi"}
+
+
+def online_core_check():
+    """Offline CPUs and this boot's kernel machine-check records, for a run to report.
+
+    ``offline_cpus`` is a sorted list and ``machine_checks`` a count of records: decoded
+    ``MC<n>_STATUS`` lines plus raw ``Machine Check: ... Bank <n>`` lines. The raw form matters
+    because a record left by a crash is logged about a second into the next boot, before the decoder
+    loads, so a count can be above zero at the start of a healthy run. Compare it with the count
+    before the job, not with zero. Either value is None where it cannot be read (not Linux, no
+    journal access), which is unknown, not zero. A machine with a bad core taken offline by hand
+    gets it back on a reboot, so compare the list with what that machine expects: this function
+    cannot know that.
+    """
+    try:
+        cpus = []
+        for part in CPU_OFFLINE.read_text().strip().split(","):
+            first, _, last = part.partition("-")
+            if first:
+                cpus.extend(range(int(first), int(last or first) + 1))
+    except (OSError, ValueError):
+        cpus = None
+    try:
+        out = subprocess.run(["journalctl", "-b", "0", "-k", "--no-pager"], capture_output=True,
+                             text=True, errors="replace", timeout=30, check=True).stdout
+        lines = out.splitlines()
+    except (OSError, subprocess.SubprocessError):
+        lines = []
+    # A booted kernel always logs something, so no entries means the log could not be read.
+    readable = bool(lines) and "No entries" not in lines[0]
+    count = sum(bool(re.search(r"MC[0-9]+_STATUS|Machine Check: .*Bank [0-9]+", line)) for line in lines)
+    return {"offline_cpus": cpus, "machine_checks": count if readable else None}
+
+
+@contextlib.contextmanager
+def gpu_lock(timeout=None, path=None, poll=1.0):
+    """``with gpu_lock():`` holds the machine's one GPU slot, waiting for it if another job has it.
+
+    Raises TimeoutError after ``timeout`` seconds (None waits for ever). The kernel drops the lock
+    when the holder exits or dies, so there is no stale lock to clear. It only excludes jobs that
+    also take it, and it is not re-entrant: taking it twice in one process waits for itself.
+    """
+    import fcntl
+
+    path = Path(GPU_LOCK if path is None else path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    deadline = None if timeout is None else time.monotonic() + timeout
+    announced = False
+    with open(path, "a+") as f:  # "a+", as "w" would wipe the holder's note before the lock is ours
+        while True:
+            try:
+                fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except BlockingIOError:
+                f.seek(0)
+                holder = f.read().strip() or "an unknown process"
+            if deadline is not None and time.monotonic() >= deadline:
+                raise TimeoutError(f"GPU lock {path} is held by {holder}, after {timeout} s")
+            if not announced:
+                print(f"Waiting for the GPU lock {path}, held by {holder}", flush=True)
+                announced = True
+            time.sleep(poll)
+        f.truncate(0)
+        f.write(f"pid {os.getpid()}, since {time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())}\n")
+        f.flush()
+        try:
+            yield path
+        finally:
+            f.truncate(0)
+            f.flush()
 
 
 def preflight(ram_gb=0.0, vram_gb=0.0, disk_gb=0.0, disk_path=None):
-    """Raise PreflightError listing every shortfall, or return what is available in GB."""
+    """Raise PreflightError listing every shortfall, or return what is available.
+
+    The return has the GB available, and ``online_core_check``'s ``offline_cpus`` and
+    ``machine_checks``, which are reported rather than judged: see that function.
+    """
     import psutil
 
     host_gb = ram_gb + (CUDA_HOST_GB if vram_gb > 0 else 0.0)
     problems = []
-    have = {"ram_gb": psutil.virtual_memory().available / 1024**3}
+    have = {"ram_gb": psutil.virtual_memory().available / 1024**3, **online_core_check()}
     if have["ram_gb"] < host_gb:
         extra = f" (including {CUDA_HOST_GB:.0f} GB for CUDA)" if vram_gb > 0 else ""
         problems.append(f"RAM: need {host_gb:.1f} GB{extra}, {have['ram_gb']:.1f} GB available")
@@ -261,10 +403,16 @@ class Store:
             raise ValueError(f"{name!r} is reserved by the store")
         return self.path / f"{name}{suffix}"
 
+    def _what_to_do(self):
+        return (f"Only small JSON results are in git, so arrays from a full run are not in a fresh "
+                f"clone. If you have a copy, put it in {RESTORE_DIR / self.id} and call "
+                f"Store({self.id!r}).restore(). If not, PYMC_CHALLENGES_RUN=read shows the stored "
+                "numbers and PYMC_CHALLENGES_RUN=small computes the reduced problem.")
+
     def _checked(self, path, check=True):
         if not path.exists():
-            raise FileNotFoundError(f"{path} is not in the store: restore the stored results, or "
-                                    "produce them with PYMC_CHALLENGES_RUN=small or full.")
+            raise ResultsMissing(f"{path.relative_to(self.path)} is not in {self.path}. "
+                                 + self._what_to_do())
         if check and not _intact(path):
             raise ChecksumError(f"{path} does not match its checksum (corrupt, or the writer died "
                                 "before finishing). Re-run the stage that produces it.")
@@ -303,6 +451,54 @@ class Store:
 
     def manifest(self):
         return json.loads(self._checked(self.path / "manifest.json").read_text())
+
+    def missing(self):
+        """Files the manifest lists that are not on disk; empty if there is no manifest."""
+        if not (self.path / "manifest.json").exists():
+            return []
+        return [name for name in self.manifest()["files"] if not (self.path / name).exists()]
+
+    def restore(self, source=None):
+        """Bring in a copy of this store's files, then raise ResultsMissing if any are still absent.
+
+        ``source`` is a folder laid out like this store, by default under ``RESTORE_DIR``. Files
+        that are already intact are left alone, so results in git are never overwritten. A file is
+        taken only if it matches the manifest here, or without an entry there its own sidecar; any
+        other is listed in ``refused``, so arrays of another run cannot mix with this run's numbers.
+        ``stages.json`` has no checksum and is not copied. With no copy nothing is hashed, so this
+        is cheap to call at the top of a notebook. Returns the restored and refused names.
+        """
+        source = Path(RESTORE_DIR / self.id if source is None else source)
+        restored, refused = [], []
+
+        def bring(name, digest):
+            path, copy = self.path / name, source / name
+            if _intact(path) and digest in (None, sha256_file(path)):
+                return
+            if digest is None and _sidecar(copy).exists():
+                digest = next(iter(_sidecar(copy).read_text().split()), None)
+            if digest is None or sha256_file(copy) != digest:
+                refused.append(name)
+                return
+            with open(copy, "rb") as f:
+                _save(path, lambda out: shutil.copyfileobj(f, out))
+            restored.append(name)
+
+        if (source / "manifest.json").is_file():
+            bring("manifest.json", None)  # first: it is what the other files are checked against
+        has_manifest = (self.path / "manifest.json").exists()
+        listed = self.manifest()["files"] if has_manifest else {}
+        for copy in sorted(source.rglob("*")) if source.is_dir() else ():
+            name = copy.relative_to(source).as_posix()
+            if (copy.is_file() and copy.suffix != ".sha256" and not name.endswith(TMP_SUFFIX)
+                    and name not in ("manifest.json", "stages.json")):
+                bring(name, listed.get(name))
+        absent = self.missing() if has_manifest else ["manifest.json"]
+        if absent:
+            why = f" Refused, as checksums did not match: {refused[:5]}." if refused else ""
+            raise ResultsMissing(f"{self.id}: {len(absent)} stored files are not in {self.path}, "
+                                 f"first {absent[:5]}.{why} " + self._what_to_do())
+        return {"restored": restored, "refused": refused}
 
     def verify(self):
         """Re-hash the store against sidecars and the manifest; returns a list of problems."""
@@ -355,8 +551,8 @@ class Store:
     def gather(self, name, n, axis=0):
         """Concatenate chunks 0..n-1, key by key. Refuses if any is missing or corrupt."""
         if todo := self.pending(name, n):
-            raise FileNotFoundError(f"{name}: {len(todo)} of {n} chunks are not finished, "
-                                    f"first {todo[:5]}")
+            raise ResultsMissing(f"{name}: {len(todo)} of {n} chunks are not finished or not here, "
+                                 f"first {todo[:5]}. " + self._what_to_do())
         chunks = [self.load_chunk(name, i, check=False) for i in range(n)]
         return {k: np.concatenate([c[k] for c in chunks], axis=axis) for k in chunks[0]}
 
@@ -442,7 +638,8 @@ def banner(level=None, **values):
     for key, title in _ROWS.items():
         cell = values[key]
         if not isinstance(cell, dict) or cell.get("label") not in LABELS:
-            raise TypeError(f"{key} must be labelled: wrap it in measured() or estimated()")
+            raise TypeError(f"{key} must be labelled {', '.join(LABELS)}: "
+                            "wrap it in the function of that name")
         text = f"{cell['value']} {cell.get('unit', '')}".strip().replace("|", "\\|")
         lines.append(f"| {title} | {text} | {cell['label']} |")
     note = _LEVEL_NOTES.get(level)
@@ -450,6 +647,57 @@ def banner(level=None, **values):
 
 
 # Pilot helpers: JAX is imported inside each one ---------------------------------------------------
+
+
+def _leaves(out):
+    jax = _jax_if_loaded()
+    if jax is not None:
+        return jax.tree.leaves(out)
+    if isinstance(out, dict):
+        out = list(out.values())
+    if isinstance(out, (list, tuple)):
+        return [leaf for item in out for leaf in _leaves(item)]
+    return [] if out is None else [out]
+
+
+def _finite(out):
+    for leaf in _leaves(out):
+        try:
+            array = np.asarray(leaf)
+        except TypeError:  # JAX PRNG keys and the like hold no floats
+            continue
+        if array.dtype.kind in "fc" and not np.isfinite(array).all():
+            return False
+    return True
+
+
+def time_call(fn, *args, repeat=5, **kwargs):
+    """Time ``fn(*args, **kwargs)`` and wait for its result, so that the work itself is measured.
+
+    Returns ``first_s`` (the first call, with any compilation), ``run_ms`` (best of ``repeat`` more
+    calls), ``repeat`` and ``finite`` (whether all float outputs were; a NaN path can run at another
+    speed). ``fn`` must return its result: unused JAX work can be deleted and a result nobody holds
+    cannot be waited on, so a function that returns nothing raises ValueError. JAX is only touched
+    if something has imported it, so this also times NumPy code without loading JAX.
+    """
+    if repeat < 1:
+        raise ValueError(f"repeat must be at least 1, got {repeat}")
+
+    def timed():
+        t0 = time.perf_counter()
+        out = fn(*args, **kwargs)
+        if (jax := _jax_if_loaded()) is not None:
+            out = jax.block_until_ready(out)
+        return out, time.perf_counter() - t0
+
+    out, first_s = timed()
+    if not _leaves(out):
+        raise ValueError("time_call needs fn to return its result, so that it can be waited on")
+    runs = []
+    for _ in range(repeat):
+        out, seconds = timed()
+        runs.append(seconds)
+    return {"first_s": first_s, "run_ms": min(runs) * 1e3, "repeat": repeat, "finite": _finite(out)}
 
 
 def time_gradient(logdensity, q0, chains=(1, 8, 32, 128), repeat=5, jitter=0.1, seed=0, device=None):
@@ -473,18 +721,10 @@ def time_gradient(logdensity, q0, chains=(1, 8, 32, 128), repeat=5, jitter=0.1, 
         q = np.asarray(q0) + jitter * rng.normal(size=(n, q0.size))
         q = jax.device_put(jnp.asarray(q, q0.dtype), device)
         step = jax.jit(jax.vmap(jax.value_and_grad(logdensity)))
-        t0 = time.perf_counter()
-        jax.block_until_ready(step(q))
-        compile_s = time.perf_counter() - t0
-        runs = []
-        for _ in range(repeat):
-            t0 = time.perf_counter()
-            out = jax.block_until_ready(step(q))
-            runs.append(time.perf_counter() - t0)
-        rows.append({"chains": n, "compile_s": compile_s, "run_ms": min(runs) * 1e3,
-                     "ms_per_chain": min(runs) * 1e3 / n, "dtype": str(q0.dtype),
-                     "device": str(device), "finite": all(bool(np.isfinite(np.asarray(leaf)).all())
-                                                          for leaf in jax.tree.leaves(out))})
+        timing = time_call(step, q, repeat=repeat)
+        rows.append({"chains": n, "compile_s": timing["first_s"], "run_ms": timing["run_ms"],
+                     "ms_per_chain": timing["run_ms"] / n, "dtype": str(q0.dtype),
+                     "device": str(device), "finite": timing["finite"]})
         jax.clear_caches()
     return rows
 
