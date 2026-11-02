@@ -159,20 +159,43 @@ def lattice(cell):
 
 
 y5, elev5, grad5, _, _ = lattice(5.0)
-fig, axes = plt.subplots(3, 1, figsize=(9, 11), sharex=True, layout="constrained")
+fig, axes = plt.subplots(2, 1, figsize=(9, 8.2), sharex=True, layout="constrained")
 extent = (0, 1000, 0, 500)
-axes[0].scatter(raw["x"], raw["y"], s=1, c="k")
-axes[0].set(title=f"{n_trees:,} Beilschmiedia pendula trees", ylabel="y (m)", aspect="equal", xlim=(0, 1000), ylim=(0, 500))
-for ax, v, title in zip(axes[1:], (raw["elev"], np.log(raw["grad"])), ("elevation (m)", "log terrain gradient")):
-    im = ax.imshow(v, origin="lower", extent=extent, cmap="viridis")
-    ax.set(title=title, ylabel="y (m)")
-    fig.colorbar(im, ax=ax, shrink=0.8)
-fig.colorbar(im, ax=axes[0], shrink=0.8).ax.set_visible(False)  # keeps the three maps aligned
-axes[2].set_xlabel("x (m)");
+grid_y, grid_x = (np.linspace(0, size, n) for size, n in zip((500, 1000), raw["elev"].shape))
+levels = np.arange(np.floor(raw["elev"].min() / 2) * 2, raw["elev"].max() + 2, 2)  # every 2 m
+
+im = axes[0].imshow(raw["elev"], origin="lower", extent=extent, cmap="YlOrBr", alpha=0.75)
+lines = axes[0].contour(grid_x, grid_y, raw["elev"], levels=levels, colors="#5b3a1a")
+lines.set_linewidths([1.3 if level % 10 == 0 else 0.5 for level in lines.levels])  # index contours
+axes[0].clabel(lines, levels=[level for level in levels if level % 10 == 0], fmt="%d m", fontsize=8)
+axes[0].scatter(raw["x"], raw["y"], s=4, c="#0b3d2e", linewidths=0)
+axes[0].set(title=f"{n_trees:,} Beilschmiedia pendula trees on the terrain, contours every 2 m", ylabel="y (m)",
+            aspect="equal", xlim=(0, 1000), ylim=(0, 500))
+fig.colorbar(im, ax=axes[0], shrink=0.8, label="elevation (m)")
+
+im = axes[1].imshow(np.log(raw["grad"]), origin="lower", extent=extent, cmap="viridis")
+axes[1].contour(grid_x, grid_y, raw["elev"], levels=levels, colors="w", linewidths=0.4, alpha=0.6)
+axes[1].set(title="log terrain gradient, with the same contours", xlabel="x (m)", ylabel="y (m)")
+fig.colorbar(im, ax=axes[1], shrink=0.8)
+plt.show()
+
+
+def trees_per_ha(terrain):
+    """Mean tree density in the four quartiles of a terrain variable, on the 5 m cells."""
+    quartile = pd.qcut(terrain.ravel(), 4, labels=["lowest quarter", "second", "third", "highest quarter"])
+    return (pd.Series(y5.ravel()).groupby(quartile, observed=True).mean() * 400).round(1)  # 400 cells a hectare
+
+
+print("Trees per hectare, by quarter of the plot:")
+print(pd.DataFrame({"elevation": trees_per_ha(elev5), "log gradient": trees_per_ha(grad5)}).to_string());
 
 
 # %% [markdown]
-# Trees avoid the centre of the plot and bunch into tight clumps. (The R documentation says 3,605
+# Trees avoid the centre of the plot and bunch into tight clumps. The contours show what that centre
+# is: a flat hollow, with a western rise, a higher plateau to the east and steep edges running
+# between them. Density climbs steadily with gradient, from 20 to 107 trees per hectare across the
+# quarters of the plot. Elevation shows no steady trend, and its highest quarter holds the fewest
+# trees, a first hint at the brief's question. (The R documentation says 3,605
 # trees; the file holds 3,604.) For a homogeneous Poisson process, counts across quadrats have
 # variance equal to their mean, whatever the quadrat size. Here:
 
