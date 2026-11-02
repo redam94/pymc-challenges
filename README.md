@@ -21,11 +21,15 @@ uv run jupyter lab notebooks
 
 Using VS Code or another IDE instead? Point it at the interpreter in `.venv`.
 
+On Linux x86_64 with an NVIDIA GPU, `uv sync --extra gpu` installs CUDA 13 JAX. A CPU is enough
+for every notebook, so this is optional. Later syncs drop it unless you repeat the flag:
+`uv sync --extra gpu --extra reports`.
+
 ## How to use this
 
 ```
 notebooks/
-  examples/      E01-E85  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
+  examples/      E01-E86  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
   challenges/    C01-C15  your workspace. Tasks, empty cells, hints on request.
   solutions/     C01-C15  full reference solutions, executed, with commentary.
 ```
@@ -261,6 +265,14 @@ for the tails rather than the mean - each with the failure that catches people o
 | **E81** | Circular data: directions, times of day and seasons | Santa Barbara airport hourly wind 2021-23 (IEM ASOS); Barro Colorado camera traps (Rowcliffe et al. 2014, CC BY); Oklahoma quakes as a null | mean resultant vector, von Mises / wrapped / projected normal, tan-half vs canonical (natural-parameter) link, wrapped-prior and step-mode failures with zero divergences, harmonic circular predictors, a regime mixture, circular PPC (rose bands, PIT), a held-out year, label switching and density r-hat, log-Fourier densities via trig moments, activity overlap vs kernel + bootstrap, clock/compass/arc displays |
 | **E82** | Bayesian optimisation: choosing the next experiment | Shields et al. 2021 direct-arylation screen: all 1,728 reactions (12 ligands x 4 bases x 4 solvents x 3 conc x 3 temp), plus 50 chemists' campaigns and EDBO runs (MIT) | GP over categorical + continuous factors (per-factor correlation kernels, main effects + interactions), MAP refits of a compiled PyMC model vs NUTS, EI/PI/UCB/Thompson (Kronecker + Matheron draws), paired benchmark vs random/OFAT/chemists, encoding failure, batches, noisy incumbents, stopping rules |
 | **E83** | Bayesian quantile regression, and when it lies | 20,000 US singleton births 2023 (NCHS natality public-use file) + a known-truth simulation | check loss and a Frisch-Newton LP solver, the quantile process, the asymmetric Laplace working likelihood (mode right, spread wrong, units trap), coverage simulation, Yang-Wang-He sandwich, Gibbs posterior with a bootstrap-calibrated learning rate, quantile crossing / rearrangement / monotone-increment joint model, sinh-arcsinh distributional regression, held-out pinball loss, interval score, PIT |
+
+#### GPU ensemble sampling (E86)
+
+What a GPU actually speeds up in Bayesian sampling, measured on one large spatial model. `uv sync --extra gpu` gives the full 5 m problem; without a GPU the notebook runs a 20 m lattice on the CPU.
+
+| | Topic | Data | Key techniques |
+|---|---|---|---|
+| **E86** | GPU ensembles: ChEES-HMC and MEADS on a forest of 20,000 cells | Barro Colorado Island *Beilschmiedia pendula*: 3,604 mapped trees with elevation and slope (`spatstat.data`; Hubbell & Foster 1983) | log-Gaussian Cox process with four latent fields on a Kronecker HSGP basis, spatially varying effects, blackjax ChEES and MEADS, GPU vs CPU timing by chains, size and precision, float32 checks, ensemble stragglers, NUTS baseline |
 
 ### Data work (D-series)
 

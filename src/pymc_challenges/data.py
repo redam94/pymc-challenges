@@ -1487,6 +1487,16 @@ REGISTRY: dict[str, Dataset] = {
         "reported in steps of 10; 0 together with sknt = 0 means calm), sknt (speed, knots), tmpf and dwpf "
         "(air and dew-point temperature, Fahrenheit). Empty = missing (e.g. variable direction).",
     ),
+    "bei_trees": Dataset(
+        "bei_trees_terrain.npz",
+        "https://raw.githubusercontent.com/cran/spatstat.data/master/data/bei.rda",
+        "Hubbell & Foster (1983), Condit, Hubbell & Foster (1996) and Condit (1998), Barro Colorado Island forest "
+        "dynamics plot, Panama; as shipped with the R package `spatstat.data` 3.1-9 (GPL >= 2), analysed by "
+        "Moller & Waagepetersen (2007). CONVERTED from the R file by tools/build_e86_bei.py - keep the cached file.",
+        "Exact positions (x, y in metres) of the Beilschmiedia pendula trees in the 1000 x 500 m plot, with "
+        "elevation (elev, m) and its gradient norm (grad) on a 5 m grid (yrow x xcol). Not a table: open "
+        "data.path() with np.load.",
+    ),
     "bci_camera_trap": Dataset(
         "bci_camera_trap_times.csv",
         "https://ndownloader.figshare.com/files/3219290",

@@ -30,17 +30,39 @@ you have read the text outputs (r_hat, ESS, divergences) and *looked at the figu
 every sentence of commentary agrees with what the outputs actually show. Never describe a
 result you have not seen.
 
-## Memory: this machine has about 8 GB to spare
+## Memory, CPU and GPU: this machine has 15 cores online, 64 GB and an RTX 3090 Ti
 
-Running several samplers at once has crashed the whole session before. Rules, no exceptions:
+The notebook budget stays small because readers have laptops, whatever this machine can do.
+Running several samplers at once has crashed the whole session before. Rules, with the one GPU exception below:
 
 - Run EVERY Python job (prototype scripts and builds) through the guard, which kills the whole
   process tree if it crosses the cap and prints the peak otherwise:
   `.venv/bin/python tools/memguard.py --max-gb 3 -- .venv/bin/python tools/build.py E13`
-- One Python job at a time. Never start a second while one is running; no background jobs.
+  Use `--max-gb 3` for notebook builds (GPU builds: see below); prototype scripts may go up to
+  `--max-gb 12`.
+- At most 4 Python jobs at a time (with 4 chains each, that is one more chain than the 15 cores, which the 30 threads absorb). Background
+  jobs are fine as long as each one runs through the guard.
+- The GPU (NVIDIA RTX 3090 Ti, 24 GB) needs `uv sync --extra gpu` (CUDA 13 JAX, Linux x86_64
+  only). A sync without that extra removes it, so list every extra you need. JAX then uses
+  the GPU by default: set `JAX_PLATFORMS=cpu` to force CPU, which is how to time a CPU run or
+  reproduce a reader's. JAX grabs 75% of GPU memory per process, so run one GPU job at a time,
+  or set `XLA_PYTHON_CLIENT_PREALLOCATE=false`. The guard counts system memory, not GPU
+  memory, and CUDA adds system memory of its own: about 1.5 GB at startup, 2 GB after the first
+  compile.
+  Time GPU code with `.block_until_ready()`, or you only measure the dispatch. Notebooks must
+  still run within budget on a reader's CPU-only laptop.
+- **GPU builds are the one exception to the 3 GB cap.** CUDA's 2 GB is not returned by clearing
+  caches. E86's GPU path builds under `--max-gb 5` (peak ~4.9 GB) and its CPU path under the usual
+  `--max-gb 3`. Run any CPU baseline BEFORE CUDA starts. `jax.default_backend()` starts it and so
+  does `import blackjax` (a `jnp` default argument), so import blackjax after the baseline; detect
+  a GPU with `importlib.util.find_spec("jax_cuda13_plugin")` plus `/dev/nvidia0`, `/dev/nvidiactl`
+  or `/dev/dxg`. `find_spec("jax_plugins.xla_cuda13")` raises when the extra is not installed.
+- Test a CPU path in a plain `uv sync` environment (`UV_PROJECT_ENVIRONMENT=/some/dir uv sync
+  --frozen`) under `taskset -c 0-7`: `JAX_PLATFORMS=cpu` in a GPU environment is not the same test.
 - nutpie runs its chains as threads in one process (memory is shared) - prefer it. The
   multiprocess samplers (`nuts_sampler="pymc"`, PGBART for BART, `pm.sample_smc`, Pathfinder
-  with `parallel=True`) copy the model into one worker PER CHAIN: pass `cores=2` to them.
+  with `parallel=True`) copy the model into one worker PER CHAIN: in notebook sources, pass
+  `cores=2` to them to stay within the reader budget.
 - Keep what you store small: `pm.sample(var_names=[...])` to drop big deterministics,
   `compute_p=False`, thin before `pm.compute_log_likelihood` on large data, `del` big
   idata objects you no longer need (a notebook kernel keeps everything alive to the end).
@@ -58,8 +80,9 @@ Running several samplers at once has crashed the whole session before. Rules, no
     `adaptation="flow"` trains one JAX flow per chain: `cores=1` (2.4 GB vs over 3.4 GB).
     For timing, use nutpie's per-chain `runtime_ms` from the progress callback, which stays
     meaningful when chains run in turn. `jax.clear_caches()` once the JAX part is over.
-- If the guard kills a job (exit 137), make the job smaller - do not raise the cap.
-- A notebook whose build peaks above ~3 GB is a bug for a reader with a laptop; say the
+- If the guard kills a job (exit 137), make the job smaller - do not raise the cap (a GPU build
+  aside).
+- A notebook whose CPU path peaks above ~3 GB is a bug for a reader with a laptop; say the
   measured peak in your report.
 
 ## One source, two notebooks
@@ -118,7 +141,8 @@ Two series live in `notebook_src/examples/`: **E** (modelling techniques, E01-E0
 E07+ advanced) and **D** (data work: preparation, data problems, exploratory analysis and
 reporting). Both follow the same rules.
 
-Fully worked and narrated, same header table as E01, no tags. Teaches one family of
+Fully worked and narrated, same header table as E01 (plus a Time row when above the 6-minute
+budget), no tags. Teaches one family of
 techniques on a real dataset with the complete workflow (prior predictive -> fit ->
 diagnostics -> PPC -> interpretation). Shows a failure and its fix where that is the
 lesson (e.g. centred vs non-centred). Ends with "Try it yourself" (3 modifications).
@@ -166,8 +190,9 @@ solution. Every check must be exercised by an `assert h.check(...)` in a solutio
   Note that `pm.sample()` **uses nutpie by default** here because nutpie is installed; pass
   `nuts_sampler="pymc"` for PyMC's own NUTS. Divergence counts differ between the two, so
   say which sampler a claim refers to.
-- **Runtime budget: a solution or example should execute in under ~6 minutes** on an
-  8-core laptop. Subsample large data (and say so) rather than blow the budget.
+- **Runtime budget: a solution or example should execute in under ~6 minutes** on a reader's
+  8-core laptop, not just on this machine: E86's GPU path is the one stated exception. Subsample
+  large data (and say so) rather than blow the budget.
 - matplotlib for custom figures; ArviZ for diagnostics. End plotting cells with `;`.
 - Plain ASCII hyphens in prose are fine; keep lines under ~100 characters.
 
@@ -175,7 +200,8 @@ solution. Every check must be exercised by an `assert h.check(...)` in a solutio
 
 Installed: pymc 6.3.2, arviz 1.3.0, pytensor 3.3, nutpie, pymc-extras 0.15, preliz, patsy,
 scipy, pandas 3, seaborn, h5py, and the JAX stack (jax 0.11, numpyro 0.22, diffrax 0.7,
-equinox 0.13, flowjax 19, optax), pymc-bart 0.13, and plotly 7 (added for E16).
+equinox 0.13, flowjax 19, optax), pymc-bart 0.13, plotly 7 (added for E16), and blackjax 1.7
+(added for E86).
 `pytensor.wrap_jax` exists for bringing JAX functions into a graph. **Do not add
 dependencies** without asking. HDF5 datasets (LIGO strain) are opened with
 `h5py.File(data.path(name))` and the county GeoJSON with `json.load(open(data.path(name)))`;
@@ -275,8 +301,8 @@ doubt run `uv run python -c "..."` to check:
   - A Bayesian neural network's weight r_hat is meaningless (permutation/sign symmetries):
     diagnose in function space - r_hat/ESS of predictions on a grid and of the log-likelihood.
   - **A discrete free variable makes `pm.sample` silently drop nutpie** for a multiprocess
-    `CompoundStep` (NUTS + Metropolis/Gibbs) - one model copy per chain, which matters on an
-    8 GB machine. Marginalise it instead (E04, D02), or pass `cores=2`.
+    `CompoundStep` (NUTS + Metropolis/Gibbs) - one model copy per chain, which counts against
+    the 3 GB notebook budget. Marginalise it instead (E04, D02), or pass `cores=2`.
   - Automatic imputation (NaN / masked array / pandas Series in `observed`): creates
     `y_unobserved` (free), `y_observed`, and a Deterministic `y` in the original row order;
     only `y` keeps your `dims`; the log-likelihood (so LOO) covers `y_observed` only; nutpie
@@ -929,6 +955,33 @@ doubt run `uv run python -c "..."` to check:
     substitution holds only at one common price vector. `rq_fn` goes singular with one dummy
     per sparse cell. Pairing draws from two independent posteriors inflates "switch" counts
     (net is unaffected). A held-out flag-rate check has little power against too-narrow bands.
+  - **GPU ensembles: ChEES and MEADS with blackjax (E86).** Consumer GPUs: float32 was ~17x faster than
+    float64 at 128 chains (3090 Ti), and float32 logp error was ~0.04 sd at logp ~ -37,000, fine for ChEES.
+    **Baselines:** NumPy's OpenBLAS pool ate nutpie: set `OPENBLAS_NUM_THREADS=1` before importing NumPy (2-3x)
+    and use more chains; these two changes cut a headline 200x to 60x. `nutpie.compile_pymc_model(var_names=)`
+    only filters derived variables, free ones are always stored: use `store_mass_matrix=False` and
+    `zarr_store=nutpie.zarr_store.LocalStore(dir)`, which opens lazily. `get_jaxified_logp(model)`: the default
+    `negative_logp=True` returns +logp and False flips it. It needs `model.replace_rvs_by_values` for other
+    outputs (shared RNG error otherwise). **`import pymc` turns JAX x64 on**: set `jax_enable_x64` yourself
+    (float32/float64 carry error in `while_loop` otherwise). `chees_adaptation` default (identity metric): r_hat
+    1.07-1.24 at healthy acceptance; `mass_matrix_estimation="diagonal"` adds a length floor with a d x d
+    accumulator (4.6 GiB float64 at d = 24,810). **One stuck chain can inflate that floor for all chains** (L up
+    to 980, hundreds of divergences, wrong totals, seed-dependent): warm up in two stages and restart chains
+    > 6 robust sds from the ensemble in logp or hyperparameters from healthy copies - check they are stuck, not a
+    mode. A second `warmup.run` is a fresh warmup and lowers L even with nothing culled. Printed L is a maximum;
+    the jittered mean is L/2. `meads_adaptation` from dispersed starts: step size 0, healthy acceptance, ZERO
+    divergences, r_hat 10 to 10^15 - frozen chains accept. It needs a start in the typical set (Adam overshoots
+    to the mode), `step_size_multiplier=0.25` here, at least 16 chains per fold (8 collapsed on 1 seed of 3) and
+    results vary between identical runs. Half-normal or Gamma priors on field sds let a log sd run to -4e7 under
+    MEADS (float64 too): their tail is linear in log sd; LogNormal's is quadratic. Timing only
+    `num_integration_steps` lets XLA delete the whole ChEES sampler (fixed sequence, 0 ms): return a function
+    of the positions. NUTS trees were nearly all 127 under `vmap` here, so no lock-step waste; it still cost 4x
+    per gradient in bookkeeping. Each chain count is a new XLA program: `jax.clear_caches()` between timings.
+    spatstat's `bei` has 3,604 trees (docs say 3,605). An HSGP on a grid is `Phi_y (sqrt(S) * z) Phi_x^T`; check
+    the boundary against the fitted lengthscale (c = 1.25 left 40% of the variance at the edges). A predictive
+    check that keeps a fitted fine field is in-sample: redraw its z. A fine-scale Matern 1/2 needs many modes:
+    Matern 3/2 at 64 x 128 pushed its lengthscale below the resolution. ~10 min at 4.9 GB on the GPU path; ~5.5
+    min at 1.7 GB on 8 CPU cores, plain install.
 - Available and worth using where they fit: `pm.ZeroSumNormal`, `pm.Censored`,
   `pm.Truncated`, `pm.CustomDist`, `pm.Mixture`, `pm.NormalMixture`, `pm.OrderedLogistic`,
   `pm.LKJCholeskyCov`, `pm.GaussianRandomWalk`, `pm.AR`, `pm.gp.HSGP`, `pm.gp.HSGPPeriodic`,

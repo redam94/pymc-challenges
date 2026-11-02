@@ -116,9 +116,13 @@ SERIES = [
          intro="A posterior is a labelled array with named chain, draw and model dimensions. These notebooks do "
                "all their data and posterior work by name, and use it for derived quantities, time "
                "aggregation, binning and unusual plots."),
+    dict(key="gpu", range="E86", title="GPU ensemble sampling", ids=["E86"],
+         intro="What a GPU actually speeds up in Bayesian sampling, measured on a 24,810-parameter spatial model of "
+               "a tropical forest: ChEES-HMC and MEADS against a well-configured NUTS baseline, by chain count, "
+               "problem size and precision, with the failures that an ensemble of chains can hide."),
 ]
 SERIES_BY_KEY = {s["key"]: s for s in SERIES}
-RECENT = ["E85", "E84", "E83", "E82", "E81", "E80", "E79"]          # newest first, shown on the home page
+RECENT = ["E86", "E85", "E84", "E83", "E82", "E81", "E80"]          # newest first, shown on the home page
 
 
 def _link(ctx, eid, text=None):
@@ -365,7 +369,7 @@ def guide_page(ctx):
         ("Time until an event, some not yet observed", "Weibull or other survival models with <code>pm.Censored</code>",
          f"{L('E06')}, {L('C04')}, {L('E25')}"),
         ("The largest value in each year or block", "Generalised extreme value distribution", f"{L('E37')}"),
-        ("Points in space and time", "A (log-Gaussian) Cox process", f"{L('E07')}"),
+        ("Points in space and time", "A (log-Gaussian) Cox process", f"{L('E07')}, {L('E86')}"),
         ("A partition or a vocabulary", "Chinese restaurant / Pitman–Yor process", f"{L('E30')}"),
         ("A network of ties", "Latent-space and stochastic block models", f"{L('E21')}"),
         ("Who beat whom, or a whole finishing order", "Bradley-Terry, dynamic skills, Plackett-Luce", f"{L('E67')}"),
