@@ -150,7 +150,8 @@ SERIES = [
                "polls, some Senate polls, few district polls and fundamentals everywhere. Backtests on two known "
                "cycles, Jacobson's spending paradox and Levitt's rematches, a nowcast of campaign spending from "
                "lagged FEC filings, and a 2026 forecast frozen before the polls closed, with the code that will "
-               "score it."),
+               "score it, an animated map of its predictive draws, and how far it moves if Democrats fall short of "
+               "their polls."),
 ]
 SERIES_BY_KEY = {s["key"]: s for s in SERIES}
 RECENT = ["E94", "E90", "E88", "E91", "E87", "E89", "E86"]          # newest first, shown on the home page

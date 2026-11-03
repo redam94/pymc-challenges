@@ -13,7 +13,7 @@
 # |---|---|
 # | **Type** | Advanced worked example - read, run, modify |
 # | **Data** | Real: US House and Senate races 2016-2026. Results, candidate reports and independent expenditures from the **FEC** (results workbooks and bulk files, public domain); polls, partisan lean and historical poll errors from **FiveThirtyEight** (CC BY 4.0); House returns 2004-2014 from **MEDSL** (GitHub copy, treated as CC0); 2026 nominees, Cook PVI, race polls and weekly aggregator averages from **Wikipedia** as of 2026-11-02 (CC BY-SA 4.0). Seven derived files and three JSON records (build log and two frozen forecasts), 2.3 MB |
-# | **You will learn** | Forecasting from **ragged information**: many national polls, few district polls, fundamentals everywhere · a **midterm prior** and a weekly **reverse random walk** with house effects and a **shared polling error**, rotated to be sampleable · fundamentals learned on **earlier cycles only**, with **state effects** shared by House and Senate · **backtests** of 2018 and 2022 against three simpler forecasts · **Jacobson's paradox** and **Levitt's rematches** for the effect of spending · **nowcasting campaign spending** from lagged FEC filings, with a **reporting-lag** model and a hierarchical **late-spending** model · a 2026 forecast **frozen** before the polls closed, and the code that will **score it later** |
+# | **You will learn** | Forecasting from **ragged information**: many national polls, few district polls, fundamentals everywhere · a **midterm prior** and a weekly **reverse random walk** with house effects and a **shared polling error**, rotated to be sampleable · fundamentals learned on **earlier cycles only**, with **state effects** shared by House and Senate · **backtests** of 2018 and 2022 against three simpler forecasts · **Jacobson's paradox** and **Levitt's rematches** for the effect of spending · **nowcasting campaign spending** from lagged FEC filings, with a **reporting-lag** model and a hierarchical **late-spending** model · a 2026 forecast **frozen** before the polls closed, and the code that will **score it later** · **predictive draws** as an animated map, and the forecast's **sensitivity** to a polling error that favours one party |
 #
 # ## The setting
 #
@@ -51,7 +51,7 @@
 # | 4 | Do the forecasts hold up? | backtests of 2018 and 2022: the full model against aggregate-only, polls-only and fundamentals-only |
 # | 5 | Does money buy votes? | Jacobson's paradox (failure 2); Levitt's rematches with hierarchical slopes |
 # | 6 | How much was spent? | the spending curve, a reporting-lag model for outside money, a late-spending model (failure 3), backtests |
-# | 7 | 2026 | two frozen forecasts and spending nowcasts (pre-registered and corrected), recomputed |
+# | 7 | 2026 | two frozen forecasts (pre-registered and corrected), an animated map of predictive draws, the forecast if Democrats fall short of their polls, spending nowcasts |
 # | 8 | Scoring 2026, later | the scorer, exercised on 2018 and 2022; "not yet available" for 2026 |
 
 # %%
@@ -75,6 +75,9 @@ import numpy as np
 import pandas as pd
 import pymc as pm
 import pytensor.tensor as pt
+from IPython.display import HTML
+from matplotlib import animation
+from matplotlib.collections import LineCollection, PolyCollection
 from matplotlib.lines import Line2D
 from matplotlib.ticker import MaxNLocator
 
@@ -468,6 +471,7 @@ def build_model(d, rotate=True):
     st_tr, st = train.state.map(s_idx).to_numpy(), tm.state.map(s_idx).to_numpy()
     natm_tr = np.array([MARGIN[c] for c in cycles])
     mu_N, sd_N, sd_b = d["prior"]["mu"], d["prior"]["sd"], d["perr"]["shared"]
+    mu_b = d.get("bias_mean", 0.0)   # the shared error's prior mean: 0 except in section 7.1
     coords = {"office": ["H", "S"], "x": ["lean", "inc", "money"], "cycle": cycles, "state": states,
               "week": np.arange(22)}
     if pollsters:
@@ -497,10 +501,10 @@ def build_model(d, rotate=True):
             zr = pm.Normal("z_rot", 0, 1, shape=2)
             h = np.hypot(sd_N, sd_b)
             N = pm.Deterministic("N", mu_N + sd_N * (sd_N / h * zr[0] - sd_b / h * zr[1]))
-            bias = pm.Deterministic("bias", sd_b * (sd_b / h * zr[0] + sd_N / h * zr[1]))
+            bias = pm.Deterministic("bias", mu_b + sd_b * (sd_b / h * zr[0] + sd_N / h * zr[1]))
         else:
             N = pm.Deterministic("N", mu_N + sd_N * pm.Normal("z_N", 0, 1))
-            bias = pm.Deterministic("bias", sd_b * pm.Normal("z_bias", 0, 1))
+            bias = pm.Deterministic("bias", mu_b + sd_b * pm.Normal("z_bias", 0, 1))
         s_rw = pm.HalfNormal("s_rw", 1.0)
         z_rw = pm.Normal("z_rw", 0, 1, dims="week")
         walk = N + s_rw * pt.concatenate([pt.zeros(1), pt.cumsum(z_rw[1:])])  # week 0 = election week
@@ -580,8 +584,8 @@ def seats(d, sim):
     return out
 
 
-def fit_cycle(target, mode="full", rotate=True, keep=False):
-    d = prepare(target, mode)
+def fit_cycle(target, mode="full", rotate=True, keep=False, bias_mean=0.0):
+    d = {**prepare(target, mode), "bias_mean": bias_mean}
     t0 = time.time()
     with build_model(d, rotate):
         idata = pm.sample(random_seed=RANDOM_SEED, progressbar=False, target_accept=0.9)
@@ -1752,6 +1756,289 @@ axs.set_title("the 35 Senate races", fontsize=9);
 # the Democratic end, sits in the light blue: the seat that decides the majority leans Democratic. Of the
 # 30 closest races on the right, 22 have race polls (marked *); the other 8 rest on the fundamentals.
 
+# %% [markdown]
+# A distribution of seat counts is hard to feel. Each predictive draw is one complete election: every race
+# gets a margin, and all of them share one national environment, one set of state effects and one polling
+# error. The animation plays thirty of them. They are taken evenly across the distribution of Democratic
+# House seats (the draws at the 2nd, 5th, 8th and so on up to the 98th percentile), so a Republican House
+# turns up about as often as the forecast says it should, and they run from the worst Democratic outcome to
+# the best. The left panel colours each state with a Senate race by its margin in that draw. The right panel
+# is the House grid from above, coloured by margin instead of by probability. The states are drawn from the
+# county outlines used in E16 and E89; a state border is any county edge the state shares with another
+# state. There is no district map, because several states redrew their lines for 2026 and the repository
+# has no boundary file for the new districts.
+
+# %%
+FIPS = {"01": "AL", "02": "AK", "04": "AZ", "05": "AR", "06": "CA", "08": "CO", "09": "CT", "10": "DE", "11": "DC",
+        "12": "FL", "13": "GA", "15": "HI", "16": "ID", "17": "IL", "18": "IN", "19": "IA", "20": "KS", "21": "KY",
+        "22": "LA", "23": "ME", "24": "MD", "25": "MA", "26": "MI", "27": "MN", "28": "MS", "29": "MO", "30": "MT",
+        "31": "NE", "32": "NV", "33": "NH", "34": "NJ", "35": "NM", "36": "NY", "37": "NC", "38": "ND", "39": "OH",
+        "40": "OK", "41": "OR", "42": "PA", "44": "RI", "45": "SC", "46": "SD", "47": "TN", "48": "TX", "49": "UT",
+        "50": "VT", "51": "VA", "53": "WA", "54": "WV", "55": "WI", "56": "WY"}
+
+
+def place(ring, st):
+    """Lower 48 as longitude and latitude; Alaska and Hawaii moved and scaled into the corner."""
+    x, y = ring[:, 0], ring[:, 1]
+    if st == "AK":
+        x, y = -118 + (x + 152) * 0.2, 25 + (y - 63) * 0.35
+    elif st == "HI":
+        x, y = -104 + (x + 157), 25 + (y - 20.5)
+    return np.c_[x, y]
+
+
+rings, ring_state = [], []
+for ft in json.load(open(data.path("us_counties_geojson")))["features"]:
+    st = FIPS.get(ft["properties"]["STATE"])
+    geom = ft["geometry"]
+    polys = [geom["coordinates"]] if geom["type"] == "Polygon" else geom["coordinates"]
+    for poly in polys:
+        ring = np.asarray(poly[0], float)
+        if st and not (st == "AK" and ring[:, 0].max() > 0):      # Aleutians past 180 degrees dropped
+            rings.append(place(ring, st))
+            ring_state.append(st)
+ring_state = np.array(ring_state)
+seen_ = {}
+for ring, st in zip(rings, ring_state):                          # state borders, no GIS dissolve (E89)
+    r_ = np.round(ring, 3)
+    for a_, b_ in zip(map(tuple, r_[:-1]), map(tuple, r_[1:])):
+        seen_.setdefault((a_, b_) if a_ < b_ else (b_, a_), set()).add(st)
+borders = [e for e, g_ in seen_.items() if len(g_) > 1]
+
+tm_a = fit26["d"]["tm"]
+sim26 = fit26["sim"]
+sen_i = np.flatnonzero((tm_a.office == "S").to_numpy())
+sen_col = {st: i for st, i in zip(tm_a.state.to_numpy()[sen_i], sen_i)}
+ring_race = np.array([sen_col.get(st, -1) for st in ring_state])
+h_i = np.flatnonzero((tm_a.office == "H").to_numpy())
+h_i = h_i[np.argsort(np.median(sim26[:, h_i], 0))]               # safest R to safest D
+tgt26 = fit26["d"]["tgt"]
+unc = tgt26[(tgt26.office == "H") & ~tgt26.modelled]
+n_r, n_d = int((unc.d_name.fillna("") == "").sum()), int((unc.d_name.fillna("") != "").sum())
+ncol = 29
+n_tiles = n_r + len(h_i) + n_d
+gx, gy = np.arange(n_tiles) % ncol, np.arange(n_tiles) // ncol
+
+n_frames = 30
+house_draws = seats(fit26["d"], sim26)["H"]
+by_seats = np.argsort(house_draws, kind="stable")
+pick = by_seats[((np.arange(n_frames) + 0.5) / n_frames * len(sim26)).astype(int)]  # evenly spaced in rank
+norm = plt.Normalize(-20, 20)
+cmap = plt.get_cmap("RdBu").copy()
+cmap.set_bad(LIGHT)
+
+fig, (axm, axh) = plt.subplots(1, 2, figsize=(11, 4.2), width_ratios=[1.45, 1], dpi=60)
+pc = PolyCollection(rings, cmap=cmap, norm=norm, edgecolor="face", linewidth=0.4)   # no seams between counties
+axm.add_collection(pc)
+axm.add_collection(LineCollection(borders, color="white", lw=0.5))
+axm.set_xlim(-125, -66)
+axm.set_ylim(17, 50)
+axm.set_aspect(1 / np.cos(np.radians(38)))
+axm.set_axis_off()
+axm.set_title("Senate: D margin by state (grey: no race)", fontsize=9)
+tiles = axh.scatter(gx, -gy, c=np.zeros(n_tiles), cmap=cmap, norm=norm, marker="s", s=40, linewidths=0)
+k218 = n_tiles - 218
+axh.scatter([gx[k218]], [-gy[k218]], marker="s", s=64, facecolor="none", edgecolor=GOLD, lw=1.6)
+axh.set_axis_off()
+axh.set_aspect("equal")
+axh.set_title("House: 435 seats, safest R to safest D\n(gold: the 218th seat from the D end)", fontsize=9)
+fig.colorbar(plt.cm.ScalarMappable(norm, cmap), ax=[axm, axh], orientation="horizontal", fraction=0.04, pad=0.02,
+             label="D minus R margin in this draw (points; clipped at 20)")
+title = fig.suptitle("", fontsize=10)
+
+
+def show_draw(k):
+    s_ = sim26[pick[k]]
+    pc.set_array(np.ma.masked_array(np.where(ring_race >= 0, s_[ring_race], 0.0), ring_race < 0))
+    tiles.set_array(np.r_[np.full(n_r, -100.0), s_[h_i], np.full(n_d, 100.0)])
+    hd = n_d + int((s_[h_i] > 0).sum())
+    sd = int((s_[sen_i] > 0).sum()) + notup["Democratic"] + notup["Independent"]
+    title.set_text(f"Draw {k + 1} of {n_frames}, from fewest to most D House seats: House D {hd} "
+                   f"({'D' if hd >= 218 else 'R'} majority), Senate D caucus {sd} ({'D' if sd >= 51 else 'R'} control)")
+    return [pc, tiles, title]
+
+
+show_draw(0)
+anim = animation.FuncAnimation(fig, show_draw, frames=n_frames, interval=600)
+plt.close(fig)
+hd_all = house_draws[pick]
+print(f"{n_frames} draws: the Democrats hold the House in {(hd_all >= 218).sum()} and the Senate in "
+      f"{int(((sim26[pick][:, sen_i] > 0).sum(1) + notup['Democratic'] + notup['Independent'] >= 51).sum())}; "
+      f"{len(rings):,} county polygons, {len(borders):,} border edges")
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore", UserWarning)
+    anim_html = anim.to_jshtml(default_mode="loop")
+print(f"animation: {len(anim_html) / 1e6:.1f} MB")
+HTML(anim_html)
+
+# %% [markdown]
+# The Democrats hold the House in 28 of the 30 frames, close to the forecast's 0.94. They hold the Senate in
+# 20, fewer than the 24 that 0.79 implies, but the frames were chosen to cover the House distribution, and
+# thirty frames are a small sample of the Senate. The point of watching is that the races move together.
+# In the early frames the middle rows of the grid turn red together, and Iowa, Ohio, Alaska and Texas move
+# the same way, because $N$, the shared error and the state effects shift every race at once. Each race
+# also has its own noise, so a few seats and states go against the tide in every frame. Between them,
+# those two kinds of variation make the seat distribution wide.
+
+# %% [markdown]
+# ### 7.1 If the Democrats fall short of their polls
+#
+# Both frozen forecasts centre the shared polling error on zero: the polls are as likely to overstate the
+# Democrats as the Republicans. After 2016, 2020 and 2024 a common worry is that they lean one way, and that
+# Democrats tend to underperform their polls. This section asks what the record says, and how much the 2026
+# forecast depends on the answer. Both analyses were added on election day, after the freezes, and are not
+# part of either frozen forecast.
+
+# %%
+gen_err = pollerr[pollerr.generic].set_index("cycle").err
+sen_err = pollerr[~pollerr.generic & (pollerr.type_simple == "Sen-G")].groupby("cycle").err.mean()
+hist = pd.DataFrame({"generic ballot": gen_err, "Senate, mean of races": sen_err})
+hist = hist[hist.index % 2 == 0]                     # drop the odd-year Senate specials
+hist["midterm"] = hist.index.isin(PRES)
+print("mean signed error of the last three weeks' polls, D minus R margin (positive: the polls overstated the Democrats)")
+print(hist.drop(columns="midterm").round(1).T.to_string())
+for lab, sel in (("midterms", hist.midterm), ("presidential years", ~hist.midterm)):
+    h_ = hist[sel]
+    print(f"{lab:19s}: generic ballot {h_['generic ballot'].mean():+.1f} on average, overstating the Democrats in "
+          f"{(h_['generic ballot'] > 0).sum()} of {len(h_)}; Senate {h_['Senate, mean of races'].mean():+.1f}, "
+          f"{(h_['Senate, mean of races'] > 0).sum()} of {len(h_)}")
+MID_GEN = {c: float(hist[(hist.index < c) & hist.midterm]["generic ballot"].mean()) for c in (2018, 2022, 2026)}
+print("mean midterm generic-ballot error before each target:", {c: round(v, 2) for c, v in MID_GEN.items()})
+b26 = np.quantile(fit26["bias"], [0.05, 0.5, 0.95])
+print(f"2026 shared error: prior Normal(0, {PERR[2026]['shared']:.1f}); posterior median {b26[1]:+.1f} "
+      f"[{b26[0]:+.1f}, {b26[2]:+.1f}]; P(error > {MID_GEN[2026]:.1f}) = {(fit26['bias'] > MID_GEN[2026]).mean():.2f}")
+
+# %% [markdown]
+# For national polls, the record supports the worry. In their last three weeks, generic-ballot polls
+# overstated the Democrats in 9 of the 13 cycles since 1998: in 5 of 7 midterms, by 2.6 points on average,
+# and in 4 of 6 presidential years, by 2.1. Senate polls show no such lean in midterms (-0.1 on average, 4
+# of 7) and a modest one in presidential years (+1.1). The errors are large and change sign from cycle to
+# cycle. 2018 understated the Democrats by 1.2 points and 2006 overstated them by 6.3. With seven midterms,
+# the mean of 2.6 has a standard error of about 1 point.
+#
+# The model already leans that way a little. Its posterior for the 2026 shared error has a median of +1.2
+# points (90% interval -3.7 to +5.8), because the midterm prior (D+4.3) is less Democratic than the polls
+# (about D+9). The model splits the gap between them, and the part it gives to the polls is read as
+# polling error. It puts a 30% chance on an error larger than the midterm average of 2.6.
+
+# %%
+shortfalls = np.arange(-2, 8.01, 0.25)
+rows = []
+for dl in shortfalls:
+    s_ = seats(fit26["d"], fit26["sim"] - dl)     # every race dl points less Democratic, in every draw
+    sen_ = s_["S"] + notup["Democratic"] + notup["Independent"]
+    rows.append({"shortfall": dl, "P(D House)": (s_["H"] >= 218).mean(), "P(D Senate)": (sen_ >= 51).mean(),
+                 **{f"H q{int(100 * p_)}": np.quantile(s_["H"], p_) for p_ in (0.05, 0.5, 0.95)},
+                 **{f"S q{int(100 * p_)}": np.quantile(sen_, p_) for p_ in (0.05, 0.5, 0.95)}})
+sweep = pd.DataFrame(rows)
+even = {k: float(np.interp(0.5, sweep[k].to_numpy()[::-1], sweep.shortfall.to_numpy()[::-1]))
+        for k in ("P(D House)", "P(D Senate)")}           # P falls as the shortfall grows
+print(sweep[sweep.shortfall.isin(np.arange(-1, 7))].round(2).to_string(index=False))
+print(f"shortfall at which control is a coin flip: House {even['P(D House)']:.1f} points, "
+      f"Senate {even['P(D Senate)']:.1f} points")
+h0, h3 = (sweep.loc[sweep.shortfall == v, "H q50"].iat[0] for v in (0, 3))
+print(f"median House seats: {h0:.0f} with no shortfall, {h3:.0f} with 3 points ({(h0 - h3) / 3:.1f} seats per point)")
+
+fig, axes = plt.subplots(1, 3, figsize=(14, 3.9))
+ax = axes[0]
+ax.bar(hist.index, hist["generic ballot"], width=1.5, color=np.where(hist.midterm, GOLD, MUTED), alpha=0.85)
+ax.scatter(hist.index, hist["Senate, mean of races"], color=INK, s=14, zorder=5, label="Senate polls, mean of races")
+ax.axhline(0, color=INK, lw=0.6)
+ax.axhline(MID_GEN[2026], color=GOLD, lw=1, ls="--")
+ax.set_ylabel("polls minus result, D margin\n(+: overstated the Democrats)")
+ax.set_title("generic-ballot polling error (gold bars: midterms)", fontsize=10)
+ax.legend(fontsize=8, loc="lower left")
+ax = axes[1]
+ax.plot(sweep.shortfall, sweep["P(D House)"], color=D_C, lw=2, label="House")
+ax.plot(sweep.shortfall, sweep["P(D Senate)"], color=GOLD, lw=2, label="Senate")
+for v, lab in ((MID_GEN[2026], "midterm\naverage"), (hist[hist.midterm]["generic ballot"].max(), "largest\n(2006)")):
+    ax.axvline(v, color=MUTED, lw=0.8, ls=":")
+    ax.text(v, 0.03, f" {lab}", fontsize=7, color=MUTED)
+ax.axhline(0.5, color=INK, lw=0.6, ls=":")
+ax.set_xlabel("Democratic shortfall in every race (points)")
+ax.set_ylabel("P(D control)")
+ax.set_title("chance of control against the shortfall", fontsize=10)
+ax.legend(fontsize=8)
+ax = axes[2]
+ax.fill_between(sweep.shortfall, sweep["H q5"], sweep["H q95"], color=D_C, alpha=0.2)
+ax.plot(sweep.shortfall, sweep["H q50"], color=D_C, lw=2)
+ax.axhline(217.5, color=INK, lw=0.6, ls=":")
+ax.set_xlabel("Democratic shortfall in every race (points)")
+ax.set_ylabel("House D seats, median and 90%")
+ax.set_title("House seats against the shortfall", fontsize=10)
+fig.tight_layout();
+
+# %% [markdown]
+# The simplest test subtracts a fixed shortfall from every race in every draw. The result is what the
+# forecast would say if the Democrats did $\delta$ points worse everywhere than the model expects, which
+# is what an extra shared polling error of $\delta$ would do.
+#
+# The House holds up. Each point of shortfall costs about 4 seats at the median (237 seats becomes 225 at 3
+# points). The chance of a Democratic majority falls from 0.94 to 0.84 at 2 points and 0.74 at 3, and
+# becomes a coin flip only at 4.9 points, nearly twice the midterm average and close to the misses of 2002
+# and 2006. The Senate is fragile. Its median sits one seat above control, so a small shift moves the
+# deciding races in Iowa, Ohio and Alaska: 0.79 becomes 0.60 at 2 points, and control is a coin flip at 2.9,
+# about the size of an average midterm miss. If Democrats fall short of their polls by the historical
+# average, the House stays likely Democratic (about 0.8) and the Senate is a toss-up.
+#
+# A uniform shift is the hardest case for the forecast, because every race moves in the same direction.
+# A real polling error also varies from race to race, and the model already carries that part, with an sd
+# of about 5.7 points.
+
+# %%
+t0 = time.time()
+SHIFTED = {c: fit_cycle(c, bias_mean=MID_GEN[c]) for c in (2018, 2022, 2026)}
+TIMES["shifted-prior fits"] = time.time() - t0
+iv3 = lambda v, fmt: "{1:{f}} [{0:{f}}, {2:{f}}]".format(*np.quantile(v, [0.05, 0.5, 0.95]), f=fmt)  # noqa: E731
+rows = []
+for c in (2018, 2022, 2026):
+    for lab, f in (("mean 0 (as frozen)", FITS[c, "full"] if c < 2026 else fit26),
+                   (f"mean {MID_GEN[c]:+.1f}", SHIFTED[c])):
+        row = {"cycle": c, "shared-error prior": lab, "div.": f["divergences"], "max r_hat": f["max r_hat"],
+               "national": iv3(f["N"], "+.1f"), "House D": iv3(f["seats"]["H"], ".0f"),
+               "P(D House)": round(float((f["seats"]["H"] >= 218).mean()), 2)}
+        if c < 2026:
+            sc, _, _ = race_scores(f["sim"], f["d"]["tm"].m.to_numpy())
+            row.update({"actual N": round(MARGIN[c], 1),
+                        "actual House": int((f["d"]["tgt"].query("office == 'H'").winner == "D").sum()),
+                        "cover 90%": round(sc["cover 90%"], 3), "Brier": round(sc["Brier"], 4),
+                        "log score": round(sc["log score"], 3), "wrong calls": sc["wrong calls"]})
+        else:
+            sen_ = f["seats"]["S"] + notup["Democratic"] + notup["Independent"]
+            row.update({"Senate D": iv3(sen_, ".0f"), "P(D Senate)": round(float((sen_ >= 51).mean()), 2)})
+        rows.append(row)
+print(pd.DataFrame(rows).fillna("").to_string(index=False))
+print(f"2026: the prior mean moved by {MID_GEN[2026]:+.1f}, the national median by "
+      f"{np.median(SHIFTED[2026]['N']) - np.median(fit26['N']):+.1f}")
+
+# %% [markdown]
+# Subtracting a shift afterwards assumes the whole shortfall happens. To say "polls tend to overstate the
+# Democrats" in the model itself, move the prior mean of the shared error to the historical midterm
+# average and refit. As always, the average uses only midterms before the target: +3.5 for 2018, +2.7 for
+# 2022 and +2.6 for 2026. The backtests can then judge the idea.
+#
+# In 2026 the national median moves by 1.9 points, not by 2.6. The polls fix $N + b$, and the midterm prior
+# on $N$ pulls back, so the shift is shared in proportion to the prior variances: $2.6 \times
+# 6.3^2/(6.3^2 + 3.3^2) \approx 2.0$. The refitted forecast gives 229 House seats (211 to 251) with
+# $P = 0.84$, and 51 Senate seats (47 to 55) with $P = 0.61$.
+#
+# The backtests reject the shifted prior. In 2018 it puts the national margin at D+5.2 against an actual
+# D+8.8 and the House at 211 seats against 235, and gives a Democratic House a 0.29 chance (they won it).
+# Its race scores are worse on every measure: 88% coverage of the 90% intervals against 93%, a Brier score
+# of 0.053 against 0.042, and 34 wrong calls against 26. In 2022 it says R+4.2 against an actual R+2.7 and
+# 196 seats against 213, and again every score is worse. That year the generic polls did overstate the
+# Democrats, by 2.3 points, but the midterm prior had already pulled the model's national estimate below
+# the polls, and the shifted prior pulled it too far. In both backtests the Democrats did better than the
+# unshifted model expected, not worse: the same lean as the PITs and the wrong calls in section 4.
+#
+# So the tendency is real in the generic-ballot record, but it is small next to the swings from year to
+# year. Part of it is already absorbed by a midterm prior that is less enthusiastic than the polls, and two
+# backtests give no support for building in more. The question that matters on election night is how large
+# a shortfall would change the answer: about 5 points for the House and about 3 for the Senate.
+
+# %% [markdown]
+# ### 7.2 The spending nowcast
+
 # %%
 late26 = predict_late(LATE_FIT["both -> 2026"], CT[2026])
 ie26, ie26_seen = ie_nowcast(IE_FIT["both -> 2026"], 2026)
@@ -1958,6 +2245,11 @@ print({k: round(v) for k, v in TIMES.items()})
 #   pre-registered v1 said D+7.9, 236 seats (P = 0.95), 52 seats (P = 0.83) and \$6.20B; it counted
 #   nominees without a matched FEC ID as raising nothing. Both were committed before the polls closed,
 #   and the scoring code prints "not yet available" until the results are in.
+* **The Senate depends more than the House on whether the polls lean Democratic.** Generic-ballot polls
+#   overstated the Democrats in 5 of 7 midterms since 1998, by 2.6 points on average. With a uniform
+#   shortfall, House control becomes a coin flip at 4.9 points and Senate control at 2.9. Building the
+#   average into the prior moves 2026 to 229 seats ($P = 0.84$) and Senate $P = 0.61$, but it made both the
+#   2018 and 2022 backtests worse.
 #
 # ## Try it yourself
 #
