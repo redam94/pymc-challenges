@@ -1,0 +1,18 @@
+{
+ "commit": "e9c37e70fda7799543ad8d825164ae14245d7d04",
+ "committed_utc": "2026-11-03T19:09:40Z",
+ "content_sha256": {
+  "e94_races.csv": "1d7f48a04ec563e1f8963cc1ac4e0d15d92717757345a41c672d3a35498135d7",
+  "e94_polls.csv": "744a14d34c3fb6f7c11c251f36f584695b0b7c827b7ab36bd5da0b9a1e35e6ff",
+  "e94_reports.csv.gz": "9930cd4bd0123555dafe7bc9244081efcbc5fa52388910ef126a92454564e1b8",
+  "e94_ie.csv.gz": "ced16bab9ce25b3aab6c294d694374481c870640be94a50caa8b0ea13cd4d212",
+  "e94_pollerr.csv": "76db2ec225ecaaccb10ffe4163666f96167ce881c93df359b3d21d913ea85a3f"
+ },
+ "raw_sha256_check": {
+  "e94_races.csv": true,
+  "e94_polls.csv": true,
+  "e94_reports.csv.gz": true,
+  "e94_ie.csv.gz": true,
+  "e94_pollerr.csv": true
+ }
+}
