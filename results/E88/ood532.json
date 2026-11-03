@@ -1,0 +1,21 @@
+{
+  "a": {
+    "found_per_frame": 123.5,
+    "median_sd_nm": 32.1844,
+    "sum_p_per_frame": 144.1992
+  },
+  "b": {
+    "found_per_frame": 209.5,
+    "median_sd_nm": 29.5732,
+    "sum_p_per_frame": 351.3891
+  },
+  "certificate": "never tested here",
+  "file": "dSTORM532_Nc82_7.tif",
+  "frames": [
+    3000,
+    3001,
+    3002,
+    3003
+  ],
+  "median_counts": 199.0
+}

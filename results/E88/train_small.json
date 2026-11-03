@@ -1,0 +1,9 @@
+{
+  "base": 16,
+  "device": "cuda:0",
+  "last_loss": 12.60478687286377,
+  "seconds": 8.433322429656982,
+  "start": 0,
+  "steps": 1500,
+  "weights": 118392
+}

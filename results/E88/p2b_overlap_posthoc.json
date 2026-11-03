@@ -1,0 +1,27 @@
+{
+  "note": "Post-hoc, not a gate, computed after P2b. Neighbours taken from another frame carry the spatial clustering without detector merging or a same-frame fit. Same-molecule returns inflate the under-1.5 px part, so 1.5-4 px is shown too.",
+  "r32": {
+    "gap1000": {
+      "blobs": 54431,
+      "px_1p5_to_4": 0.0653,
+      "under_4": 0.0853
+    },
+    "gap200": {
+      "blobs": 56482,
+      "px_1p5_to_4": 0.0686,
+      "under_4": 0.0906
+    }
+  },
+  "r7": {
+    "gap1000": {
+      "blobs": 79317,
+      "px_1p5_to_4": 0.0502,
+      "under_4": 0.0663
+    },
+    "gap200": {
+      "blobs": 82674,
+      "px_1p5_to_4": 0.0523,
+      "under_4": 0.0742
+    }
+  }
+}

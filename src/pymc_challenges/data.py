@@ -1605,6 +1605,25 @@ REGISTRY: dict[str, Dataset] = {
         "codes run by first appearance in the file. Tail 0 and any other tail code are not aircraft "
         "registrations; rows with no tail share one code. `notice` holds the source notice.",
     ),
+    # ---- examples (E88) ----
+    "dannhauser2022_e88_summary": Dataset(
+        "dannhauser2022_e88_summary.npz",
+        "https://zenodo.org/records/7328805",  # the source record: this derived file ships in git
+        "Mrestani (2022), Example raw dSTORM data of Brp (Alexa Fluor532) and Unc-13 (Alexa Fluor647), Zenodo "
+        "doi:10.5281/zenodo.7328805 (CC BY 4.0); from Dannhaeuser, Mrestani, Gundelach, Pauli, Komma, Kollmannsberger, "
+        "Sauer, Heckmann & Paul (2022), Endogenous tagging of Unc-13 reveals nanoscale reorganization at active zones "
+        "during presynaptic homeostatic potentiation, Frontiers in Cellular Neuroscience 16:1074304. Licence: "
+        "https://creativecommons.org/licenses/by/4.0/. Changed: localised and reduced to the summaries below. DERIVED by tools/build_e88_pack.py from the two 1.2 GB recordings and a local FULL run "
+        "(tools/run_e88_full.py) - keep the cached file. No endorsement by the authors is implied.",
+        "NumPy archive, not a table: open data.path() with np.load. What E88 draws, for recordings r7 and r32 "
+        "(dStorm647_Unc13_7 and _32): the authors' masks (<rec>_mask), two raw frames (<rec>_frames, at show_frames), "
+        "background per 100 frames, blobs and rows per 500-frame block, full-field renders on a 0.25 px grid "
+        "(<rec>_render_chosen, _a, _b), stored drift (<rec>_drift*, px per 1,000-frame block), paired-test z "
+        "quantiles (<rec>_z_*, sim_z_*, at z_quantiles), FRC curves (<rec>_frc_*: period in nm, FRC). Recording 7 "
+        "only: a 3 um zoom at 10 nm (zoom_*), the block and rest renders of one drift block (drift_demo_*), per-spot "
+        "audit results (audit_*), four spots' pixels (spot_*) and a 40 px window for an animation (animation_*). "
+        "lineup_*: the check-3 lineups. psf_band: bootstrap band of the stacked PSF. `attribution` holds the notice.",
+    ),
     # ---- examples (E89) ----
     "e89_sites": Dataset(
         "e89_sites.csv",

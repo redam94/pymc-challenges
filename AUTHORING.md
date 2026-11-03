@@ -234,6 +234,11 @@ doubt run `uv run python -c "..."` to check:
   `plot_kde`. Plots return a `PlotCollection` (not axes); for custom figures use matplotlib
   directly with `np.quantile` / `az.hdi` bands.
 - **Gotchas found while building these notebooks** (each one cost somebody an hour):
+  - nutpie 0.16.11: `compiled.with_data(...)` swaps the data in the log density, and the start keeps the
+    compile-time values, while `init_mean` is ignored for a PyMC model. A prior located on a `pm.Data`
+    therefore starts at its placeholder. Write it non-centred (`x = cx + 2 * rx`) so that the start follows
+    the data. Most of the 87 stuck spots of 200 in E88's audit came from this. Results of a stuck or multimodal model can also
+    change with the PyTensor compile cache at the same seed, so do not quote them to three figures.
   - HSGP (or any basis expansion) on a `pm.Data` input is recomputed at every gradient
     evaluation: ~30x slower. Sample inside `with freeze_dims_and_data(model):`
     (`from pymc.model.transform.optimization import freeze_dims_and_data`) and keep the

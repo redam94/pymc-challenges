@@ -124,6 +124,11 @@ SERIES = [
          intro="A contractor quotes two hours on a GPU for a row-level model of 14 million rows of US flights. Stored "
                "GPU timings and a CPU run on 2 cores test that quote, and held-out forecasts on one unnamed carrier ask "
                "whether a bigger model changes a watch list. It teaches how to write a price someone can check."),
+    dict(key="localiser", range="E88", title="A neural localiser, tried and failed", ids=["E88"],
+         intro="Would a neural network change how many frames a dSTORM movie needs? A stored run trained one on simulation "
+               "and judged it on two full real recordings, with gates written first. It failed, and the answer stays the "
+               "classical one. The replay is light, and it teaches checks that need no ground truth and a calibration "
+               "certificate for a trained network."),
     dict(key="voi", range="E89", title="Value of information on a map", ids=["E89"],
          intro="Where should the next air monitors go? A marginal Gaussian process over real EPA PM2.5 data, exact "
                "county conditionals and closed-form value of information show that a map of uncertainty and a map "
@@ -136,7 +141,7 @@ SERIES = [
                "bands, and four winter evenings, not a thousand homes, set the limit."),
 ]
 SERIES_BY_KEY = {s["key"]: s for s in SERIES}
-RECENT = ["E91", "E87", "E89", "E86", "E85", "E84", "E83"]          # newest first, shown on the home page
+RECENT = ["E88", "E91", "E87", "E89", "E86", "E85", "E84"]          # newest first, shown on the home page
 
 
 def _link(ctx, eid, text=None):
@@ -402,6 +407,8 @@ def guide_page(ctx):
          f"{L('E91')}"),
         ("What a big model will cost, and whether to buy it", "Timed gradients, a price table and a rung-by-rung held-out test",
          f"{L('E87')}"),
+        ("Whether a trained network's error bars hold on real data", "Paired-frame tests, a population replicate and a calibration certificate",
+         f"{L('E88')}"),
         ("A centile, not the mean (growth charts, thresholds)", "Bayesian quantile regression with calibration checks",
          f"{L('E83')}, {L('C14')}"),
         ("A quick two-way choice and its response time", "Drift diffusion model (Wiener first-passage time)",

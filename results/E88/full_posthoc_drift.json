@@ -1,0 +1,7 @@
+{
+  "reason": "The gated leave-block-out drift on network rows gave non-physical shifts of 1-23 um in 1-4 of 15 blocks in every network run but b r32, against 5-18 nm range for classical. Whole 1,000-frame blocks were moved. Curves built on that are not a measurement of the frames decision.",
+  "repair": "Network rows are corrected with the stored classical drift of the same recording and same calibration (drift_r7, drift_r32, drift_line_r7, drift_line_r32). Everything else as gated: 200 draws, seeds, filter, merging, Field, N* rule.",
+  "status": "post-hoc, not a gate; full_gates.md unchanged and its decision_* outputs stay on the record",
+  "why_this_repair": "Drift is a property of the sample, so it does not depend on the localiser, and the classical estimate was checked in P2 by injected shifts. Chosen because of the fault, before any repaired curve was seen. No alternative repair will be tried.",
+  "written": "2026-11-02, after the gated curves, before this rerun"
+}

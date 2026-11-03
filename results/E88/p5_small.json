@@ -1,0 +1,114 @@
+{
+  "checkpoint_step": 1500,
+  "crlb_nm": 7.7838,
+  "crlb_px": 0.0613,
+  "dense_2000": {
+    "found": 39334,
+    "median_sd_px": 0.0693,
+    "rmse_over_crlb": 3.7226,
+    "sum_p": 54285.3359,
+    "tol1.0": {
+      "bias_px": [
+        -0.0065,
+        -0.0147
+      ],
+      "matched": 38868,
+      "precision": 0.9882,
+      "recall": 0.8604,
+      "rmse_px_axis": 0.2127
+    },
+    "tol2.0": {
+      "bias_px": [
+        -0.0065,
+        -0.015
+      ],
+      "matched": 39334,
+      "precision": 1.0,
+      "recall": 0.8707,
+      "rmse_px_axis": 0.2282
+    },
+    "true": 45175
+  },
+  "dense_e58_brightness": {
+    "found": 30697,
+    "median_sd_px": 0.0734,
+    "rmse_over_crlb": 3.357,
+    "sum_p": 43401.5234,
+    "tol1.0": {
+      "bias_px": [
+        0.0074,
+        0.0023
+      ],
+      "matched": 30452,
+      "precision": 0.992,
+      "recall": 0.6652,
+      "rmse_px_axis": 0.1938
+    },
+    "tol2.0": {
+      "bias_px": [
+        0.007,
+        0.0026
+      ],
+      "matched": 30696,
+      "precision": 1.0,
+      "recall": 0.6706,
+      "rmse_px_axis": 0.2058
+    },
+    "true": 45776
+  },
+  "go": false,
+  "sparse_2000": {
+    "found": 5619,
+    "median_sd_px": 0.0674,
+    "rmse_over_crlb": 1.8426,
+    "sum_p": 8921.2129,
+    "tol1.0": {
+      "bias_px": [
+        0.0037,
+        0.0142
+      ],
+      "matched": 5613,
+      "precision": 0.9989,
+      "recall": 0.9801,
+      "rmse_px_axis": 0.1094
+    },
+    "tol2.0": {
+      "bias_px": [
+        0.0037,
+        0.014
+      ],
+      "matched": 5619,
+      "precision": 1.0,
+      "recall": 0.9811,
+      "rmse_px_axis": 0.1129
+    },
+    "true": 5727
+  },
+  "sparse_e58_brightness": {
+    "found": 4603,
+    "median_sd_px": 0.0746,
+    "rmse_over_crlb": 1.8608,
+    "sum_p": 7196.2192,
+    "tol1.0": {
+      "bias_px": [
+        0.0084,
+        0.0144
+      ],
+      "matched": 4596,
+      "precision": 0.9985,
+      "recall": 0.8036,
+      "rmse_px_axis": 0.1099
+    },
+    "tol2.0": {
+      "bias_px": [
+        0.008,
+        0.0138
+      ],
+      "matched": 4603,
+      "precision": 1.0,
+      "recall": 0.8049,
+      "rmse_px_axis": 0.1141
+    },
+    "true": 5719
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "r32": {
+    "a": {
+      "block_split_nm": 35.9766,
+      "gap_nm": 6.4606,
+      "random_split_nm": 29.516
+    },
+    "b": {
+      "block_split_nm": 41.0685,
+      "gap_nm": 11.7518,
+      "random_split_nm": 29.3167
+    }
+  },
+  "r7": {
+    "a": {
+      "block_split_nm": 31.9945,
+      "gap_nm": 2.8793,
+      "random_split_nm": 29.1152
+    },
+    "b": {
+      "block_split_nm": 30.4205,
+      "gap_nm": 8.0186,
+      "random_split_nm": 22.4019
+    }
+  }
+}

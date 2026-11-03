@@ -1,0 +1,39 @@
+{
+  "K1_fit": {
+    "median_N_ratio": 1.0026,
+    "median_px": 0.0019,
+    "of": 100,
+    "within_half_px": 99
+  },
+  "chain_gap_unconverged": {
+    "max": 318.6697,
+    "median": 0.5873
+  },
+  "compile_s": 10.4066,
+  "divergences": {
+    "K1": 8,
+    "all": 229
+  },
+  "max_rhat": {
+    "K1": 1.0082,
+    "K2": 1.5768
+  },
+  "median_sd_ratio": {
+    "K1": 1.0206,
+    "K1_converged": 1.0206,
+    "K2": 1.8451,
+    "K2_converged": 1.5466,
+    "K2_wider_axis": 1.7312,
+    "K2_wider_axis_converged": 1.5144,
+    "all": 1.1353,
+    "converged": 1.0592
+  },
+  "over_1_01": {
+    "K1": 0,
+    "K2": 35,
+    "K2_wider_axis": 36
+  },
+  "spots": 200,
+  "status": "post-hoc",
+  "tag": "warm"
+}

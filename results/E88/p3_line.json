@@ -1,0 +1,25 @@
+{
+  "note": "Post-hoc sensitivity, not a gate. Labelled [estimated] in the plan.",
+  "r32": {
+    "mean_range": [
+      1057.6238,
+      1288.8282
+    ],
+    "offset": 413.273,
+    "r": 0.9998,
+    "resid_sd": 14.5359,
+    "slope": 12.8106,
+    "slope_se": 0.0483
+  },
+  "r7": {
+    "mean_range": [
+      1056.1267,
+      1344.6869
+    ],
+    "offset": 433.8751,
+    "r": 0.9997,
+    "resid_sd": 22.2921,
+    "slope": 13.4849,
+    "slope_se": 0.0584
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "compile_s": 3.8853,
+  "cpus": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    11,
+    12,
+    13
+  ],
+  "device": "gpu",
+  "finite": true,
+  "jax_device": "cuda:0",
+  "loss": -0.4734,
+  "seconds": 2.4578,
+  "steps": 500,
+  "steps_per_s": 203.4313,
+  "vram": {
+    "device": "cuda:0",
+    "in_use_gb": 0.0,
+    "limit_gb": 16.5645,
+    "peak_gb": 0.7642
+  },
+  "weight_sum": 24.3658,
+  "weights": 471784,
+  "wilson_hilferty": {
+    "136": {
+      "tv": 0.0116,
+      "tv_floor": 0.0024
+    },
+    "20": {
+      "tv": 0.0236,
+      "tv_floor": 0.0018
+    },
+    "2000": {
+      "tv": 0.0101,
+      "tv_floor": 0.0048
+    },
+    "88": {
+      "tv": 0.0136,
+      "tv_floor": 0.0024
+    }
+  }
+}

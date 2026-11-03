@@ -1,0 +1,39 @@
+{
+  "r32": {
+    "K1": {
+      "ratio": 0.0107,
+      "shifted": 1.2814
+    },
+    "a": {
+      "ratio": 5.3911,
+      "shifted": 1.2705
+    },
+    "b": {
+      "ratio": 2.692,
+      "shifted": 0.9816
+    },
+    "chosen": {
+      "ratio": 39.2551,
+      "shifted": 1.6514
+    }
+  },
+  "r7": {
+    "K1": {
+      "ratio": 0.0031,
+      "shifted": 1.0497
+    },
+    "a": {
+      "ratio": 5.1667,
+      "shifted": 1.1287
+    },
+    "b": {
+      "ratio": 1.9541,
+      "shifted": 1.0204
+    },
+    "chosen": {
+      "ratio": 37.404,
+      "shifted": 1.3329
+    }
+  },
+  "status": "post-hoc: K = 1 has one row per blob, so detector blindness inside a blob hides any halo"
+}

@@ -1,0 +1,222 @@
+{
+  "compile_s": 17.0159,
+  "divergences": 2074,
+  "extrapolated_200_min_13cpu": 0.4892,
+  "go": false,
+  "max_rhat": 2.5717,
+  "median_sd_ratio": {
+    "K1": 1.0552,
+    "all": 2.3098
+  },
+  "min_ess": 5.1357,
+  "per_spot_s": 0.185,
+  "spots": [
+    {
+      "K": 1,
+      "divergences": 3,
+      "ess": 7.2044,
+      "laplace_sd_px": 0.0308,
+      "nuts_sd_px": 2.6349,
+      "rhat": 1.5311,
+      "seconds": 0.1648,
+      "t": 5316
+    },
+    {
+      "K": 1,
+      "divergences": 0,
+      "ess": 1812.1978,
+      "laplace_sd_px": 0.033,
+      "nuts_sd_px": 0.0338,
+      "rhat": 1.003,
+      "seconds": 0.151,
+      "t": 12807
+    },
+    {
+      "K": 1,
+      "divergences": 0,
+      "ess": 2231.4859,
+      "laplace_sd_px": 0.072,
+      "nuts_sd_px": 0.073,
+      "rhat": 1.0035,
+      "seconds": 0.1217,
+      "t": 11706
+    },
+    {
+      "K": 1,
+      "divergences": 306,
+      "ess": 5.1357,
+      "laplace_sd_px": 0.0416,
+      "nuts_sd_px": 1.8797,
+      "rhat": 2.2873,
+      "seconds": 0.1595,
+      "t": 2926
+    },
+    {
+      "K": 1,
+      "divergences": 0,
+      "ess": 1198.4343,
+      "laplace_sd_px": 0.3384,
+      "nuts_sd_px": 0.4896,
+      "rhat": 1.0029,
+      "seconds": 0.1282,
+      "t": 12740
+    },
+    {
+      "K": 1,
+      "divergences": 2,
+      "ess": 7.1815,
+      "laplace_sd_px": 0.0222,
+      "nuts_sd_px": 2.8259,
+      "rhat": 1.5306,
+      "seconds": 0.2511,
+      "t": 5897
+    },
+    {
+      "K": 1,
+      "divergences": 3,
+      "ess": 105.098,
+      "laplace_sd_px": 0.0647,
+      "nuts_sd_px": 0.0663,
+      "rhat": 1.1063,
+      "seconds": 0.1377,
+      "t": 10933
+    },
+    {
+      "K": 1,
+      "divergences": 0,
+      "ess": 2008.5062,
+      "laplace_sd_px": 0.0815,
+      "nuts_sd_px": 0.0834,
+      "rhat": 1.0016,
+      "seconds": 0.1488,
+      "t": 2900
+    },
+    {
+      "K": 1,
+      "divergences": 0,
+      "ess": 1346.7815,
+      "laplace_sd_px": 0.0819,
+      "nuts_sd_px": 0.0849,
+      "rhat": 1.0005,
+      "seconds": 0.1433,
+      "t": 1394
+    },
+    {
+      "K": 1,
+      "divergences": 0,
+      "ess": 1750.9919,
+      "laplace_sd_px": 0.1499,
+      "nuts_sd_px": 0.1609,
+      "rhat": 1.0014,
+      "seconds": 0.1149,
+      "t": 1321
+    },
+    {
+      "K": 2,
+      "divergences": 0,
+      "ess": 2307.083,
+      "laplace_sd_px": 0.2235,
+      "nuts_sd_px": 0.2693,
+      "rhat": 1.0017,
+      "seconds": 0.1533,
+      "t": 4528
+    },
+    {
+      "K": 2,
+      "divergences": 0,
+      "ess": 19.504,
+      "laplace_sd_px": 0.3129,
+      "nuts_sd_px": 1.3176,
+      "rhat": 1.1567,
+      "seconds": 0.2979,
+      "t": 3247
+    },
+    {
+      "K": 2,
+      "divergences": 69,
+      "ess": 5.1605,
+      "laplace_sd_px": 0.1945,
+      "nuts_sd_px": 3.4859,
+      "rhat": 2.1617,
+      "seconds": 0.1907,
+      "t": 13939
+    },
+    {
+      "K": 2,
+      "divergences": 0,
+      "ess": 192.0256,
+      "laplace_sd_px": 0.1633,
+      "nuts_sd_px": 0.5026,
+      "rhat": 1.0192,
+      "seconds": 0.2477,
+      "t": 587
+    },
+    {
+      "K": 2,
+      "divergences": 0,
+      "ess": 325.3941,
+      "laplace_sd_px": 0.2816,
+      "nuts_sd_px": 0.6162,
+      "rhat": 1.0144,
+      "seconds": 0.2556,
+      "t": 362
+    },
+    {
+      "K": 2,
+      "divergences": 0,
+      "ess": 2216.9434,
+      "laplace_sd_px": 0.211,
+      "nuts_sd_px": 0.2721,
+      "rhat": 1.0018,
+      "seconds": 0.1514,
+      "t": 2473
+    },
+    {
+      "K": 2,
+      "divergences": 0,
+      "ess": 238.6921,
+      "laplace_sd_px": 0.256,
+      "nuts_sd_px": 0.6223,
+      "rhat": 1.0096,
+      "seconds": 0.3497,
+      "t": 77
+    },
+    {
+      "K": 2,
+      "divergences": 0,
+      "ess": 305.8864,
+      "laplace_sd_px": 0.2172,
+      "nuts_sd_px": 0.5627,
+      "rhat": 1.019,
+      "seconds": 0.1573,
+      "t": 10283
+    },
+    {
+      "K": 2,
+      "divergences": 1326,
+      "ess": 5.1422,
+      "laplace_sd_px": 0.158,
+      "nuts_sd_px": 3.7302,
+      "rhat": 2.5717,
+      "seconds": 0.1937,
+      "t": 13136
+    },
+    {
+      "K": 2,
+      "divergences": 365,
+      "ess": 6.1424,
+      "laplace_sd_px": 0.2082,
+      "nuts_sd_px": 2.967,
+      "rhat": 1.7689,
+      "seconds": 0.1818,
+      "t": 5948
+    }
+  ],
+  "state": {
+    "machine_checks": 1,
+    "offline_cpus": [
+      10,
+      26
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "batch32": {
+    "checksum": 27354554.0,
+    "frames_per_s": 1364.2714,
+    "seconds": 0.3518,
+    "used": 480
+  },
+  "batch8": {
+    "checksum": 28188314.0,
+    "frames_per_s": 1201.8777,
+    "seconds": 0.4127,
+    "used": 496
+  },
+  "checkpoint_step": 5000,
+  "finite": true,
+  "found_per_frame": 67.1167,
+  "frames": 500,
+  "grid_max_over_min": 1.7806,
+  "grid_mod2": 1.0444,
+  "read_s": 0.1949,
+  "sum_p_per_frame": 78.7469,
+  "vram": {
+    "device": "cuda:0",
+    "in_use_gb": 0.6089,
+    "limit_gb": 16.5645,
+    "peak_gb": 4.4993
+  }
+}

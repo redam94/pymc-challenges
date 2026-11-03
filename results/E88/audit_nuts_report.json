@@ -1,0 +1,40 @@
+{
+  "K_counts": [
+    100,
+    100
+  ],
+  "check4_within_0_8_1_25": false,
+  "compile_s": 10.1114,
+  "cores": 2,
+  "divergences": 30458,
+  "max_rhat": 3.1126,
+  "median_sd_ratio": {
+    "K1": 1.043,
+    "K1_converged": 1.0256,
+    "K2": 2.6392,
+    "K2_converged": 1.4838,
+    "all": 1.5401,
+    "converged": 1.0582
+  },
+  "min_ess": 4.5988,
+  "nets": {
+    "a": {
+      "matched": 212,
+      "median_distance_nm": 11.7291,
+      "median_nuts_over_net_sd": 1.2591,
+      "of": 300
+    },
+    "b": {
+      "matched": 171,
+      "median_distance_nm": 13.3407,
+      "median_nuts_over_net_sd": 1.4541,
+      "of": 300
+    }
+  },
+  "over_1_01": {
+    "K1": 26,
+    "K2": 61
+  },
+  "per_spot_s": 0.2946,
+  "spots": 200
+}

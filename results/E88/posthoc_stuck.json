@@ -1,0 +1,24 @@
+{
+  "K1_fit": {
+    "median_N_ratio": 1.0008,
+    "of": 26,
+    "on_best_chain": 25
+  },
+  "best_chain_sd_ratio": {
+    "K1": 1.0198,
+    "K2": 1.5401,
+    "all": 1.0724
+  },
+  "gap_20": {
+    "K1": 24,
+    "K2": 33
+  },
+  "gap_20_flat_after_lbfgs": 23,
+  "median_chain_step_max_over_min": 2.9914,
+  "of": {
+    "K1": 26,
+    "K2": 61
+  },
+  "spots": 87,
+  "status": "post-hoc, rerun of the stored form, not a reproduction"
+}

@@ -1,0 +1,365 @@
+{
+  "attribution": "Derived from Mrestani (2022), Example raw dSTORM data of Brp (Alexa Fluor532) and Unc-13 (Alexa Fluor647), Zenodo doi:10.5281/zenodo.7328805, CC BY 4.0, https://creativecommons.org/licenses/by/4.0/. Paper: Dannhaeuser et al. (2022), Frontiers in Cellular Neuroscience 16:1074304. Changed: two recordings reduced to a few raw frames and windows, audit patches, background and blob statistics, the authors' masks on the 200 px grid, and renders, FRC curves, drift estimates and paired-test quantiles from a local analysis, with simulated lineup panels added. No endorsement by the authors is implied.",
+  "decision": {
+    "a": {
+      "N_both": 10500,
+      "r32": 7500,
+      "r7": 10500
+    },
+    "a_line": {
+      "N_both": 10500,
+      "r32": 6000,
+      "r7": 10500
+    },
+    "b": {
+      "N_both": 12000,
+      "r32": 6000,
+      "r7": 12000
+    },
+    "b_line": {
+      "N_both": 10500,
+      "r32": 6000,
+      "r7": 10500
+    },
+    "classical": {
+      "N_both": 10500,
+      "r32": 7500,
+      "r7": 10500
+    },
+    "classical_line": {
+      "N_both": 12000,
+      "r32": 5000,
+      "r7": 12000
+    }
+  },
+  "fails_a": {
+    "halo": true,
+    "paired_z": true,
+    "relative_worse": false
+  },
+  "fails_b": {
+    "halo": true,
+    "paired_z": true,
+    "relative_worse": false
+  },
+  "grid": {
+    "a_r32": 1.7208,
+    "a_r7": 1.5032,
+    "b_r32": 2.0118,
+    "b_r7": 1.4933
+  },
+  "infer": {
+    "a": {
+      "infer_a_line_r32": {
+        "frames": 15000,
+        "frames_per_s": 747.7718,
+        "predict_seconds": 20.0596,
+        "vram": {
+          "device": "cuda:0",
+          "in_use_gb": 0.0018,
+          "limit_gb": 16.5645,
+          "peak_gb": 2.524
+        }
+      },
+      "infer_a_line_r7": {
+        "frames": 15000,
+        "frames_per_s": 725.22,
+        "predict_seconds": 20.6834,
+        "vram": {
+          "device": "cuda:0",
+          "in_use_gb": 0.0018,
+          "limit_gb": 16.5645,
+          "peak_gb": 2.524
+        }
+      },
+      "infer_a_r32": {
+        "frames": 15000,
+        "frames_per_s": 725.8244,
+        "predict_seconds": 20.6662,
+        "vram": {
+          "device": "cuda:0",
+          "in_use_gb": 0.0018,
+          "limit_gb": 16.5645,
+          "peak_gb": 2.524
+        }
+      },
+      "infer_a_r7": {
+        "frames": 15000,
+        "frames_per_s": 649.6225,
+        "predict_seconds": 23.0903,
+        "vram": {
+          "device": "cuda:0",
+          "in_use_gb": 0.0018,
+          "limit_gb": 16.5645,
+          "peak_gb": 2.524
+        }
+      }
+    },
+    "b": {
+      "infer_b_line_r32": {
+        "frames": 15000,
+        "frames_per_s": 622.7154,
+        "predict_seconds": 24.0881,
+        "vram": {
+          "device": "cuda:0",
+          "in_use_gb": 0.0018,
+          "limit_gb": 16.5645,
+          "peak_gb": 2.524
+        }
+      },
+      "infer_b_line_r7": {
+        "frames": 15000,
+        "frames_per_s": 616.6055,
+        "predict_seconds": 24.3267,
+        "vram": {
+          "device": "cuda:0",
+          "in_use_gb": 0.0018,
+          "limit_gb": 16.5645,
+          "peak_gb": 2.524
+        }
+      },
+      "infer_b_r32": {
+        "frames": 15000,
+        "frames_per_s": 627.9875,
+        "predict_seconds": 23.8858,
+        "vram": {
+          "device": "cuda:0",
+          "in_use_gb": 0.0018,
+          "limit_gb": 16.5645,
+          "peak_gb": 2.524
+        }
+      },
+      "infer_b_r7": {
+        "frames": 15000,
+        "frames_per_s": 570.5209,
+        "predict_seconds": 26.2918,
+        "vram": {
+          "device": "cuda:0",
+          "in_use_gb": 0.0018,
+          "limit_gb": 16.5645,
+          "peak_gb": 2.524
+        }
+      }
+    }
+  },
+  "outcome": "B",
+  "outcome_D": false,
+  "owner_ruling": "Its oke if the network isn't definitive tried and failed is still useful information",
+  "p4_cpu_ratio_pilot": 44,
+  "p5_at_final": {
+    "a": {
+      "found": 5696,
+      "median_sd_px": 0.0624,
+      "rmse_over_crlb": 1.1578,
+      "sum_p": 5645.1973,
+      "tol1.0": {
+        "bias_px": [
+          -0.0035,
+          -0.0018
+        ],
+        "matched": 5692,
+        "precision": 0.9993,
+        "recall": 0.9939,
+        "rmse_px_axis": 0.0698
+      },
+      "tol2.0": {
+        "bias_px": [
+          -0.0036,
+          -0.002
+        ],
+        "matched": 5693,
+        "precision": 0.9995,
+        "recall": 0.9941,
+        "rmse_px_axis": 0.071
+      },
+      "true": 5727
+    },
+    "b": {
+      "found": 5687,
+      "median_sd_px": 0.0632,
+      "rmse_over_crlb": 1.2336,
+      "sum_p": 5508.5845,
+      "tol1.0": {
+        "bias_px": [
+          0.0079,
+          0.0
+        ],
+        "matched": 5685,
+        "precision": 0.9996,
+        "recall": 0.9927,
+        "rmse_px_axis": 0.0756
+      },
+      "tol2.0": {
+        "bias_px": [
+          0.0079,
+          0.0
+        ],
+        "matched": 5685,
+        "precision": 0.9996,
+        "recall": 0.9927,
+        "rmse_px_axis": 0.0756
+      },
+      "true": 5727
+    }
+  },
+  "pilots_on_record": {
+    "P2": "pass",
+    "P2b_overlap": "rare (2.2% / 1.65%), Q1 stop fired, overridden by the owner",
+    "P3": "NO-GO",
+    "P4": "pass (203 steps/s, 44x over 13 CPUs, a pilot rate)",
+    "P5": "NO-GO (1.38 x CRLB at 5,000 steps)",
+    "P6_grid": "NO-GO (1.78, line 1.25)",
+    "P7": "NO-GO (r_hat 2.57, 2,074 divergences)",
+    "P8p": "first attempt NO-GO; second pass with deterministic ops"
+  },
+  "train": {
+    "a": {
+      "base": 32,
+      "device": "cuda:0",
+      "last_loss": -37.0361,
+      "lock_wait_s": 713.1128,
+      "log": [
+        160.3755,
+        -2.7732,
+        -7.7873,
+        -22.3464,
+        -18.007,
+        -25.6731,
+        -13.9261,
+        -20.2329,
+        -27.9663,
+        -14.0486,
+        -25.1948,
+        -28.479,
+        -11.1709,
+        -19.071,
+        -25.4717,
+        -29.7073,
+        -36.3547,
+        -21.1943,
+        -26.5852,
+        -28.1283,
+        -30.1224,
+        -20.896,
+        -33.5645,
+        -27.3162,
+        -14.9034,
+        -22.6442,
+        -39.8854,
+        -28.1339,
+        -27.5366,
+        -24.0399,
+        -32.4517,
+        -25.2427,
+        -31.3829,
+        -21.7245,
+        -23.3503,
+        -25.5723,
+        -29.2514,
+        -23.4714,
+        -13.7029,
+        -27.1981
+      ],
+      "log_steps": [
+        50,
+        1050,
+        2050,
+        3050,
+        4050,
+        5050,
+        6050,
+        7050,
+        8050,
+        9050,
+        10050,
+        11050,
+        12050,
+        13050,
+        14050,
+        15050,
+        16050,
+        17050,
+        18050,
+        19050,
+        20050,
+        21050,
+        22050,
+        23050,
+        24050,
+        25050,
+        26050,
+        27050,
+        28050,
+        29050,
+        30050,
+        31050,
+        32050,
+        33050,
+        34050,
+        35050,
+        36050,
+        37050,
+        38050,
+        39050
+      ],
+      "seconds": 817.4773,
+      "start": 0,
+      "steps": 40000,
+      "steps_per_s": 48.931,
+      "vram": {
+        "device": "cuda:0",
+        "in_use_gb": 0.006,
+        "limit_gb": 16.5645,
+        "peak_gb": 0.2633
+      },
+      "weights": 471784,
+      "xla_flags": "--xla_gpu_deterministic_ops=true"
+    },
+    "b": {
+      "base": 32,
+      "device": "cuda:0",
+      "last_loss": -23.8659,
+      "lock_wait_s": 1363.1296,
+      "log": [
+        -12.7979,
+        -17.3706,
+        -19.4463,
+        -18.1044,
+        -14.1747,
+        -22.4895,
+        -20.8493,
+        -26.3688,
+        -21.9773,
+        -24.129,
+        -21.2999,
+        -26.3732
+      ],
+      "log_steps": [
+        50,
+        1050,
+        2050,
+        3050,
+        4050,
+        5050,
+        6050,
+        7050,
+        8050,
+        9050,
+        10050,
+        11050
+      ],
+      "seconds": 253.192,
+      "start": 0,
+      "steps": 12000,
+      "steps_per_s": 47.3949,
+      "vram": {
+        "device": "cuda:0",
+        "in_use_gb": 0.0105,
+        "limit_gb": 16.5645,
+        "peak_gb": 0.2679
+      },
+      "weights": 471784,
+      "xla_flags": "--xla_gpu_deterministic_ops=true"
+    }
+  }
+}

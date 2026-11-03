@@ -1,0 +1,653 @@
+{
+  "N_both": 12000,
+  "overlap_primary": {
+    "r32": 0.0166,
+    "r7": 0.0219
+  },
+  "overlap_rare": true,
+  "r32": {
+    "K_counts": [
+      9744,
+      132260,
+      46958,
+      22162,
+      34220
+    ],
+    "N_star": 5000,
+    "bands": {
+      "2000": {
+        "count_median": 294.0,
+        "count_q": [
+          270.975,
+          321.025
+        ],
+        "frc_median": 59.6212,
+        "frc_nan": 0,
+        "frc_q": [
+          43.5534,
+          81.0337
+        ]
+      },
+      "3000": {
+        "count_median": 356.0,
+        "count_q": [
+          326.0,
+          389.075
+        ],
+        "frc_median": 59.1295,
+        "frc_nan": 0,
+        "frc_q": [
+          47.4748,
+          79.5868
+        ]
+      },
+      "4000": {
+        "count_median": 383.0,
+        "count_q": [
+          354.975,
+          414.0
+        ],
+        "frc_median": 59.0683,
+        "frc_nan": 0,
+        "frc_q": [
+          48.7147,
+          75.5362
+        ]
+      },
+      "5000": {
+        "count_median": 393.0,
+        "count_q": [
+          361.975,
+          429.075
+        ],
+        "frc_median": 57.1869,
+        "frc_nan": 0,
+        "frc_q": [
+          46.9063,
+          68.8527
+        ]
+      },
+      "6000": {
+        "count_median": 401.0,
+        "count_q": [
+          369.975,
+          434.025
+        ],
+        "frc_median": 56.3148,
+        "frc_nan": 0,
+        "frc_q": [
+          48.8347,
+          67.2785
+        ]
+      },
+      "7500": {
+        "count_median": 407.0,
+        "count_q": [
+          378.0,
+          435.0
+        ],
+        "frc_median": 55.7313,
+        "frc_nan": 0,
+        "frc_q": [
+          48.8818,
+          64.4639
+        ]
+      },
+      "9000": {
+        "count_median": 405.0,
+        "count_q": [
+          378.925,
+          443.025
+        ],
+        "frc_median": 55.3252,
+        "frc_nan": 0,
+        "frc_q": [
+          49.3319,
+          63.2973
+        ]
+      },
+      "10500": {
+        "count_median": 411.0,
+        "count_q": [
+          387.95,
+          449.05
+        ],
+        "frc_median": 55.4741,
+        "frc_nan": 0,
+        "frc_q": [
+          48.1557,
+          61.4961
+        ]
+      },
+      "12000": {
+        "count_median": 418.0,
+        "count_q": [
+          391.975,
+          447.025
+        ],
+        "frc_median": 54.7626,
+        "frc_nan": 0,
+        "frc_q": [
+          46.8714,
+          60.058
+        ]
+      },
+      "13500": {
+        "count_median": 421.0,
+        "count_q": [
+          394.975,
+          449.025
+        ],
+        "frc_median": 54.9202,
+        "frc_nan": 0,
+        "frc_q": [
+          48.8783,
+          59.685
+        ]
+      },
+      "15000": {
+        "count_median": 423.0,
+        "count_q": [
+          399.95,
+          451.025
+        ],
+        "frc_median": 54.588,
+        "frc_nan": 0,
+        "frc_q": [
+          48.9928,
+          60.8403
+        ]
+      }
+    },
+    "blobs": 245344,
+    "checks": {
+      "2000": {
+        "all": false,
+        "band": false,
+        "count": false,
+        "frc": true
+      },
+      "3000": {
+        "all": false,
+        "band": false,
+        "count": false,
+        "frc": true
+      },
+      "4000": {
+        "all": false,
+        "band": true,
+        "count": false,
+        "frc": true
+      },
+      "5000": {
+        "all": true,
+        "band": true,
+        "count": true,
+        "frc": true
+      },
+      "6000": {
+        "all": true,
+        "band": true,
+        "count": true,
+        "frc": true
+      },
+      "7500": {
+        "all": true,
+        "band": true,
+        "count": true,
+        "frc": true
+      },
+      "9000": {
+        "all": true,
+        "band": true,
+        "count": true,
+        "frc": true
+      },
+      "10500": {
+        "all": true,
+        "band": true,
+        "count": true,
+        "frc": true
+      },
+      "12000": {
+        "all": true,
+        "band": true,
+        "count": true,
+        "frc": true
+      },
+      "13500": {
+        "all": true,
+        "band": true,
+        "count": true,
+        "frc": true
+      },
+      "15000": {
+        "all": true,
+        "band": true,
+        "count": true,
+        "frc": true
+      }
+    },
+    "drift_range_nm": [
+      5.13,
+      18.49
+    ],
+    "events": 128537,
+    "events_in_mask": 39328,
+    "overlap": {
+      "all": {
+        "blobs_in_mask": 56969,
+        "detector_under_4": 0.0036,
+        "n_4_8": 0.0502,
+        "per_frame": 3.7979,
+        "primary": 0.0166
+      },
+      "first_2000": {
+        "blobs_in_mask": 12025,
+        "detector_under_4": 0.0027,
+        "n_4_8": 0.0654,
+        "per_frame": 6.0125,
+        "primary": 0.0216
+      },
+      "last_5000": {
+        "blobs_in_mask": 14329,
+        "detector_under_4": 0.0047,
+        "n_4_8": 0.041,
+        "per_frame": 2.8658,
+        "primary": 0.0136
+      },
+      "poisson_basis": {
+        "area_um2": 46.2741,
+        "blobs_per_um2_frame": 0.0821,
+        "share_under_4": 0.0644
+      },
+      "share_K2plus": 0.5051,
+      "share_two_bright_1_4px": 0.3044
+    },
+    "points": {
+      "2000": {
+        "count": 255,
+        "frc_nm": 40.5616,
+        "largest": 0.0187
+      },
+      "3000": {
+        "count": 305,
+        "frc_nm": 41.5145,
+        "largest": 0.0186
+      },
+      "4000": {
+        "count": 320,
+        "frc_nm": 43.5622,
+        "largest": 0.0204
+      },
+      "5000": {
+        "count": 327,
+        "frc_nm": 43.4672,
+        "largest": 0.0201
+      },
+      "6000": {
+        "count": 330,
+        "frc_nm": 41.5223,
+        "largest": 0.0213
+      },
+      "7500": {
+        "count": 347,
+        "frc_nm": 42.0119,
+        "largest": 0.0336
+      },
+      "9000": {
+        "count": 334,
+        "frc_nm": 41.1858,
+        "largest": 0.033
+      },
+      "10500": {
+        "count": 350,
+        "frc_nm": 40.7358,
+        "largest": 0.0328
+      },
+      "12000": {
+        "count": 366,
+        "frc_nm": 40.7827,
+        "largest": 0.0319
+      },
+      "13500": {
+        "count": 359,
+        "frc_nm": 40.9092,
+        "largest": 0.032
+      },
+      "15000": {
+        "count": 363,
+        "frc_nm": 40.9153,
+        "largest": 0.0577
+      }
+    },
+    "render_shape": [
+      1469,
+      1651
+    ],
+    "rows_filtered": 208928
+  },
+  "r7": {
+    "K_counts": [
+      8107,
+      192214,
+      75182,
+      36785,
+      54839
+    ],
+    "N_star": 12000,
+    "bands": {
+      "2000": {
+        "count_median": 381.0,
+        "count_q": [
+          354.0,
+          408.025
+        ],
+        "frc_median": 47.1768,
+        "frc_nan": 0,
+        "frc_q": [
+          40.6452,
+          55.3152
+        ]
+      },
+      "3000": {
+        "count_median": 529.0,
+        "count_q": [
+          496.95,
+          561.025
+        ],
+        "frc_median": 46.2533,
+        "frc_nan": 0,
+        "frc_q": [
+          39.0324,
+          53.9142
+        ]
+      },
+      "4000": {
+        "count_median": 626.0,
+        "count_q": [
+          592.875,
+          665.15
+        ],
+        "frc_median": 47.5923,
+        "frc_nan": 0,
+        "frc_q": [
+          42.6493,
+          55.8516
+        ]
+      },
+      "5000": {
+        "count_median": 693.0,
+        "count_q": [
+          656.95,
+          739.05
+        ],
+        "frc_median": 48.685,
+        "frc_nan": 0,
+        "frc_q": [
+          41.3052,
+          57.9495
+        ]
+      },
+      "6000": {
+        "count_median": 734.0,
+        "count_q": [
+          699.975,
+          775.025
+        ],
+        "frc_median": 48.8645,
+        "frc_nan": 0,
+        "frc_q": [
+          43.214,
+          58.6907
+        ]
+      },
+      "7500": {
+        "count_median": 792.0,
+        "count_q": [
+          748.0,
+          832.1
+        ],
+        "frc_median": 49.1869,
+        "frc_nan": 0,
+        "frc_q": [
+          44.4015,
+          55.937
+        ]
+      },
+      "9000": {
+        "count_median": 818.0,
+        "count_q": [
+          781.95,
+          871.05
+        ],
+        "frc_median": 50.4056,
+        "frc_nan": 0,
+        "frc_q": [
+          44.4264,
+          58.2324
+        ]
+      },
+      "10500": {
+        "count_median": 853.0,
+        "count_q": [
+          809.725,
+          902.025
+        ],
+        "frc_median": 50.7078,
+        "frc_nan": 0,
+        "frc_q": [
+          45.3626,
+          57.1134
+        ]
+      },
+      "12000": {
+        "count_median": 888.0,
+        "count_q": [
+          840.95,
+          938.025
+        ],
+        "frc_median": 51.2174,
+        "frc_nan": 0,
+        "frc_q": [
+          46.5536,
+          57.7217
+        ]
+      },
+      "13500": {
+        "count_median": 913.0,
+        "count_q": [
+          870.975,
+          962.025
+        ],
+        "frc_median": 51.144,
+        "frc_nan": 0,
+        "frc_q": [
+          46.2239,
+          57.7431
+        ]
+      },
+      "15000": {
+        "count_median": 935.0,
+        "count_q": [
+          891.975,
+          995.05
+        ],
+        "frc_median": 50.2812,
+        "frc_nan": 0,
+        "frc_q": [
+          46.0696,
+          55.6408
+        ]
+      }
+    },
+    "blobs": 367127,
+    "checks": {
+      "2000": {
+        "all": false,
+        "band": false,
+        "count": false,
+        "frc": true
+      },
+      "3000": {
+        "all": false,
+        "band": false,
+        "count": false,
+        "frc": false
+      },
+      "4000": {
+        "all": false,
+        "band": false,
+        "count": false,
+        "frc": true
+      },
+      "5000": {
+        "all": false,
+        "band": false,
+        "count": false,
+        "frc": true
+      },
+      "6000": {
+        "all": false,
+        "band": false,
+        "count": false,
+        "frc": true
+      },
+      "7500": {
+        "all": false,
+        "band": false,
+        "count": false,
+        "frc": true
+      },
+      "9000": {
+        "all": false,
+        "band": false,
+        "count": false,
+        "frc": true
+      },
+      "10500": {
+        "all": false,
+        "band": true,
+        "count": false,
+        "frc": true
+      },
+      "12000": {
+        "all": true,
+        "band": true,
+        "count": true,
+        "frc": true
+      },
+      "13500": {
+        "all": true,
+        "band": true,
+        "count": true,
+        "frc": true
+      },
+      "15000": {
+        "all": true,
+        "band": true,
+        "count": true,
+        "frc": true
+      }
+    },
+    "drift_range_nm": [
+      5.06,
+      13.31
+    ],
+    "events": 198036,
+    "events_in_mask": 54323,
+    "overlap": {
+      "all": {
+        "blobs_in_mask": 83489,
+        "detector_under_4": 0.0042,
+        "n_4_8": 0.0663,
+        "per_frame": 5.5659,
+        "primary": 0.0219
+      },
+      "first_2000": {
+        "blobs_in_mask": 17474,
+        "detector_under_4": 0.0037,
+        "n_4_8": 0.0872,
+        "per_frame": 8.737,
+        "primary": 0.0287
+      },
+      "last_5000": {
+        "blobs_in_mask": 21210,
+        "detector_under_4": 0.004,
+        "n_4_8": 0.0524,
+        "per_frame": 4.242,
+        "primary": 0.0173
+      },
+      "poisson_basis": {
+        "area_um2": 82.7095,
+        "blobs_per_um2_frame": 0.0673,
+        "share_under_4": 0.0531
+      },
+      "share_K2plus": 0.4966,
+      "share_two_bright_1_4px": 0.2721
+    },
+    "points": {
+      "2000": {
+        "count": 371,
+        "frc_nm": 33.3031,
+        "largest": 0.0242
+      },
+      "3000": {
+        "count": 523,
+        "frc_nm": 31.5218,
+        "largest": 0.0182
+      },
+      "4000": {
+        "count": 580,
+        "frc_nm": 33.3269,
+        "largest": 0.0161
+      },
+      "5000": {
+        "count": 609,
+        "frc_nm": 34.1701,
+        "largest": 0.0169
+      },
+      "6000": {
+        "count": 652,
+        "frc_nm": 34.1723,
+        "largest": 0.0162
+      },
+      "7500": {
+        "count": 687,
+        "frc_nm": 34.1025,
+        "largest": 0.0144
+      },
+      "9000": {
+        "count": 702,
+        "frc_nm": 35.0932,
+        "largest": 0.0136
+      },
+      "10500": {
+        "count": 715,
+        "frc_nm": 35.1053,
+        "largest": 0.0138
+      },
+      "12000": {
+        "count": 749,
+        "frc_nm": 35.2409,
+        "largest": 0.0141
+      },
+      "13500": {
+        "count": 776,
+        "frc_nm": 35.2587,
+        "largest": 0.0169
+      },
+      "15000": {
+        "count": 802,
+        "frc_nm": 35.2331,
+        "largest": 0.0196
+      }
+    },
+    "render_shape": [
+      1094,
+      2076
+    ],
+    "rows_filtered": 341012
+  },
+  "seconds_curves": 186.515
+}

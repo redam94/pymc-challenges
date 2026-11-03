@@ -1,0 +1,10 @@
+{
+  "frames": "Count rule only, classical: block bootstrap of N*, 100 draws, 200-frame blocks, both calibrations; events thinned at random from all 15,000 frames; recording 7's count band at 10,500 and 15,000 in five fresh seed families.",
+  "halo": "Written ring and far field, K = 1 added, and faint rows taken from frames 200, 400 and 800 away as a control.",
+  "nuts": "All 200 audit spots, same seeds, 4 chains, 1,000 + 1,000, in the non-centred form of the same posterior, so the start follows the data. Once with an empty compile cache and once warm. K = 2 is also read sorted on the wider axis.",
+  "psf": "The stored 20,000 spots, repeated at the same sites 100 and 300 frames away, and at random sites in the same frame.",
+  "real": "Per-block rows in the mask, gap 3, 1.5 px. Common pairs: same frame, both ends within 0.5 px, in all four methods. Floor fit: b.fit_floor, 40 bootstraps. Piles: bins of 50 or more whole-field rows, 0.25 px.",
+  "sim": "Simulated baseline scored against the simulator's own emitters: a row is true within 2 px of an emitter in its frame. Static bins hold 10 or more false rows.",
+  "status": "Post-hoc, from the audits of 2026-11-02. Written before these stages ran. No gate, line or stored verdict changes.",
+  "stuck": "The 87 stuck spots rerun in the stored centred form with per-chain logp, step size and an L-BFGS climb from each chain's last draw."
+}

@@ -1,0 +1,46 @@
+{
+  "infer_a_line_r32": {
+    "frames": 15000,
+    "frames_per_s": 747.7718,
+    "predict_seconds": 20.0596,
+    "vram": {
+      "device": "cuda:0",
+      "in_use_gb": 0.0018,
+      "limit_gb": 16.5645,
+      "peak_gb": 2.524
+    }
+  },
+  "infer_a_line_r7": {
+    "frames": 15000,
+    "frames_per_s": 725.22,
+    "predict_seconds": 20.6834,
+    "vram": {
+      "device": "cuda:0",
+      "in_use_gb": 0.0018,
+      "limit_gb": 16.5645,
+      "peak_gb": 2.524
+    }
+  },
+  "infer_a_r32": {
+    "frames": 15000,
+    "frames_per_s": 725.8244,
+    "predict_seconds": 20.6662,
+    "vram": {
+      "device": "cuda:0",
+      "in_use_gb": 0.0018,
+      "limit_gb": 16.5645,
+      "peak_gb": 2.524
+    }
+  },
+  "infer_a_r7": {
+    "frames": 15000,
+    "frames_per_s": 649.6225,
+    "predict_seconds": 23.0903,
+    "vram": {
+      "device": "cuda:0",
+      "in_use_gb": 0.0018,
+      "limit_gb": 16.5645,
+      "peak_gb": 2.524
+    }
+  }
+}

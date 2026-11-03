@@ -29,7 +29,7 @@ for every notebook, so this is optional. Later syncs drop it unless you repeat t
 
 ```
 notebooks/
-  examples/      E01-E87, E89, E91  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
+  examples/      E01-E89, E91  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
   challenges/    C01-C15  your workspace. Tasks, empty cells, hints on request.
   solutions/     C01-C15  full reference solutions, executed, with commentary.
 ```
@@ -281,6 +281,14 @@ What will a big model cost, and does it change the decision? The notebook tests 
 | | Topic | Data | Key techniques |
 |---|---|---|---|
 | **E87** | Pricing a model: should a charity buy a flight-level forecast? | BTS Reporting Carrier On-Time Performance 2024-2025 (14,080,680 rows, kept as 494,547 flight x month cells and one month of rows, with integer codes and no names); the stakeholder is fictional | price = rate x gradients + memory + precision, an iso-cost map, GPU and CPU rates by cost shape, a gather and scatter timed on real indices, float32 spacing and a VRAM grid, a rung ladder from persistence and a conjugate beta-binomial to a hierarchical beta-binomial under nutpie, redrawing the month in a forecast, a rung rule fixed before any score was read, slopegraph of ranks, writing a price someone can check |
+
+#### A neural localiser, tried and failed (E88)
+
+Would a neural network change how many frames a dSTORM movie needs? A DECODE-style network was trained on simulation and judged on two full real recordings, and it failed: the answer on real data stays the classical one, about 10,500-12,000 of 15,000 frames, for these two recordings, with a sampling range of 7,500-13,500. The notebook replays that stored run on 2 cores and in about 1 GB, in about a minute, with no GPU and no download. Do not rerun the heavy scripts on limited hardware.
+
+| | Topic | Data | Key techniques |
+|---|---|---|---|
+| **E88** | Every photon: a neural localiser tried on a full dSTORM movie, and how it failed | Two full 647 nm recordings of Unc-13 at *Drosophila* junctions (Mrestani 2022, Zenodo 7328805, CC BY 4.0; 15,000 frames each, kept as a 1.7 MB summary and small JSON tables of a stored run); the imaging lead is fictional | gates written before the run and printed when they fail, a frames decision rule recomputed live, a paired-frame test of error bars with no ground truth, companion halo, population replicate and a visual lineup, a live NUTS audit in PyMC with per-chain log density, a cross-correlation drift failure reproduced from stored renders, random against block split in Fourier ring correlation, a calibration certificate for a trained network |
 
 #### Value of information on a map (E89)
 
