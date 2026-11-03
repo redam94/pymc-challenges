@@ -12,125 +12,79 @@
 # | | |
 # |---|---|
 # | **Type** | Advanced worked example - read, run, modify |
-# | **Data** | Real: two full dSTORM recordings of Unc-13 at *Drosophila* neuromuscular junctions (Mrestani 2022, Zenodo 7328805, CC BY 4.0), 15,000 frames each, as a 1.7 MB summary and small JSON tables of a stored run |
-# | **Time** | About 1 minute on 2 cores (measured, the longer with a cold compile cache). This is a replay: the heavy run is not repeated |
-# | **You will learn** | Reading a stored run honestly · gates written before the run, and printing the ones that failed · a paired-frame test of error bars that needs no ground truth · why a simulation pass says nothing about a microscope · a calibration certificate for a trained network · a NUTS audit of a fitter, live in PyMC · how a cross-correlation drift estimate breaks · why a random split flatters Fourier ring correlation · reporting "tried and failed" |
+# | **Data** | Real: two full dSTORM recordings of Unc-13 at *Drosophila* neuromuscular junctions (Mrestani 2022, Zenodo 7328805, CC BY 4.0), 15,000 frames each, reduced to a 1.7 MB summary and small JSON tables from a stored run |
+# | **Time** | About 1 minute on 2 cores. The notebook replays a stored run; the heavy run is not repeated |
+# | **You will learn** | **How many frames** a super-resolution movie needs, by a **stability rule** and a **block bootstrap** · **DECODE-style networks** trained on simulators · the **paired-frame test** of error bars without ground truth · why a **simulation pass** says nothing about a microscope · the **companion halo** and a **population replicate with a lineup** · a **calibration certificate** for a trained network · **auditing a Laplace fitter with NUTS**, and a start-value trap in nutpie's `with_data` · how **cross-correlation drift correction** breaks · why a **random split flatters FRC** |
 #
 # > **Do not rerun the heavy parts on limited hardware.** Every network number here comes from one stored
-# > run: 2.4 GB of raw movies, a GPU, 120,000 frames of inference and hours of wall time on a shared machine.
-# > A normal run of this notebook touches none of that. It loads small JSON files from `results/E88/` and one
-# > 1.7 MB summary, needs no GPU and no download, and refuses any other run level. The scripts
-# > `tools/run_e88_classical.py`, `tools/run_e88_net.py` and `tools/run_e88_full.py` hold the heavy run. It ran on a
-# > 16-core desktop with a 24 GB GPU and 64 GB of memory. Do not start it on a laptop.
+# > run that read 2.4 GB of raw movies and took hours on a 16-core desktop with a 24 GB GPU and 64 GB of
+# > memory. A normal run loads small JSON files from `results/E88/` and a 1.7 MB summary, needs no GPU and
+# > no download, and refuses any other run level. The heavy run is in `tools/run_e88_classical.py`,
+# > `tools/run_e88_net.py` and `tools/run_e88_full.py`.
 #
-# ## The brief
+# ## The setting
 #
-# > *From the lead of an imaging core, to the analyst. The lead is fictional, invented for this notebook; the
-# > data and the numbers are real.* We are planning a repeat of the Unc-13 potentiation experiment. Last
-# > time each field was 15,000 frames. On the camera that is only three minutes, but with 45 junctions per
-# > channel it is 2.2 hours of scope time per channel and 54 GB per channel, and the dye bleaches throughout.
-# > For these two recordings, how many frames would have given the same answer? How far apart are the two?
-# > And I keep being told to replace our fitter with a neural network: would that change your answer, and
-# > what would I have to check before trusting one?
+# E58 showed that super-resolution microscopy is a statistics problem. In dSTORM (Heilemann et al. 2008)
+# almost every dye molecule is dark at any moment and a sparse random few blink on, so each camera frame
+# holds a handful of isolated spots whose centres can be found to a few nanometres, far below the 250 nm
+# blur of the optics. E58 worked on 2,000 frames of a small crop. This notebook takes the full recording the
+# crop came from and a second one, 15,000 frames each, from the study of the synaptic protein Unc-13 by
+# Dannhäuser et al. (2022).
 #
-# ## The answer, before the working
+# Suppose the lead of an imaging core is planning a repeat of that experiment. On the camera a field takes
+# only three minutes, but at 45 junctions per channel that is 2.2 hours of scope time and 54 GB of data per
+# channel, and the dye bleaches all the while. The lead asks three questions. For these two recordings, how many
+# frames would have given the same answer? How far apart are the two recordings? And the lead keeps being told to
+# replace the core's fitter with a neural network: would that change the answer, and what would they have to check
+# before trusting one?
 #
-# **We tried the network on the real movies, and it failed. Keep your fitter.** The result on real data is
-# the classical one.
+# The third question is the hard one. Networks such as DECODE (Speiser et al. 2021) are trained entirely on
+# simulated frames, and on simulation they beat classical fitters, above all when spots overlap. On a real
+# movie nothing is known, and a network still prints a confident position and error bar for every blink. So
+# much of this notebook is about checks that need **no ground truth**: two frames of the same molecule, the
+# ring of faint detections around bright ones, a simulated replicate of the whole population, and a
+# certificate that says where the network was never tested. We turn the same checks on the classical fitter,
+# because a network can only be judged against a baseline whose own error bars have been checked.
 #
-# - **Frames: about 10,500-12,000, which is 20-30% fewer than 15,000, with a sampling range of 7,500-13,500.** That
-#   rests on the classical pipeline on both full recordings, under a rule fixed before any full result was seen. It is
-#   10,500 under the calibration the rule required and 12,000 under a calibration chosen afterwards. Those are two
-#   points, not an interval: a block bootstrap of the count rule gives 7,500-13,500 under either calibration
-#   [post-hoc]. The count and the band test set 10,500 jointly, by a narrow margin: in one of five fresh seed families
-#   the band test fails there. If you cut, cut to 12,000. It holds for these two recordings and sets no lab policy.
-# - **How far apart are the two recordings?** Their own answers differ by 3,000-7,000 frames (10,500 against
-#   7,500, or 12,000 against 5,000), and recording 7 sets the number for both. That gap is not resolved: recording 32's
-#   own answer runs from 2,000 to 12,000 across the bootstrap. The second recording is the only replication there is.
-# - **The network failed the check that matters most.** On recording 32, which played no part in training,
-#   its error bars are too small: the paired-frame z is 1.40 for network A and 1.63 for network B against a
-#   failure line of 1.25. A fix (network B, trained on a simulator built from real data) halved the false
-#   halo of faint detections around bright ones but made z worse, and the halo still fails on recording 32.
-#   That is the written outcome B: the failure appears and the fix does not fix it.
-# - **Your fitter's error bars are too small as well.** Classical z is 1.63 on the same brightness-matched set, so
-#   both networks count as "no worse than classical" on the written line. That is no reason to switch. On the 4,337
-#   pairs all four methods share, B is worse than classical (1.76 against 1.55), and A (1.44) has the same scatter
-#   as single-emitter fits, 12.0 nm [post-hoc]. A also has the worse halo and replicate. Part of the excess is shared:
-#   a floor of about 4-6 nm per frame in every method, which looks like the sample or stage and not the localiser. For
-#   chosen K and B, most of it remains an unexplained scale.
-# - **The network does not move the frames answer in any way we can trust.** The gated runs say 10,500 for A
-#   and 12,000 for B, but they rest on a broken drift estimate, so that difference is not a finding. After
-#   one post-hoc repair the networks give 12,000 (A) and 10,500 (B), or 15,000 and 13,500 under the other
-#   calibration. Calibration and localiser each move N by 1,500-3,000 frames, about the same, and neither shift
-#   stands clear of sampling noise.
-# - **What the network does do it does on clean simulation:** recall 0.994 and 1.16 x the Cramér-Rao bound (CRLB)
-#   after 40,000 steps on a flat background, and about 570-750 frames per second. Nothing in that passes to real data.
-#   On the one simulated movie with a real background, half of A's rows match no emitter, and A also failed on a
-#   harder simulator, which is the warning in miniature.
-# - **The audit of the fitter failed largely through our own bug.** Check 4 stays failed as written. But every chain
-#   started at the corner of its patch, because `with_data` in nutpie 0.16.11 does not move the start. Rerun with a
-#   start on the spot, the ratio is 1.11-1.14 and all 100 single-emitter spots of recording 7 reach r_hat 1.01, with a few
-#   divergences left, on the fitter's own positions and photons [post-hoc]. Laplace looks fine at K = 1 on that recording. K = 2 is the real open problem.
-# - **Why it could not help much here.** The network's gain is at high density. The written overlap measure
-#   gives 2.2% and 1.65%; a better post-hoc estimate gives about 5-9%, against 43% in E58's dense simulation.
-#   The written stop before the full run fired, and the project owner chose to run it anyway, knowing it might
-#   fail. It did, and that is useful: it is what this notebook reports.
-# - **Before you trust any network, check four things:** paired frames, the halo, a population replicate and
-#   a calibration certificate saying where it was never tested. All four are below.
+# The network failed. The most useful thing this notebook can do is show how it failed, and how you would
+# have caught it before trusting it. Each check has a threshold set before we looked at the result, and
+# where a check came later we say so where it is used.
 #
-# **What each number rests on.** Five labels are used throughout.
+# **What "the same answer" means.** N is the smallest frame count at which three things hold, in both
+# recordings, inside the authors' masks of the terminal boutons, at N and at every larger N on the grid. The
+# resolution by Fourier ring correlation (FRC) is within 10% of its 15,000-frame value. So is the number of
+# clusters. And a time-block bootstrap band at N overlaps the band at 15,000. "Frames" means the
+# first N frames of a full movie, which stands in for a shorter acquisition but keeps the full movie's
+# bleaching history. The cluster count is our own readout (connected components on a 10 nm render), not the
+# paper's HDBSCAN subclusters: a tool for this decision, not a biological measurement.
 #
-# | Label | Meaning |
-# |---|---|
-# | **Stored** | Measured once in the stored run of 2026-11-02 and read from `results/E88/`. Your run reloads it and cannot change it |
-# | **Live** | Computed in this notebook from the summary file, so you can change it |
-# | **Gated** | Judged against a line written to a file before the job ran. No line was moved afterwards |
-# | **Post-hoc** | Added after seeing a result. It can explain a gate; it cannot overturn one |
-# | **Extrapolated** | Arithmetic from a measured rate. Nothing was timed at that size |
-#
-# Every failed gate is printed with its line and value in section 9. Wall times from the full run are
-# inflated: another notebook's job shared the machine and the GPU lock, so they are not a benchmark.
-#
-# ## What "the same answer" means here
-#
-# N is the smallest frame count at which, in **both** recordings, inside the authors' mask of terminal
-# boutons, three things hold at N and at every larger N on the grid: resolution by Fourier ring correlation
-# (FRC) is within 10% of its 15,000-frame value, the cluster count is within 10% of its 15,000-frame value,
-# and the time-block bootstrap band at N overlaps the band at 15,000. "Frames" means the first N frames of a
-# recording that ran to 15,000, so a truncated movie keeps the labelling and bleaching history of a full one.
-# It is a proxy for a shorter acquisition. There is no ground truth here and there are no dark frames.
-#
-# ## Modelling decisions, stated up front
-#
-# | Decision | What this notebook does | Why, and what it costs |
-# |---|---|---|
-# | **Scope** | Two 647 nm recordings, inside the authors' masks. The record does not say how the two relate: same animal, junction or day is unknown | Between-sample variance cannot be estimated. **No lab-wide rule follows** |
-# | **Rung** | Replay only. The plan's small rung, a base-16 network trained on a crop, was not built | Its pilot reached recall 0.80 and 1.86 x CRLB at E58's brightness (0.98 and 1.84 x at 2,000 photons), and a laptop's time is unmeasured. It would have taught the code without the result |
-# | **Classical baseline** | E58's detection, Laplace fits and chosen K, with a 201-frame rolling background | The background falls during the movie, so a fixed one would be a poorly configured baseline. It also gives the fitter temporal context the network lacks: the network sees 3 frames, so long-lived bright objects stay in its input (section 10) |
-# | **Network** | A DECODE-style U-Net written fresh from the paper in plain JAX: 3 frames in, per-pixel detection, position, photons and sds out, 471,784 weights | Per-pixel Gaussians are marginals. They are not a joint posterior over emitter sets |
-# | **Network A** | 40,000 steps on E58's forward model: Gaussian PSF, flat background, independent frames | The expected failure, on purpose: it knows nothing of structured background or of blinks that last |
-# | **Network B** | Warm start from A, 12,000 more steps on a simulator built from recording 7: stacked PSF, real background maps, persistence. The stack proved to be contaminated (section 7) | **Recording 32 played no part in the fit**, so it is the judged recording |
-# | **Calibration** | Per block, per recording: the written action after P3 failed. A single line per recording is a labelled sensitivity run | The line is post-hoc, and no ruling has picked between them. Both are shown |
-# | **Thresholds** | 10% on FRC and on count, fixed before any full result | Chosen as defaults by the analyst, not ruled on by the owner |
-# | **Structure readout** | Connected components on a 10 nm render inside the mask, at least 7 events. Brp left out | **Our count is not the paper's.** HDBSCAN needs a dependency we do not have, and subclusters need the second channel |
-# | **Training mode** | Deterministic GPU ops | The only setting under which a killed and resumed run matched exactly. It costs 3.4x in steps per second, like for like (64.3 s against 19.0 s for 3,000 steps) |
-# | **Lines on the paired test** | Keep the absolute lines (pass 1.0-1.15, fail over 1.25) and add one relative to classical, set before any network result | The classical fitter fails the absolute line itself, so one alone would mislead |
+# **The methods.** The classical baseline is E58's pipeline: detection, a Laplace fit of each blob with the
+# number of emitters $K$ chosen by evidence, and a 201-frame rolling background. The network is a
+# DECODE-style U-Net written from the paper in plain JAX. It reads 3 frames and predicts, at every pixel, a
+# detection probability, a sub-pixel position, photons and an sd for each; those sds are per-pixel
+# marginals, not a joint posterior over sets of emitters. **Network A** is trained for 40,000 steps on E58's
+# forward model (Gaussian PSF, flat background, independent frames), a naive simulator on purpose. **Network
+# B** starts from A and trains 12,000 more steps on a simulator built from recording 7, with a stacked PSF,
+# real background maps and blinks that persist. Recording 32 plays no part in training, so it is where the
+# networks are judged.
 #
 # ## The plan
 #
-# 1. The movie, and what it costs
-# 2. The first failure: a calibration that does not hold still
-# 3. The classical answer: how many frames?
-# 4. Is there anything for a network to find?
-# 5. The instrument, and what it cost to build
-# 6. A pass on simulation, and the certificate
-# 7. Real frames: the four checks
-# 8. A live audit in PyMC
-# 9. The ledger: every gate, with its line
-# 10. The second failure: drift
-# 11. The third failure: a flattering split
-# 12. The frames decision, all of it
-# 13. What to tell the core
+# | Part | Question | Tool |
+# |---|---|---|
+# | 1 | What does a full recording look like, and what does it cost? | raw frames, renders, bleaching |
+# | 2 | Does the camera calibration hold along a movie? | block photon-transfer fits |
+# | 3 | How many frames does the classical pipeline need? | the decision rule, a block bootstrap |
+# | 4 | Do spots overlap enough for a network to help? | neighbour statistics |
+# | 5 | What did the network cost to build and use? | timings |
+# | 6 | Does it pass on simulation, and what is that worth? | recall, CRLB, a coverage grid |
+# | 7 | Are its error bars and detections honest on real frames? | paired frames, halo, replicate, NUTS |
+# | 8 | Why did the NUTS audit of the fitter fail? | PyMC and nutpie, live |
+# | 9 | All the checks together | a table of thresholds |
+# | 10 | Why does drift correction break on network output? | cross-correlation |
+# | 11 | How much does a random split flatter FRC? | random and block splits |
+# | 12 | Does the network change the number of frames? | the decision rule on network rows |
+# | 13 | What to tell the core | a calibration certificate |
 
 # %%
 import os
@@ -228,22 +182,21 @@ display(Markdown(banner(
     smaller_machine=estimated("this replay is the small problem: no reader needs more", ""))))
 
 # %% [markdown]
-# ## 1. The movie, and what it costs
+# ## 1 · The movie, and what it costs
 #
-# **Source.** Mrestani (2022), *Example raw dSTORM data of Brp (Alexa Fluor532) and Unc-13 (Alexa Fluor647)*, Zenodo,
-# doi:10.5281/zenodo.7328805, licensed [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Paper: Dannhäuser,
-# Mrestani, Gundelach, Pauli, Komma, Kollmannsberger, Sauer, Heckmann & Paul (2022), *Endogenous tagging of Unc-13 reveals
-# nanoscale reorganization at active zones during presynaptic homeostatic potentiation*, Frontiers in Cellular
-# Neuroscience 16:1074304. **What we changed:** the two movies are reduced to a few raw frames and windows, statistics,
-# masks on the 200 px grid and the output of our own analysis, and the lineups add simulated panels. No endorsement by
-# the authors is implied. The record calls the files example data and numbers them. It does not say which animal, junction
-# or condition each came from.
+# **Source.** Mrestani (2022), *Example raw dSTORM data of Brp (Alexa Fluor532) and Unc-13 (Alexa
+# Fluor647)*, Zenodo, doi:10.5281/zenodo.7328805, licensed [CC BY
+# 4.0](https://creativecommons.org/licenses/by/4.0/). Paper: Dannhäuser, Mrestani, Gundelach, Pauli, Komma,
+# Kollmannsberger, Sauer, Heckmann & Paul (2022), *Endogenous tagging of Unc-13 reveals nanoscale
+# reorganization at active zones during presynaptic homeostatic potentiation*, Frontiers in Cellular
+# Neuroscience 16:1074304. **What we changed:** the two movies are reduced to a few raw frames and windows,
+# statistics, masks on the 200 px grid and the output of our own analysis, and the lineups add simulated
+# panels. No endorsement by the authors is implied. The record numbers the files (7 and 32) but does not say
+# which animal, junction or condition each came from.
 #
-# dSTORM makes a few dye molecules blink on in each frame, finds each one to a few nanometres, and builds a
-# picture from the positions. The left panels below are raw frames. The two large panels are built from the filtered
-# localisations of each three-minute movie, 340,711 of them in recording 7, and the pale outlines are the authors' masks
-# of the terminal boutons. The small box is the crop E58 used, which lies entirely outside the mask, so E58's companions
-# and this notebook's numbers do not come from the same place.
+# The cost assumes the paper's 22 + 23 junctions were one recording each. In the figure, the left panels are
+# raw frames, the large panels are built from the classical localisations of each movie (340,711 in
+# recording 7 after filtering), the pale outlines are the authors' masks, and the small box is E58's crop.
 
 # %%
 seconds = FRAMES * CYCLE_MS / 1000
@@ -280,12 +233,14 @@ for col, rec in enumerate(RECS):
     ax.set_facecolor("black");
 
 # %% [markdown]
-# Two things to notice before any model runs. The two recordings are visibly different samples, with different
-# coverage by their masks. And a mask is a small part of the frame: 12.8% and 7.2% of the pixels hold the
-# structures the whole decision is about, so most of what the camera records never reaches the answer.
+# One movie is 176 s on the camera. Stopping at 10,500 frames would save about 40 minutes and 16 GB per
+# channel, and stopping at 12,000 about 26 minutes and 11 GB.
 #
-# The dye bleaches, and that is the reason a shorter movie might work at all. Here is how fast the signal runs
-# out. The top axis gives camera seconds.
+# The recordings are visibly different samples, and a mask is a small part of the frame: 12.8% of the pixels
+# in recording 7 and 7.2% in recording 32. Most of what the camera records never reaches the answer. E58's
+# crop lies entirely outside the mask, so its numbers and this notebook's come from different places.
+#
+# The dye bleaches, and that is why a shorter movie might work at all. Here is how fast the signal runs out.
 
 # %%
 frames_at = (np.arange(30) + 0.5) * int(pack["block_frames"])
@@ -314,18 +269,18 @@ for ax in axes:
     top.set_xlabel("seconds on the camera", fontsize=9);
 
 # %% [markdown]
-# The first third of each movie holds 43-44% of its blobs, and the first 10,500 frames about 77%. Nothing here says when
-# structure stops gaining, because later blinks can fill in clusters that are still sparse. Only the decision curve can say that, and it needs
-# calibrated, drift-corrected positions first.
+# The detector finds 367,071 blobs in recording 7 and 245,335 in recording 32, 23% of them inside the mask.
+# The blink rate falls to under half its starting value, and the first 10,500 frames hold about 77% of all
+# blobs. The background falls too, which is why the classical pipeline subtracts a rolling background.
 
 # %% [markdown]
-# ## 2. The first failure: a calibration that does not hold still
+# ## 2 · The first failure: a calibration that does not hold still
 #
-# A localiser needs photons, and the camera gives ADU. E58 fitted one offset and one gain from a photon-transfer
-# curve on 2,000 frames. Gate P3 asked whether those hold along a full movie and between recordings: within 20
-# ADU and 10% of the recording's median in every block, and between the two recordings.
-#
-# They do not. Stored, gated.
+# A localiser needs photons, and the camera reports ADU. An EMCCD adds an offset and multiplies each
+# photoelectron by a gain, so the variance of a steady pixel grows in a straight line with its mean, and the
+# photon-transfer curve gives both numbers (E58, section 1). E58 fitted them once, on 2,000 frames. Do they
+# hold along a full movie and between recordings? We set the tolerance at 20 ADU and 10%, and planned to
+# calibrate every 500-frame block separately if it failed.
 
 # %%
 p3 = store.load_json("p3_calibration")
@@ -364,25 +319,26 @@ axes[1].set(xlabel="frame", ylabel="background (counts per px)", ylim=(None, 86)
 axes[1].set_title("Taken literally, the block fits make the background rise", fontsize=11);
 
 # %% [markdown]
-# Read the right panel. The raw background falls throughout the movie, yet the per-block calibration turns that
-# into a background that climbs, which is not physically plausible. The left panel suggests why: each block's fit
-# seems to trade offset against slope over a narrow range of pixel values. Across blocks, block mean against block
-# variance falls on one straight line, with r near 0.9998, close to E58's numbers.
+# They fail by a wide margin. Along recording 7 the fitted offset moves by 243 ADU and the gain by 37%,
+# along recording 32 by 208 ADU and 31%, and the two recordings differ by 83 ADU and 12%.
 #
-# **So there are two calibrations here, and neither is settled.** The gate failed and its written action was
-# per-block fits, so per-block is the primary everywhere, because a gate cannot change. The one-line fit was found
-# after the failure, so it is post-hoc and runs beside it as a sensitivity check. It is the more plausible of the
-# two, and it matters later. No ruling has picked between them.
+# Read the right panel. The raw background falls throughout the movie, yet the per-block calibration turns
+# it into a background that climbs, which is not physically plausible. The left panel suggests why: within a
+# block the pixel values span a narrow range, and the fit trades offset against gain along a ridge. Across
+# blocks, block mean against block variance falls on one straight line per recording (r of 0.9997-0.9998),
+# with gains of 13.5 and 12.8 close to E58's 13.9.
+#
+# So there are two calibrations, and neither is settled. We keep both. Per-block calibration is the main
+# analysis; the single line per recording, which we only looked for after the per-block fit failed, is the
+# more plausible and runs alongside it. The difference turns out to matter.
 
 # %% [markdown]
-# ## 3. The classical answer: how many frames?
+# ## 3 · The classical answer: how many frames?
 #
-# This is the result of the notebook, and it uses no network. E58's fitter ran over both movies: 367,071 and
-# 245,335 blobs, about 3-4 minutes each on 13 CPUs. Rows with a posterior sd under 30 nm were kept, drift was
-# corrected, gap-1 links were merged into events, and then the three tests were read at each frame count.
-#
-# The stored file has the verdict. We also recompute it here from the stored points, live, from the rule as
-# written, so you can change the rule and see what moves.
+# This is the main result of the notebook, and it uses no network. E58's fitter ran over both movies, 3-4
+# minutes each on 13 CPUs. Rows with a posterior sd under 30 nm were kept, drift was corrected, and
+# localisations linked in consecutive frames were merged into events. We recompute the rule live from the
+# stored points, check that it reproduces every stored answer, and then vary it.
 
 # %%
 def n_star(curve, allowance=0.10):
@@ -471,39 +427,38 @@ fig.suptitle("Count and its band decide, and FRC barely moves. Filled dot: all t
              "Shaded: 10% of the 15,000-frame value", fontsize=11);
 
 # %% [markdown]
-# **Reading it.** Under the written rule the answer is 10,500 frames, 30% fewer. Seven things stop that from being
-# a clean number.
+# Under the rule as fixed, the answer is **10,500 frames, 30% fewer than 15,000**: recording 7 needs 10,500
+# and recording 32 only 7,500. Under the one-line calibration it is 12,000, with recording 32 at 5,000.
 #
-# - **FRC is no help.** At 2,000 frames it is already 32.8 nm in recording 7, against 35.3 nm at 15,000, so more frames
-#   did not improve it. FRC cannot see this decision and should not be the headline here.
-# - **The count never plateaus in recording 7.** It rises 9% from 10,500 to 15,000. N* does not come from the curve going
-#   flat. A tighter allowance moves it up: 5% gives 12,000, or 13,500 under the line.
-# - **Count and band set 10,500 jointly, narrowly.** At 9,000 both fail, and the count misses its 10% line by only 6
-#   clusters. But 12.5-20% allowances leave N at 10,500 per block, because the band test still blocks it. At 10,500 the
-#   two bands overlap by 11 clusters (900 against 889). In five fresh seed families the margin is +8 to +11 four times and
-#   negative once, and a failure there would make N 12,000. So 12,000 is the safer end. This covers recording 7's count
-#   band only.
-# - **It moves with calibration.** Under the line, N for both is 12,000, and recording 32 drops from 7,500 to 5,000.
-#   Hence "10,500-12,000". Those are two points, not an interval.
-# - **Sampling noise is wider than that pair.** The bootstrap of the count rule gives 7,500-13,500 under either
-#   calibration, with near-identical draws at each N, so this run does not show that calibration moves N at all. It is
-#   a count-only, classical-only check with duplicated blocks, and it does not replace the gated value.
-# - **The count measures events, not settling.** Thin all 15,000 frames at random to the same event count and you get
-#   almost the same curve as the first N frames. Frame order carries almost nothing, so the rule says "about 77% of the
-#   events". It does not show that structure has settled.
-# - **The band and the points are different things.** Each bootstrap draw jitters events by their sd, adding error a
-#   second time, so at 15,000 frames the band is 889-989 clusters and 45-56 nm against points of 801 and 35.3 nm. Test
-#   3 compares bands with bands, so it stands, but the bands are not intervals around the points, and they are not
-#   drawn here. They are not a posterior over resolution either: it is a time-block bootstrap with localisation
-#   error propagated.
+# **FRC is no help.** Recording 7 reads 32.8 nm at 2,000 frames and 35.3 nm at 15,000, so more frames did
+# not improve it. The count does all the work, and in recording 7 it never levels off: it rises 9% from
+# 10,500 frames to 15,000. N comes from where the curve enters the 10% band, so a tighter allowance pushes
+# it up (5% gives 12,000).
+#
+# **The margin at 10,500 is narrow.** At 9,000 frames the count misses its band by only 6 clusters, and at
+# 10,500 the bootstrap bands of recording 7's count overlap by 11 clusters. Repeating that bootstrap with
+# five fresh seeds gave a margin of +8 to +11 four times and -10 once, and a failure would make N 12,000. So
+# 12,000 is the safer end.
+#
+# **Sampling noise is wider than the gap between the calibrations.** A block bootstrap of the count rule,
+# added after these results, puts N for both recordings between 7,500 and 13,500 under either calibration,
+# with almost the same spread of draws. So this run cannot show that calibration moves N at all. Recording
+# 32 alone ranges from 2,000 to 12,000.
+#
+# **The rule measures events, not settling.** Thin all 15,000 frames at random to the same number of events
+# and the cluster curve barely changes (743 clusters against 732 at 10,500). Frame order carries almost
+# nothing, so "10,500 frames" really means "about 77% of the events". The bootstrap bands are not intervals
+# around the points, since each draw adds the localisation error a second time (889-989 clusters against a
+# point of 801 at 15,000 frames), but the test compares bands with bands, so it stands.
 
 # %% [markdown]
-# ## 4. Is there anything for a network to find?
+# ## 4 · Is there anything for a network to find?
 #
-# E58's headline was that overlapping emitters cost a classical pipeline recall: 0.758 even with Bayesian model
-# selection at a density of 0.70 per µm². If real movies were that dense, a network might see what fitters merge.
-# So gate P2b asked the question first, at no GPU cost: how often do blobs in the mask have a neighbour under 4 px?
-# "Rare" was written as under 5% in both recordings, and rare meant stop before the full run.
+# E58's headline was that overlapping emitters cost a classical pipeline recall: 0.758 even with Bayesian
+# model selection, at 0.70 emitters per µm². If the real movies were that dense, a network might separate
+# spots that fitters merge. So before training anything, we asked how often a blob in the mask has a
+# neighbour closer than 4 px, set "rare" at under 5% in both recordings, and planned to stop before the full
+# network run if it was rare.
 
 # %%
 over = {rec: decisions["classical"][rec]["overlap"] for rec in RECS}
@@ -539,29 +494,25 @@ ax.set_xlabel("share of in-mask blobs with a neighbour under 4 px (filled: recor
 ax.set_title("The written measure says rare, a better one says just over the line, and either is far from dense", fontsize=11);
 
 # %% [markdown]
-# The gate says **rare** and stays rare. But the primary was always a lower bound, and it sat further below the truth
-# than expected, because its annulus reaches outside narrow boutons where density falls. Post-hoc neighbours from
-# another frame keep the spatial clustering and avoid detector merging, and they give about 5-9%. That is our best
-# estimate, and it is an estimate and not a gate. The two fit-based rows read high because fits add emitters to
-# absorb misfit: on a simulated control the same K measure read 18% with 11.5% of emitters truly near a neighbour, and
-# 51% on the real crop. So they cannot be read as overlap.
+# The measure we fixed in advance gives 2.2% and 1.65%: rare. It is a lower bound, and further below the
+# truth than we expected, because its annulus reaches outside narrow boutons. Pairing each blob with
+# neighbours from a frame 200 away keeps the clustering and avoids detector merging, and this later measure
+# gives about 5-9%. E58's dense setting gives 43%, so either way the real movies are far from dense. The
+# rows built from fits read high because a fit adds emitters to absorb misfit: on a simulated control the
+# same $K$ measure read 18% when 11.5% of emitters truly had a near neighbour.
 #
-# **What happened next.** The stop fired, along with P5, P6, P7 and the first P8'. The owner of the project looked
-# at the pilots and ruled that the network should run in full anyway, because a tried-and-failed result is still
-# useful. That ruling changed no gate. Every failed gate stayed failed, and the full run wrote its own gates first
-# (`results/E88/full_gates.md`, in the repository as `full_gates.json`).
+# So there is little for a network to find here, and small pilot runs had already shown problems (section
+# 9). We train the full network anyway: a failure on real data, checked carefully, teaches more than a
+# success on simulation.
 
 # %% [markdown]
-# ## 5. The instrument, and what it cost to build
+# ## 5 · The instrument, and what it cost to build
 #
-# The network is a DECODE-style U-Net (Speiser et al. 2021, *Nature Methods* 18:1082), written fresh from the paper,
-# with no code copied. It takes 3 frames and predicts, per pixel, a detection probability, sub-pixel position,
-# photons, background, and an sd for each. Training has no real data at all: a simulator inside the JIT draws
-# emitters and camera noise, and the loss asks the network to recover them. So the network learns its simulator. The
-# training code is in `tools/run_e88_net.py`; it needs a GPU and stays out of this notebook.
-#
-# Below is the bill. **Stored, wall times inflated** where marked: the job shared the machine with another
-# notebook's run. Hatched bars are extrapolated.
+# The network follows DECODE (Speiser et al. 2021, *Nature Methods* 18:1082), written fresh from the paper.
+# Training uses no real data: a simulator draws emitters and camera noise, and the loss asks the network to
+# recover them. **So the network learns its simulator.** The training code is in `tools/run_e88_net.py`. The
+# wall times below are inflated, because the job shared the machine; hatched bars are extrapolated from a
+# measured rate.
 
 # %%
 train, infer = summary["train"], summary["infer"]
@@ -605,27 +556,27 @@ ax.set_title("A's and B's losses, on different simulators", fontsize=11)
 ax.legend(loc="upper right");
 
 # %% [markdown]
-# Three plain points from this bill.
+# **Training and use are different bills.** Network A took 40,000 steps in 14 minutes, B 12,000 more in 4.
+# In a pilot the GPU ran 44 times faster than 13 CPUs (203 against 4.7 steps per second), and about 10 times
+# at the deterministic setting used here; both are pilot rates. Use is cheap: 120,000 frames went through in
+# about 3 minutes, 20-26 s per movie. Whoever trains the network pays once; every user inherits a
+# certificate or the lack of one.
 #
-# - **Training and use are different bills, paid by different people.** The GPU matters for training: 44x on the pilot's
-#   rates without deterministic ops, and about 10.5x at the deterministic setting this run actually used, against the
-#   same 13-CPU rate. The planned CPU run was skipped, so both are pilot rates. Use is cheap: 20-26 s to read one movie at batch 10. Whoever trains the network pays once,
-#   and everyone who uses it inherits a certificate or the lack of one.
-# - **The compute was never the hard part.** The training used under 0.3 GB of a 24 GB card, inference 2.5 GB, and the
-#   GPU work adds up to about 21 minutes in these lines, and about 32 if all of validation counts [estimated]. The plan expected about 1 h 10 min. The series
-#   was meant to show top-end compute, and E88 does not show it. Neither speed nor memory limited this result.
-# - **Reproducibility cost more than memory did.** Two identical GPU runs had already differed by step 50, so the first
-#   kill-and-resume test failed through non-determinism and not through the resume. Deterministic ops fixed that and
-#   cost 3.4x in steps per second like for like (64.3 s against 19.0 s for the same 3,000 steps). The rest of the gap
-#   between 49 steps/s and P4's 203 comes from different jobs on a shared machine. The owner has not ruled on this as the
-#   published setting.
+# **The compute was never the hard part.** Training used under 0.3 GB of a 24 GB card and the GPU work adds
+# up to about 21 minutes. **Reproducibility cost more:** two identical GPU runs differed by step 50, so a
+# stop-and-resume test failed until we switched to deterministic GPU operations, at 3.4 times the time per
+# step.
 
 # %% [markdown]
-# ## 6. A pass on simulation, and the certificate
+# ## 6 · A pass on simulation, and the certificate
 #
-# P5 asked for recall of at least 0.90 and RMSE within 1.3 x the CRLB at 5,000 steps. It missed narrowly at 1.38, and
-# its written no-go said not to scale up. The full run did scale up, by the owner's ruling. Here is what more steps
-# bought, on P5's own held-out movie. **Stored.** The 5,000-step no-go stays on the record whatever these show.
+# On simulated frames the truth is known, so we can ask whether the network finds the emitters (recall) and
+# how close its error is to the Cramér-Rao lower bound (CRLB), the best any unbiased estimator can do (E58,
+# section 4). We count the network as good enough if it finds at least 90% of emitters at no more than 1.3
+# times the CRLB at 2,000 photons. After 5,000 steps it fell just short, at 1.38, and we trained it longer.
+# The figure shows the
+# coverage of the networks' 95% intervals over brightness and density in two simulated worlds: A's simple
+# one and B's empirical one.
 
 # %%
 p5 = {"5,000 steps (P5, NO-GO)": store.load_json("p5_p5"), "A, 40,000 steps": store.load_json("p5_a"),
@@ -691,29 +642,29 @@ print(f"A in its own world at 0.70 per um^2, 2,000-4,000 photons: {min(r['rmse_o
       f"{max(r['rmse_over_crlb'] for r in own):.1f} x CRLB");
 
 # %% [markdown]
-# Taken alone, the table is a success: at 40,000 steps both networks are inside P5's lines. That is the trap.
+# Taken alone, the table is a success. At 40,000 steps A finds 99.4% of emitters at 1.16 times the CRLB, and
+# B 99.3% at 1.23 times. In the dense movie both fall to 2.2-2.8 times. The 5,000-step miss still counts:
+# more training is not the same as passing the check you set.
 #
-# **A simulation pass says the network learned the simulator.** A was tested on the world that trained it, so
-# its coverage looks fine. Move it to B's world, with a heavier stacked PSF and persistence, still a simulation, and its
-# precision falls as far as 0.42, so most of its detections there match nothing. B repairs much of that in the
-# empirical world, with precision under 0.9 in 4 cells against A's 11, at some cost in A's world and in recall. Neither
-# result touches the microscope.
-#
-# P5's sd note matters too. The 5,000-step network predicted a median sd (0.050 px) below the CRLB (0.061 px), which an
-# unbiased estimator cannot sustain. At 40,000 steps A's median sd sits near the CRLB and RMSE is 1.16 x, so its error
-# bars look fine on this movie. The paired test in section 7 asks whether that lasts on real frames.
+# **That is the trap: a simulation pass says the network learned the simulator.** In its own world A has 95%
+# coverage within 0.90-0.98 in 13 of 16 cells. Move it to B's world, still a simulation, and that drops to
+# 8, and its precision falls as low as 0.42, so most of its detections there match nothing. B repairs much
+# of that in its own world, at some cost in recall. Neither result touches the microscope. The 5,000-step
+# network also predicted a median sd of 0.050 px, below the CRLB of 0.061 px, which no unbiased estimator
+# can sustain; at 40,000 steps A's sd sits at the CRLB. Section 7 asks whether that lasts on real frames.
 
 # %% [markdown]
-# ## 7. Real frames: the four checks
+# ## 7 · Real frames: the four checks
 #
-# Here is the part no training loss can see. Each check is **stored**, all but check 3 are **gated**, and recording 32, which played no
-# part in training, is the judged one. All are inside the mask.
+# Here is what no training loss can see. Every check runs inside the masks, and recording 32, which played
+# no part in training, is the one that counts.
 #
-# ### The stack B was built on
+# ### The PSF that B was built on
 #
-# B's fix starts here. Stacking 20,000 isolated bright spots from recording 7 gave the point spread function (PSF) B was
-# trained on. As stored, it puts a quarter of the light beyond 3 px. A post-hoc control shows that most of that is not PSF:
-# repeat the same stack where the emitter has gone, and subtract.
+# B's simulator used a point spread function (PSF) stacked from 20,000 bright spots of recording 7. As
+# stored, it puts a quarter of the light beyond 3 px, against 2.3% for a Gaussian. Is that the real PSF? A
+# control added afterwards answers it: repeat the stack where the emitter has gone, at the same sites later
+# or at random sites, and subtract.
 
 # %%
 psf = store.load_json("psf_bg")
@@ -749,28 +700,27 @@ ax.set_title("Most of the stack's wings stay when the spot has gone, so they are
 ax.legend(loc="upper right", fontsize=9);
 
 # %% [markdown]
-# **So the wing is mostly a contaminant.** The stack takes the mean of each pixel and subtracts a median, and a mean sits
-# above a median here. Random sites leave a flat pedestal holding 0.23 of the photon count, and the sites themselves
-# add about 0.09 more, because bright spots sit where other molecules and long-lived objects sit. Once that is subtracted
-# the light sums to 1.02 of N, so classical photons are about right, and 5-6% lies beyond 3 px (10% against random
-# sites), against 2.3% for the Gaussian. The real PSF has some wing, and far less than a quarter.
-#
-# B inherited the stored stack. Its simulator moves about 15-20% of each emitter's light into wings that are not PSF, and
-# lowers the peak to 0.097 from about 0.11. **So B tests a contaminated stack, not "the real PSF".** Whether that explains
-# B's z, or its recall cliff at 500 photons, was not measured. The stored fit's width of 0.84 is also an artefact of a fixed
-# amplitude: freed, it is 0.96, which supports B's centre of 1.
+# **The wing is mostly a contaminant.** Random sites leave a flat pedestal holding 0.23 of the spot's photon
+# count, and the same sites 100 frames later leave 0.32, because bright spots sit where other molecules sit.
+# Subtract that, and the light sums to 1.02 of the photon count, with 5-6% beyond 3 px. The real PSF has
+# some wing, but nowhere near a quarter. **So B was trained on a contaminated PSF, not the real one**, with
+# about 15-20% of each emitter's light in wings that are not PSF. We did not measure how much that explains
+# of B's results below.
 #
 # ### Check 1: the paired-frame test
 #
-# How do you test error bars with no ground truth? A molecule that stays on across frames gives two estimates of one
-# point. If the sds are honest, the difference divided by its predicted sd is a standard normal. Links are made at a
-# gap of 3 frames, because the network reads 3 frames at a time and a gap of 1 would share pixels. A mixture on the disc
-# allows for false links, and every method is matched to classical chosen K on brightness, because z depends on it.
+# How do you test error bars with no ground truth? A molecule that stays on across frames gives two
+# estimates of the same point. If the sds are honest, the standardised difference
 #
-# Lines written beforehand: pass within 1.0-1.15, failure over 1.25, and between them undefined. A second line: "no
-# worse than classical" if z is at or below classical z on the same brightness-matched set. That set is matched on
-# brightness only: each method keeps its own pairs. **This test needs no ground truth,
-# and it cannot see a bias common to both frames**, so a pass would be necessary, not sufficient.
+# $$z = \frac{\hat x_1 - \hat x_2}{\sqrt{\sigma_1^2 + \sigma_2^2}}$$
+#
+# is standard normal, so the sd of $z$ over many pairs should be 1; above 1, the error bars are too small.
+# We link detections 3 frames apart, because the network reads 3 frames at a time and a gap of 1 would let
+# both estimates share pixels. A mixture allows for false links, and every method is weighted to the
+# brightness of the classical chosen-$K$ fit, since $z$ depends on brightness. Honest error bars give an sd
+# of $z$ near 1; we call 1.0-1.15 good and anything above 1.25 a failure. Because the classical fitter might
+# fail that too, we also ask a relative question: is the network no worse than classical? The test cannot see
+# a bias shared by both frames, so passing it would be necessary, not sufficient.
 
 # %%
 verdicts = paired["verdicts"]
@@ -859,47 +809,37 @@ ax.set(xlabel="link radius (px)", ylabel="z sd, recording 32")
 ax.set_title("No radius rescues it. x marks gap 1", fontsize=11);
 
 # %% [markdown]
-# **Read this as a failure on every line that counts.** On the judged recording both networks are over 1.25, and the
-# half-widths of about 0.03 leave no doubt. Recording 7, which B was built from, is also over the line for both, though A
-# only just: its matched 1.267 has a lower bound of 1.253, and its unweighted z is 1.235 with an upper bound of 1.249, under
-# the line. The matched value is the gated one, so the failure stands. Calibration does not rescue them: the line gives
-# 1.39 and 1.61.
+# **Both networks fail.** On recording 32 the sd of $z$ is 1.40 for A and 1.63 for B, with 95% half-widths
+# of about 0.03. On recording 7 both are over the line too, A only just (1.27), and the line calibration
+# does not rescue either. On simulation the test works: on pairs with both ends on a true emitter, $z$ is
+# 1.06-1.13 for every method, so what differs on real frames is the microscope. Raw simulated pairs flatter
+# A, though: half of its rows there match no emitter, and 34,028 of its 43,555 pairs join two false rows
+# stuck at fixed sites, which agree with each other and fool the mixture.
 #
-# **The simulated baseline needs care.** Taken raw it is 1.02-1.13, and A's 1.02 flatters. Half of A's rows on that movie
-# match no emitter, and 34,028 of its 43,555 pairs join two false rows, stuck at fixed sites, that agree with themselves. The
-# mixture still calls 97% of pairs true, because it cannot detect a false link at a fixed site. On pairs with both ends true,
-# z is 1.06-1.13 for all four methods, so the method does work and what differs is the microscope. That is the value plotted.
-# B's baseline also sits outside its own simulated world, and B's z of 0.59 at gap 1 shows what shared pixels can do.
+# **"No worse than classical" is true, and weak.** The classical chosen-$K$ fit also scores 1.63 on
+# recording 32. But each method keeps its own pairs, matched on brightness only. On literally the same 4,337
+# pairs, which we looked at after the run, $z$ is 1.55 for chosen $K$, 1.51 for $K = 1$, 1.44 for A and 1.76
+# for B, and A's scatter equals $K = 1$'s at 12.0 nm. **The classical fitter's error bars are too small as
+# well**; no method here has honest error bars on real frames.
 #
-# The relative line says "no worse than classical". True, and it needs care. Each method keeps its own pairs here:
-# 8,187 for classical, 10,360 for A and 12,333 for B on recording 32. They are matched on brightness only. On that footing K
-# = 1 is 1.43, which A (1.40) cannot be told from, and the 1.49 printed as "own basis" is K = 1 matched to itself. Matched to
-# K = 1 instead, B is 1.69 against 1.49, which would read "worse" on the relative line. **B ties classical only on chosen K's
-# basis.** On literally the same pairs, 4,337 on recording 32, z is chosen K 1.55, K = 1 1.51, A 1.44 and B 1.76, and A's
-# scatter equals K = 1's at 12.0 nm. All of this is post-hoc, and the gated relative verdict stands.
+# **A $z$ of 1.4 does not mean the scatter is 1.4 times the sd.** In every method $z$ falls as the sd
+# widens: on recording 32, $K = 1$ goes 1.99, 1.41, 1.29 from the tightest third of pairs to the widest.
+# That is the signature of a floor. A fit with a floor and a scale gives about 4-6 nm per frame on top of
+# each sd in all four methods, which looks like movement of the sample or stage rather than any localiser.
+# A residual scale of 1.1-1.5 remains that we cannot explain. The practical advice: add a floor of a few
+# nanometres before you scale any sd.
 #
-# **A z of 1.4 does not mean the real scatter is 1.4 x the sd.** z falls as the sd widens, in every method: on recording 32,
-# K = 1 goes 1.99, 1.41, 1.29 from the tightest third to the widest. That is the shape of a floor. A fit with a floor and a
-# scale gives about 4-6 nm per frame on top of each sd in all four methods, so it looks like sample or stage and not any
-# localiser, plus a residual scale of 1.1-1.2 for K = 1 and A and 1.3-1.5 for B and chosen K. Scatter also grows with the
-# gap, so part of the floor is movement over time. **Advice: add a floor of a few nanometres before you scale any sd.**
-#
-# **B got worse than A,** for two different reasons. The fix took z from 1.40 to 1.63. On recording 32 B's scatter rose 20%
-# over A's on common pairs. On recording 7 it rose 2% while B's sds shrank. The radius curve keeps rising for every method on
-# recording 32, so real displacements have heavier tails than the mixture allows, and no fixed radius cures that there. On
-# recording 7, A dips under 1.25 at radii of 0.75 and 1 px. Gap 1 looks better for the networks, 1.30 and 1.49, which is the
-# trap the gap of 3 avoids, since at gap 1 they share frames. Classical also falls at gap 1, to 1.51, though its fits are
-# independent, so shared pixels are not the whole story.
-#
-# **Recording 7 needs one more warning.** Long-lived bright objects, section 10, touch 45% of A's pairs and 42% of B's there.
-# Without them z rises: unweighted A 1.23 to 1.34, B 1.38 to 1.55. Recording 32 moves less: A barely, B about 60% as much. So piles do not rescue any
-# real z, and they mean recording 7's z mixes a pile population into the number.
+# **B got worse than A.** The fix took $z$ from 1.40 to 1.63, and B's scatter on common pairs rose 20% over
+# A's. On recording 32 no link radius rescues either network, because real displacements have heavier tails
+# than the mixture allows; on recording 7, A dips under 1.25 at radii of 0.75 and 1 px. A gap of 1 looks
+# better for the networks (1.30 and 1.49), the shared-pixel trap the gap of 3 avoids. Classical also falls
+# at gap 1, to 1.51, though its fits are independent, so shared pixels are not the whole story.
 #
 # ### Check 2: the companion halo
 #
-# E58 found faint companions at 301-462 nm from bright spots: fitters explaining PSF wings with extra emitters. Do
-# networks invent the same ring? Density of faint detections around bright ones, against distance. Failure:
-# ring density over twice the far-field density.
+# E58 found faint companions 301-462 nm from bright spots: fitters explaining the PSF's wings with extra
+# emitters. Do networks invent the same ring? We call it a failure if the density of faint detections in
+# that ring is more than twice the far-field density.
 
 # %%
 print(f"{'halo ratio, line 2':22}{'rec 32':>9}{'rec 7':>9}{'rec 32 shifted':>16}{'rec 7 shifted':>15}")
@@ -923,23 +863,20 @@ axes[0].text(310, 0.0016, "E58's ring", fontsize=9)
 axes[0].set_ylabel("faint detections per bright one, per µm²");
 
 # %% [markdown]
-# A fails on both recordings at about 5 x. B halves that: 2.69 on the judged recording, still a failure, and 1.95 on
-# recording 7, a pass. Of all B's changes this is the one that did what it was built for, though the simulator changed
-# several things at once, so the run cannot credit the PSF alone. Classical chosen K sits at 37-39, but that is not like
-# for like: rows from K of 2 or more sit inside one blob by construction. K = 1 gives 0.01 and 0.00, which is no fairer:
-# one row per blob is blindness inside a blob, not honesty. So this ratio has no fair classical comparator.
-#
-# Shifting the faint rows in time, post-hoc, gives 0.98-1.27 for the networks, so clustering of the sample does not
-# inflate the gate.
-#
-# Look where the peaks are. Classical peaks inside E58's ring. A's excess peaks further out, at about 500 nm, so the
-# written ring only catches its shoulder and 5.4 understates it. The ring was fixed in advance, so it stands.
+# **A fails on both recordings at about 5 times the far field.** B halves that: 2.7 on recording 32, still a
+# failure, and 1.95 on recording 7, a pass. Of all B's changes this is the one that did what it was built
+# for, though its simulator changed several things at once. Taking the faint rows from frames 200-800 away
+# gives 0.98-1.27, so the clustering of the sample does not inflate the ratio. There is no fair classical
+# comparison: chosen $K$ reads 37-39 because rows from a fit with $K \ge 2$ sit in one blob by construction,
+# and $K = 1$ reads 0.01 because it is blind inside a blob. Note too that A's excess peaks near 500 nm,
+# outside E58's ring, so 5.4 understates it.
 #
 # ### Check 3: the population replicate, and a lineup
 #
-# Simulate fresh frames from the fitted *population* of each method (density, brightness, PSF, background), never from
-# the frames' own fitted emitters, which would look good by construction. Compare blobs. No line was written, so
-# none is invented here. Before reading on, try the lineup: **one panel of nine is real.**
+# Simulate fresh frames from each network's fitted *population* (density, brightness, PSF, background),
+# never from the frames' own fitted emitters, which would look right by construction, and compare the blobs
+# with the real ones. This check has no threshold: it describes, it does not judge. First, try
+# the lineup (Buja et al. 2009): **one panel of nine is real.**
 
 # %%
 fig, axes = plt.subplots(3, 7, figsize=(12.5, 5.5), width_ratios=[1, 1, 1, 0.14, 1, 1, 1], layout="constrained")
@@ -957,8 +894,8 @@ for offset, net in zip((0, 4), ("a", "b")):
     axes[0, offset + 1].set_title(f"Lineup for {NAME[net]}, recording 32", fontsize=11);
 
 # %% [markdown]
-# The reveal is in the next cell. Decide first: which panel is real in each lineup, and how sure are you? Both lineups
-# hold the same real frame, so comparing the two sides is a hint.
+# The answer is in the next cell. Decide first: which panel is real in each lineup? Both hold the same real
+# frame.
 
 # %%
 for net in ("a", "b"):
@@ -985,16 +922,17 @@ for ax, rec in zip(axes, ("r32", "r7")):
 axes[0].set_ylabel("mean height, peak = 1");
 
 # %% [markdown]
-# A's population gives far too many small blobs: more than twice the real count on recording 32, with a median area of 14
-# px against 28. Its profile falls too fast at 3-7 px. B is closer on both KS distances, and on recording 32 its blobs
-# are still too many, too small and too faint. **So the simple simulator fails a check you can run without any labels, and the empirical
-# one improves on it without reaching the data.** These are descriptive: no line was written, and no verdict is given.
+# A's population gives far too many small blobs: on recording 32, 12,138 against 5,290 real ones, with a
+# median area of 14 px against 28. B is closer on both Kolmogorov-Smirnov distances (0.13 against 0.28 for
+# area), but its blobs are still too many, too small and too faint. **The simple simulator fails a check you
+# can run without labels, and the empirical one improves on it without reaching the data.**
 #
 # ### Check 4: the NUTS audit
 #
-# Does the Laplace approximation behind the classical sds hold? NUTS on E58's spot model, 200 spots from the
-# recording-7 mask, half with chosen K = 1 and half with K = 2. It shares the forward model with the fit, so it
-# checks the approximation and not the model, and it cannot replace check 1. Line: median sd ratio within 0.8-1.25.
+# The classical sds come from a Laplace approximation. Does it hold? We ran NUTS on E58's spot model for 200
+# spots of recording 7, half with $K = 1$ and half with $K = 2$, and compared the sds. NUTS shares the
+# forward model with the fit, so this checks the approximation, not the model. We want the median ratio of
+# NUTS to Laplace sd within 0.8-1.25, with every spot at r_hat 1.01 or below and no divergences.
 
 # %%
 K, rhat, nuts_sd, laplace_sd = pack["audit_K"], pack["audit_rhat"], pack["audit_nuts_sd_px"], pack["audit_laplace_sd_px"]
@@ -1043,38 +981,37 @@ ax.set_title("Stored run: two populations of spot, clean or stuck", fontsize=11)
 ax.legend();
 
 # %% [markdown]
-# It fails its line at 1.54, and 44% of spots (87 of 200) miss r_hat 1.01. Read the left panel. On K = 1 spots that converge, NUTS
-# and Laplace agree (1.03). The excess in check 1 therefore does not look like a Laplace problem at K = 1: it points at
-# the forward model, which both share. At K = 2 even converged spots sit above the band (1.48), so there the
-# approximation does understate the sd. Stuck spots climb the plot because chains sit far apart, which inflates the
-# pooled sd. The converged medians are descriptive only, since r_hat chose which spots got in.
+# As stored, the audit fails: the median ratio is 1.54, 87 of 200 spots miss r_hat 1.01, and there are
+# 30,458 divergences. On the $K = 1$ spots that converge, NUTS and Laplace agree (1.03), so the excess in
+# check 1 is not a Laplace problem at $K = 1$ but lies in the forward model both share. At $K = 2$ even
+# converged spots sit at 1.48.
 #
-# **Most of that failure is a bug in our audit, and the gate stays failed anyway.** It was written for this run, so the
-# record does not move. But chains were never started on the spot. In nutpie 0.16.11 `with_data` swaps the data in the log
-# density, and the start keeps the compile-time placeholders, here `cx = cy = 0`, the corner of the patch. `init_mean` is
-# ignored for a PyMC model, which is why the pilot's Laplace start changed no K = 1 result. Rewrite the same posterior in
-# non-centred form, so that the start follows the data, and the ratio is 1.11 with an empty compile cache and 1.14 with a
-# warm one, inside 0.8-1.25. All 100 K = 1 spots reach r_hat 1.01, with 8-9 divergences left and on recording 7 only, and the fitter's row sits on the NUTS mean with a photon ratio of
-# 1.00. **Laplace looks fine at K = 1 on this recording.**
+# **Most of that failure was a bug in our audit.** The chains never started on the spot. In nutpie 0.16.11,
+# `with_data` swaps the data inside the log density, but the starting point keeps the compile-time
+# placeholders, here the corner of the patch. After finding this we reran the same posterior written
+# non-centred, so that the start follows the data (section 8 shows how). The ratio becomes 1.11-1.14, inside
+# 0.8-1.25, all 100 $K = 1$ spots reach r_hat 1.01, and the fitter's position sits within 0.5 px of the NUTS
+# mean for 99 of them, with a median photon ratio of 1.00. **Laplace looks sound at $K = 1$ on recording 7**,
+# though 8-9 divergences remain across the 100 spots. Section 9's table keeps the original audit.
 #
-# **K = 2 is the real problem.** There 35-45 spots stay over 1.01, with the ratio at 1.8-1.9 overall (1.7-1.8 with draws sorted on the
-# wider axis) and about 1.5 on those that converge. Their chains sit a median 0.6 nats apart, so most are slow or competing
-# states, though the largest gaps show some are still trapped. That is a claim about these rerun numbers, which are post-hoc, one form of the model and
-# not a gate.
+# **$K = 2$ is the open problem.** There 35-45 spots stay above r_hat 1.01 even from a good start, and the
+# ratio is about 1.9 overall and 1.5 on spots that converge. Their chains sit a median 0.6 nats apart, so
+# most are slow mixing or competing configurations, though a few are still trapped. This rests on one
+# reparameterisation, run after the stored audit.
 
 # %% [markdown]
-# ## 8. A live audit in PyMC
+# ## 8 · A live audit in PyMC
 #
-# This one runs on your machine. The summary keeps the pixels of four audited spots, chosen by a rule and not by
-# eye: for K = 1 and K = 2, the spot with the worst stored r_hat, and the first spot in audit order at or under
-# 1.01. The model is E58's spot model with the fitter's mask of neighbouring blobs. `pm.Data` plus
-# `nutpie.compile_pymc_model(...).with_data(...)` means each K compiles once. The prior predictive step belongs to E58;
-# this section is the diagnostics. With two emitters, draws are sorted on x before r_hat, since label switching is not a
+# This part runs on your machine. The summary keeps the pixels of four spots chosen by a rule: for $K = 1$
+# and $K = 2$, the spot with the worst stored r_hat and the first clean one. The model is E58's spot model.
+# `pm.Data` plus `nutpie.compile_pymc_model(...).with_data(...)` means each $K$ compiles once and every spot
+# reuses it. With two emitters, draws are sorted on $x$ before r_hat, since label switching is not a
 # sampling failure.
 #
-# We run it twice. First the stored form, centred, on the worst K = 1 spot, with the warmup kept so that you can see where
-# the chains start. Then the same posterior written non-centred, `x = cx + 2 * rx`, whose start is the spot, on all four.
-# **If you use `with_data`, check that your start does not depend on the data you swapped.**
+# We run the stored, centred form on the worst $K = 1$ spot, keeping the warm-up to see where the chains
+# start, then the same posterior written non-centred, $x = c_x + 2 r_x$ with $r_x \sim N(0, 1)$, on all
+# four. **If you use `with_data`, check that your starting point does not depend on the data you swapped
+# in.**
 
 # %%
 PIX = np.arange(PATCH)
@@ -1163,42 +1100,27 @@ for ax, (i, row, title) in zip(axes, panels):
 fig.suptitle("Dots: each chain's draws of position. X: each chain's mean. White pixels belong to neighbouring blobs", fontsize=11);
 
 # %% [markdown]
-# **The start explains the K = 1 trap.** The stored form starts every chain at the patch corner, nowhere near the spot, and it
-# returns the stored r_hat of 3.012 in every compile-cache state we tried. Only chain 1 reaches the spot: about 6,000
-# photons on a background of 112, with mean logp -435. The other three hold 160-830 photons on a background near 159, and
-# they sit almost 2,000 nats lower. The light of the spot is being absorbed by a raised background, and in two of them the
-# emitter roams at x sds of 2-4 px, the width of the prior, and leaves the patch. Start on the spot, with the same posterior
-# and seed, and all four chains agree on about 6,000 photons, at r_hat 1.002 with no divergences.
+# **The start explains the $K = 1$ failure.** In the stored form every chain starts within about a pixel of
+# $(0, 0)$, while the spot is at $(5.5, 4.5)$, and r_hat is 3.01 as stored. Only chain 1 reaches the spot:
+# about 6,000 photons on a background of 112. The other three hold 160-830 photons on a raised background
+# near 159, almost 2,000 nats lower in log density, and in two of them the emitter roams with an sd of 2-4
+# px, the width of the prior. Start on the spot, with the same posterior and seed, and all four chains agree
+# on about 6,000 photons at r_hat 1.002, with no divergences. The worst $K = 2$ spot also converges (r_hat
+# 1.003), though section 7 showed not every $K = 2$ spot does.
 #
-# **This corrects how the stored run read its own audit.** The pilot and the plan called these "false modes" that a Laplace
-# fit hides. A state 2,000 nats below another has a relative posterior weight of about exp(-2000), so it is no rival
-# explanation of the pixels. The r_hat failure reports a bad start and a failed sampler, not a wider posterior, and the
-# "NUTS sd" of such a spot is the distance between stuck chains.
+# A state 2,000 nats below another has a relative posterior weight of about $e^{-2000}$, so it is no rival
+# explanation of the pixels. The stored r_hat reports a bad start and a stalled sampler, not a wider
+# posterior.
 #
-# "Trap" does not cover all 87 stuck spots, though. Rerun in the stored form, 57 show a gap of at least 20 nats, 24 of 26 at K =
-# 1 and 33 of 61 at K = 2. Of those 57, 23 reach the same level under plain L-BFGS, so nothing held them but a stalled
-# chain. The other 30 have no such gap, and 28 of those are K = 2. That is why section 7's rerun, from the spot, matters more
-# than any reading of the stuck chains.
-#
-# **The stored K = 2 numbers depend on the compile cache.** Same seed, inputs and machine, stored form, worst K = 2 spot: a warm
-# PyTensor compile cache gives r_hat 3.113, 92 divergences and a gap of 2,723, and an empty cache gives 4.424, 2,515 and 3,147.
-# One cache directory gave the second result on its first run and the first on its second. Core count made no difference, and
-# K = 1 did not change. The cause is not established. Across the whole stored audit an empty cache gave a median ratio of
-# 1.52, not 1.54, and 83 spots over the line, not 87, so every verdict holds. A reader's first run would see the same effect in
-# the K = 2 clean row above, in its third decimal. The start on the spot brings this worst K = 2 spot to r_hat 1.003-1.004, and
-# not every K = 2 spot follows: section 7 has 35-45 still over the line.
-#
-# **What that rests on, and what it does not change.** All of this is post-hoc. The gate was written for all 200 spots with
-# the stored start, so it stays failed. The rerun is one reparameterisation, it is not a gate, and it says nothing of the
-# K = 2 fits beyond the ratio. At K = 1 it is direct evidence for the fitter: its row sits on the NUTS mean on 99 of 100 spots.
+# One loose end: the stored $K = 2$ numbers depend on PyTensor's compile cache (r_hat 3.11 warm and 4.42
+# empty for the worst spot), for reasons we have not found. Across the audit this moves the ratio from 1.54
+# to 1.52, so no conclusion changes.
 
 # %% [markdown]
-# ## 9. The ledger: every gate, with its line
+# ## 9 · All the checks together
 #
-# Everything judged so far, in one table, including the gates that made it awkward to continue. The pilot gates are
-# `results/E88/pilot_gates.json`, a copy of a Markdown file written at 13:25 and made at 13:31, both before any pilot
-# below ran. The full run's are `results/E88/full_gates.json`,
-# written at 15:34 before any full job ran. Neither changed. **A later pass never replaces an earlier failure.**
+# The table collects every check with a threshold: the small pilot runs (P2-P8) and the four checks of
+# section 7.
 
 # %%
 p2 = store.load_json("p2_classical_r7")
@@ -1246,23 +1168,18 @@ print(f"{sum(FAIL in row[3] for row in ledger)} of {len(ledger)} rows failed. Wr
       f"(A fails and B does not pass everything A failed).")
 
 # %% [markdown]
-# Some of those failures carry a diagnosis, and a diagnosis does not turn one into a pass:
-#
-# - **P6's grid looks like the sample, not a seam.** In the pilot the pattern moved with the image when the frames were
-#   shifted (r 0.98 shifted back, 0.05 unshifted), and uniform simulated emitters gave 1.13. The gate was badly specified.
-#   That diagnosis was not rerun on the full frames, so the failure stands and the cause there is unconfirmed.
-# - **P5 passed at scale-up,** and the failure at 5,000 steps stands, because its written action was "do not scale up".
-#   Whether the owner's ruling was right to override it is a judgement, not a measurement.
-# - **Check 3 has no verdict,** because nobody wrote a line, and inventing one afterwards would be the very thing the
-#   gates exist to prevent.
+# Fifteen of the 28 checks fail. Some failures have an explanation, such as the grid pattern in the
+# detection map (P6), which moved with the image when the pilot frames were shifted and so looks like the
+# sample rather than a seam between tiles; that test was not repeated on the full frames. An explanation is
+# not a pass. The resume test (P8') passed only after we switched to deterministic GPU operations.
 
 # %% [markdown]
-# ## 10. The second failure: drift
+# ## 10 · The second failure: drift
 #
-# The written decision rule was applied to network rows exactly as it was to classical rows, including its drift method:
-# for each 1,000-frame block, cross-correlate that block's render with the render of all other blocks. And on network
-# rows it broke. The stored shifts are below. The smoke test had missed this, because its stand-in rows were classical,
-# and it was found by reading the output after the run.
+# Over three minutes the stage drifts by nanometres, and every pipeline corrects for it. Our method
+# cross-correlates each 1,000-frame block's render with the render of all other blocks and takes the peak as
+# the block's shift. It was applied to network rows exactly as to classical ones, and on network rows it
+# broke. We found this only by reading the output after the full run.
 
 # %%
 def shift_um(rec, tail, method):
@@ -1340,44 +1257,35 @@ ax.legend(handles=[Line2D([], [], marker=m, ls="", color=COLOUR[k], label=NAME[k
              Line2D([], [], marker="o", ls="", mfc="none", color="k", label="recording 32")], fontsize=8, loc="center", bbox_to_anchor=(0.5, 0.68), ncols=2);
 
 # %% [markdown]
-# **What broke.** The classical drift range on these recordings is 5-18 nm. The written method returned shifts of microns
-# on network rows, up to 11.6 µm, in 1-4 of 15 blocks, for every network run except B per block on recording 32. A few
-# fixed spots pile up hundreds or thousands of network rows in a single 0.25 px bin, where a typical bin holds one, and
-# classical piles reach only 424. A cross-correlation peak is dominated by its strongest sources, so it lines up two
-# *different* piles and calls the difference between them drift. The live result above is that fault on your machine:
-# the peak falls at the separation of the two fullest bins, and a whole 1,000-frame block then gets moved by about 11 µm.
+# **What broke.** Classical drift stays within 5-18 nm. On network rows the same method returned shifts of
+# up to 11.6 µm in 1-4 of the 15 blocks, in all but one of the network runs. A few fixed spots pile up
+# thousands of network rows in a single 0.25 px bin (3,888 for A and 4,955 for B), where a typical bin holds
+# one and classical piles reach only 424. A cross-correlation peak is dominated by its strongest sources,
+# so it lines up two *different* piles and calls the difference drift. The live result above reproduces
+# it: in block 14 of recording 7 the peak falls at the separation of the two fullest bins, 11.4 µm, while
+# the classical rows give 3 nm.
 #
-# **What the piles are, post-hoc.** The fullest spots are long-lived bright objects, not detector artefacts. Recording 7's at
-# (x 36, y 99) reads about 2,500 ADU in block medians against 1,150 nearby, and it switches on and off for thousands of frames
-# at a time. Recording 32's at (x 6, y 184) reads a median of about 1,550 ADU across its blocks. Only the fullest of each recording
-# was read this way. The simulated movie points the same way: its background maps come from recording 7, and 93% of A's false
-# rows and 91% of B's pile up there with no emitter present, and they lie within 1 px of the 20 fullest real pile bins about
-# 13-18 times as often as true rows do. Only those 20 bins were tested.
+# **What the piles are.** The fullest spots are long-lived bright objects that switch on and off for
+# thousands of frames; recording 7's reads about 2,500 ADU against 1,150 nearby. The fitter's 201-frame
+# rolling background removes them, but a network that sees 3 frames cannot know an object has been there for
+# a minute. In the simulated movie, whose backgrounds come from recording 7, the networks' false rows sit
+# near the fullest real piles 13-18 times as often as true rows do.
 #
-# This is partly a fair-fight problem. The fitter subtracts a 201-frame rolling background, so these objects vanish for it.
-# The network sees 3 frames and has no way to know one has been there for a minute. Classical's temporal context is part of
-# this comparison.
-#
-# This matters because the gated decision curves used those shifts. Network B on recording 7 gave 86 clusters at 2,000
-# frames, against 413 under the line. It was first misread as a calibration effect. It was this.
-#
-# **The repair, post-hoc and declared.** `results/E88/full_posthoc_drift.json` was written before the rerun, and only one
-# repair was allowed: apply the stored classical drift of the same recording and calibration to the network rows, because
-# drift belongs to the sample and not to the localiser.
-# The gated curves stay on the record, and they are called unsound in section 12. A drift estimate robust to piles would be
-# a new method, and it was not tried.
-#
-# **The general point.** A pipeline step validated on one kind of input is unvalidated on another. Classical rows and
-# network rows have the same columns, and they are not the same distribution.
+# The networks' frame counts used those shifts: B gave 86 clusters at 2,000 frames of recording 7, against
+# 413 under the other calibration, a gap that looks like a calibration effect but is not. The repair
+# applies the classical drift of the same recording to the network rows, since drift belongs to the sample,
+# not the localiser. Section 12 shows both versions. A pipeline
+# step validated on one kind of input is unvalidated on another: classical and network rows have the same
+# columns, and not the same distribution.
 
 # %% [markdown]
-# ## 11. The third failure: a flattering split
+# ## 11 · The third failure: a flattering split
 #
-# This failure was predicted, and it has nothing to do with networks. FRC splits localisations in two and asks at what
-# scale the two renders stop agreeing. A random split puts half a blink in each half. With 42% and 38% of filtered rows
-# linking into the next frame, those halves share molecules, so FRC reports agreement that has nothing to do with resolution. The
-# fix merges linked rows into events and splits by time blocks of 50 frames. Stored, and the curves are recomputed for the
-# summary with assertions that they return the stored values.
+# This failure was predicted, and it has nothing to do with networks. FRC (Nieuwenhuizen et al. 2013) splits
+# the localisations in two, renders each half, and asks at what scale the two renders stop agreeing. A
+# random split puts half of each blink in each half, and here about 40% of rows link into the next frame, so
+# the halves share molecules and agree at scales that have nothing to do with resolution. The fix merges
+# linked rows into events and splits by time blocks of 50 frames.
 
 # %%
 split, split_post = store.load_json("frc_split"), store.load_json("frc_split_cdrift")
@@ -1407,15 +1315,15 @@ for ax, rec in zip(axes, RECS):
 axes[0].set_ylabel("Fourier ring correlation");
 
 # %% [markdown]
-# The split alone is worth up to 10 nm on classical rows and up to 12 nm on network rows. Even the block split is
-# optimistic, since a molecule that returns after a long dark period can land in both halves. So always name the split
-# when you quote FRC, and read a block-split number as a best case.
+# The split alone is worth up to 10 nm on classical rows (31.3 against 41.2 nm on recording 32) and up to 12
+# nm on network rows. Even the block split is optimistic, since a molecule that returns after a long dark
+# period can land in both halves. Always name the split when you quote FRC.
 
 # %% [markdown]
-# ## 12. The frames decision, all of it
+# ## 12 · The frames decision, all of it
 #
-# Now the brief's third question: would the network change the answer? The table has the gated runs and the post-hoc
-# repair, each under both calibrations.
+# Now the third question: would the network change the answer? The table has the network runs with the
+# original drift and with the repaired drift, each under both calibrations.
 
 # %%
 stored = summary["decision"]
@@ -1470,22 +1378,19 @@ ax.legend(handles=[Line2D([], [], marker="o", ls="", color="k", label="per block
                    Patch(color=CLASSICAL, alpha=0.2, label="classical range")], fontsize=8, loc="lower right", bbox_to_anchor=(1.01, -0.01));
 
 # %% [markdown]
-# **Under the written rule the network changes the decision, and that is not a finding.** B's 12,000 against 10,500 rests
-# on the drift fault. After the one declared repair, per block, B agrees with classical at 10,500 and A sits one grid step
-# higher at 12,000, where recording 32 sets A's number, inside the range already quoted. Outcome D, "the network changes
-# nothing", is false as written and about right per block. Under the line the repaired networks read 15,000 (A) and 13,500
-# (B), above that range, but those are post-hoc curves from a network that failed its checks. The claim we stand behind is
-# the classical one.
+# **With the original drift, the network changes the decision, and that is not a finding**: B's 12,000 rests
+# on the drift fault. After the repair, per block, B agrees with classical at 10,500 and A sits one grid
+# step higher at 12,000, inside the classical range. Under the line calibration the repaired networks read
+# 15,000 (A) and 13,500 (B), above it. These come from networks that failed their checks, after a repair
+# chosen once the fault was seen, so the number we stand behind is the classical one.
 #
-# **Calibration and localiser matter about equally here.** With the post-hoc repair, the line adds 3,000 frames to both
-# networks and 1,500 to classical. Choosing a localiser spreads N by 1,500 per block and by 3,000 under the line. So the
-# unsettled decision from section 2 is worth about as much to this answer as the network is, and the bootstrap in section 3
-# says neither shift stands clear of sampling noise. In the first block of recording 7, B finds 55 rows per frame per block
-# and 123 under the line, where classical finds 81 and 87, but that does not explain the shift: B's post-hoc count at 2,000
-# frames barely moves, 402 against 419.
+# **Calibration and localiser matter about equally.** After the repair the line calibration adds 3,000
+# frames to both networks and 1,500 to classical, and the choice of localiser spreads N by 1,500-3,000
+# frames. The unsettled calibration of section 2 is worth about as much to this answer as the network is,
+# and the bootstrap of section 3 says neither shift stands clear of sampling noise.
 #
-# Note what the post-hoc curves do not support: a claim that the network sees *more*. Look at the same 3 µm square through
-# all three.
+# Nor do the curves support a claim that the network sees *more*. Look at the same 3 µm square through all
+# three.
 
 # %%
 fig, axes = plt.subplots(1, 3, figsize=(12.5, 4.5), layout="constrained")
@@ -1501,14 +1406,14 @@ for ax, m in zip(axes, ("chosen", "a", "b")):
 fig.suptitle("The densest 3 µm of recording 7's mask, by a rule, 10 nm bins, classical drift. A render is not evidence", fontsize=11);
 
 # %% [markdown]
-# They look alike, and the networks' pictures hold more rows and look a little crisper. **A render cannot tell you
-# whether its error bars are honest, and these are the same rows that failed section 7.** A crisp picture is not a check.
+# They look alike, and the networks' pictures hold more rows and look a little crisper. But these are the
+# rows that failed section 7: a crisp render cannot tell you whether its error bars are honest.
 #
 # ### The whole recording in one movie
 #
-# Here is the decision as a process, on real data, classical rows. Left: a raw frame from a 40 px window. Middle: events so
-# far in that window. Right: the whole mask's cluster count, against the 10% band. Watch the middle panel keep filling in
-# after the count has entered the band. That is what a 10% allowance gives up.
+# Here is the decision as a process, on classical rows. Left: a raw frame from a 40 px window. Middle: the
+# events found so far. Right: the whole mask's cluster count against the 10% band. Watch the middle panel
+# keep filling in after the count has entered the band. That is what a 10% allowance gives up.
 
 # %%
 ids = pack["animation_frames"]
@@ -1559,13 +1464,13 @@ print(f"{len(ids)} frames, {len(html) / 1e6:.1f} MB of HTML")
 HTML(html)
 
 # %% [markdown]
-# ## 13. What to tell the core
+# ## 13 · What to tell the core
 #
 # ### The certificate
 #
-# A trained network is an instrument, and it should ship with a calibration certificate, the way a balance does. Here is
-# network B's, in one table, generated from the stored file. It is the part of this run we would hand over even if nothing
-# else survived.
+# A trained network is an instrument, and it should ship with a calibration certificate, the way a balance
+# does: what it was trained on, where it was tested, how it did there and on real data, and what it has
+# never seen. Here is network B's, generated from the stored file.
 
 # %%
 real = certificate["real"]
@@ -1588,75 +1493,32 @@ page = pd.DataFrame([
 display(markdown_table(page))
 
 # %% [markdown]
-# Note the 532 row. A network given data it has never seen gives you a tidy table of detections with confident sds, and
-# nothing in its output says that anything is wrong. Only the certificate does.
+# Note the 532 nm row. Frames from the other channel, a dye the networks never saw, gave 124-210 detections
+# per frame with sds near 30 nm. A network given unfamiliar data produces a tidy table of confident
+# detections, and nothing in its output says anything is wrong. Only the certificate does.
 #
-# ### What to tell the imaging core
+# ### The answer for the core
 #
-# - **Frames.** For these two recordings, 10,500-12,000 frames would have given the same answer as 15,000 in both, by a
-#   rule fixed in advance, with a sampling range of 7,500-13,500 on the count alone. Take 12,000 as the working number if
-#   you cut at all: about 26 minutes and 11 GB per channel saved on our assumptions. 10,500 clears its tests by 11 clusters
-#   and fails in one of five seed families. Run a pilot on your next sample before trusting either, because recording 7
-#   alone sets this, its count never plateaus, and the rule is close to a statement about event number.
-# - **The two recordings.** They agree on the method and differ on the number. Recording 32 settles 3,000-7,000 frames
-#   earlier, a gap the bootstrap cannot resolve. The record does not say how the two relate, so we cannot tell how far
-#   apart the next one will be.
-# - **The network.** Do not replace your fitter on this evidence. It runs fast, it looks crisp and it passed simulation. It
-#   also failed the paired test and the halo on data it had not seen, and its fix made one of those worse.
-# - **Your fitter.** Its sds on these data are too small as well: z is 1.63 on recording 32. That is not a flat 1.6 x. Part of
-#   the shortfall at the tight end is a floor of about 4-6 nm per frame, the same size in every method, and most of the
-#   rest is an unexplained scale. Add a floor before you
-#   scale, and test any classical sd before you treat it as a real error bar. The fitter's Laplace sds themselves hold at K =
-#   1, where NUTS agrees once it starts on the spot. At K = 2 they are too small by a factor not yet settled.
-# - **Before you trust any network, ask for:** the paired-frame z with a classical reference on literally common pairs; the halo;
-#   a population replicate with a lineup; and a certificate that lists what it has never seen. All four can be run without
-#   ground truth.
-# - **Settle calibration.** Offset and gain moved this answer by about as much as the localiser did, 1,500-3,000 frames,
-#   though neither shift stands clear of sampling noise. These recordings have no dark frames; recording some is the obvious next step [our judgement, not tested here].
+# For these two recordings, 10,500-12,000 frames would have given the same answer as 15,000. If the core
+# cuts at all, 12,000 is the working number, saving about 26 minutes and 11 GB per channel. Pilot the next
+# sample first: recording 7 alone sets the number, and recording 32 settles 3,000-7,000 frames earlier, a
+# gap the bootstrap cannot resolve.
 #
-# ### What this notebook cannot claim
+# Do not replace the fitter on this evidence. The network runs fast, looks crisp and passed simulation, and
+# it failed the paired test and the halo on a recording it had not seen. This is one design, one training
+# budget and one pair of simulators, on data of low density; it says nothing about networks in general, and
+# a better simulator may well do better. Before trusting any network, ask for the four checks of section 7
+# and a certificate. All of them run without ground truth, and none of them tests accuracy: a bias shared by
+# both frames of a pair would pass them all.
 #
-# - **Nothing for a lab policy.** Two recordings, whose relation the record does not state, one dye pair. Between-sample
-#   variance is not estimable.
-# - **Nothing about structure.** Our count is connected components, not the paper's HDBSCAN subclusters, and it is not
-#   compared to their Brp. It is a readout for a frames decision, and it is not a biological measurement.
-# - **Nothing about a shorter acquisition.** First-N frames of a 15,000-frame movie is a proxy. A planned short movie
-#   might use another laser power, and bleaching would differ.
-# - **Nothing about networks in general.** This is one design, one training budget and one pair of simulators, and it was
-#   not tuned, because tuning until something passed was ruled out. A better simulator may well do better. Density was
-#   low here, and the network's advantage on simulation lies at high density.
-# - **The error bar failure is only part explained.** A floor of about 4-6 nm per frame is common to all four methods, and
-#   scatter grows with the gap, so sample or stage movement is the likely source, but nothing here tests that. The residual
-#   scale of 1.3-1.5 for B and chosen K, and the heavy tails, are unexplained.
-# - **Accuracy is untested.** Every real-data check is on precision or on consistency. A bias common to both frames of a
-#   pair would pass all of them.
-#
-# ### Lapses in the stored run
-#
-# Reported because they bear on how far to trust it. The plan (`plans/large/E88.md`, sections 6b and 6c) has the full list.
-#
-# - The drift fault was caught by reading output after the run, not by the smoke test. The post-hoc table exists because of it.
-# - The NUTS audit's chains started at the patch corner, and the pilot's Laplace start was silently ignored. This was found only
-#   by a later audit. P7 and check 4 stay failed, and their numbers measure that start as much as the fitter.
-# - The stored audit's K = 2 values, and any rerun's, depend on the state of the compile cache (section 8). The gate record stays.
-# - The PSF stack went into B's simulator with no control, so B was trained on a contaminated PSF.
-# - The attribution stored in the summary file was wrong until the audit, and the notebook did not show it. Fixed here.
-# - The P8' pass came on a second attempt, under a flag its gate did not name.
-# - The gates name `simulate_linked_movie` and `localise`. Both were replaced by patch-rendered, batched versions of the same
-#   model, because the originals needed about 14 GB here.
-# - The classical recording-7 timing covers 28 of 30 chunks, after an 8x slowdown from memory contention forced a restart
-#   with a smaller fit batch.
-# - The pilots' 14-worker plan could not be met with a core held offline, so all pools ran on 13 CPUs. The 44x is on 13
-#   CPUs, and it is a pilot rate; the planned full CPU comparison was skipped by instruction.
-# - Deterministic ops, the section 11 answers and the 10% thresholds were chosen by the analyst, as defaults. They were
-#   not ruled on by the owner, who ruled on one thing: run it, and let it fail if it fails.
+# The fitter's error bars are too small as well. Add a floor of a few nanometres before scaling them, and
+# treat the $K = 2$ sds with caution. Finally, settle the calibration: it moved the answer as much as the
+# localiser did, though neither shift stands clear of sampling noise, and these recordings have no dark
+# frames, so recording some is the obvious next step.
 
 # %% [markdown]
-# ### The main numbers, checked
-#
-# These are stored values, so a mismatch between prose and output would be our error. The assertions below test the numbers
-# the argument rests on against the files they came from. They are not exhaustive. The pilot-P1 control figures in section 4
-# (18%, 11.5%, 51%) are quoted from the plan and are in no stored file here.
+# The last cell checks the numbers this notebook quotes against the stored files, and reports the replay's
+# run time.
 
 # %%
 near_value = lambda value, want, tol=0.006: abs(value - want) <= tol
@@ -1708,18 +1570,46 @@ print("The stored numbers the argument rests on: checked. Section 8's K = 2 row 
 print(f"Replay finished in {(time.perf_counter() - started) / 60:.1f} min on {CORES} cores.")
 
 # %% [markdown]
+# ## Summary
+#
+# - **Frames: 10,500-12,000, 20-30% fewer than 15,000.** The stability rule gives 10,500 under
+#   per-block calibration and 12,000 under the more plausible one-line calibration, found afterwards; a
+#   block bootstrap gives 7,500-13,500. 10,500 holds narrowly, so 12,000 is safer. The cluster count
+#   decided, not FRC, and it tracks the number of events rather than a settled structure (section 3).
+# - **The two recordings differ by 3,000-7,000 frames**, a gap sampling noise cannot resolve (recording 32
+#   alone runs 2,000-12,000 across the bootstrap), and recording 7 sets the answer for both. With two
+#   recordings of unknown relation, no rule for a lab follows.
+# - **The camera calibration is unsettled**: per-block fits move by over 200 ADU and 30%, probably partly a
+#   fitting artefact, and the two calibrations give N 1,500-3,000 frames apart, a shift the block bootstrap
+#   cannot tell from sampling noise (sections 2, 3, 12).
+# - **A simulation pass is not a pass.** Network A reached recall 0.994 at 1.16 times the CRLB on its own
+#   simulator, and on real frames both networks failed the paired-frame test ($z$ 1.40 and 1.63 against
+#   1.25) and the halo (5.4 and 2.7 against 2). B's fix halved the halo but made $z$ worse (sections 6-7).
+# - **The classical error bars are too small too** ($z$ 1.63), partly from a floor of about 4-6 nm per frame
+#   common to every method; the rest is unexplained. On common pairs B is worse than classical and A only
+#   matches single-emitter fits, so neither gives a reason to switch (section 7).
+# - **The NUTS audit failed mostly through a bad start**: nutpie's `with_data` kept the start at the patch
+#   corner. Started on the spot, the ratio is 1.11-1.14 and Laplace looks sound at $K = 1$ on recording 7,
+#   with 8-9 divergences left; $K = 2$ is open (sections 7-8).
+# - **Cross-correlation drift breaks on network rows**, turning piles of long-lived bright objects into
+#   micron shifts. Repaired, the networks give 10,500-15,000 frames, not a change we can trust (sections 10,
+#   12).
+# - **A random split flatters FRC** by up to 10-12 nm (section 11).
+# - **There was little for a network to find**: overlaps are under 10% here, against 43% in E58's dense
+#   simulation.
+#
 # ## Try it yourself
 #
-# The first two run in seconds on the stored summary. Task 3 recompiles, which took 17-44 s here.
+# The first two run in seconds on the stored summary. The third recompiles the models, which took 17-44 s
+# here.
 #
-# 1. **Move the allowance, and the rule.** `n_both` takes the 10%. Replace "every larger N" with "this N only" in `n_star`,
-#    and see which recording changes. What would an honest report say if the answer moved by two grid steps?
-# 2. **Make drift robust.** Clip the renders passed to `cross` at a low count, say 3 rows per bin, so that no pile can
-#    dominate, and rerun block 14 for network A and for classical. Does the classical answer survive? This is the new
-#    method the run did not try.
-# 3. **Move the start, then free K = 2.** In section 8, run the K = 2 spots with `centred=True`, and see how far the corner start
-#    takes them. Then keep the non-centred form and tighten the position prior from 2.0 to 0.5 px. Do the chains now agree? Is
-#    that a better model of the pixels, or only a better-behaved sampler? How would you tell the two apart?
-#
-# The plan's reader tasks asked you to change the simulator and retrain. They need a GPU, and a laptop's time for them is
-# unmeasured, so they are left out here. The training code is `tools/run_e88_net.py`.
+# 1. **Move the allowance, and the rule.** `n_both` takes the 10%. Replace "every larger N" with "this N
+#    only" in `n_star`, and see which recording changes. What would an honest report say if the answer moved
+#    by two grid steps?
+# 2. **Make drift robust.** Clip the renders passed to `cross` at a low count, say 3 rows per bin, so that
+#    no pile can dominate, and rerun block 14 for network A and for classical. Does the classical answer
+#    survive?
+# 3. **Move the start, then free $K = 2$.** In section 8, run the $K = 2$ spots with `centred=True` and see
+#    how far the corner start takes them. Then keep the non-centred form and tighten the position prior from
+#    2.0 to 0.5 px. Do the chains now agree? Is that a better model of the pixels, or only a better-behaved
+#    sampler?

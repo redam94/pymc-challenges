@@ -126,7 +126,7 @@ SERIES = [
                "whether a bigger model changes a watch list. It teaches how to write a price someone can check."),
     dict(key="localiser", range="E88", title="A neural localiser, tried and failed", ids=["E88"],
          intro="Would a neural network change how many frames a dSTORM movie needs? A stored run trained one on simulation "
-               "and judged it on two full real recordings, with gates written first. It failed, and the answer stays the "
+               "and judged it on two full real recordings, with pass marks written first. It failed, and the answer stays the "
                "classical one. The replay is light, and it teaches checks that need no ground truth and a calibration "
                "certificate for a trained network."),
     dict(key="voi", range="E89", title="Value of information on a map", ids=["E89"],
@@ -405,7 +405,7 @@ def guide_page(ctx):
          f"{L('E89')}"),
         ("A sum over many homes on one shared day (load, delivery)", "A closed-form fleet, event means and a day-level model",
          f"{L('E91')}"),
-        ("What a big model will cost, and whether to buy it", "Timed gradients, a price table and a rung-by-rung held-out test",
+        ("What a big model will cost, and whether to buy it", "Timed gradients, a price table and a held-out test of each model in a ladder",
          f"{L('E87')}"),
         ("Whether a trained network's error bars hold on real data", "Paired-frame tests, a population replicate and a calibration certificate",
          f"{L('E88')}"),

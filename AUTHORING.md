@@ -147,6 +147,30 @@ techniques on a real dataset with the complete workflow (prior predictive -> fit
 diagnostics -> PPC -> interpretation). Shows a failure and its fix where that is the
 lesson (e.g. centred vs non-centred). Ends with "Try it yourself" (3 modifications).
 
+### Prose style (E01-E85 set it; the large-model notebooks follow it too)
+
+Models: E58, E62, E80, E83, E84. A notebook reads as a narrated lesson, not an audit report.
+
+- **Opening.** After the header table, a section such as "The setting" or "The question":
+  a few paragraphs on the real problem, why it matters, the statistical idea and its literature
+  (Author year), and what the notebook will do. Then a part table (part | question | tool) or
+  "The plan" as a numbered list. A decision-maker can be part of the story ("The marketing lead
+  asks: ..."), told in the narrator's voice; no memo from a fictional persona, no disclaimer
+  paragraph, no "answer before the working" section.
+- **Body.** Parts "## A. ..." or "## 1 · ..." with "###" subsections. Explain the idea (with
+  maths) before the code; after the output, interpret the printed numbers in a few plain
+  sentences. Paragraphs, not bullet lists. "We", present tense, declarative. A failure is part
+  of the lesson ("Failure 1: forgetting the telescope"), told once, with its fix or meaning.
+- **Caveats** are stated once, in a sentence, where they matter. If a check was chosen after
+  seeing the data, say so in words where it is used. No tags such as [post-hoc], and no
+  vocabulary of gates, ledgers, rungs, written outcomes, verifiers or who decided what. No
+  sections like "What this notebook cannot claim", "Lapses", "The main numbers, checked".
+- **End.** "## Summary": one bold-led bullet per finding, with its key numbers and its main
+  limit. Then "## Try it yourself": three numbered, concrete extensions.
+- **Length.** Long notebooks run 4,000-7,000 words of prose. Round numbers; do not stack hedges.
+- A notebook that must not be rerun on a laptop keeps a short blockquote warning after the
+  header table: what the heavy run needed and what a normal run does instead.
+
 ## Hints YAML
 
 Three levels per task, always in this order: **nudge** (a question or concept), **approach**

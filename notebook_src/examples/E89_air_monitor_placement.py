@@ -13,98 +13,48 @@
 # |---|---|
 # | **Type** | Advanced worked example - read, run, modify |
 # | **Data** | Real: EPA AirData daily PM2.5 for 2023-2025 (419 sites in a 19-state crop), Census 2024 county populations, 2020 population centres |
-# | **Time** | About 15 minutes on 2 cores (measured, three model fits). 4 cores should be shorter, and a laptop may differ: neither was measured |
-# | **You will learn** | Value of information as one plain question: what would we do differently if we knew? · a marginal Gaussian process in PyMC, with exact county conditionals · expected value of sample information in closed form, checked by brute force · a lazy greedy loop for choosing many sites · why summed greedy gains overstate what a set of sites is worth · a search that lets county means move · reporting a band of sites rather than a ranked list |
+# | **Time** | About 16 minutes on 2 cores (three model fits); other machines were not timed |
+# | **You will learn** | **Value of information** as one plain question: what would we do differently if we knew? · a **marginal Gaussian process** in PyMC, with exact county conditionals · the **expected value of sample information** (EVSI) in closed form, checked by **brute force** · a **lazy greedy** search for choosing many sites · why **summed greedy gains** overstate what a set of sites is worth, and how to value a set **jointly** · a search that lets **county means move** · reporting a **band of sites** rather than a ranked list |
 #
-# ## The brief
+# ## The question
 #
-# > *From a state air-monitoring planner, working with an EPA regional office. The planner is
-# > fictional, invented for this notebook; the data and the rules are real.* We can fund a fixed
-# > number of new PM2.5 monitors. About four in five US counties have none, and they hold about 100
-# > million people. Which sites should we fund, how many are worth funding, and what would we be
-# > buying? We expect "put them where we are most uncertain" to be challenged, so we need to know
-# > whether that answer is right.
+# Fine particles in the air, PM2.5, are measured at regulatory monitors, and their three-year means
+# decide whether an area meets the US annual standard of 9.0 µg/m³. About 1,000 sites in the
+# contiguous US have usable daily data for 2023-2025. Four in five counties have none, and those
+# counties hold about 100 million people.
 #
-# ## The answer, before the working
+# Suppose a state air-monitoring planner, working with an EPA regional office, can fund a fixed number
+# of new monitors and asks three things: which sites, how many are worth funding, and what would we be
+# buying? The answer most people reach for is "put them where we are most uncertain". This notebook
+# tests that answer and finds it wrong.
 #
-# This is for a 19-state crop of the Midwest, Ohio Valley, Plains and Rockies, on 2023-2025 air.
+# The idea that replaces it is preposterior analysis (Raiffa & Schlaifer 1961): before buying a
+# measurement, work out how each reading it might give would change the decision, and how much better
+# the decision gets on average. That gain is the **expected value of sample information**, and a very
+# uncertain place can still offer no reading that would change what we do. Choosing sensor sites on a
+# Gaussian process has a literature of its own (Krause, Singh & Guestrin 2008), which also supplies
+# the greedy search we use to choose many sites at once.
 #
-# - **"Where we are most uncertain" is the wrong rule.** It sends monitors to the Canadian border of
-#   North Dakota, and the 20 most uncertain counties are worth almost nothing: at most a thirtieth of
-#   the best site, because no reading there is likely to change a call.
-# - **The value sits around Columbus, Ohio and in lower Michigan,** with smaller pockets near Wichita
-#   on the main fit, and near Chicago if the excluded sites go or the pairs are used. The first search's
-#   shortcut costs value: a search without it, called moving means in section 7, shares about 13 of 20
-#   picks, is worth a fifth to a quarter more on the main fit, and holds up better when assumptions
-#   change. It is not much less clustered, and searched afresh without the excluded sites it comes out
-#   about level with the first search. About 9 counties are on all four moving-means lists (two draw
-#   sets, no excluded sites, paired prior), and about 15 on at least three. Report them as a band, not a
-#   rank.
-# - **Twenty monitors are worth about 0.9-1.2 million people moved to a right call** on the better list
-#   (0.7-1.0 on the first-pass list), of about 10 million at risk (modelled). Added-up greedy scores on
-#   the first-pass list say about 1.7 million, and should not be quoted. The first five monitors do about
-#   half the work of twenty. On the first-pass list the gain per monitor is about 140 thousand for the
-#   first, about 50-60 thousand up to five, about 30 thousand to twelve, and about 20 thousand from twelve
-#   to twenty. It does not reach zero, and no natural stopping point is shown, though the step down after
-#   five is sharp in this build. The per-monitor curve was not run for the better list.
-# - **That total leans on two modelling choices.** The model's method term disagrees with instruments
-#   compared side by side: give it a prior from those pairs and about 7 million are at risk. The lists
-#   built on the main run are worth only about 0.3-0.4 million there, and a moving-means list searched
-#   on that field about 0.5-0.6 million. A county's truth here is the smooth regional field. If a monitor
-#   settled its own county, about 1.4 million would be at risk; if the local difference is real air
-#   everywhere, about 23 million.
-# - **The catch a planner must hear.** About nine in ten of the people at risk live in counties that
-#   already have a monitor. On either main list, only about 0.01-0.05 million of that value falls in
-#   empty counties, and the rest falls in counties that already have monitors. If a monitor settled its
-#   own county, the balance flips: about 1.1 of the 1.4 million are in empty counties. If only empty
-#   counties count, the list changes, about half of it moving to the counties around Indianapolis, and
-#   20 monitors resolve only a small part of what is at risk there.
+# **What a wrong call means here.** A county with no monitor has no legal call that could be wrong, so
+# our loss is on **exposure**: the true 2023-2025 mean of the **smooth regional field** at a county's
+# population centre, against the standard. Design values round to 0.1, so "above 9.0" means at least
+# 9.05. A **wrong call** is our best estimate sitting on the other side of 9.05 from the truth, and a
+# site is scored by the **people moved from a wrong call to a right one**. Dollars do not enter: we
+# have no sourced cost for a monitor. Taking the smooth field as the truth leaves out the local
+# difference a single site shows, and section 4 shows how much that choice matters.
 #
-# **Numbers in the prose are ranges or rounded, and your run will differ.** Sampling this dense model
-# is not bit-reproducible, even at a fixed seed. Repeat builds at the same seed gave three different
-# fits, though some repeats matched exactly, and the picks and values below moved with them. The ranges
-# come from those builds, and the outputs saved in this notebook are one build.
+# No new monitor can help the current round: designations rest on 2023-2025 data and are due by 6
+# February 2027 under a court order now on appeal, and the standard itself is before the Supreme
+# Court. We take 9.0 as given. A monitor running by 2028 first reports a three-year mean for
+# 2028-2030, so the value we compute is a what-if: what a reading of the 2023-2025 field would have
+# been worth. A real reading covers a later window, so the value runs somewhat high; section 7 sizes
+# the gap.
 #
-# ## What a "wrong call" means here
-#
-# Attainment in law comes from eligible monitors' three-year design values. A county with no monitor
-# has no legal call that could be wrong, and this notebook does not pretend otherwise. Its loss is on
-# *exposure*: the true 2023-2025 mean PM2.5 of the **smooth regional field** at a county's population
-# centre, against the annual standard of 9.0 µg/m³. That truth leaves out the local difference a single
-# site shows (the nugget of section 2), which is a real choice, and section 4 sizes it. A **wrong call**
-# means our best estimate sits on the other side of the line from the truth. Design values round to
-# 0.1, so "above 9.0" means at least 9.05. A site is scored by **people moved from a wrong call to a
-# right one**. Dollars do not enter, because we have no sourced cost for a monitor: that line belongs
-# to the planner.
-#
-# **No monitor can help the current round.** EPA's designations rest on 2023-2025 data. A court has
-# ordered final designations by 6 February 2027, an order under appeal when EPA's bulletin of 2
-# October 2026 was written. The standard itself is also contested: state and industry petitioners asked
-# the Supreme Court to review it in August 2026, after the D.C. Circuit upheld it. We take 9.0 as
-# given. A monitor funded in 2027 and running by 2028 gives its first three-year mean for 2028-2030.
-# This is a decision for the next review cycle.
-#
-# **So the value here is a what-if.** It asks what a reading of the 2023-2025 field would be worth,
-# from a daily instrument on an FRM footing. A real first reading covers another window, and the noise
-# below has no term for the gap between windows, so the value runs somewhat high. Section 7 gives a
-# rough size.
-#
-# ## Modelling decisions, stated up front
-#
-# | Decision | What this notebook does | Why, and what it costs |
-# |---|---|---|
-# | **Scope** | One 19-state crop (Midwest, Ohio Valley, Plains, Rockies), one model (M1), 4 chains, 200 draws for value of information | Sized for 2 cores and under 3 GB. **No national, coastal, Californian or Southeastern claim follows from it.** There is no route to a national run yet: no such run exists, and setting `PYMC_CHALLENGES_RUN=full` stops with an error |
-# | **Excluded sites** | The 30 contiguous-US sites excluded from the annual standard (15 are in the crop; a 31st is in Hawaii) stay in, under a measurement-scale nugget | They measure air, though EPA does not compare them with the standard. Dropping them is shown as a sensitivity result in section 8, and it moves the list more than draw noise |
-# | **Daily data** | The annual model only. The daily model was **not run**, and neither was the cheaper test of whether it would change the ranking | So this notebook cannot say the daily model is unneeded |
-# | **Preferential siting** | A second model (M2 in the build plan), where the field also drives which counties have monitors, was **not sampled** | Nothing here says whether monitors sit where the air is bad on purpose. Section 3 shows why that matters |
-# | **Method term** | Learned across sites, with a refit from same-day instrument pairs in section 8 | The two disagree, and the refit moves the totals, the values and the list. The main run keeps the learned term |
-# | **Truth** | The smooth regional field at a county's population centre | Leaves out local air. Section 4 gives the totals either side of this choice |
-# | **Value of a set** | Simulated jointly | Summed greedy gains overstate it, as section 7 shows |
-# | **Output** | A band of sites, never a ranked list | Two equally good sets of draws share about 17 of 20 picks, and 13-19 across builds |
-#
-# "The pilot" below means the checks run before this notebook was written, recorded in
-# `plans/large/E89.md`. Their results came from separate fits, so some of them widen the ranges here.
-# The pilot's joint values, 1.08-1.22 million, sit above them, as section 7 notes.
+# We work on one 19-state crop of the Midwest, Ohio Valley, Plains and Rockies, with one model of the
+# annual means, sized for 2 cores and under 3 GB. Nothing here speaks for the coasts, California or
+# the Southeast. Sampling this dense model is not bit-reproducible even at a fixed seed, so your
+# printed numbers will differ a little; where the text gives a range, it spans several builds of the
+# notebook.
 #
 # ## The plan
 #
@@ -113,10 +63,10 @@
 # 3. Can the map see what it has not measured?
 # 4. Which calls are close?
 # 5. Uncertainty is not value
-# 6. Choosing twenty sites, and the second failure
-# 7. How many monitors? The third and fourth failures
+# 6. Choosing twenty sites
+# 7. How many monitors?
 # 8. Whose objective, which standard, which sites?
-# 9. The band, and what to tell the planner
+# 9. The band
 
 # %%
 import os
@@ -205,10 +155,12 @@ banner(wall_time=measured(16, "min on 2 cores, build of 2026-11-02"),
        smaller_machine=estimated("this is the small problem: no larger level exists", ""))
 
 # %% [markdown]
-# ## 1. The network, and what the raw files hide
+# ## 1 · The network, and what the raw files hide
 #
-# Two tables carry the notebook. `tools/build_e89_data.py` builds them from EPA's daily files, and
-# everything in them is a real measurement or a Census count.
+# Two tables, built by `tools/build_e89_data.py` from EPA's daily files and Census counts, hold one
+# row per site (its 2023-2025 mean, days and years reported, instruments and measurement scale) and
+# one row per county (population, population centre, and whether it has a monitor). The first map
+# shades the empty counties of the contiguous US by population and outlines our crop.
 
 # %%
 data.describe("e89_sites")
@@ -331,21 +283,21 @@ ax.legend(loc="lower left", fontsize=9)
 fig.colorbar(everywhere, ax=ax, shrink=0.55, label="people in a county with no monitor", pad=0.01);
 
 # %% [markdown]
-# Four in five counties have no monitor, and they hold about 30% of the people. Empty does not always
-# mean small: the darkest counties have hundreds of thousands of residents.
+# Four in five counties have no monitor, and they hold about 30% of the people, 103 million. Empty
+# does not always mean small: the darkest empty counties have hundreds of thousands of residents.
 #
-# The crop is the darker dots: the Midwest and Ohio Valley, where many sites sit close to the line,
-# with the Plains and Rockies, where counties are empty and clean. It holds both halves of the
-# lesson. It is not the whole country, and New Jersey is outside it, so a Pennsylvania pick near the
-# edge sees a truncated field.
+# The crop holds 419 sites and 1,535 counties, 1,242 of them empty. It joins the Midwest and Ohio
+# Valley, where many sites sit near the standard, with the empty, clean Plains and Rockies. New Jersey
+# lies outside it, so a pick in eastern Pennsylvania sees a field cut off at the edge.
 #
-# ### The first failure happened before any model ran
+# ### Failure 1: two versions of the same instrument
 #
-# The daily file holds **two versions of the same instruments**. EPA's advisory of 26 August 2024
-# says to drop the original Teledyne T640 series, methods 236 and 238. They are 20.8% of the 2023
-# rows, under different POC numbers from the corrected series, and a first pass that kept them, or
-# took the maximum over POCs, gave a 2023 mean of 8.54 against 8.22 once clean. Each dot below is a
-# site in 2023, on the days both versions report.
+# Before any model runs, the daily file holds **two versions of the same instruments**. EPA's advisory
+# of 26 August 2024 says to drop the original Teledyne T640 series, methods 236 and 238, which
+# corrected series replace. The originals are 20.8% of the 2023 rows and sit under different POC
+# numbers, so nothing marks them as duplicates. A first pass that kept them, or took the maximum over
+# POCs, gave a 2023 mean of 8.54 µg/m³ against 8.22 once clean. Each dot below is one site-series in
+# 2023, on the days both versions report.
 
 # %%
 pairs = data.load("e89_t640_pairs")
@@ -374,15 +326,15 @@ ax.set_title(f"Each dot is one site-series at one of {pairs['site'].nunique()} s
 ax.legend(loc="upper left");
 
 # %% [markdown]
-# The two versions exist side by side at 393 site-series, and the original reads 1.14 µg/m³ high on
-# average. That offset is about the size of the whole near-line margin: **60 site-series change sides of
-# 9.05**, all of them in the shaded box. A model fitted to the raw file would learn a wrong map of exactly the
-# region this brief is about, and nothing in the fit would complain.
+# The two versions run side by side at 393 site-series, and the original reads 1.14 µg/m³ high on
+# average. That is the width of the near-line margin: **60 site-series change sides of 9.05**, the red
+# dots in the shaded box. A model fitted to the raw file would learn a wrong map of exactly the places
+# this question is about, and nothing in the fit would complain.
 #
-# The fix cannot come from EPA's annual files: in 2023 their rows say "Multiple Methods Used" and
+# EPA's annual summary files cannot fix this, because their 2023 rows say "Multiple Methods Used" and
 # still hold the original data. So every annual value here is rebuilt from the daily files, as the
-# mean over surviving POCs and never the maximum. Is that close enough to EPA's own numbers? The
-# comparison below is against EPA's 2023-2025 design-value workbook.
+# mean over the surviving POCs, never the maximum. The table compares the result with EPA's 2023-2025
+# design-value workbook.
 
 # %%
 epa = pd.DataFrame(checks["epa_comparison"]).T[
@@ -391,15 +343,16 @@ epa.index = ["No concurred events", "All valid sites", "Both FRM and T640 presen
 print(epa.astype(float).round(3).to_string())
 
 # %% [markdown]
-# Close: a median gap of 0.03 µg/m³. The honest column is the last one, sites with a design value
-# between 8 and 10, because far from the line agreement is easy. These means are **not** official
-# design values, and the tail sits at sites with both FRM and T640.
+# Close: a median gap of 0.03 µg/m³. The column that matters is the last, sites with a design value of
+# 8-10, since far from the line agreement is easy. There 92-98% of sites fall on the same side of 9.05
+# as EPA's value, worst at sites that run both FRM and T640. These means are close to official design
+# values, but they are not design values.
 #
 # ### Smoke stays in
 #
-# A window mean hides its worst days. The ribbon below shows what share of US site-days passed 35
-# µg/m³, by day and latitude. Regulators can exclude concurred events; we do not, because the question
-# here is exposure, and smoke is exposure.
+# A three-year mean hides its worst days. The ribbon shows the share of US site-days above 35 µg/m³,
+# by day and latitude. Regulators can set aside days that EPA agrees were exceptional events, such as
+# wildfire smoke. We keep them, because our question is about exposure, and smoke is exposure.
 
 # %%
 ribbon = data.load("e89_ribbon")
@@ -416,15 +369,17 @@ axes[0].set_title("The worst days arrive in sheets: share of site-days above 35 
 fig.colorbar(mesh, ax=axes, shrink=0.7, label="share of site-days");
 
 # %% [markdown]
-# Most of the year is empty, and then a sheet crosses many latitudes in days. 2023 has the most summer
-# sheets across 40-50 N, 2024 has fewer, and 2025 has a dense run from June to August. A site that missed
-# a year missed its sheets, which is why the model carries a term for which years a site has.
+# Most of the year is blank; then a sheet crosses many degrees of latitude in days. 2023 has the most
+# summer sheets across 40-50° N, 2024 fewer, and 2025 a dense run from June to August. A site that
+# missed a year missed its sheets, which is why the model carries a term for the years a site
+# reported.
 #
-# ### A sparse schedule is measurement error, and we can size it
+# ### A sparse schedule is measurement error
 #
-# Many sites sample one day in three or six. We thinned near-daily sites to each schedule and compared
-# the annual mean with the full year, against the variance formula the data script uses. The formula
-# goes into the model as each site's known noise, `v`.
+# Many sites sample one day in three or one in six. We thinned near-daily sites to each schedule and
+# compared the thinned annual mean with the full-year one. The data script predicts that error from a
+# variance formula, which enters the model as each site's known noise, $v_s$. The table compares the
+# realised error with the formula's, in µg/m³.
 
 # %%
 schedule = pd.DataFrame({(year, name): {"realised rms": row[f"1_in_{k}"]["rms"],
@@ -434,30 +389,37 @@ schedule = pd.DataFrame({(year, name): {"realised rms": row[f"1_in_{k}"]["rms"],
 print(schedule.round(2).to_string())
 
 # %% [markdown]
-# The formula's rms runs above the realised rms in all three years. That is not a wide margin at
-# the sparsest schedule: at 1-in-12 a site's error over its own formula sd has an rms of 0.99-1.16, so
-# there the formula is about right and no more. That bounds thinning error only. It is not evidence that a daily model would change nothing, because a daily model was not run.
+# The formula's error runs above the realised error at every schedule in all three years, so it errs
+# on the side of caution. At the sparsest, 1-in-12, the margin is thin: a site's error divided by its
+# own formula sd has an rms of 0.99-1.16 across the years. This bounds the error of a thinned
+# schedule. It does not show that a model of the daily values would give the same answer, and that
+# model was not run.
 #
-# ## 2. The model, on a map
+# ## 2 · The model, on a map
 #
-# One row per site. Let $y_s$ be the log window mean and $v_s$ its known sampling variance:
+# One row per site. Let $y_s$ be the log of the site's window mean and $v_s$ its known sampling
+# variance:
 #
 # $$y_s \sim \text{Normal}\big(\alpha + \beta_d\,\text{density}_s + w_s^\top\beta_m + a_s^\top\delta + f(s),\;
 # \tau_{\text{scale}(s)}^2 + v_s\big), \qquad f \sim \text{GP}\big(0,\ \eta^2\,\text{Matern}_{3/2}(\ell)\big).$$
 #
 # In words: pollution is a smooth field over the map, plus a term for how crowded the county is, plus
-# corrections for which instrument and which years a site happens to have.
+# corrections for which instruments and which years a site happens to have.
 #
-# - **Density** is the one covariate that exists at empty counties as well as at monitors.
-# - **Method shares** $w_s$ put everything on an FRM footing: T640 and BAM do not read alike.
-# - **Year mix** $a_s$ is a sum-to-zero offset, because a site that missed 2023 missed the smoke.
-# - **One nugget per measurement scale.** A microscale site should not pretend to be a neighbourhood.
-#   This changes a site's spread only, not its mean. Section 3 shows where that falls short.
-# - **The field is integrated out**, so PyMC sees a 419 x 419 `MvNormal` and only 15 free parameters.
-#   Exact county conditionals come afterwards, one draw at a time.
+# **Density**, log people per km², is the one covariate that exists at empty counties as well as at
+# monitors. The **method shares** $w_s$ put every site on an FRM footing, because continuous T640 and
+# BAM instruments do not read exactly like the filter-based reference method. The **year mix** $a_s$
+# is a sum-to-zero offset, because a site that missed 2023 missed the smoke. Each **measurement
+# scale** gets its own nugget $\tau$, the scatter of a site around the smooth field, so a microscale
+# site is not taken for a neighbourhood average. The scale changes a site's spread only, not its mean,
+# and section 3 shows where that falls short.
 #
-# Priors are LogNormal on the scales, centred on a 400 km lengthscale. What do they imply? We draw
-# whole fields at county centres in NumPy, because `pm.sample_prior_predictive` would only give us sites.
+# The field is **integrated out**: given the hyperparameters the site values are jointly Gaussian, so
+# PyMC sees one 419 × 419 `MvNormal` with 15 free parameters, and NUTS never explores 419 latent
+# values. The field at the county centres comes back afterwards, exactly, one draw at a time.
+#
+# The priors are LogNormal on the three scales, with the lengthscale centred on 400 km. We draw whole
+# prior fields at the county centres in NumPy, since `pm.sample_prior_predictive` gives only sites.
 
 # %%
 def design(frame, scale=None):
@@ -541,13 +503,12 @@ with stage("prior check"):
     gc.collect();
 
 # %% [markdown]
-# The priors are wide but not silly. They cover the observed spread of sites and the observed crop mean, and
-# the fields run from patchy at short `ell` to one regional tone at long `ell`. The maps also show the
-# density term: crowded counties stand out from their neighbours.
+# The priors are wide but not silly. The observed spread of log site means (0.28) and crop mean (7.6
+# µg/m³) sit well inside the prior's 90% ranges, 0.17-0.56 and 3-19 µg/m³. The six worlds run from
+# patchy at a short `ell` to one regional tone at a long one.
 #
-# Now the fit: nutpie through `pm.sample`, four chains, **400 tuning steps and 500 draws**, one BLAS
-# thread per chain. That is fewer draws than the usual 1,000: we only need 200 evenly spaced draws
-# for value of information, and this model mixes well.
+# Now the fit: nutpie through `pm.sample`, four chains, 400 tuning steps and **500 draws** each, one
+# BLAS thread per chain. Later sections need only 200 evenly spaced draws, and this model mixes well.
 
 # %%
 NAMES = ("alpha", "beta_density", "beta_method", "delta", "eta", "ell", "tau")
@@ -578,20 +539,24 @@ fit = draws_of(idata)
 
 
 # %% [markdown]
-# A clean fit: no divergences after warm-up, r_hat at most about 1.01, and a smallest ESS above 1,000, in
-# about 2.5 minutes on 2 cores. A few parameters deserve a plain reading.
+# A clean fit in under 2.5 minutes on 2 cores: no divergences, r_hat at most 1.005, every ESS above
+# 1,200. On the log scale, coefficients read as percentages.
 #
-# - `ell` is about 310 km (90% interval 209-472), well inside its prior, so the data did set it.
-# - Each sd of log density adds about 9% to PM2.5. Crowded counties read higher.
-# - BAM reads about 10% below FRM. T640 is +3%, and its interval spans zero. Instruments compared side
-#   by side say about -3% and +6%. This term is learned across sites, and BAM sites are rural, so it
-#   can pick up rural air. Predictions rest on it, so section 8 refits with the pairs.
-# - 2023 ran about 12% above the window's average year.
-# - The site nugget `tau` is 10-17%. **Remember it.** It says a monitor's reading differs from the
-#   smooth regional field by about that much, and it matters again in section 4.
+# The lengthscale `ell` is about 310 km (90% interval 210-470), well inside its prior, so the data set
+# it. Each standard deviation of log density adds about 9% to PM2.5, and 2023 ran about 12% above the
+# window's average year: the smoke again.
 #
-# The number that matters most is `ell`, because it says how far one monitor can see. Here it is as
-# correlation against distance, before and after the data.
+# The method term needs care. BAM reads about 10% below FRM, and T640 about 3% above with an interval
+# that spans zero. Instruments compared side by side, at one site on one day, say about -3% and +6%.
+# The model learns this term across sites, and BAM sites tend to be rural, so it can absorb rural air
+# as well as instrument bias. Section 8 refits with the side-by-side pairs as a prior.
+#
+# The site nugget `tau` is 10-17%, depending on scale. **Remember it**: a monitor's reading differs
+# from the smooth regional field by about that much, and in section 4 that decides what a monitor can
+# settle about its own county.
+#
+# `ell` matters most, because it says how far one monitor can see. Here it is as correlation against
+# distance, before and after the data.
 
 # %%
 km = np.linspace(1, 900, 90)
@@ -611,17 +576,19 @@ print({f"{k} km": round(v, 2) for k, v in reach.items()})
 
 
 # %% [markdown]
-# ## 3. Can the map see what it has not measured?
+# The data pull the prior's wide band in to a narrow one. At the posterior median, places 100 km apart
+# have a correlation of 0.88, at 200 km 0.67 and at 400 km 0.32: a monitor tells us a lot about its
+# neighbours and a little about the next state.
 #
-# In a GP, checks that reuse the fitted field are in-sample. So we use three checks that do not. The
-# replicated networks use 200 posterior draws. The two hold-outs use the median hyperparameters and the
-# inverse of the site covariance (`az.loo` would see one observation from an `MvNormal`).
+# ## 3 · Can the map see what it has not measured?
 #
-# - **Replicated data:** draw a new field, a new network reading and ask whether the spread and the
-#   number of near-line sites look like ours.
-# - **Hold out one site**, or a whole **200 km block**, which is closer to what an empty county faces.
-# - **Hold out the new sites**, those first seen in 2023 or later, and predict them from older sites.
-#   The one honest leak: the hyperparameters saw these sites.
+# Every recommendation is about places with no monitor, so we judge the model on places it has not
+# seen. We use three checks. The first simulates new networks from 200 draws and compares them with
+# ours. The second holds out one site at a time, and then whole 200 km blocks, which is closer to what
+# an empty county faces. The third holds out the **new sites**, first seen in 2023 or later, and
+# predicts them from the older ones, though the hyperparameters did see them. The hold-outs use the
+# median hyperparameters and the inverse of the site covariance, which gives every held-out prediction
+# in closed form (`az.loo` would see one observation from an `MvNormal`).
 
 # %%
 def site_mean(design_table, draw):
@@ -715,39 +682,38 @@ with stage("checks"):
     ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=2, frameon=False);
 
 # %% [markdown]
-# **One check fails, and we leave it open.** Replicated networks match the spread and the extreme, but
-# 42% of real sites sit between 8 and 10, against 10-33% of replicated sites. Real sites pile up near the
-# line more than a smooth Gaussian field can. Perhaps that is where monitors get placed, or perhaps
-# the log-normal shape is wrong. So do not over-read the fine detail near the line.
+# **One check fails, and we leave it open.** Replicated networks match the spread and the largest
+# value, but 42% of real sites sit between 8 and 10 µg/m³, against 10-33% of replicated ones. Perhaps
+# that is where monitors get placed, perhaps the log-normal shape is wrong; either way, do not
+# over-read fine detail near the line.
 #
-# **Held-out sites behave.** Leaving out one site or a whole 200 km block, the error is about 15% with
-# 90% intervals covering 91-92%. Block error is only a little larger, as it should be with `ell` near 310 km.
+# **Held-out sites behave.** Leaving out one site or a whole 200 km block, the error is about 15% and
+# the 90% intervals cover 91-92%. Block error is only a little larger, as it should be with `ell` near
+# 310 km.
 #
-# **The new sites are the warning.** 34 sites in the crop first reported in 2023 or later, and the
-# model predicts them from older sites with almost no bias overall. But the 18 more than 25 km from
-# any older site read about 9% **below** prediction (se 4%), and you can see the dots lean left at the
-# top of the figure. That is what an upward-biased network would produce: if monitors sit where the
-# air is worse, the model reads high in the gaps. It is also what rural sites near urban ones would
-# produce. This is a rough look. Only 3 of those 18 sites are near the line, so **it cannot validate
-# wrong-call rates**, and M2, the model built to test this, was not sampled. We carry it as a named
-# risk: the map may run high in empty places.
+# **The new sites are a warning.** Overall the model predicts the 34 new sites with almost no bias.
+# But the 18 that lie more than 25 km from any older site read about 9% **below** prediction (se 4%),
+# and the dots lean left at the top of the figure. That is what a preferentially sited network would
+# produce (Diggle, Menezes & Su 2010): if monitors sit where the air is worse, a model fitted to them
+# reads high in the gaps. So would rural sites near cities. Only 3 of the 18 read near the line, so
+# this cannot check wrong-call rates; the map may run high in empty places.
 #
-# **Middle-scale sites read high.** The last table holds out one site at a time, by measurement scale.
-# Middle-scale sites sit about 6% above prediction (se 2%, 23 sites), and the other scales are within
-# noise. These sites sit near sources, and the model gives scale a variance and no mean, so they may pull
-# the field up in the near-line cities where they stand. We leave that in and name it: a mean term for
-# scale, or treating these sites as source-oriented, is not tested here.
+# **Middle-scale sites read high**, about 6% above prediction (se 2%, 23 sites), while the other
+# scales are within noise. They stand near sources, and the model gives scale no mean term, so they
+# may pull up the field in near-line cities.
 #
-# ## 4. Which calls are close?
+# ## 4 · Which calls are close?
 #
-# For each posterior draw of the hyperparameters, the county field is exactly Gaussian. We take 200
-# draws evenly spaced through the chains. Hyperparameters stay integrated over: the final probability
-# is a mixture over draws, not a plug-in at the median.
+# For each posterior draw, the field at the 1,535 county centres is exactly Gaussian given the sites.
+# We take 200 draws evenly spaced through the chains, so a county's probability of being above the
+# line is a mixture over draws, not a plug-in at the median.
 #
-# The covariance of 1,535 counties would cost 1.9 GB over 200 draws. It has a simple form, though:
-# $S = K_{cc} - H^\top H$, the prior covariance less what the 419 sites explain, where
-# $H = L^{-1} K_{sc}$ is 419 x 1,535. The prior part is a formula, so we store only $H$: 0.5 GB, and a
-# row of $S$ when we need it. Our first draft stored $S$ and was killed at the 3 GB cap.
+# The county covariance over 200 draws would take 1.9 GB, too much for a 3 GB budget. It has a simple
+# form, though: $S = K_{cc} - H^\top H$, the prior covariance less what the 419 sites explain, where
+# $H = L^{-1} K_{sc}$ is 419 × 1,535 and $L$ is the Cholesky factor of the site covariance. The prior
+# part is a formula, so we store only $H$, about 0.5 GB, and build a row of $S$ when we need one. The
+# cell then sets the model's calls against the monitors' own readings and tries three ideas of what a
+# county's truth is.
 
 # %%
 def thin(chains, count, shift=0):
@@ -860,50 +826,46 @@ axes[1].set_title("The stakes: people in a county times its chance of a wrong ca
                   "Grey counties are undecided", loc="left", fontsize=11);
 
 # %% [markdown]
-# The top map shows how few calls are close. Most of the crop is pale: clearly below the line. Only 9
-# or so counties are called above it, but they hold about 11 million people. Across the builds, about
-# **10-11 million people** of 103.9 million are expected to be on the wrong side of the line (modelled,
-# not observed), and about 30% of counties are undecided.
+# The top map shows how few calls are close. Most of the crop is pale, clearly below the line. Only 9
+# counties are called above it, but they hold about 11 million people. In all, about **10 million
+# people** of 104 million are expected to be on the wrong side, and 452 counties, about 30%, are
+# undecided (a probability of being above between 0.01 and 0.99). These are modelled numbers.
 #
-# The bottom map is the surprise. **About nine in ten of those people live in counties that already
-# have a monitor**: the blue circles. Franklin County OH has four monitors, all reading about 9.05-9.86, and
-# still sits near P = 0.5. Allegheny PA has a site at 10.25 and 1.2 million people, and P is about 0.
-# That is the nugget from section 2. A site's reading is not the county's field, so the model does
-# not treat a monitor as settling its own county. A planner will spot this at once: about 32 counties
-# have a site at or above the line, and the model calls about 7 of them above. Of the 12 where every
-# site is above, it calls about 3.
+# The bottom map holds the surprise. **About nine in ten of those people live in counties that already
+# have a monitor**, the blue circles; Cook IL alone carries 1.3 million. Franklin OH has four monitors
+# reading 9.05-9.86 and still sits at P = 0.52. Allegheny PA has a site at 10.25 and 1.2 million
+# people, and P is about 0. That is the nugget at work: a site's reading is not the county's smooth
+# field, so a monitor does not settle its county. Of the 32 counties with a site at or above the line,
+# the model calls 7 above; of the 12 where every site is above, it calls 3.
 #
-# This is a modelling choice with a large effect, and it does not describe law: legally, Franklin's
-# call comes from its monitors. **The table above sizes it.** Let a monitored county be settled by its
-# highest site, and about 1.4 million are at risk. Treat the nugget as real air at every county centre,
-# and about 23 million are, in about 1,270 undecided counties. That last case is an upper one, since
-# some of the nugget is instrument difference. Our 10 million sits between them, and it is a statement
-# about the smooth field, not about what any one person breathes. The balance moves as well: about four
-# in five of those at risk are in monitored counties in the upper case, but under one in five if a site
-# settles its county, when about 1.1 of the 1.4 million are in empty counties. Hold on to this, because
-# it decides what the shortlist means.
+# This choice is not the law, under which Franklin's status comes from its monitors, and the table of
+# three conventions shows its size. If a monitored county is settled by its highest site, about 1.4
+# million people are at risk, and about 1.1 million of them are in empty counties. If the nugget is
+# real air at every county centre, about 23 million are, four in five of them in monitored counties;
+# that is an upper case, since part of the nugget is instrument difference. Our 10 million, between
+# the two, is about the smooth field, not what any one person breathes, and this split decides what
+# the shortlist means.
 #
-# ## 5. Uncertainty is not value
+# ## 5 · Uncertainty is not value
 #
-# The obvious rule is to put monitors where we are most uncertain. The better question is the one
-# from the top: **what would we do differently if we knew?**
+# The obvious rule is to put monitors where we are most uncertain. The better question is the one from
+# the top: **what would we do differently if we knew?**
 #
-# For one candidate $c$ and one draw, a new reading $y$ has predictive variance $S_{cc} + n$ and moves
-# every county's mean by a rank-one update. So, in closed form, with no simulation of the field:
+# For one candidate county $c$ and one posterior draw, a new reading $y$ has predictive variance
+# $S_{cc} + n$, where $n$ is the noise of a new neighbourhood-scale monitor, and it moves every
+# county's mean by a rank-one Gaussian update. So the value of a monitor at $c$ needs no simulation:
 #
-# 1. Take 16 equal-probability readings from the predictive mixture over draws.
-# 2. For each reading, reweight the draws by how well they predicted it, update each county, and
-#    average over draws to get the county's new $P(\text{above})$.
-# 3. Expected loss is the average over readings of people times $\min(p, 1 - p)$.
+# 1. Take 16 equally likely readings from the predictive distribution of $y$, a mixture over draws.
+# 2. For each reading, reweight the draws by how well they predicted it, update each county within
+#    each draw, and average over draws to get the county's new $P(\text{above})$.
+# 3. The expected loss is the average over readings of $\sum_j \text{people}_j \min(p_j, 1 - p_j)$.
 #
-# The fall in that loss is the **expected value of sample information** (EVSI) of the site. To save
-# time we count only counties within $3\ell$ and still undecided.
+# The fall in expected loss is the site's **EVSI**, in people moved to a right call. To save time we
+# count only counties within $3\ell$ of the candidate that are still undecided.
 #
-# Two tricks keep this cheap. A score only reads the covariance of a candidate with undecided
-# counties, so that block is built once. And later rounds need the covariance after earlier picks: the
-# pilot overwrote it in place, which spent a whole covariance per run. Here a pick stores only its
-# low-rank factor, 25 MB for 20 picks, so one field serves every run below, and subsets of draws are
-# views with no copy.
+# Two tricks keep this cheap. A score reads only the covariance of a candidate with the undecided
+# counties, so that block is built once. And a pick stores only its low-rank factor, 25 MB for 20
+# picks, rather than a new covariance, so one field serves every search below.
 
 # %%
 def reading_nodes(mean, variance_, nodes):
@@ -1034,12 +996,16 @@ print(f"Candidates with EVSI under 1,000 people: {(first_value[candidates] < 1e3
 
 
 # %% [markdown]
+# The best single monitor is in Delaware County, Ohio, just north of Columbus, worth about 140
+# thousand people moved to a right call. The median candidate is worth under 5 thousand, and a quarter
+# of them under 1,000.
+#
 # ### Does the closed form tell the truth?
 #
-# A formula this convenient needs a test that can fail. For the best candidate we simulate a true field
-# from each draw, draw a reading with noise, make the calls with the closed-form posterior, and **count
-# real wrong calls** against the simulated truth, with no shortcut. As a control, we repeat the calls
-# with a reading believed 25x more precise than it is; that must fall short.
+# A formula this convenient needs a test that can fail. For the best candidate we simulate a true
+# field from each draw, draw a noisy reading, make the calls with the closed-form posterior, and
+# **count real wrong calls** against the simulated truth. As a control we repeat the calls with a
+# reading believed 25 times more precise than it is; that version must fall short.
 
 # %%
 def brute_force(field_, c, sims=8000, width=150, seed=0, control_factor=25.0):
@@ -1080,13 +1046,12 @@ with stage("brute-force check"):
     print({k: round(float(v), 2) for k, v in brute_force(field, int(ranked[0])).items()})
 
 # %% [markdown]
-# They agree within one standard error, and the control falls far short, so the test can fail. This is
-# one candidate with 8,000 simulated worlds; the pilot passed the same test at three configurations
-# with 20,000 and then 40,000. The test holds the draws fixed, so it cannot see draw noise. That comes
-# next, in section 6.
+# Closed form 141 thousand, brute force 146 thousand with a standard error of 11 thousand: they agree
+# within half a standard error. The control does worse than no monitor at all, about 50 thousand
+# people worse off, so the test can tell a wrong posterior from a right one. The draws are held fixed,
+# so draw noise is invisible here; section 6 measures it.
 #
-# With that settled, here is the centrepiece: the map of what we do not know, the map of what is worth
-# knowing, and the ranks between them.
+# Now the centrepiece: what we do not know, against what is worth knowing.
 
 # %%
 is_candidate = np.zeros(len(table), bool)
@@ -1146,19 +1111,19 @@ print(f"Value rank of the 20 foggiest: {foggy_ranks.min()}-{foggy_ranks.max()} o
 ax_bump.set_title("The foggiest counties rank in the lower half by value", fontsize=11);
 
 # %% [markdown]
-# This is the lesson in one picture. The fog is over the northern Plains, and the value is in a few
-# pockets around Columbus, lower Michigan and Wichita. **The top 20 by uncertainty and the top 20 by
-# value have no county in common**, and over all candidates the two ranks are negatively correlated.
-# The most uncertain counties have about twice the posterior sd of the most valuable ones, and at best
-# a thirtieth of their value. By value they rank in the lower half of the candidates, not at the bottom:
-# the right panel compresses everything below rank 15.
+# This is the lesson in one picture. The fog lies over the northern Plains; the value sits in a few
+# pockets around Columbus, lower Michigan and Wichita. **The 20 most uncertain counties and the 20
+# most valuable have no county in common**, and over all 1,238 candidates the two rankings are
+# negatively correlated (Spearman -0.29). The most uncertain have twice the posterior sd of the most
+# valuable (1.05 against 0.49 µg/m³), and the best of them is worth a thirtieth of Delaware OH. By
+# value they rank between 621st and 1,015th: the lower half, though not the very bottom, since the
+# right panel squeezes every rank below 15.
 #
-# Now you can say the sentence this notebook is meant to teach: *"Rolette County is very uncertain, and
-# it is not worth a monitor."* The reason is in the next figure.
-#
-# Why is a foggy county worthless? For three counties below, the horizontal axis is what a new monitor
-# might read. The curve is how likely each reading is. The colour shows how many people's calls would
-# flip at that reading, and white means none. **Value needs the curve and the colour to overlap.**
+# So a sentence that sounds odd is true: *Rolette County, North Dakota, is very uncertain, and it is
+# not worth a monitor.* The next figure shows why. For three counties, the horizontal axis is what a
+# new monitor might read. The black curve is how likely each reading is; the colour shows how many
+# people's calls would flip at that reading, and white means none. **Value needs the curve and the
+# colour to overlap.**
 
 # %%
 def reading_strip(network, c, grid_ug):
@@ -1199,22 +1164,22 @@ fig.colorbar(mesh, ax=axes, shrink=0.8, label="people whose call flips")
 print(pd.DataFrame(rows).round(2).to_string(index=False));
 
 # %% [markdown]
-# **Rolette ND:** the curve is wide, which is the fog, but nearly all of it sits over white. A call
-# flips only if the reading tops about 10, which has a 14% chance, and then few people are affected.
-# **Delaware OH:** the curve is narrower, yet it overlaps colour on both sides, and 74% of readings would
-# flip some call, up to 2.7 million people. **Lake IL** is the most populous empty county. A reading
-# could flip Chicago's calls, and 45% of readings flip something, but its EVSI is still only about 12
-# thousand. A flip is necessary and not sufficient: moving a county from 0.51 to 0.49 changes its label
-# and hardly changes its expected wrong calls.
+# **Rolette ND:** the curve is wide, which is the fog, but almost all of it lies over white. A call
+# flips only if the reading tops about 10, a 14% chance, and then few people are affected. **Delaware
+# OH:** the curve is narrower, yet it overlaps colour on both sides, and 74% of readings would flip
+# some call. **Lake IL**, the most populous empty county, beside Chicago, could flip Chicago's call,
+# and 45% of its readings flip something, yet its EVSI is only about 12 thousand. A flip is necessary
+# but not sufficient: moving a county from 0.51 to 0.49 hardly changes its expected wrong calls.
 #
-# ## 6. Choosing twenty sites, and the second failure
+# ## 6 · Choosing twenty sites
 #
-# One monitor is a formula. Twenty is a search: pick the best, update, repeat. Scoring every candidate
-# every round would take minutes. The **lazy loop** scores everyone once, then in later rounds rescores
-# only the 50 sites with the best last score. It rests on a site's gain rarely rising after another
-# pick. The pilot found that false as stated (gains rose in 75% of pairs) but harmless (median ratio
-# 1.0002), and the lazy top 20 matched a full greedy run exactly at 100 and 200 draws. Because that
-# assumption is known to be false, the loop here pays for one full rescore on its last round.
+# One monitor is a formula. Twenty is a search: pick the best, update the field, repeat. Scoring all
+# 1,238 candidates in every round takes minutes, so we use the **lazy** greedy search (Minoux 1978):
+# it scores everyone once, then rescores only the 50 sites with the best previous scores. That is safe
+# when a site's gain never rises after another pick. Here it is not quite true. In tests on this
+# field, gains rose in three pairs of picks out of four, but only by a median ratio of 1.0002, and the
+# lazy top 20 matched a full greedy search exactly at 100 and 200 draws. To catch a miss anyway, the loop rescores
+# every remaining candidate in its last round.
 
 # %%
 def lazy_greedy(network, pool=candidates, rounds=20, top=50, recheck=False, start=None):
@@ -1255,18 +1220,14 @@ print(", ".join(short_name[main["picks"]]))
 print(f"Sum of greedy gains: {sum(main['gains']) / 1e6:.2f} million people")
 
 # %% [markdown]
-# The audit passes: the last pick is still the best of all 1,219 remaining candidates. The audit reads
-# the last round only, so it says nothing about earlier rounds: for those we have only the pilot's
-# match above, on another fit. The 20 picks fall into two tight clusters, Ohio around Columbus and lower
-# Michigan. Do not read those clusters as a fact about the air yet: section 7 shows the search changes
-# which sites are picked. The search order is not a merit order, because each pick depends on the ones
-# before it. The first site is the only one scored exactly. Across fits and draw sets, Delaware County
-# OH came first in all but one pilot draw set.
+# The last-round check passes: the lazy choice, Greene OH, is also the best of all 1,219 remaining
+# candidates, though that checks the last round only. The 20 picks fall into two tight clusters, ten
+# around Columbus and ten in lower Michigan. The printed order is the order of the search, not of
+# merit, because each pick depends on the ones before it and only the first is scored exactly.
 #
-# Is that list a fact about the air, or about our draws? **Split the draws and run the search on each
-# part.** Our pilot asked for at least 16 of 20 in common. It started with 100 draws, so 50 a side, and
-# it failed at 12. Here is the same test on this fit, with four disjoint sets of 50, then two sets of
-# 100.
+# Is this list about the air, or about our draws? **Split the draws and search each part.** A list we
+# could hand over as a ranking would need most picks to survive, say 16 of 20. Here are four disjoint
+# sets of 50 draws, compared in pairs, and two sets of 100.
 
 # %%
 def overlap(a, b):
@@ -1282,17 +1243,17 @@ print(f"Top-20 overlap, 50 draws against 50:   {overlap_50}")
 print(f"Top-20 overlap, 100 draws against 100: {overlap_100}")
 
 # %% [markdown]
-# **The second failure.** Read the printed pairs against the bar of 16. Some 50-draw pairs usually miss it, and across builds
-# they ranged from 13 to 19 with the 100-draw pairs often no better. The pilot's first split gave 12,
-# which is what sent us to 200 draws. Do not expect overlap to climb steadily with draws: the pilot's
-# overlaps were 12, 19 and then 17 at 50, 100 and 200 a side, and review reruns on fresh draw sets gave
-# 16-18. **Read it as about 17 of 20, sometimes 13**, whatever the draws. That number alone rules out a
-# fixed ranked list, because the last places change with the random draws. All the picks stay nearby,
-# though: in the pilot, 90-100% of one half's picks had a pick of the other half within 100 km.
+# ### Failure 2: a ranked list does not survive new draws
 #
-# How far does a set of monitors reach? Below, the share of each county's uncertainty removed by the
-# picks so far. The readings are unknown, so this shows how much fog lifts, and not which way a county
-# moves. The picks crowd into the gaps around existing sites, and the effect fades within about 200 km.
+# The 50-draw pairs share 15 to 19 picks and the two 100-draw lists 17. On other runs of the notebook
+# the pairs went as low as 13, and more draws did not steadily help, so read it as **about 17 of 20,
+# sometimes 13**. That alone rules out a fixed ranked list: the last places change with the random
+# draws. The picks stay close, though: 90-100% of one half's picks lie within 100 km of a pick from
+# the other half.
+#
+# How far does a set reach? The maps show the share of each county's uncertainty removed after 5, 10
+# and 20 picks: how much fog lifts, not which way a county moves. The picks crowd into the gaps
+# between existing sites, and their effect fades within about 200 km.
 
 # %%
 box = xy_county[main["picks"]]
@@ -1310,14 +1271,14 @@ fig.colorbar(shapes, ax=axes, shrink=0.7, label="share of uncertainty removed")
 fig.suptitle("Orange: new monitors. Black: existing sites", fontsize=11);
 
 # %% [markdown]
-# ## 7. How many monitors? The third and fourth failures
+# ## 7 · How many monitors?
 #
-# A greedy gain is exact only in round one. After that, the loop keeps each draw's mean fixed, because
-# the first monitor's reading is unknown. So adding up the gains answers a slightly different question,
-# and the temptation to read that sum as "people moved" is strong. The honest number comes from
-# simulating readings **jointly** at all the chosen sites, updating every draw on all of them at once,
-# and making the calls. We simulate one set of 20 readings and use the first $k$ for each size, so the
-# sizes differ only by the sites added, and the step from one size to the next is measured directly.
+# A greedy gain is exact only in the first round. After that the search keeps each draw's mean fixed,
+# because the earlier readings are unknown, so the gains do not add up to "people moved". To get that
+# number we value the set directly: simulate readings **jointly** at all the chosen sites, update
+# every draw on all of them at once, and make the calls. We simulate one set of 20 readings and use
+# the first $k$ for each size $k$, so sizes differ only by the sites added. The cell also values three
+# rules of thumb and a noisier reading.
 
 # %%
 def joint_curve(field_, picks, sizes, sims=1500, seed=0, noise_scale=1.0):
@@ -1447,42 +1408,49 @@ ax.set(xlabel="monitors funded", ylabel="people per extra monitor (thousand)")
 ax.set_title("Set your own line here. Black bars: 2 se of each step", fontsize=11);
 
 # %% [markdown]
-# **The third failure.** The dashed line is what you get by adding up greedy gains: about 1.7 million
-# people at 20 monitors. The simulation says about 0.73. **The sum overstates by more than 2x here**,
-# by 1.7-2.4x at twenty across builds, and by 1.3-2.1x in the pilot, whose joint values were 1.08-1.22
-# million. The sums are also unstable across draw sets (1.52-2.47 million in the pilot). Only the first monitor is safe, since
-# its gain is an exact value. This list is worth **about 0.7-1.0 million people for 20 monitors**:
-# about 0.7-0.95 on these draws and 0.9-1.0 on a disjoint set, as section 8 prints. The pilot's
-# 1.08-1.22 is higher, and we did not explain that gap.
+# ### Failure 3: summed gains are not people
 #
-# **The stopping rule** is the right-hand panel: how many people the next monitors move, per monitor. We
-# have no sourced cost for a monitor, so we will not draw the line for the planner. Draw yours in
-# people per monitor, and stop where the bars cross it. The bars fall from about 60 thousand for the
-# first few monitors to about 30 by 8-12 and about 20 by 12-20. Monitors 12 to 20 still add about 0.15
-# million people, many standard errors from zero. It steps down after five and flattens by 12-20, but it
-# stays well above zero, so your line sets the stopping point. The first five monitors do about half
-# the work of twenty. These bars are for the first list: the moving-means list below has only two
-# points printed.
+# The dashed line adds up greedy gains: about 1.7 million people at 20 monitors. The simulation says
+# 0.73 million. **The sum overstates by about 2.4 times** (1.7-2.4 over several runs), so only the
+# first monitor's gain is safe to quote. On a disjoint set of draws the same list is worth about 1.0
+# million (section 8), so call it **0.7-1.0 million for twenty monitors**. Other runs have valued it
+# as high as 1.2 million.
 #
-# **Against the rules of thumb,** at five monitors EVSI is worth about three to five times either
-# sensible rule, and many times the "most uncertain" rule. At twenty the sensible rules catch up to
-# about three quarters of this list, because any list that crowds into populous near-line areas finds
-# some value. The pure uncertainty rule never does.
+# **When to stop** is the right-hand panel. We have no sourced cost for a monitor, so the planner
+# draws the line, in people per monitor. The first monitor moves about 140 thousand people, the next
+# few about 50-60 thousand each, monitors five to twelve about 30 thousand and twelve to twenty about
+# 20 thousand. The first five do about half the work of twenty, but the curve never reaches zero:
+# monitors 12 to 20 still add 0.15 million people (se 0.02). There is no natural stopping point.
 #
-# **The window gap.** The value is a what-if, as the top of this notebook said. As a rough size, year effects
-# here have an sd of about 0.1, so a three-year mean drifts by about 0.05 on the log scale. That raises
-# the variance of the reading noise by about a fifth, or its sd by about a tenth, and the printed run
-# with that noise loses under a tenth of the value.
+# **Against the rules of thumb**, at five monitors EVSI is worth three to five times the two sensible
+# rules (uncertainty times people; most populous empty counties) and nine times "most uncertain". At
+# twenty the sensible rules recover about three quarters of the value, because any list that crowds
+# into populous near-line areas finds some. The uncertainty rule never does.
 #
-# ### The fourth failure: the search's shortcut bends the picks
+# **The window gap.** Year effects have an sd of about 0.1 on the log scale, so a later three-year
+# mean drifts by about 0.05, which raises the reading noise variance by about a fifth. With that noise
+# the list loses less than a tenth of its value (0.67 million).
 #
-# The third failure looks like a reporting error, and it is more than that. After a pick, a county's
-# variance shrinks but its mean stays put, since the reading is unknown. So a county near 0.5 stays near
-# 0.5 and keeps drawing picks, when half the possible readings would in truth have settled it. So the
-# first search misjudges what a set is worth. The fix is to score what a set leaves behind. Readings move a county's
-# mean by a normal amount, with a variance that adds up pick by pick, and the expected loss is then an
-# integral per county. The new search below uses that score, and `joint_curve` then values its list
-# exactly as it valued the first.
+# **Almost none of the value lands in empty counties**: 0.02 million (se 0.01) of the 0.73, where 1.15
+# million people are at risk. The rest is a firmer read on counties that already have monitors.
+#
+# ### Failure 4: the search's shortcut bends the picks
+#
+# After a pick, a county's variance shrinks but its mean stays put, so a county near 0.5 keeps drawing
+# picks when half the possible readings would have settled it. The search misjudges which sets are
+# worth most, not only how much.
+#
+# The fix is to score what a set leaves behind. For one Gaussian county $j$, readings at a set of
+# sites move its mean by a normal amount whose variance $u_j$ adds up pick by pick. With $m_j$ the
+# county's mean distance from the line on the log scale and $s_j^2$ its total variance, the expected
+# loss after the set is a one-dimensional integral,
+#
+# $$\text{people}_j\;\mathbb{E}_{z}\big[\min(p_j, 1 - p_j)\big], \qquad
+# p_j = \Phi\!\left(\frac{m_j + z\sqrt{u_j}}{\sqrt{s_j^2 - u_j}}\right), \quad z \sim \text{Normal}(0, 1),$$
+#
+# summed over counties. The **moving-means** search below uses that score, with the draws pooled into
+# one mean and variance per county. `joint_curve` then values its list exactly as it valued the first.
+
 # %%
 class JointNetwork(Network):
     """A search that scores what a set leaves behind, with each county's mean free to move.
@@ -1554,24 +1522,20 @@ print(f"Of the moving-means list's {spread_overall[1].mean() / 1e6:.2f} million,
       f"million falls in empty counties (se {spread_in_empty[1].std() / root_n / 1e6:.2f})")
 
 # %% [markdown]
-# **The moving-means list is worth a fifth to a quarter more** at 20 monitors, and it shares only about 13
-# picks with the first. It keeps most of Columbus and lower Michigan and adds Kansas and Indiana. The
-# gain at five monitors is small. Its score is a crude approximation, so treat this list as a lower
-# bound on what a better search could find, and not as a best list. Section 8 scores both lists on the
-# three other fields, and the moving-means list wins on each. The clusters themselves survive: median
-# spacing is about 43 km against 40, and 17 of 20 picks stay in Ohio and Michigan. From here on, "the
-# first list" is the fixed-means one and "the moving-means list" is the other.
+# **The moving-means list is worth a fifth to a quarter more** at twenty monitors: 0.91 million
+# against 0.73 here (difference 0.18, se 0.04). At five the gain is small, 0.42 against 0.37 (se
+# 0.03). It shares 13 picks with the first list, keeps most of Columbus and lower Michigan, and adds
+# two Kansas counties near Wichita and one in Indiana. Its score is crude, so treat it as a better
+# list, not the best one. The clusters survive (median gap to the nearest other pick 43 km against
+# 40), and it puts no more of its value in empty counties, about 0.03 million.
 #
-# **Now the catch from section 4, in numbers.** Of the first list's value, only about 0.01-0.05 million
-# falls in empty counties, where about 1.15 million people are at risk. The moving-means list is no
-# different, at about 0.03 million. The rest is a firmer read on places that already have monitors.
+# ## 8 · Whose objective, which standard, which sites?
 #
-# ## 8. Whose objective, which standard, which sites?
-#
-# **Objective is a choice.** A state may not want to find exceedances, so "fewest wrong calls" is not
-# automatically its goal. We keep the p = 0.5 calling rule and change what counts as a loss: missed
-# exceedances only, false exceedances only, or wrong counties with every county counting once. Then we
-# repeat the search at the old 12.0 standard, which is thin: few counties are anywhere near it.
+# **The objective is a choice.** "Fewest people on the wrong side" weighs a missed exceedance and a
+# false one equally, and a state may not want to find exceedances at all. Keeping the call at p = 0.5,
+# we change what counts as loss: missed exceedances only, false exceedances only, every county
+# counting once, and only people in empty counties. Then we repeat the search at the old standard of
+# 12.0, which few counties are anywhere near.
 
 # %%
 with stage("objectives"):
@@ -1611,26 +1575,22 @@ ax.set_title("Every pick of every objective, one row per county, grouped by stat
 ax.grid(True, lw=0.3);
 
 # %% [markdown]
-# The list depends heavily on the objective, about as much as it does on the method term in section 8.
-#
-# - **False exceedances** keeps 12 of the 20, and stays in Ohio and Michigan.
-# - **Unweighted counties** keeps 11, moving out of Ohio towards Michigan and Indiana.
-# - **Missed exceedances** keeps almost none. It leaves for wherever a county sits just below 0.5, and
-#   which counties those are changes with the fit: Kansas and Missouri here, Indiana, Michigan and
-#   Illinois in another build. With the calling rule fixed, this objective pays for pushing a
-#   below-the-line county over 0.5, and Sedgwick KS, near 0.43, is the kind of county it hunts.
-# - **People in empty counties** keeps one. This is the objective closest to the brief's wording, and
-#   about half of it moves to the counties around Indianapolis. The prize is small: those 20 picks move about 0.06
-#   million people in empty counties (se 0.02), of 1.15 million at risk.
-# - **The 12.0 standard** has almost nothing to decide in this crop: at most one undecided county and
-#   one pick, in Montana, and none in some builds. We do not force a shortlist out of that.
+# The list depends heavily on the objective. **False exceedances** keeps 12 of the 20 picks and stays
+# in Ohio and Michigan. **Unweighted counties** keeps 11 and moves towards Michigan and Indiana.
+# **Missed exceedances** keeps none. It pays for pushing a county just below 0.5 over the line, so it
+# goes wherever such counties are: Kansas and Missouri here, with Sedgwick KS at 0.43 the kind of
+# county it hunts. On another run it went to Indiana, Michigan and Illinois. **People in empty counties**,
+# the objective closest to the planner's words, keeps one pick and moves about half the list to the
+# counties around Indianapolis. Its prize is small: about 0.06 million people moved in empty counties
+# (se 0.02), of 1.15 million at risk there. **The 12.0 standard** has one undecided county in the
+# crop, Lincoln MT, and one pick before value runs out, so there is no shortlist to make.
 #
 # ### A second draw set, and the excluded sites
 #
-# Two more runs, each searched both ways. One uses a disjoint set of 200 draws from the same fit, which
-# measures draw noise at the size we actually use. The other drops the excluded sites and refits. These
-# sites have no row in EPA's workbook and carry an exclusion covering the annual standard. They read
-# air, so they stay in by default, but they may be source sites.
+# Two more runs, each searched both ways. One uses a disjoint set of 200 draws from the same fit,
+# which measures draw noise at the size we use. The other refits without the 15 crop sites
+# **excluded** from comparison with the annual standard. They measure real air, so they stay in by
+# default, but some may sit beside sources.
 
 # %%
 main_field_rows = {"fixed-means list": (joint.loc[20, "joint"], joint.loc[20, "se"]),
@@ -1693,21 +1653,21 @@ print("Change side:", ", ".join(f"{short_name[i]} {p_now[i]:.2f} to {p_drop[i]:.
                                 for i in np.flatnonzero((p_now > 0.5) != (p_drop > 0.5))))
 
 # %% [markdown]
-# Two disjoint sets of 200 draws share about 18 of 20 picks, which is draw noise at the size we use.
-# Dropping the 15 excluded sites in the crop keeps the fit healthy, moves `ell` from about 310 to about
-# 350 km, and shares only about 11 of 20 picks (9-12 in the pilot). That is **more than draw noise**,
-# and it is not a local change for the first list: most of its Ohio picks go, and Michigan and Illinois
-# take over, so "within 100 km of a kept pick" flatters it, because one kept pick at Delaware OH sits
-# near the whole Ohio ring. The moving-means list holds up better and keeps its Ohio picks. About 6
-# counties change side of 0.5, printed above, Franklin among them. One of its four sites, reading
-# 9.86, is excluded; we did not isolate which sites drive the move. The choice needs someone who knows why each was
-# excluded.
+# Two disjoint sets of 200 draws share 18 of 20 picks, and the moving-means search 19: that is draw
+# noise at the size we use. Dropping the excluded sites keeps the fit clean and moves `ell` from about
+# 310 to 350 km, but the first list keeps only 11 of its 20 picks: **more than draw noise**. Most of
+# its Ohio picks go and Michigan takes 16 places, so "85% within 100 km of a kept pick" flatters it,
+# since the one kept pick at Delaware OH sits near the whole Ohio ring. The moving-means list holds up
+# better, keeping 12 picks, its Ohio ones among them. Six counties change side of 0.5, Franklin OH
+# among them; one of Franklin's four sites, the one reading 9.86, is excluded. We did not isolate
+# which sites drive the move; whether to keep them depends on why each was excluded.
 #
 # ### The method term, against the instruments themselves
 #
-# Section 2 flagged this. The model learns the method term across sites, and BAM sites are rural, so
-# the term can pick up rural air. There is a direct check: an FRM filter and a continuous instrument
-# running at one site on one day saw the same air.
+# Section 2 flagged the method term, which the model learns across sites and which can absorb rural
+# air. There is a direct check: where an FRM filter and a continuous instrument ran at the same site
+# on the same day, they saw the same air, and their ratio measures the instrument alone. We refit with
+# the pairs as the prior on the method term and search both ways on the new field.
 
 # %%
 print(f"BAM sites: mean {crop_sites.loc[crop_sites['share_BAM'] > 0.5, 'mean'].mean():.1f} {UG}, mean log density "
@@ -1752,43 +1712,34 @@ print(pd.DataFrame({field_name: {list_name: f"{value / 1e6:.2f} ({se / 1e6:.2f})
                     for field_name, row in worth.items()}).T.to_string())
 
 # %% [markdown]
-# **The pairs and the model disagree, and that moves the totals and the values more than anything else
-# in this section.** BAM sites are cleaner and more rural than the rest, and the across-site term puts
-# BAM about 10% low where the pairs say about 3%. T640 goes the other way, and T640 sites are the most common. With a prior
-# from the pairs and nothing else changed, the fit stays clean, and:
+# BAM sites are cleaner (6.2 against 8.0 µg/m³) and much less crowded than the rest, and the
+# across-site term puts BAM about 10% low where the pairs say about 3%. For T640, the most common
+# instrument, it goes the other way: +3% in the model, +6% in the pairs. **Of the checks in this
+# section, this disagreement moves the totals and the values most.** With the paired prior the fit
+# stays clean. About 7.4 million people are at risk instead of 10, 0.4 million rather than 1.15 in
+# empty counties, and 259 counties are undecided instead of 452. Only 2 counties are called above: Franklin OH, Wayne
+# MI and Kent MI cross below, and Cook IL lands on the line at 0.50, so the people in counties called
+# above swing between about 1 and 6 million on that one call.
 #
-# - about 7.4 million people are at risk, not 10, and about 0.4 million in empty counties, not 1.15;
-# - about 250 counties are undecided, not 450;
-# - only 2-3 counties are called above. Cook IL lands on the line at about 0.5, so the people in
-#   counties called above swing between about 1 and 6 million on that one call. Franklin OH, Wayne MI
-#   and Kent MI all cross below;
-# - the two main lists move about 0.3-0.4 million people on this field, not 0.7-1.2, and the moving-means
-#   list still wins. A moving-means list searched on this field is worth about 0.5-0.6 million, so
-#   0.3-0.4 is a floor;
-# - the first search's own list barely resembles its main list (0-7 of 20 across fits), while the
-#   moving-means search keeps about 12 of 20.
+# The lists move too. The first search on the new field shares none of its picks with its main list
+# (0-7 across fits); the moving-means search keeps 12. In the last table (millions, se in brackets)
+# the first two columns score the two main lists on each field: on the second draw set the
+# moving-means list is worth 1.2 million, the first list 1.0, and on the paired field they are worth
+# only 0.37 and 0.31. The last two columns value lists searched afresh on each field. The moving-means
+# search wins on the second draw set and with the paired prior (0.57 against 0.36, though the two have
+# come out level at about 0.5 on another run). Without the excluded sites the two are level.
 #
-# The last table reads as value in millions, with the se in brackets. Its first two columns keep the
-# same two lists and change the field they are scored on, so the differences between rows are as much a
-# statement about the draws and the model as about the lists. Its last two columns value the lists
-# searched on that field, which is a different test. There the moving-means search wins on the second
-# draw set and with the paired prior, and the two are about level without the excluded sites. The
-# paired gap is less firm than it looks: a stored fit from another build, valued the same way, had the
-# two searches level at about 0.5.
+# We keep the learned term in the main run, because the pairs come from selected sites on FRM sampling
+# days and this is one refit. But the 10 million is not settled.
 #
-# We keep the learned term in the main run and report this beside it, because the pairs are not the
-# last word. They are selected sites, they exist only on FRM sampling days, and this is one refit. But
-# the reader should not take 10 million as settled.
+# ## 9 · The band
 #
-# ## 9. The band, and what to tell the planner
-#
-# Four lists, all from the moving-means search, since its main list scored higher on all four fields
-# and it keeps more of its picks when the field changes.
-# Two are draw sets of the main fit, so draw noise counts once. The other two change an assumption:
-# without the excluded sites, and with a method prior from the pairs. A county's standing is how
-# many of the four picked it. We sort the table by place, not by rank, because the data do not support
-# a rank. The first search's lists are printed by state as well, because they show the instability the
-# band is there to catch.
+# The answer is a band of places, built from four lists, all from the moving-means search, since its
+# main list scored higher on all four fields and kept more of its picks when the field changed. Two
+# lists are the two draw sets of the main fit, so draw noise counts once; the other two drop the
+# excluded sites or use the paired method prior. A county's standing is how many of the four picked
+# it. The table is sorted by place, because the data do not support a rank, and the first search's
+# lists are printed by state to show the instability the band absorbs.
 
 # %%
 lists = {"these draws": spread, "other draws": spread_second, "no excluded sites": spread_dropped,
@@ -1845,19 +1796,27 @@ ax.set_title("The shortlist is a band of places. Larger, darker circles survive 
              loc="left", fontsize=11);
 
 # %% [markdown]
-# The band has about 30 counties. **About 15 are on at least three of the four lists, and about 9 are on
-# all four.** Those 9 are the robust core, mostly around Columbus with a few in lower Michigan. The rest
-# depend on an assumption someone has to own, and the Ohio picks depend on the search: on the first
-# search, dropping the excluded sites takes Ohio from half the list to a single pick.
+# Thirty-two counties appear on at least one list. **Fifteen are on at least three of the four, and 9
+# are on all four**: Delaware, Fairfield, Licking, Madison, Pickaway and Union around Columbus, Wood
+# in north-west Ohio, and Barry and Cass in lower Michigan. Those 9 are the robust core; the rest
+# depend on which draws, which sites and which method prior we accept. The first search's lists show
+# how much: dropping the excluded sites takes Ohio from half of its list to a single pick.
 #
-# Random sets of 20 from the band are worth about the same as each other, a little below the
-# moving-means list and above the first list. So a planner choosing any 20 from around these places is
-# close to the best this analysis found, which is a rough statement and not a guarantee: six random
-# sets at 400 simulations each is a small test. The table above is sorted by place on purpose. The blue squares
-# are the picks when only empty counties count, and the map makes plain that they are a different
-# answer.
+# Random sets of 20 from the band are worth 0.81-0.88 million, a little below the moving-means list
+# (0.91) and above the first list (0.73). So a planner who picks any 20 from around these places is
+# close to the best this analysis found. Six random sets is a small test, so that is a rough
+# statement, not a guarantee. The blue squares are the picks when only empty counties count, a
+# different answer.
 #
-# ### What this run cost, and what it never touched
+# So the planner should not fund "where we are most uncertain". For a firmer read on exposure across
+# the populated Midwest, the band around Columbus and lower Michigan is the answer; to resolve calls
+# in empty counties, the list moves towards Indianapolis and the gain is far smaller. Settle the
+# method term before buying anything: it costs no monitors, moves the number at risk by about 3
+# million and cuts the lists' value by half or more. Buy in stages from the band, rescoring each
+# stage. And check the band against satellite-derived PM2.5, EPA's fused surfaces and low-cost
+# sensors, none of which were used here and which would probably shrink the fog in empty counties.
+#
+# ### What the run cost
 
 # %%
 price = pd.Series(PRICE, name="seconds").round(0).astype(int)
@@ -1869,72 +1828,56 @@ assert "libcuda" not in maps, "CUDA is mapped into the annual path"
 print("No JAX module executed, no CUDA library mapped.")
 
 # %% [markdown]
-# Measured peak memory and wall time are in the banner at the top. The largest single items are the
-# three fits and the joint simulations. JAX never ran, so no GPU extra is needed.
+# About 16 minutes on 2 cores. The three fits take a little over 2 minutes each, and the joint
+# simulations and the searches on other fields and objectives take most of the rest. Peak memory was
+# 2.6 GB, and JAX never ran, so no GPU extra is needed.
 #
-# ### What to tell the planner
+# ## Summary
 #
-# 1. **Do not fund "where we are most uncertain".** The map of uncertainty and the map of value are
-#    different maps here, and the most uncertain counties are close to worthless for this decision.
-# 2. **Decide what the monitors are for.** If the aim is a firmer read on exposure across the
-#    populated Midwest, the band around Columbus and lower Michigan is the answer, at about 0.9-1.2
-#    million people moved for twenty monitors from the better list. If the aim is to resolve calls in
-#    empty counties, the list changes, about half of it moving to the counties around Indianapolis, and
-#    the gain is far smaller.
-# 3. **Settle the method term first.** It costs nothing in monitors, and it changes the number at risk
-#    by about 3 million and takes the main lists' value from 0.7-1.2 to 0.3-0.4 million. A moving-means
-#    list rebuilt for the pairs is worth about 0.5-0.6 million. Same-site, same-day
-#    instrument pairs are selected sites on FRM sampling days, so they are evidence, not the last word.
-# 4. **Buy in stages, from the band, and stop on your own line.** The first five monitors do about half
-#    the work of twenty. After that each monitor adds less, and it still adds something at twenty.
-#    Rescore each stage with the joint simulation.
-# 5. **Check before signing.** Satellite-derived PM2.5, EPA's fused surfaces and low-cost sensor
-#    networks were not used here, and we did not check what they show. This field probably overstates
-#    the fog in empty counties without them. Start with the counties in the band and with Sedgwick
-#    County's neighbours, then check the far-from-monitors bias from section 3.
+# - **Uncertainty is not value.** The 20 most uncertain empty counties, in the northern Plains, share
+#   none with the 20 most valuable, and the best of them is worth a thirtieth of the best site.
+# - **The raw files had to be cleaned first.** Superseded T640 series read 1.14 µg/m³ high and moved
+#   60 site-series across 9.05.
+# - **The marginal GP** fitted cleanly (lengthscale about 310 km) and predicted held-out sites and
+#   blocks to about 15%. Real sites crowd the line more than replicated ones, and far new sites read
+#   about 9% low, so the map may run high in empty places.
+# - **About 10 million of 104 million people** are expected to be on the wrong side of 9.0, nine in
+#   ten of them in counties that already have a monitor. The total rests on what counts as a county's
+#   truth (1.4-23 million) and on the method term (about 7 million with a prior from paired
+#   instruments).
+# - **EVSI in closed form** matched a brute-force count of wrong calls for the best site, Delaware OH
+#   (141 against 146 thousand, se 11).
+# - **Twenty monitors are worth about 0.7-1.0 million people moved to a right call on the first list,
+#   0.9-1.2 million on the moving-means list**, and about 0.3-0.6 million on the paired field. Summed
+#   greedy gains say 1.7 million and should not be quoted. The first five do about half the work;
+#   later ones add less but never nothing.
+# - **Report a band, not a rank.** Draw sets share about 17 of 20 picks, dropping the excluded sites
+#   about 11. Nine counties around Columbus and in lower Michigan are on all four moving-means lists,
+#   and random sets from the band are worth nearly as much as the best list.
+# - **The value lands in monitored counties**: about 0.02-0.03 million of it falls in empty counties.
+#   A search for them alone moves towards Indianapolis and resolves about 0.06 of 1.15 million at
+#   risk.
+# - **Limits.** One 19-state crop and one annual model, with no daily model and no model of
+#   preferential siting; the value is a what-if on the 2023-2025 field, and the moving-means score is
+#   crude.
 #
-# No new monitor can help the February 2027 designations. These sites inform the next cycle, from
-# 2028-2030 data at the earliest.
-#
-# ### What this notebook cannot claim
-#
-# - **Anything national, coastal, Californian or Southeastern.** No national model has been fitted.
-# - **A fixed ranked list.** Overlap is about 17 of 20 across draws, about 11 of 20 if the excluded
-#   sites go, and 0-7 of 20 on the first search (about 12 on the moving-means search) if the method
-#   term changes.
-# - **A best list.** The moving-means search beat the first on the main fit, on a crude score, and the
-#   two came out about level without the excluded sites when that field was searched afresh. A better
-#   one may exist.
-# - **That 10 million is the true number at risk.** It depends on the method term and on what counts
-#   as truth in a county: 1.4-23 million across the cases in section 4.
-# - **Greedy gains as people moved,** or a stopping budget in monitors. The rule is built, and the
-#   planner's line is not ours to draw.
-# - **Validated wrong-call rates.** Only a few far-away new sites sit near the line.
-# - **That preferential siting is or is not resolved.** The far new sites lean low, and M2 was not sampled.
-# - **That the daily model is unnecessary.** Neither it nor its gate was run.
-# - **Anything about a wrong call in law.** The loss is on exposure at a county's population centre, and
-#   a large county is one point here.
-# - **A speed for your laptop.** Every time here is from one Ryzen 5950X, on two cores.
-#
-# **The bigger lesson is the plain question.** Before funding a measurement, ask what you would do
-# differently if you had it. If the answer is "nothing", it does not matter how little you know.
+# Before funding a measurement, ask what you would do differently if you had it. If the answer is
+# "nothing", it does not matter how little you know.
 #
 # ## Try it yourself
 #
-# Each of these ran after the finished notebook on 2 cores, in under a minute. First rebuild the field,
-# which the notebook freed: `field = make_field(d, fit)`. Assign each result as written. A bare
-# `lazy_greedy(...)` line leaves the whole network in IPython's output history, and `del field` then
-# frees nothing.
+# Each takes under a minute on 2 cores. First rebuild the freed field with `field = make_field(d,
+# fit)`, and assign results as written, so IPython's output history does not keep whole networks.
 #
-# 1. **A cheaper instrument.** A low-cost sensor reads with more noise. Run
-#    `cheap = lazy_greedy(Network(field, noise_scale=4.0))["picks"]`, and compare with
-#    `overlap(cheap, main["picks"])` and `joint_value(field, cheap, noise_scale=4.0)[0]`. Pass the same
-#    `noise_scale` to both, or the value is for a better sensor than the one you chose for. How much
-#    of the list survives?
+# 1. **A cheaper instrument.** A low-cost sensor reads with more noise. Run `cheap =
+#    lazy_greedy(Network(field, noise_scale=4.0))["picks"]`, and compare with `overlap(cheap,
+#    main["picks"])` and `joint_value(field, cheap, noise_scale=4.0)[0]`. Pass the same `noise_scale`
+#    to both, or the value is for a better sensor than the one you chose for. How much of the list
+#    survives?
 # 2. **A logistics rule.** Suppose a monitor needs a county of at least 50,000 people. Restrict the pool
 #    with `limited = lazy_greedy(Network(field), pool=candidates[population[candidates] >= 50_000])["picks"]`.
 #    Which picks fall out, and what does it cost in joint value?
-# 3. **A shorter reach.** Run `del field` and `gc.collect()` first: a second field is large. Hold `ell`
-#    at its 10th percentile with `short = {**fit, "ell": np.full_like(fit["ell"], np.quantile(fit["ell"], 0.1))}`,
-#    then run `reach = lazy_greedy(Network(make_field(d, short, count=100)))["picks"]`. If a monitor sees
-#    less far, do the clusters spread out?
+# 3. **A shorter reach.** Run `del field` and `gc.collect()` first, because a second field is large.
+#    Hold `ell` at its 10th percentile with `short = {**fit, "ell": np.full_like(fit["ell"],
+#    np.quantile(fit["ell"], 0.1))}`, then run `reach = lazy_greedy(Network(make_field(d, short,
+#    count=100)))["picks"]`. If a monitor sees less far, do the clusters spread out?

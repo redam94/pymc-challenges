@@ -11,119 +11,63 @@
 #
 # | | |
 # |---|---|
-# | **Type** | Advanced worked example - read, run, modify. Part of the large-model series, at its small rung only |
-# | **Data** | Real: Low Carbon London smart meters from UK Power Networks on the London Datastore, CC BY 4.0, and the trial's 2013 price file. 167.9 million half-hours from 5,561 homes, cut down here to three derived files (4.8 MB): hourly group means, a home x event table for 1,088 tariff homes, and the hourly meters of 200 homes. Changed from the source by aggregation and fitting |
-# | **Time** | About 3 minutes on 2 cores (measured), and about 2 of those are the 20 Student-t fits. A laptop may differ, and it was not measured. No GPU is used |
-# | **You will learn** | Saying what was randomised and what was not, and labelling every claim by which · a within-home closed-form fleet that runs in seconds · a placebo on the months before any price existed · why a robust likelihood can get a sum wrong · a crossed day-level model on event means · why homes do not buy certainty and evenings do · cross-fitting a "best responders" claim · turning a posterior into a procurement sentence · block-mean carpets, funnels and calendar rasters in plain matplotlib |
+# | **Type** | Advanced worked example - read, run, modify. Part of the large-model series, run here at its smallest size |
+# | **Data** | Real: Low Carbon London smart meters (UK Power Networks, London Datastore, CC BY 4.0) and the trial's 2013 price file. 167.9 million half-hours from 5,561 homes, reduced to three derived files (4.8 MB): hourly group means, a home x event table for 1,088 tariff homes, and the hourly meters of 200 homes |
+# | **Time** | About 3 minutes on 2 cores, two of them for 20 Student-t fits. No GPU |
+# | **You will learn** | Telling what was **randomised** from what was chosen · why a **group comparison** of volunteers is not an effect · catching a **clock mismatch** between meters and prices · a **within-home baseline** fitted in closed form · a **placebo test** on months before any price existed · why a **robust likelihood** can get a sum wrong · a **day-level hierarchical model**, and why homes do not buy certainty but evenings do · **cross-fitting** a "best responders" claim · turning a posterior into a **procurement chance** |
 #
-# ## The brief
+# ## The setting
 #
-# > *From a network planner at a London distribution operator. The planner, the operator and the
-# > substation are fictional, invented for this notebook, because the public data carry no location.
-# > The meters, the prices and the trial are real.* We can reinforce a substation, or we can pay for a
-# > price signal. Before I put a price signal in the plan I need a sentence I can defend: how many
-# > homes do we have to sign up to have a stated chance of taking a stated number of kilowatts off the
-# > evening peak, on the day we need it? Is it worth chasing the best responders, or do we enrol
-# > everyone? And how far can a 2013 London trial be trusted for that?
+# A substation in a growing part of a city runs close to its limit on winter evenings. The operator
+# can reinforce it with new transformers and cables, or it can pay households to use less at the
+# peak. The price signal is cheaper, but a transformer delivers its kilowatts every evening, while a
+# price signal delivers whatever people decide to do on the night.
 #
-# ## The answer, before the working
+# Suppose a network planner at a London distribution operator asks three questions. How many homes
+# must be signed up to have a stated chance of taking a stated number of kilowatts off the evening
+# peak, on the evening it is needed? Is it worth chasing the homes that respond best? And how far can
+# a London trial from 2013 be trusted for the answer? The public data carry no location, so the
+# substation is hypothetical; the meters, the prices and the trial are real.
 #
-# **Do not put the price signal in the plan as firm capacity. Run a local trial first, and make it a
-# trial of winter evenings.** Nobody tossed a coin for who got the tariff. Somebody did toss a coin
-# for which days had Supply-Following (SF) price events. Every claim below rests on those days, and on
-# a winter evening there are four of them.
+# The trial is **Low Carbon London**, run by UK Power Networks with customers of EDF Energy. Through
+# 2013 about 1,100 homes paid a dynamic time-of-use tariff: a flat default price on most days, and a
+# High or Low price for a block of hours on announced days. **Supply-Following (SF)** events, meant to
+# imitate a grid following its supply, were placed on days and hours drawn at random over the year.
+# **Constraint-Management (CM)** events were placed by hand on days of expected network stress.
+# Thousands of other homes in the project stayed on a flat price, and every home's meter read each
+# half-hour.
 #
-# - **What a price event does.** On a randomised evening High-price event, a home on the tariff used
-#   about 29-42 W less than its own baseline, out of an evening load near 550 W. That is a mean over the
-#   priced hours, not a cut at the peak hour. The range is the choice of baseline. Section 4 argues for
-#   the 2013 end, but only after seeing the placebo, so the range stays. Each end also has its own
-#   interval from 15 events: about -23 to -36 W and -35 to -47 W. For a winter evening alone it is about
-#   37-40 W on all 4 events, or about 55 W on 3 if 28 December is left out. These are volunteers, paid
-#   and protected against losing money. Every figure here rests on the 15 randomised evenings. The
-#   placed peak days are out of the model and out of the baselines behind these figures.
-# - **How many homes.** Offer 100,000 homes at an assumed 24% acceptance and the chance of taking 1 MW
-#   off one winter evening, as a mean over its priced hours, is about 0.4-0.5. Without 28 December it is
-#   about 0.7-0.9, and without either February evening about 0.2-0.4. The 24% has no traced source, so
-#   it is the planner's number to set. One evening moves the answer that far, in either direction,
-#   which is the whole finding: **four evenings limit this, not 1,088 homes.** Measured at the
-#   18:00-20:00 peak itself the first figure is about 0.5-0.6, but only 3 of the 4 evenings priced
-#   those hours.
-# - **What 28 December is.** It does not stand alone. Every SF event after 19 December shows nothing,
-#   Low prices included. We cannot tell a signal not sent from Christmas week. Two more explanations are
-#   untested: it was the weakest of the five evening event types, and the SF High response fades
-#   through 2013.
-# - **Why more homes do not fix it.** At 200,000 offers, counting homes says a certainty. Counting
-#   evenings says about 0.7 to about 0.97, depending on the baseline and on how far a winter evening is
-#   allowed to stray. If you take the four evenings at face value, one in four falls short at any scale
-#   a planner would consider. A model that lets winter vary gives about 0.72 at 200,000 offers and about
-#   0.8 near 330,000, and four evenings cannot settle which is right. The shared-spread model, which
-#   gives the higher figures, treats 28 December as ordinary noise, and that evening is the one its own
-#   predictive check misses. How often such an evening recurs is an input: 1 in 4 is the raw count, and
-#   about 1 in 11, a post-hoc sensitivity, if it is confined to a Christmas fortnight.
-# - **Chasing the best responders.** They exist, and on held-out events the top quartile is worth about
-#   2.2x the average. The published figure is 3x, but same-event ranking here reads 4.9x, so the two were
-#   not built alike and that is no clean comparison. About half of what same-event ranking claims does
-#   not repeat, and that ranking needs response history no operator holds before a trial. Ranking on
-#   earlier evening load alone gives about 1.6x on all 15 events and 1.8x on the winter four. Both lists
-#   pick bigger homes: as a share of load the 2.2x is about 1.7x, and the load-ranked list shows no
-#   larger a share than everyone.
-# - **How far to trust it.** The within-home checks passed on balance and on the published benchmark.
-#   The pre-trial placebo **failed its gate**, below the line that would have ended the estimate. So
-#   this is a reduced delivery estimate, reported only as a range on the randomised events. The
-#   non-randomised peak days appear in two delivery rows, beside their placebo and outside every range
-#   above, and they carry nothing.
-# - **What the expensive model did.** The Student-t household fit was the plan's main model. Its
-#   location failed on SF Low and on the placed CM band, where it read about an eighth and a quarter of
-#   the mean. On the randomised High band the gap is not clearly separated from the choice of baseline.
-#   M1 stays because a sum needs means, not because Student-t was shown wrong on the headline band. The
-#   closed-form fit takes seconds and carries every kW figure here.
+# That design hides a trap and an opportunity. Nobody tossed a coin for who got the tariff: homes
+# opted in twice, were paid to sign and to stay, and were protected against losing money, so tariff
+# homes against flat homes compares volunteers with everyone else. But somebody did toss a coin for
+# the SF days, and every tariff home lived through the same calendar. Comparing each home with itself,
+# on randomised event days against ordinary days, is a small experiment hidden inside an observational
+# study.
 #
-# **Numbers in the prose are ranges or rounded, and your run may differ.** Results depend on the state of
-# the compile cache as well as on the seed. We ran this source on 2 cores at the same seed in three
-# states: PyTensor's default directory, which did not yet hold these event models, an empty directory,
-# and a full one. The first two printed the same event-model numbers, and differed only in the Student-t
-# diagnostics (median minimum ESS 2,792 against 2,855) and in timings. The full one moved some event-model
-# medians by a few tenths of a watt, the ends of own-spread intervals by up to 2 W, and printed chances by
-# at most 0.01, except one peak-hours row, which moved by 0.03. The homes needed for P = 0.95 without 28 December read about 208,000 and 215,000, because
-# the curve is nearly flat there, and that row has read 601,000 on an earlier fit. Section 6 says which
-# setting was changed to stop one fit going badly wrong on a first run. nutpie is not promised to be
-# bit-reproducible, and another core count may differ. The fleet tables and the pilot figures are stored
-# results, so a run does not change them.
+# The second lesson is about **what the sample is**. A thousand homes feel like a lot of evidence, but
+# every home saw the same evenings, so for "will it work on the night?" the independent units are the
+# evenings, and the trial had only four randomised winter evenings with a High price. Counting homes
+# when the replicates are days is what Hurlbert (1984) called pseudoreplication, and it is the largest
+# error a planner could make with these data.
 #
-# ## Modelling decisions, stated up front
+# The notebook runs at its smallest size. The 200 homes in this repository are fitted live, and a home
+# x event table for all 1,088 tariff homes with at least half of 2013, fitted the same way by the data
+# script, carries the fleet figures. Checks that need the full release (the clock, the calendar
+# balance, the placebo, a 100-home Student-t run) were run when the data were prepared and are loaded
+# from `results/E91/`. Sampler output is not bit-reproducible across machines, so printed chances can
+# move by about 0.01 between runs, and the prose rounds.
 #
-# | Decision | What this notebook does | Why, and what it costs |
+# | part | question | tool |
 # |---|---|---|
-# | **Scope** | The small rung: 200 homes' meters, a stored home x event table for 1,088 homes, one laptop-sized run | The full fleet has no route under the rules for this machine (2 cores, no soak). `PYMC_CHALLENGES_RUN=full` stops with an error |
-# | **Causal contrast** | Randomised Supply-Following (SF) event days, within tariff homes | Homes chose the tariff, so tariff vs flat is **never** an effect here. Flat homes only measure shared day shocks |
-# | **Peak days** | Constraint-Management (CM) days are shown, labelled **not randomised**, with their placebo beside them | The placebo gate failed, so its written action applies: only the SF range is reported. They enter no fit behind a headline. Two delivery rows use them, labelled, outside every range |
-# | **Estimand** | A home's mean hourly load over the priced hours of an announced 2013 event, against that home's baseline, which is fitted to its hours with no event term. An evening cell is the priced hours inside 17:00-23:00: 3 or 6 hours, not one peak hour | Among homes that accepted two opt-ins, passed filters and were paid to stay. It is not "the effect of offering a tariff". So "1 MW off an evening" below is a mean over those hours |
-# | **Clock** | Meter stamps are GMT all year and mark the end of a half-hour | Settled on all tariff homes in the pilot. Section 3 shows the size of the mistake |
-# | **Calendar** | 29 March reinstated as a CM day. 3 May and six days found only in the price file are out of events and baseline. The 3 all-Low days are out of the baseline | The owner's defaults, from a pilot whose own gate failed as written |
-# | **28 December** | Kept, and every delivery result is shown with and without it | It is one of four randomised winter evenings and shows no response. Dropping it would select on the outcome. Keeping it blind would hide the largest single swing here |
-# | **Baseline** | Two are carried: July 2012-February 2014, and 2013 with month x band terms. CM hours are left out of the fit behind the event table, M4 and every delivery figure | The second was chosen after seeing the placebo, so it is post-hoc. Together they make the reported range. A CM cell's mean was already absorbed by its own term, but its shape reached the hour levels, by up to 0.7 W on an SF evening |
-# | **Mean, not typical hour** | M1, a Gaussian fit with conjugate priors, carries all kW. Student-t is shown only for its failure | A substation adds up means. Pilot P10 failed, and its written action is this choice |
-# | **Day-level model** | Gaussian on event means, with `mu` by group, a day effect, and known between-home noise | Post-hoc, replacing the plan's Student-t version on home x event cells, which gave `nu` at its floor and locations unlike the mean |
-# | **Day spread** | Two versions, both on the 15 SF evenings only: one spread for all of them, and one where the 4 winter evenings have their own | The first misses 28 December in its own predictive check. The second leans on its prior, because 4 evenings cannot bound a spread. Both are shown. Leaving out the 17 placed CM evenings is what gate P5 requires, and it costs the spread some precision |
-# | **Acceptance** | An axis, with 24% marked as an assumption | The "24% uptake" in the slides has no denominator we could trace |
-# | **Left out** | Student-t fleet beyond 100 homes, the two-stage pooling models M3a and M3b, the joint check M5, SBC beyond a 10-replicate smoke test, plasmode, any throughput or GPU figure, household-tail claims | Section 9 says what each would have told us. **Recovery of a known response on real noise is unvalidated** |
-#
-# "The pilot" means the checks run before this notebook was written, recorded in `plans/large/E91.md`
-# and stored in `results/E91/`. The gates for P4-P11 were written to a file before they ran, and none
-# changed. P1-P3 had their gates in the plan, and P2's failed as written.
-# Figures from Report A3 and the trial's slides are marked **published**: they were not reproduced here.
-#
-# ## The plan
-#
-# 1. Who chose what, and what the coin decided
-# 2. The first failure: comparing the two groups
-# 3. The second failure: the clock
-# 4. The fix: each home against itself, and the third failure
-# 5. The fourth failure: the robust model
-# 6. Every evening counts
-# 7. How many homes? The fifth failure
-# 8. The best responders, and the sixth failure
-# 9. What this cost, what is missing, and what to tell the planner
+# | 1 | Who chose what, and what was randomised? | the trial design and the 2013 calendar |
+# | 2 | Can we compare tariff and flat homes? | the group difference before prices existed (failure 1) |
+# | 3 | Do the meters and the prices share a clock? | price edges in winter and summer time (failure 2) |
+# | 4 | What does an event do to a home? | a within-home model; balance, placebo (failure 3), benchmark |
+# | 5 | Does a robust likelihood help? | a Student-t model and a quantile shift (failure 4) |
+# | 6 | How much do evenings differ? | the 15 randomised evenings; a day-level hierarchical model |
+# | 7 | How many homes? | delivery chances, counted four ways (failure 5) |
+# | 8 | Are the best responders worth chasing? | ranking rasters, placebo funnels, cross-fitting (failure 6) |
+# | 9 | What would a local trial need? | stage costs and trial sizing |
 
 # %%
 import os
@@ -206,12 +150,11 @@ banner(
 )
 
 # %% [markdown]
-# ## 1. Who chose what, and what the coin decided
+# ## 1 · Who chose what, and what was randomised
 #
-# The release is big, and a notebook does not need most of it. `tools/build_e91_data.py` reduces 167.9
-# million half-hours to three files. Everything in them is a real reading, a mean of real readings,
-# or a closed-form fit to each home's readings. Home numbers are the public anonymous `LCLid` numbers:
-# the release has no address, substation, survey or demographic column.
+# `tools/build_e91_data.py` reduces 167.9 million half-hours to three files. Everything in them is a
+# real reading, a mean of real readings, or a closed-form fit to each home's readings. Homes are known
+# only by the public anonymous `LCLid` numbers: the release has no address, substation or survey data.
 
 # %%
 data.describe("e91_hours")
@@ -284,9 +227,14 @@ print(
 print(cells.groupby("effect", sort=False).agg(cells=("hours", "size"), hours=("hours", "sum")).T.to_string())
 
 # %% [markdown]
-# The whole design fits on one page, and two different things happened on it. The first is who ended
-# up on the tariff, which was a chain of choices. The second is which days carried a price event,
-# and for one family of events that was a draw.
+# The hourly file covers July 2012 to February 2014: six months before the prices, the priced year and
+# two months after. The event table holds 1,088 homes x 168 event cells (one event in one time band),
+# the placebo table 963 homes x 70 cells of the same calendar moved back into 2012, and the flat panel
+# is the mean of 4,090 flat-price homes. The evening High events a planner cares about are 15 SF cells
+# with 72 priced hours and 17 CM cells with 102.
+#
+# Two different things happened in this design. Who ended up on the tariff was a chain of choices.
+# Which days carried a price event was, for one family of events, a draw.
 
 # %%
 fig, ax = plt.subplots(figsize=(12.5, 5.3), layout="constrained")
@@ -387,14 +335,15 @@ arrow((2.55, 1.05), (3.6, 0.65), "a choice", CM_C, offset=(-0.2, -0.33))
 arrow((6.95, 1.85), (7.6, 1.85), "", SF_C)
 arrow((6.95, 0.6), (7.6, 0.6), "", CM_C)
 arrow((10.15, 1.85), (10.45, 1.85), "", DUD_C);
+
 # %% [markdown]
-# Read the top row as a warning and the bottom row as the opportunity. Tariff homes are not a random
-# draw from anything, and the guide to the trial says so in plain words: the flat group "was not a true
-# control". Only the blue line of the bottom row carries a causal claim, and the magenta box is what
-# is left of it for the planner's question.
+# Read the top row as a warning and the bottom row as the opportunity. The guide to the trial says it
+# plainly: the flat group "was not a true control". Only the blue line of the bottom row carries a
+# causal claim, and the magenta box is what is left of it for the planner: 15 randomised evening High
+# events, 11 in summer and only 4 in winter.
 #
-# Here is the year itself. Each column is a day and each row is a half-hour, on trial days that run
-# 05:00 to 05:00. Blue is randomised, orange is placed. The dashed lines mark the evening peak.
+# Here is the year itself: one column per day, one row per half-hour, on trial days that run from 05:00
+# to 05:00. Blue is randomised, orange is placed, and the dashed lines mark the evening.
 
 # %%
 calendar = store.load_json("calendar")
@@ -462,21 +411,22 @@ ax.set_title(
     loc="left",
     fontsize=11,
 );
+
 # %% [markdown]
-# SF blocks sweep the clock evenly, which is the design. Most blue evening blocks fall between April
-# and September, when evening load is low. The orange blocks cluster in the months a planner cares
-# about, which is why they are tempting, and why nobody should treat them as a coin toss.
+# The SF blocks sweep the clock evenly, as a random calendar should, but most blue evening blocks fall
+# between April and September, when evening load is low. The orange blocks cluster in the winter months
+# a planner cares about, which is why they are tempting and why they must not be read as a coin toss.
 #
-# Eight days are in dispute between the price file and the published table. The pilot found that a
-# known peak day could fail its own test, so that gate was too weak. The contrast added after the fact
-# supports the table: 29 March behaves like a peak day and comes back, while 3 May and six file-only
-# days stay out. Those 7 days and the 3 all-Low days are the grey columns.
+# Eight days differ between the price file and the published event table. We follow the table: 29 March
+# behaves like a CM day and is kept as one, while 3 May and six days found only in the price file are
+# left out of events and baseline alike. Those seven days and the three days priced Low all day are the
+# grey columns.
 #
-# ## 2. The first failure: comparing the two groups
+# ## 2 · Failure 1: comparing the two groups
 #
-# The obvious first analysis, M0, takes tariff homes minus flat homes during price events. It is
-# fast, it gives a number, and the number looks plausible. The check is to run the same subtraction
-# where no price could be acting.
+# The obvious first analysis, M0, subtracts the flat homes' mean load from the tariff homes' during
+# price events. The check is to run the same subtraction where no price could be acting: on evenings
+# without an event, and in the months before and after the trial.
 
 # %%
 gap = 1000 * (fleet_kw - panel_kw)
@@ -518,29 +468,26 @@ ax.legend(loc="lower left", ncols=3, fontsize=9)
 ax.set_title(
     "The two groups differ on evenings with no event, so their gap cannot be read as an effect", loc="left", fontsize=11
 );
+
 # %% [markdown]
-# M0 says about -69 W for a randomised evening event. But the groups already sat 18 W apart in late
-# 2012, when no price existed, and 36 W apart on 2013 evenings with no event. People who chose
-# differently can differ by that much before any price. Nothing here can say how much of the widening
-# was a real change in behaviour and how much was who stayed, which is why no kW figure in this
-# notebook comes from it. The group difference appears once more, in section 5, only as a rough check
-# on two other methods.
+# M0 says about -69 W on a randomised evening event. But the groups already sat 18 W apart in late
+# 2012, before any price, 36 W apart on 2013 evenings with no event, and 40 W apart after the prices
+# ended. People who chose differently differ anyway, and nothing here can say how much of the widening
+# was behaviour and how much was who stayed. No kilowatt figure in this notebook comes from M0.
 #
-# **The fix** is to stop comparing groups. Each tariff home becomes its own control. Inside the model
-# the flat homes have one job: their mean load measures the weather, the football and every other
-# shock that all of London shares on the day. Outside it they also help check the calendar and the
-# clock. It is not free, since some of a real response may be lost if
-# tariff homes learned a habit that lasted all year. The within-home contrast misses any effect of
-# simply being on the tariff.
+# **The fix** is to stop comparing groups. Each tariff home becomes its own control, and the flat homes
+# get one job: their mean load measures the weather, the football and every other shock all of London
+# shares on the day. The price is that a habit kept all year would show no contrast between event days
+# and ordinary days, so the within-home estimate misses any effect of simply being on the tariff. The
+# planner's question is about events, so that is the right thing to measure.
 #
-# ## 3. The second failure: the clock
+# ## 3 · Failure 2: the clock
 #
-# The price file is wall-clock. The meters are not. Stamps exist at 01:00 on the day the clocks go
-# forward, and no stamp repeats in October, so they cannot follow wall time. Another release of this
-# feed is documented as stamped at the end of the half-hour, but nothing we read says so for this one,
-# so the data have to. The right convention puts the step in tariff homes' load where the rule
-# predicts in every season. Each bar is the mean step at that offset, across SF price edges, in the
-# direction the price asks for.
+# The price file is in wall-clock time. The meters are not: stamps exist at 01:00 on the day the clocks
+# go forward, and none repeats in October. Nothing we found documents this release's convention, so the
+# data have to tell us. The right convention puts the step in tariff homes' load where the price
+# changes, in both seasons. Each bar is the mean step at one offset between meter stamp and price edge,
+# across SF price edges, signed in the direction the price asks for.
 
 # %%
 clock = store.load_json("pilot_clock")
@@ -591,33 +538,27 @@ print(
     .to_string()
 )
 print(f"Clear of the worse neighbour by {clock['gate_margin_se']} se; the gate asked for 3");
+
 # %% [markdown]
-# The step falls one slot after the edge in GMT months and one slot before it in BST months. Only one
-# convention predicts that pair. A naive join is 30 minutes out in **both** seasons, in opposite
-# directions, and it throws away about 12% of the response in each, with no error and no warning.
-# The smaller bars six slots from each peak, at -5 in GMT and +5 in BST, are probably the far edge of
-# 3-hour events. That is an inference and was not tested.
-# The fix is one line of arithmetic, and it sits in the data script: every hour in this notebook is two
-# half-hours read in the meter's own frame, with wall time derived from it.
+# The step falls one slot after the edge in GMT months and one slot before it in BST months, clear of
+# its neighbours by more than five standard errors. Only one convention predicts that pair: GMT all
+# year, stamped at the end of each half-hour. A naive wall-clock join is 30 minutes out in **both**
+# seasons, in opposite directions, and silently throws away about 12% of the response. The fix is one
+# line in the data script: every hour here is two half-hours read in the meter's own frame.
 #
-# ## 4. The fix: each home against itself, and the third failure
+# ## 4 · The fix: each home against itself
 #
-# M1 is the published method's plain descendant. For home $h$ in hour $t$, in mean kW,
+# M1 is a plain descendant of the trial's published method. For home $h$ in hour $t$, in mean kW,
 #
-# $$y_{ht} \sim \text{Normal}\Big(b_{h,s(t)} + \beta_h z_t + \sum_k \delta_{hk} X_{kt},\ \sigma_h^2\Big).$$
+# $$y_{ht} \sim \text{Normal}\Big(b_{h,s(t)} + \beta_h z_t + \sum_k \delta_{hk} X_{kt},\ \sigma_h^2\Big):$$
 #
-# In words: a home's usual load at this hour and day type, plus how much of today's shared shock it
-# picks up, plus an effect for each kind of price event.
-#
-# - **$s(t)$** has 48 levels: wall hour x weekday or weekend. This is where GMT meters meet wall-clock life.
-# - **$z_t$** is the flat homes' load against its own mean at that hour and day type.
-# - **$\delta_{hk}$** are 11 effects: SF High and SF Low by time band, and three CM terms. Hours next to
-#   an SF event stay in the baseline with no term of their own, so M1 does not measure load moved to
-#   those hours. Section 6 checks them once, on the fleet mean.
-# - **Priors** in kW: $b \sim N(0.4, 0.5)$, $\beta \sim N(1, 1)$, $\delta \sim N(0, 0.3)$. With $\sigma_h$
-#   plugged in, each home's posterior is a small dense solve, so a fleet costs seconds and no sampler.
-#
-# What do those priors say about one hour? We draw from them before seeing any fit.
+# a home's usual load at this hour and day type ($s(t)$, 48 levels of wall hour x weekday or weekend),
+# plus how much of today's shared shock it picks up ($z_t$, the flat homes' load against its usual
+# level), plus 11 event effects $\delta_{hk}$: SF High and SF Low by time band, and three CM terms. Hours
+# next to an event stay in the baseline, so M1 does not measure load moved into them; section 6 checks
+# that once. The priors, in kW, are $b \sim N(0.4, 0.5)$, $\beta \sim N(1, 1)$, $\delta \sim N(0, 0.3)$.
+# With $\sigma_h$ plugged in, each home's posterior is a small dense solve, so a fleet needs no sampler.
+# What do the priors say about one hour?
 
 # %%
 prior_rng = np.random.default_rng(RANDOM_SEED + 1)
@@ -639,15 +580,15 @@ print(
 
 
 # %% [markdown]
-# Wide, and deliberately so. The load prior allows some impossible negative hours, and the event prior
-# allows swings many times any published effect. With about 14,000 hours per home, neither prior
-# matters for a usual load, and a pooled event effect has 72 hours behind it. This matters only in
-# one place: an event cell has a handful of hours per home, so the home x event table uses a prior sd
-# of 5 kW. A first pilot run left the tighter prior on those cells, shrank them towards 0, and
-# understated how much event days differ. It was corrected, and no verdict changed.
+# Wide, on purpose: usual load from about -470 to 1,290 W, with 22% of draws impossibly negative, and
+# event effects of up to about 500 W either way, against a real 2013 fleet mean of 393 W (554 W in the
+# evening). With about 14,000 hours per home neither prior matters for the usual load. The one place a
+# prior could bite is the home x event table, where a cell has a handful of hours per home, so there
+# the data script uses a prior sd of 5 kW, to avoid shrinking event days towards zero and towards each
+# other.
 #
-# Now M1, live, on the 200 homes in this repository.
-
+# Now M1, live, on the 200 homes, with three baselines: the whole window from July 2012 to February
+# 2014, 2013 alone, and 2013 with a term for each month x time band.
 
 # %%
 def deviation(keep):
@@ -741,24 +682,17 @@ print(
 )
 
 # %% [markdown]
-# About a second, with no sampler. The 200 homes land within about 1.3 standard errors of the fleet in
-# every cell, with a standard error of about 5-9 W. They are a repository-sized check and not the
-# estimate. The noise is far from Gaussian, as the kurtosis shows. A mean does not need Gaussian noise
-# to be unbiased, and section 5 shows what happens when a model tries to respect those tails. A home's
-# posterior sd is therefore not trusted here. Standard errors come from the spread between homes and
-# between events.
+# Three fleets in a second. The 200 homes land within about 1.3 standard errors (5-9 W) of the
+# 1,088-home fleet in every cell, so they are a check, not the estimate. The residuals are far from
+# Gaussian, with a median excess kurtosis near 12. A mean does not need Gaussian noise to be unbiased,
+# but one home's posterior sd is too small, so standard errors from here on come from the spread
+# between homes and between events.
 #
-# The fleet results in the rest of the notebook were fitted the same way, by the data script, on all
-# 1,088 tariff homes with at least half of 2013. That took 1-6 s per run in the pilot. The stored table
-# has one term per event cell, and its SF columns come from fits with the CM hours left out.
+# ### Three checks before any delivery number
 #
-# ### Three checks, read before any delivery number
-#
-# Their gates were fixed in writing before they ran.
-#
-# **Is the calendar really random?** The seed and rule were never published, so this is approximate.
-# Flat homes never saw a price, so their evening load on SF days should look like any other day, net
-# of month and day type. We shuffled the SF days 20,000 times under a weekly limit.
+# First, **is the calendar really random?** The seed and rule were never published, so the test is
+# approximate: flat homes never saw a price, so their evening load on SF days should look like any other
+# day's, net of month and day type. We shuffled the SF days 20,000 times under a weekly limit.
 
 # %%
 balance = store.load_json("pilot_balance")
@@ -774,6 +708,15 @@ print(
     .round(2)
     .to_string()
 )
+
+# %% [markdown]
+# It passes. Flat homes' load on the 90 SF days is 2 W below other days (z about -0.5), neither season
+# stands out, and the 15 evening High days sit about one null sd above. The test has no weather data
+# and the weekly limit barely binds, so it is weak, but it gives no reason to doubt the randomisation.
+#
+# Second, a **placebo**: move the 2013 calendar back 364 days, into late 2012 when no price existed, and
+# run the same fit. If the baseline is honest, every cell should read within about 10 W of zero, with a
+# standard error under 5 W; a bias of 25 W would sink the estimate altogether.
 
 # %%
 placebo = pooled["p5"]["bands"]
@@ -811,6 +754,23 @@ print(
     f"Post-hoc, not a rescue: with month x band terms CM's placebo is {pooled['p5_local']['bands']['CM High evening']['mean_w']:+.1f} W, "
     f"SF High evening {pooled['p5_local']['bands']['SF High evening']['mean_w']:+.1f} W"
 )
+
+# %% [markdown]
+# **This is failure 3.** SF Low passes (-0.2 W). SF High has a small mean, -6 W, but a standard error of
+# 11 W from four evenings, twice the limit. And the placed peak days read **+13 W with no price at
+# all**. Nothing comes near 25 W, so the estimate survives in a reduced form: only the randomised SF
+# evenings carry a delivery estimate, and CM days stay on the page, labelled, outside every range.
+# Month x band terms bring CM's placebo down to about +5 W, which hints that one shared-shock
+# coefficient misses the winter evening rise, but that was tried after seeing the failure and does not
+# undo it.
+#
+# One cell deserves a note. The 2012 evening that lines up with 28 December reads about -28 W (se 12)
+# with no price at all, while the other three SF High placebo cells are small. One cell at 2.2 se does
+# not make Christmas week noisy (section 6 finds it about as quiet as any other), but it does warn us
+# against reading a near-zero response on 28 December 2013 as proof that something went wrong.
+#
+# Third, a **benchmark**: does the fleet reproduce the published ranges, -70 to -30 W on peak days and
+# -50 to -15 W on SF evenings? We run it on five baselines.
 
 # %%
 baselines = {
@@ -874,6 +834,24 @@ ax.set(xlabel="effect of the event (W)", title="During prices: the same fleet, f
 ax.legend(loc="center", fontsize=9, bbox_to_anchor=(0.72, 0.55));
 
 
+# %% [markdown]
+# It passes on every baseline, but the window moves everything. With the pre-trial months in, every
+# evening effect is about 10 W more negative, for High and Low prices alike (SF High -41 against
+# -29 W, SF Low +34 against +43 W). A real response would not push a Low price the same way, so this
+# looks like the 2013 level shift that widened the group gap in section 2. On SF High evenings it is
+# about 15 W in summer and only 3 W in winter.
+#
+# The quantity we want compares event days with ordinary days of the trial, which favours the 2013
+# baseline with month x band terms. We only made that argument after seeing the placebo, though, so the
+# whole-window baseline, the one we started with, stays as the other end of a range. Taken from the
+# home x event table, where
+# CM hours are out of every SF figure: **a randomised SF evening High event cut about 29-42 W per home**,
+# out of an evening load near 550 W, as a mean over the priced hours. Resampling the 15 events gives a
+# 90% interval of about -36 to -23 W around one end and -47 to -35 W around the other.
+#
+# The placebo could not test the two February evenings that carry most of the winter signal, because
+# there is no February 2012. The last cell moves them forward to February 2014, after the prices ended.
+
 # %%
 def fleet_fit(keep):
     """The fleet's mean load against M1's baseline, fitted to default hours inside `keep`, in W."""
@@ -901,56 +879,22 @@ print(
     "Spread of a Jan-Feb 2014 default evening, same fit:",
     f"{pd.Series(whole_response[late_quiet]).groupby(trial_day[late_quiet]).mean().std():.1f} W",
 )
+
 # %% [markdown]
-# Three results, one of them bad news.
+# Both read on the side of no response, +18 and +12 W, within two sd (9 W) of an ordinary 2014
+# evening. No sign of a false cut there, on a check added after the fact.
 #
-# **Balance passed.** Flat homes' evening load on SF days looks like any other day's, in both seasons.
-# That test has no weather data, so it can only see what flat load shows. Under a Monday-to-Sunday week
-# the "limit of 3 events a week" does not hold, so the limit we shuffled under barely binds. The word
-# "randomised" stays.
+# ## 5 · Failure 4: the robust model
 #
-# **The benchmark passed.** The fleet reproduces the published ranges on peak days and on SF evenings.
-#
-# **The placebo failed, and this is the third failure.** No price existed in 2012, so anything here is
-# bias or chance. The peak-day placebo is +13.2 W, 3 W over the limit. SF High has an se of 10.6 W on
-# 4 events, twice the limit. No band passed 25 W, so the notebook stays a delivery estimate, but the
-# written action now applies: **report only the SF within-home range**. CM stays on the page, labelled,
-# and it does not carry an estimate. Post-hoc month x band terms take CM's placebo down to about +5 W,
-# which suggests one `beta` across all hours misses the winter evening rise. It does not un-fail a gate.
-#
-# Note the Christmas cell. The single evening that lines up with 28 December has a placebo of about
-# -28 W (se about 12) with no price at all. That is one cell at about 2.2 se, and the other three SF
-# High placebo cells are small, so it does not show that Christmas week is loud: section 6 finds
-# late-December evenings about as noisy as any others. It only stops us reading 28 December 2013's
-# near-zero as proof that the signal was not sent.
-#
-# The placebo used four SF High dates, and the two February evenings that carry the winter mean were
-# not among them, because 2012 has no February here. The last cell moves them forward into 2014, after
-# the prices ended. Both land on the side of no response, within about 2 sd of an ordinary evening, so
-# no sign of a false cut there. That check was added after the fact and uses the fleet mean only.
-#
-# **The window matters.** Using pre-trial data pulls every evening effect about 10 W more negative, in
-# High and in Low alike. A real response to a High price would not push Low the same way. It looks
-# like a 2013 level shift, the same one that widened the gap in section 2. On SF High evenings that
-# shift is about 15 W in summer and about 3 W in winter, so the gap between the baselines is mostly a
-# summer issue. The estimand compares a home with ordinary days of the trial, which favours the 2013
-# window. That argument came after the placebo, so the whole-window figure stays in the range, because
-# the plan fixed it first. The table above is the stored pilot, and its fits still hold CM hours, as the
-# benchmark gate needs. The range is taken from the home x event table instead, the hour-weighted lines
-# printed under it, where CM hours are out of every SF figure. **SF evening range: about -29 to -42 W.**
-# That range has no sampling uncertainty in it. Resampling the 15 events gives about -23 to -36 W around
-# one end and about -35 to -47 W around the other.
-#
-# ## 5. The fourth failure: the robust model
-#
-# Residuals with an excess kurtosis near 12 are the textbook case for a Student-t likelihood, and the
-# original plan was thousands of them. M2 keeps M1's structure and changes one line:
+# Residuals with an excess kurtosis near 12 are the textbook case for a Student-t likelihood. M2 keeps
+# M1's structure and changes one line:
 #
 # $$y_{ht} \sim \text{StudentT}\big(\nu_h,\ b_{h,s(t)} + \beta_h z_t + \sum_k \delta_{hk} X_{kt},\ \sigma_h\big),
 # \qquad \nu_h = 2 + \text{Gamma}(2, 0.1).$$
 #
-# The floor of 2 keeps the variance finite. The prior puts $\nu$ around 20, so the data have to argue for
-# heavy tails. We fit every tenth home of the 200, 20 in all, with one compiled model and `with_data`.
+# The floor of 2 keeps the variance finite, and the prior puts $\nu$ near 20, so the data must argue for
+# heavy tails. We fit every tenth home of the 200 with one compiled nutpie model and `with_data`, and
+# compare with a stored 100-home run.
 
 # %%
 with pm.Model() as m2:
@@ -1062,22 +1006,17 @@ print(pd.DataFrame(fit_pilot["worst"])[["home", "rhat", "nu", "div"]].head(3).to
 # %% [markdown]
 # Two things have gone wrong, and the sampler reports neither as a failure.
 #
-# `nu` sits on its floor: median 2.003, highest 2.37, the same as in the 100 stored fits. The likelihood
-# has run out of room. Hourly load is more heavy-tailed than this model allows.
+# First, `nu` sits on its floor: median 2.003, highest 2.37, as in the 100 stored fits. Hourly load is
+# more heavy-tailed than even this model allows. Second, mixing: no divergences at all, yet only 9 of 20
+# homes reach r_hat 1.01 (40 of the stored 100). Most misses are just too few draws and clear at 2,000
+# draws, but in three homes (1704, 3047, 4687) the chains sit in different modes of `b` or `sigma` and
+# longer runs did not cure it. Home 1704 is here, at r_hat 1.73 with a minimum ESS of 6 and still no
+# divergence. We did not establish why.
 #
-# Then there is mixing. There are no divergences at all. Yet here 9 of 20 homes reach the r_hat gate of
-# 1.01, and in the stored 100 homes 40 did, with 97 reaching 1.02. Most misses are too few draws: six
-# homes rerun at 2,000 draws came out clean. Three homes (1704, 3047, 4687) are a different story, and
-# home 494 did the same on one seed of two, taking 260 s. Homes 1704 and 4687 are both in this run's 20,
-# at r_hat 1.73 and 1.53. The worst has a minimum ESS of 6, and still no divergence. These chains sit
-# in different modes, mostly of `b` and on some homes of `sigma`, and longer runs did not cure it. We
-# did not establish why. Repeated quantised readings at a near-constant base load are a guess.
-#
-# Those are diagnostics. The serious problem is the answer. M1 and M2 disagree in the bottom table,
-# and M2's figures are the smaller ones in all three bands. Where does an event take its watts from?
-# Take the 200 homes' hours during an evening event and compare them with the same homes at the same
-# wall hour and day type on nearby default days, one quantile at a time.
-
+# The serious problem is the answer. M2's effects are smaller than M1's in all three bands, and on SF
+# Low it is not even clearly positive (+50 W against -4 W, paired se 18). Where does an event take its
+# watts from? Compare the 200 homes' hours during evening events with the same homes, hours and day
+# types on nearby default days, one quantile at a time.
 
 # %%
 QUANTILES = np.arange(0.05, 0.96, 0.05)
@@ -1198,44 +1137,30 @@ ax.set_yticks(y, ["SF High\nevening", "SF Low\nevening", "CM High\nevening"])
 ax.set(xlabel="what each method reads, same 100 homes (W)", ylim=(-0.6, 2.9))
 ax.legend(loc="upper center", ncols=3, fontsize=8.2, bbox_to_anchor=(0.5, 1.0), handletextpad=0.1, columnspacing=0.7)
 ax.set_title("The robust fit misses SF Low and CM. On SF High the gap is not clear", loc="left", fontsize=11);
+
 # %% [markdown]
-# The left panel shows where the shift is, and the dashed line shows how far to trust it. On SF evenings
-# the 30th percentile reads about 6 W lower, the median about 15 W, the 90th about 66 W and the 95th
-# about 136 W. But the recipe compares the quantiles of 72 hours with those of a much larger set of hours,
-# and that is biased even with no price. Move the same events by whole weeks onto default hours and it
-# reads about +6 W at the median and about -37 W at the 95th, and those 40 calendars spread widely.
-# Net of that control the median is about -21 W and the 95th about -99 W. So the direction survives,
-# and the middle hours move about as much as the mean hour, -23 W. In percent of the matched quantile the
-# SF shift is -3.5% at the median and -10.4% at the 95th, against -4.3% for the mean hour, so part of
-# the rise in watts is simply that busy hours are bigger. The busiest hours are when people cook and
-# wash, so moved or skipped appliance use is the likely reading, but the data have no appliance column.
-# That part is inference. These compare distributions, not paired hours. The recipe also has no shared-shock
-# term, so its mean hour reads less than M1's on the same homes, about -32 W and -47 to -54 W. The CM days
-# were placed as well, so the CM curve is a description, not an effect.
+# On SF evenings the median hour reads about 15 W lower and the 95th percentile about 136 W lower. Part
+# of that is an artefact: quantiles of 72 hours compared with those of many more are biased even without
+# a price, and the same events moved onto default weeks (the dashed line) read about +6 W at the median
+# and -37 W at the 95th. Net of that, the median moves about 21 W and the 95th about 99 W. As a share
+# of each quantile the shift is -3.5% at the median and -10% at the 95th, against -4% for the mean hour,
+# so busy hours lose most watts partly because they are bigger. Moved or skipped cooking and washing is the
+# likely reading, though the data have no appliance column.
 #
-# Now the right panel. A Student-t location follows the typical hour and discounts busy hours as
-# outliers. It is not a mean. On the 100 stored homes it sees about a quarter of the peak-day cut and an
-# eighth of the SF Low rise. Pilot P10 asked the location and the group difference to agree with the
-# mean within 20% in all three bands. The location missed in all three, and the group difference in two,
-# passing on CM, so the gate failed in every band. The group difference is imprecise on 100 homes,
-# so the firm part is M2 against M1, on SF Low and on the placed CM band.
+# The right panel is the lesson. A Student-t location follows the **typical** hour and discounts busy
+# hours as outliers; it is not a mean. On the 100 stored homes it sees about a quarter of the peak-day
+# cut and an eighth of the SF Low rise; it differs from the mean by more than 20% in all three bands. On the randomised High band the gap is less clear (-30 against
+# -41 W, about 1.7 paired se, inside the baseline range), so M2 is clearly wrong for SF Low and the
+# peak days and only possibly wrong for SF High.
 #
-# The randomised High band does not show it so clearly. M2 reads about -30 W against M1's -41 W there, a
-# gap of about 1.7 paired se. That sits inside this notebook's own baseline range, and the group
-# difference, at -26 W, is closer to M2. This run's 20 homes lean the same way in all three bands, with
-# SF Low's M2 unstable in sign on so few homes (-4 W).
+# **The fix** is to ask what adds up at a substation: the sum of the homes' means. A likelihood that
+# tracks the typical hour **understates the change** wherever busy hours carry it, so M1 carries every kW
+# figure, on that argument rather than because M2 was shown wrong on the headline band.
 #
-# This was the plan's likely failure. It predicted that the Student-t fleet would be decoration. It did
-# worse on SF Low and on CM, where a sum built on it would have **understated the change**. **The fix** is
-# to ask what adds up at a substation. It is the sum of means, in kilowatts, so M1 carries the kW figures
-# on that argument, not because M2 was shown wrong on the headline band. Student-t would be kept only for
-# spread, which this notebook does not report. The two-stage pooling models in the plan are built on M2's
-# draws, so they inherit this and are not reported as results.
+# ## 6 · Every evening counts
 #
-# ## 6. Every evening counts
-#
-# Here are the 15 randomised evening events, one panel each, as the whole fleet's response hour by
-# hour against a baseline fitted to default hours of 2013. These are group means of 1,088 homes.
+# Here are the 15 randomised evening events, one panel each, as the whole fleet's response hour by hour
+# against a baseline fitted to the default hours of 2013.
 
 # %%
 with stage("Fleet curves"):
@@ -1284,17 +1209,12 @@ fig.suptitle(
 );
 
 # %% [markdown]
-# This is the notebook's main exhibit. Most panels show the same plain thing: load drops when the price
-# starts and comes back when it ends. On this 2013 baseline summer evenings read -15 to -35 W, and the
-# two February evenings are deep, at -68 and -59 W. That summer shallowness depends on the baseline, and
-# season was not randomised: on the whole window summer averages -42 W against -40 W for winter. Less
-# to switch off in summer is a guess. 4 December reads -33 W, on 3 hours. And **28 December shows almost
-# nothing**, about -2 W, with no step at 17:00. Every home saw the same evening, so that one flat line
-# is one observation, not a thousand.
-#
-# A corner figure covers event hours only: 11 February's -68 W is 3 hours, and its whole 17:00-23:00 band
-# averages about -28 W, because load comes back after the price ends.
-
+# This is the main exhibit. Most panels show the same plain thing: load drops when the price starts and
+# comes back when it ends. Summer evenings read -15 to -35 W on this baseline (season was not
+# randomised, and on the whole window summer and winter both average about -40 W). The two February
+# evenings are deep, at -68 and -59 W, and 4 December reads -33 W. **28 December shows almost nothing**,
+# about -2 W, with no step at 17:00. Every home saw the same evening, so that flat line is one
+# observation, not a thousand.
 
 # %%
 table_w = home_tables["local"][:, cells.index]
@@ -1395,61 +1315,49 @@ print(
     f"Fleet mean in the 3 hours before an event {before_w.mean():+.1f} W (se {before_w.std(ddof=1) / np.sqrt(15):.1f}); "
     f"in the 3 hours after {np.nanmean(after_w):+.1f} W (se {np.nanstd(after_w, ddof=1) / np.sqrt(np.isfinite(after_w).sum()):.1f}, {np.isfinite(after_w).sum()} events)"
 )
+
 # %% [markdown]
-# **28 December is not alone.** The first table is every SF cell from mid-November, signed so that
-# positive is the way the price asked. Every SF event after 19 December shows nothing: 5 cells on 3
-# events, with a mean near 4 W and none clearing 2 se, against about 54 W on the other winter cells,
-# where 34 of 35 clear it. That includes Low prices on 22 and 26 December, which should have raised
-# load. All-Low 19 December, by contrast, still responded, so the change falls between 19 and 22
-# December. We found this after seeing the outcomes, so it is exploratory. It does mean the question is
-# a run of days and not one evening.
+# **28 December is not alone.** In the first table, signed so that positive is the way the price
+# asked, every SF event after 19 December shows nothing: 5 cells on 3 events, mean about 4 W, none past
+# 2 se, against about 54 W on the other 35 winter cells. That includes Low prices on 22 and 26
+# December, which should have raised load, while 19 December, priced Low all day, still responded. We
+# found this after seeing the outcomes, so it is exploratory, but the question is a run of days.
 #
-# Noise is not a credible account of it. A default GMT evening has an sd near 11 W, and late December
-# is hardly louder at about 12 W on 7 evenings, so a true -40 W reading as -2 W would take about 3.5 sd.
-# That leaves four explanations, and this notebook can properly test none of them:
+# Noise cannot explain it: a default winter evening varies by about 11 W, and late December by about
+# 12 W, so a true -40 W reading as -2 W would take about 3.5 sd. Four explanations remain, and the data
+# can test none of them properly:
 #
-# - **The signal was not sent**, or not seen. Nothing in the release can tell.
-# - **Christmas week.** Homes may be away, or may simply not shift at that time of year.
-# - **The event type.** The second table has the 17:00, 12-hour event as the weakest of the five evening
-#   types: -24, -15 and -2 W, mean about -14 W, against about -28 to -43 W for the others. All three
-#   repeats are weak, and within summer the type averages about -20 W against about -28 W for the rest.
-# - **A fade through 2013.** The third table shows SF High evenings weakening by about 3.8 W a month on
-#   the 2013 baseline and 3.6 W on the whole window, and summer alone shows it too. SF Low shows no
-#   trend, and CM shows it on one baseline only. A line through the other 14 evenings predicts about -9
-#   W for 28 December (sd 16). This is a post-hoc check on few events, with season partly mixed in, so
-#   it is no proof.
+# 1. **The signal was not sent**, or not seen. Nothing in the release can tell.
+# 2. **Christmas week.** Homes may be away, or may not shift at that time of year.
+# 3. **The event type.** The 17:00, 12-hour event is the weakest of the five evening types (-24, -15 and
+#    -2 W) in the second table.
+# 4. **A fade through 2013.** SF High evenings weaken by about 4 W a month on either baseline, in summer
+#    alone too, while SF Low shows no trend; the other 14 evenings predict about -9 W (sd 16) for 28
+#    December.
 #
-# Why this matters: the four winter evenings are four different designs (17:00 for 3 h, 17:00 for 6 h,
-# 20:00 for 3 h, 17:00 for 12 h), and they sit at the two ends of the trial, with the two February
-# evenings strongest. "Winter" therefore mixes the start of the trial with its end. Both "one in four"
-# and "ordinary noise" below assume the four are exchangeable, meaning draws from one distribution of
-# winter evenings. If the fade or the event type is real, they are not, and the "without 28 December"
-# rows are not a neutral alternative either.
+# The last two were also found by looking. They matter because the four winter evenings are four
+# different designs at the two ends of the trial, and every model below treats them as
+# **exchangeable**, four draws from one distribution of winter evenings, which these data cannot check.
+# Dropping 28 December would select on the outcome, so the rows without it below are a sensitivity, not
+# a neutral alternative.
 #
-# The last line checks the hours M1 leaves in its baseline. The 3 hours before an event and the 3 after
-# differ little from zero on average, so this fleet shows no large anticipation or rebound. It is a
-# crude check: those hours helped fit the baseline, and single evenings differ (the hours after 11
-# February read about +14 W).
+# The last line checks the hours next to events: about +5 W (se 2) before and 0 W after, so there is no
+# large anticipation or rebound on average, though single evenings differ.
 #
 # ### M4: put the day in the model
 #
-# A home's response on an evening is the sum of three things: its group's usual effect, what was
-# special about that day, shared by every home, and its own noise. On event means,
+# A home's response on an evening is its group's usual effect, plus what was special about that day for
+# every home, plus its own noise. Averaging over homes removes the noise, so we model event means:
 #
 # $$\bar r_e \sim \text{Normal}\big(\mu_{c(e)} + v_e,\ \text{se}_e^2\big), \qquad
 # v_e \sim \text{Normal}(0, \tau_e^2), \qquad \mu_c \sim N(0, 100), \quad \tau_e \sim \text{HalfNormal}(30).$$
 #
-# $e$ runs over the 15 SF evenings only, and $c(e)$ splits them by winter and summer, so SF winter has 4
-# events. $\text{se}_e$ is the between-home standard error, known from the table. One $\tau_e$ is shared
-# by both groups, because 4 events could never estimate their own. That borrowing is a real assumption:
-# it says a winter day varies as much as a summer day does, and 11 of the 15 events behind it are summer
-# evenings. The 17 CM evenings stay out, because the placebo gate failed and its written action bars
-# them from the estimate. That leaves the spread with less to go on, so its prior matters more.
-#
-# This is post-hoc. The plan's version had a Student-t on each home's cell. It gave `nu` of 2.00 and
-# locations unlike the mean, for the reason just shown, so P10's action applies here too. We start
-# with what the priors imply, then fit with both baselines, with and without 28 December.
-
+# Here $e$ runs over the 15 SF evenings, $c(e)$ is winter (4) or summer (11), and $\text{se}_e$ is the
+# between-home standard error, known from the table. One day spread $\tau_e$ serves both seasons,
+# because four events could never estimate their own; that says a winter evening varies as much as a
+# summer one, on evidence that is mostly summer. The CM evenings stay out, so the prior on $\tau_e$
+# matters more. A Student-t version on each home's cell, tried
+# first, again put `nu` at 2 and missed the mean.
 
 # %%
 def event_means(baseline="local", drop=(), kinds=("SF",)):
@@ -1602,6 +1510,17 @@ fit_view = {
 }
 print(pd.DataFrame(fit_view).T.round(2).to_string())
 
+# %% [markdown]
+# Hour-weighted, the four winter evenings average -37 W on the 2013 baseline and -40 W on the whole
+# window, about -55 W without 28 December. Summer evenings sit close together (about -27 W, spread
+# 7 W); winter's four read -68, -59, -33 and -2 W (spread 30 W). The prior predictive comfortably
+# covers them.
+#
+# The fit is clean, with no divergences and r_hat at most 1.01. SF winter comes out near **-39 W (90%
+# interval -52 to -26)**, -42 W on the whole window, and about -51 W without 28 December. The day spread
+# $\tau_e$ is about 11 W (5 to 19), or 7 W on the whole window. With so few events, three more looks:
+# the prior, a predictive check, and a winter spread of its own.
+
 # %%
 with stage("M4, tau_e prior"):
     sensitivity = {scale: fit_m4(tau_scale=scale) for scale in (10.0, 100.0)}
@@ -1700,57 +1619,38 @@ ax.set_title(
     loc="left",
     fontsize=11,
 );
+
 # %% [markdown]
-# Start with the raw crosses, and the tables above the figure. Summer evenings sit close together,
-# about -27 W with a spread of 7 W between events. The four winter evenings read -68, -59, -33 and -2
-# W, a spread of 30 W. The first table is the plain summary: about -37 to -40 W for the four, about -55 W
-# for three.
+# **The prior matters a little:** HalfNormal(10) gives a spread of about 10 W, and HalfNormal(100)
+# changes almost nothing.
 #
-# M4 gave no divergences in any of its 19 SF fits, and section 7 prints that count. It does not fully pass
-# on mixing: the shared fits stay at r_hat 1.01 or below, and four own-spread fits sit above it on `mu` and `tau_e`.
-# SF winter comes out near -39 W (90% -52 to -26) on the 2013 baseline and about -42 W on the whole
-# window, or about -51 to -52 W without 28 December. Between events, `tau_e` is about 11 W (5 to 19). It
-# leans on its prior more than it would with the CM evenings in: HalfNormal(10) gives about 10 W and
-# narrows the winter sd from about 8 W to about 7 W, while HalfNormal(100) changes almost nothing. On the
-# whole-window baseline `tau_e` is only about 7 W (1 to 15), so how much days differ depends on the
-# baseline too.
+# **The check spoils it.** Redraw each day's effect: 14 of 15 event means fall inside their 90% band, and
+# the one outside is 28 December, one of the four evenings that matter. A $\tau_e$ set mostly by summer
+# treats it as ordinary noise, pulls it from -2 to about -20 W, and gives the winter mean an sd of 8 W
+# where the four evenings alone have a raw standard error of 15 W.
 #
-# **Then the check spoils it.** Redraw each day's effect and ask whether the event means could have
-# come from this model. 14 of 15 fall inside their 90% band, which looks fine, and the one that does not
-# is 28 December, one of the four evenings the planner cares about. One `tau_e` is set mostly by the 11
-# summer evenings. It treats 28 December as noise and pulls it from about -2 W to about -20 W, and it
-# gives the winter mean an sd of 7.9 W, when the four evenings on their own would give a raw standard
-# error of 15 W.
+# With a winter spread of its own, the mean barely moves (near -40 W) but its 90% interval opens to
+# about **-64 to -14 W**, with a winter $\tau_e$ near 28 W (14 to 51). Under a HalfNormal(60) prior it
+# becomes 34 W and the interval about -72 to -6 W. These fits are funnels with four events in the neck,
+# so they run at `target_accept=0.99`; none diverges, but four end at r_hat 1.011-1.021 (listed in
+# section 7), and their figures are rounded with that in mind. **Four evenings cannot bound their own
+# spread.** That is a fact about the evidence, so both versions go forward: the shared spread is the
+# narrow reading, the own spread the wide one.
 #
-# So we also fit the winter evenings with a day spread of their own. Their mean barely moves, near -40
-# W, but its 90% interval opens to about -64 to -14 W, with a winter `tau_e` near 28 W (14 to 51). Do
-# not read that as the right spread. With a HalfNormal(60) prior `tau_e` is near 34 W and the interval
-# reaches about -72 to -6 W. That fit ends at r_hat 1.02, and three other own-spread fits reach 1.011-1.013,
-# past the 1.01 we ask for. They stay as they ran, and the figures that rest on them are rounded with
-# that in mind. These fits use `target_accept=0.99`. At 0.95, on a first run with an empty compile cache, the HalfNormal(60) fit at
-# this seed gave 75 divergences and an upper limit of +42 W, and on later runs it gave none. **Four
-# evenings cannot bound their own spread.** That is a finding about the evidence and not a tuning
-# problem, so both versions go forward. The shared spread is the narrow reading. The own spread is the
-# wide one, which sits lower above about 100,000 offers and higher below.
+# ## 7 · How many homes? Failure 5
 #
-# ## 7. How many homes? The fifth failure
-#
-# The planner wants a chance, so we build one. On a new winter evening with $N$ homes offered and a
-# fraction $a$ accepting, the total cut is
+# On a new winter evening with $N$ homes offered and a fraction $a$ accepting, the total cut is
 #
 # $$\text{cut} = N a\,\big(-\mu - v\big) + \sqrt{N a}\;s\,\varepsilon, \qquad v \sim N(0, \tau_e^2),$$
 #
-# with $s$ the between-home sd of an evening's response. Enrolment shrinks the second term relative to
-# the first. It does nothing to $\mu$ or $v$. No number of homes averages out a shared bad evening. The
-# formula treats a new evening as one more draw from the spread of the old ones, which is the
-# exchangeability assumption from section 6. "1 MW" here is a mean over an event's priced hours.
+# with $s$ the between-home sd of an evening's response. More homes shrink the second term relative to
+# the first and do nothing to $\mu$ or $v$: no enrolment averages out a shared bad evening. "1 MW" is a
+# mean over an event's priced hours, and a new evening is one more draw from the old ones.
 #
-# The planner's 1 MW and the 24% are illustrations. The target and acceptance belong to the planner.
-# We compare four ways of counting, then drop the model altogether, because the choice between them is
-# the failure here. The first counts homes, the way a report quoting a fleet-wide standard error does.
-# The second adds what the four evenings leave unknown about $\mu$. The third adds a new evening's own
-# $v$. The fourth gives winter its own day spread. The last line has no model at all: the next evening is
-# one of the four, equally likely.
+# The target and the acceptance rate are the planner's. The 24% used here is the "uptake" in the trial's
+# slides, whose denominator we could not trace, so it is an assumption. We count four ways: homes only,
+# as a fleet-wide standard error does; plus the uncertainty in $\mu$; plus a new evening's $v$; and with
+# winter's own day spread. Last, no model at all: the next evening is one of the four, equally likely.
 
 # %%
 Z_DAY, Z_HOMES = np.random.default_rng(RANDOM_SEED + 3).normal(0, 1, (2, 4000))
@@ -1826,6 +1726,21 @@ print(
 )
 
 
+# %% [markdown]
+# At **100,000 offers** (24,000 homes, needing about 42 W each) every version sits near an even chance
+# with all four evenings (0.38-0.50) and moves to 0.7-0.9 without 28 December; neither row should be
+# quoted alone. At 50,000 nothing passes 0.1.
+#
+# **The fifth failure is at 200,000 offers.** Counting homes says 1.00, and adding the uncertainty in
+# $\mu$ still says 0.99. A new evening's $v$ brings it to 0.91 (0.97 on the whole window); winter's own
+# spread gives 0.72, and the four evenings at face value 0.75. Each extra home shrinks only the noise
+# that was already small. At face value, 28 December's -1.7 W would need about 2.4 million offers to
+# reach 1 MW (480,000 on the whole-window baseline), so one evening in four falls short at any realistic
+# scale.
+#
+# The last two delivery rows borrow the placed CM evenings, beside a failed placebo, and are not part of
+# the answer: CM winter's 0.81 at 100,000 offers rests on days nobody randomised.
+
 # %%
 grid = np.geomspace(1e4, 1e6, 160)
 fig, axes = plt.subplots(1, 2, figsize=(12.5, 4.9), sharey=True, layout="constrained")
@@ -1873,6 +1788,11 @@ fig.suptitle(
     ha="left",
     fontsize=11,
 );
+
+# %% [markdown]
+# The dashed "counting homes" curve is a cliff; the own-spread curve and the face-value steps flatten
+# well below 1. Next, the chance for any acceptance under winter's own spread, and the homes needed.
+
 # %%
 offers_axis = np.geomspace(1e4, 6e5, 90)
 acceptance_axis = np.linspace(0.05, 0.6, 70)
@@ -1934,47 +1854,22 @@ print(
 print(need.round(-2).to_string());
 
 # %% [markdown]
-# Start with 100,000 offers. At 24% that is 24,000 homes, and 1 MW then needs about 42 W each, almost
-# exactly the estimate. So every version sits near an even chance with all four evenings (0.38-0.50) and
-# moves to 0.7-0.9 without 28 December. Nobody should read one figure from that row without the other.
-# At 50,000 offers no version passes about 0.1, on the 2013 baseline or the whole window.
+# With all four evenings, an even chance of 1 MW needs about 26,000 accepting homes (108,000 offers at
+# 24%). An 80% chance needs about 36,000 homes under a shared spread and about 79,000 (330,000 offers)
+# under winter's own, where the curve is so flat that this figure moves between runs; 95% is never
+# reached under winter's own spread. Without 28 December, 80% needs about 31,000 homes. For comparison,
+# the trial's published figures give about 20,000 homes at the CM peak's 50 W and 33,000 at SF's 30 W.
 #
-# **The fifth failure is at 200,000.** Count homes, as a fleet-wide standard error does, and the curve
-# is a cliff that hits 1.00. It says a thousand homes settled the matter. The shared-spread curve is
-# only a little kinder, at 0.91, or 0.97 on the whole-window baseline. Let winter have its own spread and
-# it is about 0.72. Take the four evenings at face value and it is 0.75. The dashed curve is the mistake
-# to avoid, because each extra home shrinks only the noise that was already small. **The fix** is to
-# count what limits you.
-#
-# Is 3 in 4 a ceiling? Only at face value, and only at any scale a planner would consider. 28 December
-# read -1.7 W, not zero (se 10), and at that figure it reaches 1 MW at about 582,000 accepting homes,
-# about 2.4 million offers. On the whole-window baseline it read -8.7 W, which gives about 480,000
-# offers. So one in four falls short at any realistic enrolment if you take the evenings as they read.
-# The own-spread model lets winter vary and gives about 0.72 at 200,000 offers and about 0.8 near
-# 330,000. Four evenings cannot settle which is right.
-#
-# Arithmetic from published inputs says 1 MW needs about 20,000 responding homes at the CM peak figure of
-# 50 W, or about 83,000 offers at 24%. At the SF figure of about 30 W it is about 33,000 homes and about
-# 139,000 offers. In the table, a 50% chance needs about 26,000 accepting homes (about 108,000 offers).
-# An 80% chance needs about 36,000 (about 148,000 offers) under a shared spread and about 79,000 (about
-# 330,000 offers) under winter's own. That curve is nearly flat there, so small changes to the fit move
-# this figure a lot: 75,000 to 83,000 have all appeared. P = 0.95 is not reached by 4 million homes in
-# that version. Without 28 December the same 80% needs about 31,000 homes. The map above is the same
-# answer as a picture for any acceptance, drawn with the wide spread, so the planner can substitute a
-# defensible rate.
-#
-# The last two rows of the delivery table are not part of that answer, and neither is in any range in
-# this notebook. Their days were placed, and the placebo beside them failed its gate. CM winter's 0.81 at
-# 100,000 offers looks better than anything above, and it rests on days nobody randomised.
+# So the answer hinges on a choice the data cannot make. Take the four evenings at face value and one in
+# four falls short at any enrolment; let winter vary smoothly and the chance creeps from 0.72 at 200,000
+# offers to about 0.8 near 330,000. The map gives the same answer for any acceptance the planner can
+# defend.
 #
 # ### How much rests on each evening, and on what counts as the peak
 #
-# Four more checks, all after the fact. Dropping 28 December is only one of four ways to lose an evening,
-# so the first table loses each in turn. The second line shows what borrowing the 17 CM evenings would
-# change. It is not randomised, it sits beside the failed placebo, and it enters no range. The third
-# treats the frequency of a dead evening as an input instead of reading 1 in 4 off the record. The last
-# asks what happens at the hours a planner calls the peak.
-
+# Four checks made after seeing the results: drop each winter evening in turn; borrow the CM evenings
+# for the day spread; treat the share of dead evenings as an input; and look at the hours a planner calls
+# the peak.
 
 # %%
 leave_out, left_fits = {}, {}
@@ -2102,49 +1997,37 @@ print(
     f"At face value, 100,000 offers: {(-24_000 * winter_peaks >= 1e6).sum()} of {len(winter_peaks)} evenings at 18:00-20:00, "
     f"{(-24_000 * frame_main.query('group == 0')['mean'] >= 1e6).sum()} of 4 over priced hours"
 )
-# %% [markdown]
-# **One evening swings it both ways.** Lose 28 December and 100,000 offers reads 0.85 or 0.67. Lose either
-# February evening and it reads about 0.2 on the shared spread and about 0.35-0.38 on winter's own. So the
-# 28 December rows are not the only sensitivity, just the one with a story attached.
-#
-# **Borrowing from CM.** The headline fits use the 15 SF evenings and nothing else. Borrow the 17 CM
-# evenings and the shared spread falls from about 11 W to about 8 W, and 200,000 offers rises from 0.91
-# to 0.95. That row is not randomised, the +13.2 W placebo beside it failed its gate, and it is outside
-# every headline range. It is here to show the size of what P5 took away, and that is small. The
-# stored CM cells also left the baselines behind the SF figures, which moved no evening by more than
-# 0.7 W.
-#
-# **How often is a dead evening?** The 25% row is the raw count of 1 in 4, whose 95% interval runs from
-# under 1% to about 81%. The 9% row is a post-hoc sensitivity: late December is a part of the calendar
-# known in advance, but this fortnight was drawn after seeing the data. If the dead run is confined to
-# it, about 9% of winter days, the ceiling is about 0.91 and 200,000 offers reads about 0.8-0.9. That
-# assumes the confinement, which one December cannot show. The planner should also ask whether late
-# December is a peak that needs covering at all: 28 December sits low among winter evenings, and no
-# evening from 20 to 31 December reaches the top quartile of winter load.
-#
-# **The peak is not the mean.** Flat-home load in January and February peaks at 18:00-20:00. 4 December
-# was priced only from 20:00, so it says nothing about those hours, and **3 evenings priced the peak**,
-# not 4. Those three read about -82, -75 and +13 W on the fleet mean, so 100,000 offers reads about
-# 0.5-0.6 with all three (2 of 3 at face value) and about 0.9-1.0 without 28 December. The 17:00 hour is a
-# slow ramp and dilutes the longer means, which is why these sit above the priced-hours figures at
-# 100,000 offers. At 200,000 offers the own-spread answer barely changes and the shared figure drops
-# below its priced-hours one. These fits borrow each event's standard error
-# from its priced-hours cell, because the stored table has no peak-hour cells, so the shared-spread
-# figure in particular is rough. And January, which holds 8 of the 10 highest-load evenings of 2013, has
-# no randomised evening event at all.
-#
-# ## 8. The best responders, and the sixth failure
-#
-# The published claim is that the best 25% of homes give three times the mean. If that holds, the
-# planner should chase them. The plan reads it as ranked on the same events it then reports, which we
-# could not confirm. A home's estimate on an event is noisy, so the top of any such ranking is partly the
-# luckiest noise.
-#
-# Here is the trap as a picture. Each panel is homes x SF High evening events, in rows of about 20 homes,
-# blue where load fell. Left, sorted on its own events, a tidy gradient, and it looks like a discovery.
-# Middle, sorted on some events and shown on others. Right, the same tidy recipe on the **placebo**, 2012
-# evenings with no price at all.
 
+# %% [markdown]
+# **One evening swings it both ways.** Without 28 December, 100,000 offers reads 0.85 or 0.67; without
+# either February evening, about 0.2 (shared spread) or 0.35-0.38 (own). 28 December is not the only
+# sensitivity, just the one with a story. **Borrowing CM** moves the shared spread from 11 to 8 W and
+# 200,000 offers from 0.91 to 0.95, which shows that leaving those placed evenings out costs little.
+#
+# **How often is an evening dead?** One in four is the raw count, with a 95% interval from under 1% to
+# about 81%. If dead evenings were confined to a Christmas fortnight (20 December to 2 January, about 9%
+# of winter days), the ceiling would be 0.91 and 200,000 offers would read about 0.8-0.9. That window was
+# drawn after seeing the data, so it is a sensitivity, not a finding. The planner might also ask whether
+# late December needs covering: 28 December sits at the 17th percentile of winter evening load, and no
+# evening from 20 to 31 December reaches the top half.
+#
+# **The peak is not the mean.** Flat-home load peaks at 18:00-20:00 in January and February, and 4
+# December was priced only from 20:00, so **only three evenings priced the peak**. They read about -82,
+# -75 and +13 W there, giving about 0.5-0.6 at 100,000 offers and 0.9-1.0 without 28 December. At
+# 200,000 offers they read about 0.7-0.8, no better than the priced-hours figures and, on the shared
+# spread, worse (0.83 against 0.91). These
+# fits borrow standard errors from the priced-hours cells, so they are rough. And January, with 8 of the
+# 10 highest-load evenings of 2013, had no randomised evening event at all.
+#
+# ## 8 · The best responders: failure 6
+#
+# The trial's published claim is that the best 25% of homes cut three times the average. But a home's
+# estimate on an event is noisy, so the top of a ranking is partly the luckiest noise, and a ranking
+# scored on the events that chose it flatters itself: regression to the mean, or the winner's curse.
+#
+# Each panel is homes x SF High evening events, in rows of about 20 homes, blue where load fell. Left:
+# sorted on its own 15 events. Middle: sorted on 10 events, shown on the 5 held out. Right: the same
+# recipe on 2012 placebo evenings with no price at all.
 
 # %%
 def repeats():
@@ -2215,6 +2098,15 @@ print(
 );
 
 
+# %% [markdown]
+# Sorting on the data you display makes a tidy gradient even where nothing is there, as the placebo
+# shows; it looks even stronger than the left panel only because it averages 4 evenings, not 15. The
+# middle panel is what the ranking still knows on unseen evenings: the top rows lean blue, far more
+# faintly. (On 28 December alone the top quartile's gap is about -9 W, se 26: unreadable.)
+#
+# How noisy is one home? A funnel plot draws each home's mean response against its textbook standard
+# error; with nothing happening, 95% of homes should fall inside.
+
 # %%
 def funnel_points(table, weights, sigma):
     seen = np.isfinite(table)
@@ -2267,26 +2159,14 @@ print(
 
 
 # %% [markdown]
-# Middle against left is the arithmetic of ranking. Sorting on the data you display makes a gradient
-# appear even where nothing is there, and the placebo on the right shows one with no price in existence.
-# It looks stronger than the left panel mainly because it averages 4 evenings and not 15. The middle
-# panel is what the ranking still knows on evenings it did not use: the top rows still lean blue, far
-# more faintly. 28 December cannot be read here: ranked on the other 14 evenings, the top quartile's gap
-# is about -9 W with an se of 26, which fits both nothing and a typical gap.
+# In the placebo only 70% do. Hourly load comes in bursts, so one home's textbook se of 27-55 W is far
+# too small; the real spread between homes is 80 W on 15 evenings and 164 W on 4. Priced homes do lean
+# the right way (27.5% below the funnel against 16% in the placebo), so the response is real, but a list
+# of "best homes" read off one table is mostly a list of noise.
 #
-# The funnels show why a home's own estimate is not to be trusted. A funnel drawn from the textbook
-# standard error should hold 95% of homes when nothing is happening. In the placebo it holds 70%. Hourly
-# load comes in bursts, not independent draws, so one home's se of 27-55 W is far too small, and the
-# real spread between homes is 80 W on 15 evenings and 164 W on 4. That gap is mostly the number of
-# evenings, as the last printed line shows. Priced homes do lean the right way:
-# 27.5% fall below the funnel against 16.0% in the placebo. So there is a real response in there, and
-# a list of "best homes" read off one table is still mostly a list of noise.
-#
-# **The fix** is the rule for any such claim: rank on some events, score on others. Each SF type has
-# three repeats, so we do that three times. Then the honest alternative: an operator has no event
-# history, only past load, so we also rank on evening load from before the trial, which a price
-# cannot have touched.
-
+# **The fix** is to rank on some events and score on others. Each evening type has three repeats, so we
+# hold out one repeat of every type in turn. And since an operator has no response history before a
+# trial, we also rank on evening load from July-December 2012, which no price can have touched.
 
 # %%
 def targeting(baseline="local", top=0.25):
@@ -2474,40 +2354,42 @@ ax.set(
 )
 ax.legend(loc="upper left", fontsize=9)
 ax.set_title("Regression to the mean, home by home", loc="left", fontsize=11);
+
 # %% [markdown]
-# Across the three folds the top quartile reads about -141 W on the events that ranked it and about
-# -65 W on events it did not see: 54% of the claimed cut did not repeat. Against all homes on the same
-# held-out events that is about **2.2x, with folds at 2.1-2.5 and a home bootstrap of about 1.9-2.6.** The
-# published figure is 3x, but the two are not like for like. Same-event ranking on this table reads 4.9x,
-# as the top bar shows, well past the dashed line, so we did not reproduce the published method and cannot
-# say the gap from 3x is shrinkage alone. The size in watts varies a lot by fold, from about -48 to -89 W,
-# because the first fold holds both February evenings. The correlation of a home's response between
-# ranked and held-out events is only 0.11-0.19. The right panel shows what that means: most of the
-# ranking predicts almost nothing, and the signal sits in its two most extreme deciles. On the
-# whole-window baseline the ratio is about the same, 2.3x. The ranked list is also a list of bigger homes,
-# so as a share of load the 2.2x is about 1.7x.
+# The top quartile reads about -141 W on the events that ranked it and -65 W on events it did not see:
+# **54% of the claimed cut does not repeat**. Against all homes on the same held-out events that is about
+# **2.2x the average** (folds 2.1-2.5x, home bootstrap 1.9-2.6x). The published 3x is not comparable:
+# same-event ranking here reads 4.9x, so it was not built this way. A home's response on ranked and
+# held-out events correlates at only 0.11-0.19, and the right panel shows the signal sits in the two most
+# extreme deciles. The ranked homes are also bigger (earlier evening load about 730-760 W against
+# 582 W), so as a share of load 2.2x is about 1.7x.
 #
-# Now the version an operator could use before any trial. Rank on July-December 2012 evening load, with
-# no response data at all, and the top quartile cuts about 46 W (se 7) against 29 W for everyone, about
-# 1.6x, on all 15 events. On the winter evenings that a planner cares about it is about 1.8x, against 2.2x
-# for response ranking, so the gap narrows there. Nothing about this ranking was selected on the
-# outcome, so no cross-fit is needed. Those homes cut 4.2% of their evening load against 5.0% for
-# everyone, and the 90% interval on that gap reaches about zero (the bootstrap line). They are bigger,
-# not visibly keener. A targeted offer buys larger homes, and only a quarter of homes qualify, with
-# acceptance among them unknown.
+# Ranking on earlier load alone gives about 46 W against 29 W, **1.6x** (1.8x on winter evenings), with
+# nothing selected on the outcome. But those homes cut 4.2% of their load against 5.0% for everyone:
+# they are bigger, not keener.
 #
-# **This notebook gives no reason to pay for a targeted list.** It has no cost data, so it cannot say
-# when targeting pays. Response ranking can only be built once a trial has run, it is worth about 2.2x,
-# and it has to be measured on held-out events. Load ranking is available earlier and is worth a little
-# less. Neither changes the conclusion of section 7, because a smarter list of homes does nothing about
-# a bad evening: it scales the same four evenings.
+# **These data give no reason to pay for a targeted list**, and without cost data we cannot say when it
+# would pay. Response ranking needs a trial first; load ranking mostly picks larger homes. Neither
+# changes section 7, because a smarter list only scales the same four evenings.
 #
-# ## 9. What this cost, what is missing, and what to tell the planner
+# ## 9 · What it cost, and what a local trial would need
+#
+# First the time each stage of this run took, in seconds.
 
 # %%
 price = pd.Series(PRICE).sort_values(ascending=False)
 print(price.round(1).to_string())
 print(f"Timed stages {price.sum():.0f} s")
+
+# %% [markdown]
+# The 20 Student-t fits took about two minutes of the 181 timed seconds; the closed-form fleet, which
+# carries every kW figure, took one. Student-t for all 1,088 homes would take about 1.5-2 hours on 2
+# cores (extrapolated, not run), and where it differed clearly from the mean it was wrong for this
+# purpose. Its value here is the lesson.
+#
+# The day spread limits everything, so the next cell asks what new winter evenings would buy: the
+# precision of the winter mean, the chance if that mean were known exactly, and how tightly $n$
+# evenings bound the spread and the share of dead evenings.
 
 # %%
 spread_low, spread_high = float(np.median(main["tau"])), float(event_means().query("group == 0")["mean"].std())
@@ -2554,112 +2436,62 @@ store.save_json("notebook_results", results)
 print("Stored", "notebook_results", "; store problems:", store.verify() or "none")
 
 # %% [markdown]
-# ### What this cost, and whether the expensive part changed anything
+# Today's four evenings pin the winter mean to about 6-15 W from the day spread alone; twelve evenings
+# would give about 3-9 W, and reaching 5 W takes between 5 and 36 evenings, which is the range the
+# evidence leaves open. Pinning the mean is not enough: known exactly, 200,000 offers still reads 0.96 at
+# a day sd of 11 W and 0.74 at 28 W. More evenings help mostly by bounding the spread and the share of
+# dead evenings: twelve clean evenings still allow up to 22% dead, twenty allow 14%.
 #
-# The closed-form fleet ran in about a second here and carries every kW figure. The event model cost
-# seconds per fit. The Student-t fits took about two minutes for 20 homes, which is most of this
-# notebook. 1,088 homes would be about 1.5 hours on 2 cores at the pilot's rate and about 1.9 hours at
-# this run's (extrapolated, not run). **Did the expensive model change the decision? No, and on SF Low
-# and CM, where it differed clearly, it was wrong for this purpose.** Its value here is the lesson, not
-# the number. M1 alone gives the answer in seconds.
-#
-# ### What was tested, in plain words
-#
-# - **Could the calendar have been chosen using the weather?** We shuffled the event days 20,000 times
-#   and asked whether flat homes behaved oddly on them. We found no sign of it, on a test that sees only
-#   flat-home load and has no weather data.
-# - **Does the method find an effect when there can be none?** We ran it on 2012, before any price.
-#   SF Low passed, and the other two evening bands missed their limits. This is why the answer is a
-#   range, and why peak days carry nothing.
-# - **Does it agree with the trial's own published figures?** Yes, on both kinds of evening.
-# - **Does a best-responder list survive on events it never saw?** Partly: about 2.2x, not 3x.
-#
-# **What was not tested.** The plan wanted the whole analysis run 250 times on made-up homes where the
-# answer is known, and again on real homes with a response we added ourselves. Neither happened. Ten
-# replicates ran as a test of the machinery, and they say nothing about calibration. So **recovery of
-# a known response on real noise is unvalidated**, and the validation of this notebook is only the
-# placebo, the benchmark and the cross-fit.
-#
-# ### Left out
-#
-# | Left out | Why | What it would have told us |
-# |---|---|---|
-# | Student-t fleet beyond 100 homes | Over the job limit, and P10 says it would not change kW | Spread only |
-# | Pooling models M3a and M3b | Built on M2's draws, so they inherit P10's failure. Ran only in the smoke test | Whether a two-stage shortcut is calibrated |
-# | SBC at 250 replicates, plasmode | Not run | Calibration, and recovery on real noise |
-# | Joint check M5 | Not run | The two-stage shortcut against what it approximates |
-# | Pool throughput and the GPU comparison | The soak was refused, and no GPU work was done for this notebook | Whether a full fleet could run at all |
-# | Household-tail claims | They need the full fleet | Who the extreme responders are |
-# | A log-link Gamma fleet | P10 offered it as an option, and it was not tried | Whether a mean-respecting likelihood mixes better |
-#
-# ### What to tell the planner
-#
-# > *If one in four of those offered accept, an assumption you should replace, offering about 100,000
-# > homes gives about an even chance of taking 1 MW, averaged over the priced evening hours, off a winter
-# > evening. Offering 200,000 gives about 0.7 to about 0.97. If you take the four evenings at face value,
-# > one in four falls short at any scale you would consider. A model that lets winter vary gives about
-# > 0.72 at 200,000 offers and about 0.8 near 330,000, and four evenings cannot settle which is right.
-# > Every price event after 19 December 2013 showed nothing, and we cannot say why, so ask first whether
-# > a late-December evening is a peak you need to cover.*
-#
-# 1. **Do not book it as firm capacity.** The evidence is four randomised winter evenings from a 2013
-#    London trial, in volunteers paid to stay and protected against losing money, before heat pumps
-#    and electric vehicles at scale. The direction of that bias is unknown.
-# 2. **Run a local trial of winter evenings.** Randomise the evenings, not the homes alone, and record
-#    that each signal was sent. Keep one fixed event type and repeat it, with evenings spread through
-#    to the end of the winter, so that event type, time of year and fatigue can be told apart. Price the
-#    18:00-20:00 peak, include January, and include Christmas week on purpose. The printed tables size
-#    it. Today's four evenings give a standard error of 6-15 W, from the day spread alone, depending on
-#    what that spread really is. Twelve evenings would give about 3.2-8.6 W. Getting to 5 W takes about 5
-#    to about 36 evenings, and that range is what the current evidence leaves open. Pinning the mean is
-#    not enough, though: with it known exactly, 200,000 offers still reads about 0.74 at a day sd of 28 W
-#    and 0.96 at 11 W. More evenings help mostly by bounding that spread and the share of dead evenings.
-#    Twelve evenings with none dead still allow a share of up to 22%, and twenty allow 14%.
-# 3. **Measure acceptance.** The whole map moves with it, and the 24% has no traced source.
-# 4. **Do not pay for best-responder targeting yet.** Build the ranking from the local trial and score
-#    it on held-out evenings.
-#
-# ### What this notebook cannot claim
-#
-# - **Anything causal about the tariff itself.** Homes chose it. The contrast is event days within homes.
-# - **Any peak-day delivery figure.** CM days were placed, and the placebo gate failed. The two delivery
-#   rows that touch them are shown beside that placebo and sit outside every range here.
-# - **A settled day spread.** On 15 SF evenings the shared `tau_e` moves with its prior and with the
-#   baseline, about 7-11 W, and the winter spread cannot be bounded at all.
-# - **A single best number.** The range is the baseline, and the second baseline was picked after seeing
-#   the placebo.
-# - **That 28 December was a failure, or why.** It may be a signal not sent, Christmas week, the weak
-#   12-hour event type or the end of a fade through 2013. All four are untested, and the last two were
-#   found after seeing the data.
-# - **That the four winter evenings are exchangeable.** Every delivery figure assumes it. They were four
-#   different designs, at the two ends of the trial.
-# - **A cut at the peak hour.** Delivery is a mean over priced hours. Only 3 evenings priced the peak,
-#   none of them in January, and rebound into neighbouring hours gets one crude check.
-# - **That a substation behaves like this fleet.** It is modelled as a random mix of homes, and the
-#   release has no location.
-# - **Recovery on real noise, or calibration of any interval here.** Neither was run.
-# - **A speed for your laptop.** Every time here is from one Ryzen 5950X, on two cores.
-#
-# **The bigger lesson is to name the unit that limits you.** A thousand homes feel like a lot of
-# evidence. For "will it work on the night", the sample is four nights. Say what was randomised, count
-# that, and let the planner see the gap.
+# So the sentence for the planner is this. *If one in four of those offered accept, an assumption to
+# replace, about 100,000 offers give an even chance of taking 1 MW, averaged over the priced hours, off a
+# winter evening; 200,000 give somewhere between 0.7 and 0.97, and at face value one evening in four falls
+# short at any scale. Every event after 19 December 2013 showed nothing, for reasons we cannot tell.*
+# The advice is not to book the price signal as firm capacity, and to run a local trial of winter
+# evenings first: randomise the evenings, log that each signal was sent, repeat one event type through
+# the winter, price 18:00-20:00, include January and Christmas week on purpose, and measure acceptance.
+# Build any best-responder list from that trial, scored on held-out evenings.
 #
 # The data are from UK Power Networks' Low Carbon London project, London Datastore, CC BY 4.0, changed
-# as described. No endorsement is implied. The UK Data Service release of this trial has different
-# terms, and nothing from it is used here.
+# as described; no endorsement is implied. Nothing from the UK Data Service release is used.
+#
+# ## Summary
+#
+# * **Only the event calendar was randomised.** The tariff-minus-flat gap of -69 W on SF evenings was
+#   already -18 W before prices existed, so no effect can be read from it; each home was compared with
+#   itself instead.
+# * **The meters run on GMT, stamped at the end of the half-hour.** A naive wall-clock join silently
+#   loses about 12% of the response.
+# * **A closed-form within-home model fits a fleet in seconds** and matched the published ranges. The
+#   2012 placebo failed for the placed peak days (+13 W) and was too imprecise for SF High, so only SF
+#   evenings carry estimates: a High event cut **about 29-42 W per home** over the priced hours, the range
+#   being the baseline, whose 2013 end was argued for only after the placebo.
+# * **The Student-t likelihood failed quietly**: `nu` at its floor, stuck chains with no divergences,
+#   and a location that saw a quarter of the peak-day cut and an eighth of the SF Low rise. A substation
+#   sums means.
+# * **Evenings, not homes, limit the answer.** Four randomised winter evenings read -68, -59, -33 and
+#   -2 W, and every event after 19 December showed nothing, for reasons the data cannot separate. A
+#   shared day spread gives a winter mean of -39 W (90% -52 to -26) but misses 28 December in its own
+#   check; winter's own spread widens it to -64 to -14 W and leans on its prior.
+# * **How many homes.** At an assumed 24% acceptance, 100,000 offers give a 0.4-0.5 chance of 1 MW off a
+#   winter evening (0.7-0.9 without 28 December, about 0.2-0.4 without either February evening). At
+#   200,000, counting homes says 1.00 and counting evenings 0.72-0.97. This assumes the four evenings are
+#   exchangeable; only three priced the 18:00-20:00 peak, and none fell in January.
+# * **Best responders are oversold by same-event ranking**: cross-fitted, the top quartile is worth about
+#   2.2x the average, not 4.9x; ranking on earlier load gives 1.6x, and both lists mostly pick bigger
+#   homes.
+# * **Limits.** Volunteers, paid and protected against loss, in 2013 London, with no location. We did not
+#   test whether the pipeline recovers a known response injected into real noise, so the calibration of
+#   these intervals is unchecked.
 #
 # ## Try it yourself
 #
-# Each of these ran after the finished notebook on 2 cores, in under 2 seconds.
-#
 # 1. **A rate and a target you can defend.** Suppose 15% accept and you need 0.5 MW. Run
-#    `chance(own, 0, 150_000, acceptance=0.15, target_mw=0.5)` and the same with `main`. How far apart are
-#    the wide and narrow versions? Then ask for the size of a 2 MW scheme with
-#    `homes_needed(own, 2.0, 0.8)`. Compare the answer with 2 MW at 50 W a home.
-# 2. **Lose a different evening.** Section 7 printed the chance without each evening. Now look inside
-#    one: `gone = fit_m4(drop=("2013-02-11",))`, then `float(chance(gone, 0, 100_000))` and
-#    `np.median(gone["mu"][:, 0])`. If one evening can swing the answer each way, what does that say
-#    about four?
+#    `chance(own, 0, 150_000, acceptance=0.15, target_mw=0.5)` and the same with `main`. How far apart
+#    are the wide and narrow versions? Then size a 2 MW scheme with `homes_needed(own, 2.0, 0.8)` and
+#    compare it with 2 MW at 50 W a home.
+# 2. **Lose a different evening.** `gone = fit_m4(drop=("2013-02-11",))`, then
+#    `float(chance(gone, 0, 100_000))` and `np.median(gone["mu"][:, 0])`. If one evening can swing the
+#    answer each way, what does that say about four?
 # 3. **A smaller elite.** Run `elite, _ = targeting(top=0.10)`, then
 #    `elite["top, held out"].mean() / elite["all homes, held out"].mean()`. Does the ratio rise as the
 #    list shrinks, and how many homes does that leave to carry a megawatt?

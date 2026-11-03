@@ -11,118 +11,72 @@
 #
 # | | |
 # |---|---|
-# | **Type** | Advanced worked example - read, run, modify. Opens the large-model series |
-# | **Data** | Real: BTS Reporting Carrier On-Time Performance, all 14,080,680 rows of 2024-2025, kept here as 494,547 flight x month cells and one month of rows, with integer codes and no names. Rows 1-3 of the price table use the forest of E86, bike hires and daily industry returns |
-# | **Time** | About 12-13 minutes on 2 cores (measured, three model fits, in this environment and in a plain install). 8 cores were not timed, and a laptop may differ. No GPU is used: every GPU number is a stored table |
-# | **You will learn** | How to price a model: rate x gradients + memory + precision · why a rate belongs to a cost shape · timing a PyMC or JAX gradient honestly · reading a claim off an iso-cost map · a ladder of rungs from a counting rule to a hierarchical beta-binomial · redrawing the month when you forecast one · fixing a decision rule before reading any score · writing a price someone can check |
+# | **Type** | Advanced worked example - read, run, modify. The first notebook of the large-model series |
+# | **Data** | Real: BTS Reporting Carrier On-Time Performance, all 14,080,680 rows of 2024-2025, kept here as 494,547 flight x month cells and one month of 547,271 rows, with integer codes and no names. The timing comparison also uses E86's rainforest trees, hourly bike hires and daily industry returns |
+# | **Time** | About 12-13 minutes on 2 cores, mostly three fits of one model. 8 cores were not timed |
+# | **You will learn** | How to **price a model** before buying it: time per gradient x gradients x fits, then memory and precision · why a **rate belongs to a cost shape** · **timing a gradient** honestly in PyMC and JAX · reading a quote off an **iso-cost map** · why a **cost law** fitted on small subsets can mislead · **float32 spacing** in a large log density · a ladder of forecasts from **persistence** and a **beta-binomial count** to a **hierarchical beta-binomial** · **redrawing the month** when you forecast one · a **decision rule fixed before scoring** · writing **a price someone can check** |
 #
-# ## The brief
+# > Every GPU number here is a stored table, measured once on an RTX 3090 Ti and loaded from
+# > `results/E87/`. A normal run uses the CPU only and never starts a GPU.
 #
-# > *From the research lead of a passenger-rights charity. The charity and its lead are fictional,
-# > invented for this notebook; the data and the regulation are real.* US rules treat a flight that
-# > is more than 30 minutes late or cancelled over half the time in a month as chronically delayed,
-# > and holding one out for more than four consecutive months as a violation. We want a monthly
-# > watch list of the 50 flights most likely to be flagged next month. A contractor quotes a
-# > flight-level model on two years of every US flight: "two hours on one GPU, from a published
-# > rate". Our analyst says a table of counts will do. I have one workstation for one night a
-# > month, about 8 hours. **Do I approve the quote, buy something smaller, or refuse? Give me a
-# > price I can check, and tell me whether the bigger model changes the list.**
+# ## The question
 #
-# ## The answer, before the working
+# US rules single out flights that are late again and again. Under 14 CFR 399.81(c), a **chronically
+# delayed flight** is a domestic flight operated at least 10 times in a month that arrives more than
+# 30 minutes late, or is cancelled, more than half the time in that month. A carrier's departures in
+# one city-pair market within 30 minutes of the most frequent scheduled time count as one flight, and
+# holding such a flight out for more than four consecutive months is a violation.
 #
-# **Do not approve the quote as written. Run the table of counts now, and pay for one small test of
-# the middle model on all carriers before buying anything larger.** This notebook can support that
-# much, and no more: the row-level model was priced, never fitted, and the middle model was fitted
-# on one carrier.
+# Suppose the research lead of a passenger-rights charity wants a monthly watch list: the 50 flights
+# most likely to be flagged next month. A contractor quotes a flight-level model fitted to two years
+# of every US flight, "two hours on one GPU, from a published rate". The charity's own analyst says
+# a table of counts will do. The lead has one workstation for one night a month, about 8 hours.
+# Should the charity approve the quote, buy something smaller, or refuse? And would the bigger model change
+# the list?
 #
-# - **The two hours is unproven.** It holds only at about 46,000 gradients or fewer, and every
-#   count we can point to is higher or does not apply. One fit of the row-level model on all 24
-#   months prices at about 2.6 hours at 60,000 gradients and 7.0 hours at 160,000. Three test
-#   months cost 5.9-16 hours on all earlier rows, or 3.9-10.5 hours on a 12-month window. This is
-#   extrapolated from a measured 10-million-row gradient, and the gradient counts are assumptions:
-#   at 60,000 the quote misses by only 1.3x. E86's own warmup restart is inside the 160,000, and
-#   any further restart is not.
-# - **The gap is not where we expected it.** The contractor's 0.15 s a gradient is about right by
-#   accident: a rate about 5x too slow cancels 5x too few lookups. What is missing is a gradient
-#   count, and a test needs three fits where the quote prices one. We expected a slow reverse
-#   lookup, and the fix we planned, sorting the rows, made the GPU slower on one scatter at 10M
-#   rows, and changed nothing on a month of rows with five lookups.
-# - **One fit may fit a night, but nobody has shown it.** 7.0 of 8 hours is time alone. The float32
-#   total at 14 million rows was never tested, and the row-level model has about 30x the parameters
-#   of the model that gave the 160,000. The recipe behind that count also keeps a d x d table of
-#   about 2,080 GiB at this size, so it cannot run here as it stands.
-# - **Does a bigger model change the list?** On one mid-size carrier the middle model, R2, changes
-#   2-3 of a list of 10 and about half of a list of 50. Our rule buys R2 at two of three test
-#   months and the counting rule R1 at the third, so R2 on this carrier. It was fixed before any
-#   score was read, with the limits section 7 lists, and it leans towards the dearer rung. The
-#   margin is thin: R2's score is clearly better only in the worst month, July 2025, and in both
-#   other months R1 sat within one standard error. R1 lost October by one flight of list overlap, 7
-#   shared where the rule asks for 8, and April's pick moves with the seed (section 7). In a list
-#   of 10 both rungs caught the same number of flagged flights: 0, 4 and 0. In a list of 50 R2
-#   caught 3, 17 and 2 against 0, 10 and 0, and July's gain has a 5-95% range of about 0 to 14.
-#   This carrier has far more new flights than the country as a whole, so this is more a test of
-#   how R2 treats new flights than of flight history.
-# - **The analyst is partly right.** Nationally, the two counting rules take under a second. Their
-#   top 50 held 4-36 and 9-35 flagged flights in the three months, with neither winning all three,
-#   but those counts use each target month's own schedule. Built from last month's file alone, as a
-#   real list must be, they held 4-35 and 6-31. That is a usable list today, and far better than
-#   chance. It says nothing about what R2 would add nationally.
-# - **What the next test costs.** Two versions of R2 price for the same three months, and neither
-#   is the R2 checked here, which gave every flight of one carrier its own effect. ChEES on a cut
-#   model, where 24% of cells lose their flight's own effect, prices at about 16-43 minutes on the
-#   GPU, plus any further warmup restarts. ChEES has never run on R2, and its gradient counts are
-#   assumptions. nutpie with every flight prices at about 4.8-5.1 hours or more on 2 CPU cores,
-#   scaled by cells at the one carrier's gradient count. Both are extrapolated. Either fits one
-#   night at those figures, the GPU version easily and the CPU version only if the count holds,
-#   since one more tree doubling makes it about 10 hours. Either way the question can be settled
-#   for far less than a row-level run.
+# The first half of the question is about **pricing a model**. A gradient-based sampler such as NUTS
+# (Hoffman & Gelman 2014) or ChEES (Hoffman, Radul & Sountsov 2021) spends nearly all its time
+# evaluating the gradient of the log density, so the running time of a fit is
 #
-# **A warning on reruns.** Timings move between runs, so timing prose gives ranges. Repeat runs
-# here, on the same seed and 2 cores, gave identical fits, scores and lists, with and without the
-# GPU extra installed. Do not rely on that elsewhere: nutpie is not promised to be
-# bit-reproducible, and another core count or library version can move a thin result like the one
-# above. The stored GPU tables are one set of measurements from one machine, and a reader's run
-# does not reproduce them.
+# $$\text{time} = (\text{time per gradient}) \times (\text{gradients per fit}) \times (\text{fits}),$$
 #
-# ## What a flag means
+# and the model must also fit in memory and keep enough digits in its arithmetic. The contractor took
+# the rate of E86's forest model and multiplied it by the size of this data. We check whether that
+# rate transfers, what gradient count the quote assumes, how many fits a test needs, and which walls a
+# rate cannot see.
 #
-# 14 CFR 399.81(c) defines a chronically delayed flight as a domestic flight operated at least 10
-# times a month that arrives more than 30 minutes late, cancellations included, more than 50
-# percent of the time in that month. A carrier's departures in one city-pair market within 30
-# minutes of the most frequent scheduled time count as one flight. **Flagged** below means a rule
-# flight that met this test in a month, as we code it. Directions are kept apart, diversions do not
-# count as late, and months are linked by our own rule. It is an estimate, not DOT's own
-# computation and not a finding about any carrier. A watch list here says "likely to be flagged",
-# never "chronically delayed". Carriers, airports, tails and flights carry integer codes, and the
-# carrier in section 6 is called the mid-size carrier. No name is stored in this repository, but
-# that is not anonymity: anyone with the public BTS files can match the codes back, by row order in
-# the month table or by counts. No licence or terms were found for this BTS table, so only re-coded
-# tables are kept here, one of them row-level for one month.
+# The second half is about **value**. We build a ladder of forecasts of rising cost:
 #
-# ## Modelling decisions, stated up front
+# - **R0**, persistence: a flight flagged last month will be flagged again;
+# - **R1**, a beta-binomial count of each flight's late operations, shrunk towards its carrier;
+# - **R2**, a hierarchical beta-binomial on flight x month cells, with effects for origin,
+#   destination, flight and month;
+# - **R3**, the contractor's model: a Bernoulli logit on every one of the 14 million rows, with five
+#   lookups per row.
 #
-# | Decision | What this notebook does | Why, and what it costs |
-# |---|---|---|
-# | **Rungs** | R0 persistence, R1 a beta-binomial count per flight, R2 a hierarchical beta-binomial on flight x month cells, R3 Bernoulli on rows | A dearer rung is bought only if the cheaper one scores more than one SE below the best, or its list differs from the next rung's. See the rung rule below |
-# | **R3** | **Priced only**, at any size | It needs a float32 test and a gradient count that nobody has measured |
-# | **R2 on all carriers** | **Priced only**. Fitted on one carrier chosen by size alone, which turned out to be unusual (section 6) | On the GPU, a national run breaks a 60-second job limit on this machine, and warmup cannot checkpoint. On 2 CPU cores it prices in hours, far past the 15 minutes allowed for a reader's run. So there is no national R2 answer here |
-# | **Target** | Flagged next month among flights operated at least 10 times that month. Three months: 2025-04, 2025-07, 2025-10 | The month's operations count as known schedule. A real watch list must guess it, and section 5 prints what that costs. Flags swing 67-fold between months, so results are never pooled |
-# | **History** | The 12 months before each target, assuming last month's file is in hand | A real monthly cycle may be a file behind. 12 months was fixed, not tested, and section 7 shows a shorter window doing better in July |
-# | **One carrier's list** | 10 flights, with 8 shared as the overlap test. The brief's 50 is printed but decides nothing | 50 of about 600 flights is far less selective than 50 of 20,000. Length matters: 10 is the only tested length where R1 wins any month (section 7) |
-# | **Rung rule** | Cheapest rung within one bootstrap SE of the best log score whose list shares at least 8 of 10 with the next rung's. Fixed before any score was read, with the limits in section 7 | If origins disagree, two of three decide. Three months cannot carry a pooled interval. The overlap test measures difference, not benefit, so the rule leans towards the dearer rung |
-# | **R2's form** | Non-centred flight effects, nutpie, 4 chains, 1,000 tuning and 1,000 draws | The centred form was tried only in a short smoke run, so nothing here compares the two |
-# | **GPU numbers** | Loaded from `results/E87/`, measured on one RTX 3090 Ti | A reader's run never starts a GPU. CPU figures are on 2 threads, so they cannot show that a GPU beats a well-run CPU |
+# A dearer model is worth buying only if it scores better than the cheaper one or changes the list. R0
+# and R1 run on all carriers in under a second. R2 is fitted on one carrier, because a national fit
+# does not fit in a reader's run. R3 is priced and never fitted.
+#
+# ### What counts as a flag
+#
+# **Flagged** below means a flight that met this test in a month as we code it: directions kept apart,
+# diversions not counted as late, and flights linked across months by our own rule. It is our
+# estimate, not DOT's, so the list says "likely to be flagged"; carriers, airports and flights carry
+# integer codes, and the carrier of part 6 is called the mid-size carrier.
 #
 # ## The plan
 #
-# 1. The price, before anything else
-# 2. The flights
-# 3. What a gradient costs, and the first failure
-# 4. The quote, and the walls behind it
-# 5. Two counting rules, and the second failure
-# 6. R2 on one carrier, and the third failure
-# 7. Does the bigger model change the list?
-# 8. What this run cost, and what to tell the charity
+# | part | question | tool |
+# |---|---|---|
+# | 1 | What does the quote assume, and what would R3 cost? | measured gradients, an iso-cost map |
+# | 2 | What do the flights look like? | flight x month cells, flags per month |
+# | 3 | Does a rate carry over from one model to another? | `time_gradient` on five cost shapes, CPU and GPU |
+# | 4 | Which walls does a rate not show? | a VRAM grid, the sampler's own memory, float32 spacing |
+# | 5 | How good are the counting rules? | persistence and a beta-binomial, all carriers |
+# | 6 | What does a hierarchical model add on one carrier? | R2 in PyMC with nutpie, with the month redrawn |
+# | 7 | Does the bigger model change the list? | a decision rule fixed before scoring |
+# | 8 | What should the charity be told? | a price table, and a quote that can be checked |
 
 # %%
 import os
@@ -215,13 +169,16 @@ banner(wall_time=measured("12-13", "min on 2 cores, builds of 2026-11-02"),
        smaller_machine=estimated("this is the small problem: no larger level exists", ""))
 
 # %% [markdown]
-# ## 1. The price, before anything else
+# ## 1 · The price, before anything else
 #
-# Price = (time per gradient) x (gradients needed) + memory + precision + disk. The first bracket
-# needs a rate, a size and a count of gradients, and then a count of fits. The contractor
-# multiplied E86's rate of 0.336 ns per chain and cell by 14 million rows and 32 chains. We
-# measured this model on the card, at 500,089 and 10,000,174 rows, and scale only the last 1.41x to
-# 14,080,680. Everything here loads from stored tables.
+# The contractor's sum is one line: E86's rate of 0.336 ns per chain and data cell, times 14 million
+# rows, times 32 chains, gives about 0.15 s a gradient, and two hours of that is the quote. We
+# measured the row-level model R3 itself on the card, at 500,089 and 10,000,174 rows, and scale only
+# the last step, 1.41x, to all 14,080,680 rows. Nobody has measured how many gradients R3 needs, so we
+# carry two counts: **60,000**, a plain assumption, and **160,000**, the length of E86's whole run. A
+# forecast needs one fit; testing the model on three past months needs three, each on the rows before
+# its month. Everything in this cell loads from stored tables.
+
 # %%
 ROWS = 14_080_680  # all rows of 24 monthly files
 CHAINS = 32
@@ -307,33 +264,44 @@ ax.set_title("Every point on a diagonal costs the same. A price needs both axes,
              loc="left", fontsize=11);
 
 # %% [markdown]
-# Each diagonal is one budget. The orange points use measured rates and assumed gradient counts,
-# which is why they are hollow, and R3's rate is also scaled 1.41x from 10M rows. The blue dot is
-# E86's measured rate at a count inferred from its run time. Moving right along a flat line is
-# where this quote is exposed: the rate is about right, but it only meets two hours left of the 60k
-# point, with a margin of 1.3x.
+# The contractor's rate is **right by accident**. E86's rate per lookup is about 5x slower than this
+# model's (0.34 against 0.07 ns per chain and lookup), but the sum counts one lookup a row where R3
+# has five, and the two errors cancel: 151 ms against 158 ms a gradient. What the quote is missing is
+# the other two factors. At 158 ms a gradient, two hours buys at most about 46,000 gradients. At
+# 60,000 the quote misses by 1.3x and one fit takes 2.6 hours; at 160,000 it takes 7.0. A test on
+# three months costs 5.9-16 hours with all earlier rows, or 3.9-10.5 hours on a 12-month window. All
+# of these are extrapolated from one measured gradient at 10M rows, and the gradient counts are
+# assumptions.
 #
-# 60,000 is a plain assumption, and nothing here measures it. The only real count in this notebook
-# comes from section 6, where nutpie spends about 60,000 gradients a chain on 5,000 parameters.
-# That is a different sampler, so it is a hint, and not a measurement of R3. 160,000 is E86's whole
-# run, inferred from its time, on a forest with 24,810 parameters, and only 27,161 of those
-# gradients were sampling. That count alone would be under the two-hour limit, but sampling alone
-# is not a fit. R3 has about 747,000 parameters.
+# On the map, each diagonal is one budget: every point on it costs the same. The hollow orange points
+# use measured rates and assumed gradient counts, and R3's rate is also scaled from 10M rows. The blue
+# dot is E86's measured rate at a count inferred from its run time. The quote is exposed by moving
+# right along a flat line: its rate is fine, but it meets two hours only left of 60,000 gradients.
 #
-# 160,000 is not a ceiling either. E86 ran 128 chains, and the price uses 32. Matching E86's
-# effective sample size with a quarter of the chains needs about 4x its sampling gradients, about
-# 240,000 in all, or about 10.6 hours, which is over a night.
+# Neither count is solid. The only measured count in this notebook comes from part 6, where nutpie
+# spends about 60,000 gradients a chain on about 5,000 parameters: a hint from a different sampler,
+# not a measurement of R3. 160,000 is E86's whole run, inferred from its time, on a forest with 24,810
+# parameters, and only 27,161 of those gradients were sampling; it includes E86's own warmup restart,
+# and any further restart would add to it. R3 has about 747,000 parameters. Nor is 160,000 a ceiling.
+# E86 ran 128 chains and the price uses 32; matching E86's effective sample size with a quarter of the
+# chains needs about four times its sampling gradients, about 240,000 in all, or 10.6 hours, which is
+# more than a night.
 #
-# R2 sits far below R3, for two reasons. On the same 12 months, rows would take about 79 ms a
-# gradient and R2's cells take 5.4 ms, so **collapsing rows into cells is worth about 15x a
-# gradient**, with no hardware bought. The rest of the 29x between the two lines is 24 months of
-# rows against 12 months of cells, so it comes from dropping half the data, and collapsing does not
-# earn it.
+# R2 sits far below R3 on the map, for two reasons. On the same 12 months, rows would cost about 79 ms
+# a gradient and R2's cells cost 5.4 ms, so **collapsing rows into flight x month cells is worth about
+# 15x a gradient**, with no hardware bought. The rest of the 29x gap between the two lines comes from
+# setting 24 months of rows against 12 months of cells: from dropping half the data, not from
+# collapsing it.
 #
-# ## 2. The flights
+# ## 2 · The flights
 #
-# The table comes from 24 monthly BTS files. Coverage is carriers with at least 0.5% of domestic
-# scheduled passenger revenue, so smaller regional operators are absent.
+# The table comes from 24 monthly BTS files, which cover carriers with at least 0.5% of domestic
+# scheduled passenger revenue, so smaller regional operators are absent. Each flight x month cell
+# holds a count of operations and of late or cancelled arrivals, and a cell with 10 or more operations
+# is **eligible**. We forecast three held-out months, April, July and October 2025, each from the 12
+# months before it, and treat the target month's operations as known. A real list would have to guess
+# next month's schedule; part 5 shows what that costs. Results are never pooled across months, for a
+# reason the chart makes plain.
 
 # %%
 data.describe("e87_flights")
@@ -374,21 +342,33 @@ ax.legend(handles=[Patch(color=ALARM, label="the three held-out targets"), Patch
 ax.set_title("Flags swing about 67-fold between months, so one good list proves little", loc="left", fontsize=11);
 
 # %% [markdown]
-# Two things follow. Four months had fewer flags than the list has places, so in a calm month a
-# perfect list of 50 would still hold flights nobody flagged. And the three test months differ by
-# 20x, so a precision from one of them does not transfer to another.
+# Fourteen million rows collapse to 921,766 flight x month cells, about 15 rows each, and 494,547 of
+# them are eligible. 15% of operations were late or cancelled, and 9,711 eligible cells were flagged.
+# Flags swing about 67-fold between months, from 25 to 1,686, and two things follow. Four months had
+# fewer flags than the list has places, so in a calm month even a perfect list of 50 would hold
+# flights nobody flagged. And the three test months differ 20-fold, so a precision from one of them
+# says little about another.
 #
-# These flights are short-lived as we link them: over all 259,558 linked flights, eligible or not,
-# the median lasts 2 months, and part of that is our linking, which splits some real flights
-# (section 8). 22-25% of target flights in two of the three months have no history at all (11% in
-# July). Any list here is partly a list of new flights.
+# These flights are short-lived as we link them. Over all 259,558 linked flights, eligible or not, the
+# median one lasts 2 months, and part of that is our linking, which splits some real flights: 28% of
+# new eligible flights had the same number in the same market the month before. In April and October
+# 22-25% of the target flights have no history at all, and 11% in July. Any list here is partly a list
+# of new flights.
 #
-# ## 3. What a gradient costs
+# ## 3 · What a gradient costs
 #
-# Five models, five cost shapes. Row 5 is the row-level model's own gradient on one month of rows:
-# five lookups per row, whose reverse pass is a scatter-add. E86 had none of those, which is why
-# its rate might not transfer. Here is what the index pattern looks like. Each panel has one point
-# per row.
+# A rate measured on one model is a rate for its **cost shape**: the mix of dense algebra, special
+# functions, sequential steps and memory traffic in its gradient. We time five shapes:
+#
+# 1. E86's forest: dense matrix products on a lattice;
+# 2. a negative binomial on 17,379 hourly bike hires: a design matrix and three `gammaln` a row;
+# 3. stochastic volatility on 5,000 daily returns: a recursion through `jax.lax.scan`;
+# 4. R2's likelihood on every carrier's cells: six `gammaln` a cell, with a flight effect only for
+#    flights seen in 3 or more cells (part 4 says why);
+# 5. R3 on one month of rows: five lookups a row, whose reverse pass is a scatter-add.
+#
+# E86 had no lookups at all, which is why its rate might not transfer. First, the index pattern of a
+# month of rows; each panel has one point per row.
 
 # %%
 month = np.load(data.path("e87_month_rows"))
@@ -413,10 +393,13 @@ fig.colorbar(art, ax=axes, shrink=0.85, label="rows in a hexagon");
 
 
 # %% [markdown]
-# The file visits flights in blocks and returns to them day after day. Sorting puts a flight's rows
-# side by side, and the plan said that should help a scatter. Now the timing. `time_gradient` waits
-# for the result, takes the best of three calls, and reports whether every output was finite. Rows
-# are timed on this machine in this run, and the GPU column is loaded.
+# The file visits flights in blocks and returns to them day after day: adjacent rows share a flight
+# 35% of the time and a tail only 6%. Sorting by flight puts a flight's rows side by side, which
+# should make the scatter-add of the reverse pass cheaper. We test that in a moment.
+#
+# Now the timing. `time_gradient` waits for the result, takes the best of three calls, and checks that
+# every output is finite. Rows are timed on this machine's CPU in this run, at 1 and 8 chains on 2
+# threads; the GPU column is loaded from the stored tables.
 
 # %%
 def field_model():
@@ -617,26 +600,30 @@ ax.set_title("A rate belongs to a cost shape: the same card wins four rows and l
 
 
 # %% [markdown]
-# **A rate belongs to a cost shape.** On four rows the card costs 22-220x less per chain and row
-# than 2 CPU threads. That range is not like for like. Rows 2 and 5 are matched, at about 22-37x.
-# Row 1 sets the 5 m lattice of 20,000 cells on the card against 1,250 cells on the CPU. Row 4 sets
-# 32 GPU chains against 8 CPU chains, and row 5 shows the card's cost per chain falling about 1.76x
-# between those counts, so the 220x top is flattered: about 120x if row 4 behaves like row 5.
+# **A rate belongs to a cost shape.** On four of the five rows the card costs far less per chain and
+# row than 2 CPU threads, but not every ratio is like for like. Rows 2 and 5 are matched, at about
+# 30-35x in this run. Row 1 sets the 5 m lattice of 20,000 cells on the card against 1,250 cells on
+# the CPU. Row 4 sets 32 GPU chains against 8 CPU chains, and row 5 shows the card's cost per chain
+# falling 1.76x between those counts, so row 4's 210x is flattered: about 120x if it behaves like row
+# 5.
 #
-# On row 3, the `scan`, the card costs about 190-220x more at 8 chains, and its time does not move
-# with chains: 63 ms at 8, 32 and 128. So the gap shrinks as chains rise, to about 12-13x at 128
-# chains against the CPU's 8-chain rate. A recursion runs step by step on the card, so one rate
-# cannot price all five rows. Row 4 at about 140-150 ns is the dearest row on the CPU. Its six
-# `gammaln` are the likely reason, though they were not timed alone. The CPU side is 2 threads, by
-# the machine's rules, so this table shows where the time goes. It does not show that a GPU beats a
-# well-run CPU.
+# Row 3, the `scan`, goes the other way. At 8 chains the card costs about 200x **more** than the CPU,
+# and its time hardly moves with the number of chains: 63 ms at 8, 32 and 128. A recursion runs one
+# step at a time on the card, however many chains share it. The gap shrinks as chains are added, to
+# about 13x at 128 chains against the CPU's 8-chain rate, but no single rate prices all five rows. On
+# the CPU, row 4 is the dearest at about 144 ns a chain and cell; its six `gammaln` are the likely
+# reason, though they were not timed alone.
 #
-# ### The first failure: our own plan
+# The CPU side is 2 threads, so the table shows where the time goes, not that a GPU beats a well-run
+# CPU.
 #
-# We expected the reverse pass of a lookup to be a slow scatter, and planned to fix it by sorting.
-# So the next cell climbs from one day of rows to a month, sorted and unsorted, and fits a cost
-# law. The right panel loads a different test from the card: one lookup at 10 million rows, where
-# the climb has five lookups.
+# ### Failure 1: sorting the rows
+#
+# We expected the reverse pass of a lookup, a scatter-add into scattered places, to be the slow part,
+# and planned to fix it by sorting the rows by flight. The next cell climbs from one day of rows to
+# the whole month, in file order and sorted, at 1 and 8 chains, and fits a power law to the small
+# sizes to predict the month. The right panel loads a different test from the card: one lookup at 10
+# million rows, in file order, sorted, and sorted with JAX told that the indices are sorted.
 
 # %%
 def run_ladder(days=(1, 3, 7, 14, 31)):
@@ -709,32 +696,26 @@ fig.suptitle("Sorting by flight was the planned fix. It costs time on the GPU, a
 
 # %% [markdown]
 # **The slow scatter did not appear, and the fix made things worse.** On the card, sorting cuts the
-# forward pass by 0.52 ms and adds 2.12 ms to the reverse pass, so a gradient goes from 2.70 to
-# 4.30 ms, and passing JAX the sorted hint adds another 0.76 ms: 1.6-1.9x slower overall. We did
-# not find the cause. The gradients were checked against an exact NumPy answer, which clears a
-# wrong result. The plan's other suspect was the expander flag, an XLA option that changes how a
-# scatter is compiled. It compiled to the same program on file order, where the programs were
-# hashed, and it timed the same on sorted rows, where they were not.
+# forward pass by 0.52 ms but adds 2.12 ms to the reverse pass, so a gradient goes from 2.70 to 4.30
+# ms, and telling JAX the indices are sorted adds another 0.76 ms: 1.6-1.9x slower in all. On a month
+# of rows with five lookups, sorting changes nothing, on the card (2.7 ms either way at 8 chains) or
+# on the CPU. We did not find the cause, and because size and the number of lookups changed together
+# between the two tests, we cannot say which matters; the gradients are still exact. The lesson we
+# expected was "collapse, then sort, then buy". The one the data give is shorter: **collapse first,
+# then measure.**
 #
-# On a month of rows with five lookups, sorting by flight changes nothing on the card (2.7 ms
-# either way at 8 chains) or on the CPU. Size and the number of lookups changed together between
-# those two tests, and sorting with five lookups at 10M rows was never measured, so the cause of
-# the difference is unknown. The lesson we planned, collapse, then sort, then buy, loses its middle
-# step. **Collapse first, then measure.**
+# **A cost law needs a warning too.** On the CPU, going from 3 days to 7 multiplies the rows by 2.3
+# and the time by 4-6, at 1 chain and at 8, and the step repeats from run to run. Part of the step is
+# threading, since one pinned core removes it at 1 chain, so the CPU column of row 5 is not a clean
+# 2-core rate. A power law fitted on 1, 3 and 7 days lands within about 15% of the month only by
+# luck, because it straddles the step; fitted on 1 and 3 days alone it misses the month by three
+# quarters. Small subsets are cheap to time, and they can sit on the wrong side of a step.
 #
-# A cost law needs a warning too. On the CPU, going from 3 days to 7 days multiplies rows by 2.3
-# and time by about 4-6, at 1 and at 8 chains, and it repeated in every build. We only partly know
-# why. A run pinned to one core, outside this notebook, removes the step at 1 chain, at about 15 ns
-# a row at every size and 8.3 ms on the month, faster than 2 threads. So at 1 chain the step is a
-# threading effect, and the CPU column of row 5 is not a clean 2-core rate. At 8 chains a step
-# remains between 6 and 7 days even on one core, and we do not know why. A power law fitted on 1, 3
-# and 7 days lands within about a fifth of the month, on either side, by luck, because it straddles
-# the step. Fitted on 1 and 3 days alone it misses the month by about 70-90%: see the printed line.
-# On the card, 500k to 10M rows ran at 0.074 and 0.070 ns per chain-lookup, so the last step to 14M
-# has evidence behind it. That evidence is two points on one card, and it says nothing about any
-# other.
+# On the card, 500k and 10M rows ran at 0.074 and 0.070 ns per chain and lookup, so the last step from
+# 10M to 14M rows has evidence behind it: two points on one card, which say nothing about any other
+# card.
 #
-# ## 4. The quote, and the walls behind it
+# ## 4 · The walls behind the quote
 #
 # Time is one wall. Memory and precision are the other two, and neither shows up in a rate.
 
@@ -799,43 +780,51 @@ ax.set_title("A total this large has few digits left", fontsize=10.5, loc="left"
 fig.suptitle("Two more limits a rate cannot see", x=0.01, ha="left", fontsize=11);
 
 # %% [markdown]
-# Our plan drew the memory wall at 32 chains. The measured cells move it: 32 chains at 14M rows
-# need about 5.7 GiB, not 12-18, and at 14M only 128 chains go over the 16.56 GiB this card gives
-# JAX. Only the two orange cells are measured, both at 32 chains, and the rest are scaled from the
-# 10M cell. That scaling misses the other measurement by about 1.7x, 0.2 against 0.35 GiB, so
-# memory is not proportional to rows at the small end, and scaling by chain count is untested. No
-# cell above 10M rows ran, and none failed, so the wall is arithmetic.
+# **Memory for the gradient is not the wall.** Scaled from the measured 10M cell, 32 chains at 14M
+# rows need about 5.7 GiB, and only 128 chains pass the 16.56 GiB this card gives JAX. Only the two
+# orange cells are measured, both at 32 chains. Scaling from the 10M cell misses the other one by 1.7x
+# (0.20 against 0.35 GiB), scaling by chains is untested, and nothing above 10M rows was run, so this
+# wall is arithmetic.
 #
-# **A larger wall sits outside this grid.** The grid counts gradients only. E86's ChEES recipe, the
-# source of the 160,000, also keeps a d x d table during warmup (`m2` in blackjax's
-# `chees_adaptation`). At R3's 747,000 parameters that table is about 2,080 GiB. It is also why R2
-# had to be cut for ChEES: with every flight it is about 20 GiB, over the limit. With flight
-# effects kept only for flights of 3 or more cells it is 3.7 GiB, but only 30,789 of 72,386 flights
-# keep their own effect, and 24% of cells lose it, so the cut model is not the model fitted in
-# section 6. A private blackjax option, `_length_floor=False`, skips the table. It is untested
-# here, and its gradient count is unknown. So R3's price joins a gradient count from a path that
-# cannot run to a memory figure from a path with no count.
+# **The sampler's own memory is the larger wall, and it sits outside this grid.** The grid counts the
+# gradient only. E86's ChEES recipe, the source of the 160,000 gradients, also keeps a d x d table
+# during warmup (`m2` in blackjax's `chees_adaptation`). At R3's 747,000 parameters that table is
+# about 2,080 GiB. It is also why R2 must be cut down before ChEES can run it on all carriers: with an
+# effect for every flight it has 73,100 parameters and a table of about 20 GiB, over the limit.
+# Keeping flight effects only for flights seen in 3 or more cells brings it to 31,503 parameters and
+# 3.7 GiB. The price is that only 30,789 of 72,386 flights keep their own effect and 24% of cells
+# lose it, so the cut model is not the R2 fitted in part 6. A private blackjax option, `_length_floor=False`,
+# skips the table; it is untested here, and its gradient count is unknown. So R3's price joins a
+# gradient count from a recipe that cannot run at this size to a memory figure from one with no count.
 #
-# Precision is the unresolved one. At 14 million rows the total log density is near 6.8 million,
-# where neighbouring float32 numbers are 0.5 nats apart. That is the spacing, and the error of a
-# real sum was not measured: the check that would measure it was not run, and it cannot run on a
-# month, where the spacing is 0.03. Rounding of this size changes acceptance. It does not by itself
-# cause a divergence. **A row-level run must pass this test before anyone relies on its 7.0
-# hours.**
+# **Precision is unresolved.** At 14 million rows the total log density is near 6.8 million, where
+# neighbouring float32 numbers are 0.5 nats apart; on one month it is about 263,000, with a spacing of
+# 0.03. That is the spacing of the numbers, not the measured error of a real sum, and the check that
+# would measure the error was not run; it cannot be run on a month, where the spacing is small.
+# Rounding of this size changes which proposals are accepted, though it does not by itself cause a
+# divergence. A row-level run must pass this test before anyone relies on its 7.0 hours.
 #
-# ## 5. Two counting rules
+# ## 5 · Two counting rules
 #
-# The analyst's table comes first, because it may win. **R0** says a flight flagged last month will
-# be flagged again, with a rate from pairs of months in the window. **R1** counts each flight's
-# late operations over the window, shrinks them towards a Beta prior fitted to its carrier, and
-# predicts next month with a beta-binomial. Both run on all carriers. Neither needs a sampler.
+# The analyst's table comes first, because it may win. **R0** says a flight flagged last month will be
+# flagged again, with the chance estimated from pairs of consecutive months in the window. **R1** adds
+# up each flight's operations and late operations over the 12-month window, shrinks them towards a
+# Beta prior fitted by moments to its carrier, and predicts next month with a beta-binomial:
 #
-# ### The second failure: a rate that never moves
+# $$P(\text{flag}) = P\big(Y > n/2\big), \qquad Y \sim \text{BetaBinomial}(n, a, b),$$
 #
-# The first R1 treated a flight's rate as the same every month. With a year of history its Beta is
-# tight, so a flight running at 20% gets a tiny chance of passing 50%, and whole months do not
-# behave like that. The fix adds one number per carrier, a month-to-month concentration estimated
-# in the window. Only the fixed version is a rung, a choice made before any score was read.
+# where $n$ is next month's operations and $a, b$ the flight's updated Beta. Both run on all carriers,
+# and neither needs a sampler. The 12-month window, and the assumption that last month's file is
+# already in hand, are fixed choices that we do not tune; part 7 shows a shorter window doing better
+# in July.
+#
+# ### Failure 2: a rate that never moves
+#
+# The first version of R1 treated a flight's late rate as the same every month. With a year of history
+# its Beta is tight, so a flight running at 20% late gets almost no chance of passing 50%, and whole
+# months do not behave like that. The fix adds one number per carrier, a month-to-month concentration
+# $\kappa$ estimated in the window, which widens next month's Beta: its concentration $c$ becomes
+# $1/(1/c + 1/\kappa)$. We settled on the fixed version before reading any score; both are printed.
 
 # %%
 def window(target, months=WINDOW):
@@ -986,38 +975,42 @@ fig.suptitle("All carriers: the first counting rule was too sure of itself. Larg
 
 # %% [markdown]
 # Perfect forecasts sit on the diagonal. Both versions sit above it at the low end, where the first
-# version promised less than one flag in 10,000 flights and saw far more. The fix helps most in
-# July, the worst month, taking the score from -0.329 to -0.270, and it leaves April and October
-# almost unchanged. It is not free: expected flags in the calm months rise further above the truth,
-# 156 against 85 and 325 against 195, and July is still far short, 548 against 1,686. Neither
-# version foresaw a month that bad.
+# version promised less than one flag in 10,000 flights and saw far more. The fix helps most in July,
+# the worst month, lifting the mean log score from -0.329 to -0.270, and leaves April and October
+# almost unchanged. It is not free: in the calm months the expected number of flags rises further
+# above the truth, 156 against 85 in April and 325 against 195 in October, and July is still far
+# short, 548 against 1,686. Neither version saw a month that bad coming.
 #
-# Neither rule wins the national top 50: R0 held 4, 36 and 20 flagged flights, and R1 held 9, 35
-# and 9. At a base rate of 0.4-8%, random lists would hold 0.2 to 3.9. That is the analyst's case,
-# for under a second of machine time.
+# Neither rule wins the national top 50. R0 caught 4, 36 and 20 flagged flights in the three months,
+# R1 9, 35 and 9. With 0.4-8% of flights flagged, a random list of 50 would catch 0.2 to 3.9. That is
+# the analyst's case, for under a second of machine time.
 #
-# Those counts lean on the target month's own schedule. A real list has only last month's file, so
-# it must rank last month's eligible flights at last month's operations. Built that way R0 held 4,
-# 35 and 15 and R1 held 6, 31 and 6. Up to 27 of R1's look-ahead 50 were flights that were not
-# eligible the month before, which a real list could not name. Over all 12 months with a full
-# window, the two are level when they can see the target month's schedule: 158 hits against 147,
-# with R0 ahead in 5 months and R1 in 6. From last month's file alone R0 leads, 130 hits against
-# 103, ahead in 7 months against 4. R1 still has the better log score in 11 of 12. So R0 ranks a
-# list better, and R1 states a chance better.
+# Those counts lean on the target month's own schedule. A real list has only last month's file, so it
+# must rank last month's eligible flights at last month's operations. Built that way, R0 caught 4, 35
+# and 15 and R1 6, 31 and 6; up to 27 of R1's look-ahead 50 were flights a real list could not have
+# named. Over all 12 months with a full window, the two are level when they can see the target month's
+# schedule, 158 hits against 147, with R0 ahead in 5 months and R1 in 6. From last month's file alone
+# R0 leads, 130 against 103, ahead in 7 months against 4. Yet R1 has the better log score in 11 of 12.
+# **R0 ranks a list better, and R1 states a chance better.**
 #
-# ## 6. R2 on one carrier
+# ## 6 · R2 on one carrier
 #
-# R2 models each flight x month cell. On the logit scale, a flight's late rate is the carrier's
-# level plus effects for origin, destination, flight and month, and a beta-binomial `phi` carries
-# what is left between months:
+# R2 models each flight x month cell. On the logit scale, a flight's late rate is a carrier level plus
+# effects for origin, destination, flight and month, and a beta-binomial concentration $\phi$ carries
+# the variation that is left:
 #
 # $$\text{late}_{ft} \sim \text{BetaBinomial}\big(n_{ft},\ p_{ft}\phi,\ (1-p_{ft})\phi\big), \quad
 # \text{logit}\, p_{ft} = a + \sigma_o z_{o[f]} + \sigma_d z_{d[f]} + \sigma_f z_f + m_t .$$
 #
-# Sds are LogNormal, since E86 saw half-normal priors on sds run away under MEADS, and the month
-# effect is a `pm.ZeroSumNormal`. The carrier is the 8th of 15 by cells before the first test
-# month, chosen by size alone. It is one carrier, so the plan's carrier term drops out. Every
-# eligible flight it ran in the window is in the model.
+# The flight, origin and destination effects are written non-centred, the scales get LogNormal priors
+# (E86 saw half-normal priors on scales run away under MEADS), and the month effect is a
+# `pm.ZeroSumNormal`. We sample with nutpie, 4 chains of 1,000 tuning steps and 1,000 draws, rather
+# than nutpie's default of 400 tuning steps. The centred form was not compared.
+#
+# A national R2 does not fit in a reader's run: on 2 CPU cores it prices in hours (part 8), and on the
+# card here a national run would break a 60-second limit on GPU jobs, with no way to checkpoint
+# warmup. So we fit **one carrier**, the 8th of 15 by eligible cells, chosen by size alone, with every
+# eligible flight it ran in the window. A prior predictive check in NumPy comes first.
 
 # %%
 sizes = np.bincount(cells.loc[window(TARGETS[0]), "carrier"], minlength=15)
@@ -1181,31 +1174,30 @@ print(pd.concat({k: pd.DataFrame(v).T for k, v in ppc.items()}).round(3).to_stri
 
 
 # %% [markdown]
-# This carrier is not typical, and size alone did not show that. It has 1.7-1.9 window cells a
-# flight against 3.2-3.4 nationally. 41-66% of its target flights have no history in the window, so
-# no fitted effect of their own, against 11-25% nationally, and 31 of July's 39 flags fell on
-# flights not eligible the month before. So the result below is less a test of flight history than
-# of how R2 treats new flights.
+# **This carrier is not typical, and its size did not show it.** It holds 3.9% of the eligible cells,
+# but its flights are short-lived: 1.7-1.9 window cells a flight against 3.2-3.4 nationally. 41-66% of
+# its target flights have no history in the window, and so no fitted effect of their own, against
+# 11-25% nationally, and 31 of July's 39 flags fell on flights that were not eligible the month
+# before. What follows is therefore less a test of flight history than of how R2 treats new flights.
 #
-# The priors allow a late share of 4-47% and flagged cells up to 43%, wide around the observed 16%
-# and 3%. The fits are clean on the parameters and on a stand-in for the list: 0 divergences, and
-# ESS above 6,000 on the logit mean of the 50 flights ranked highest in training and above 600 on
-# the hyperparameters. r_hat is at most about 1.01: the worst, an October hyperparameter at 1.0104,
-# strictly misses the plan's bar of 1.01. The stand-in is not the list itself, which ranks next
-# month's flights and redraws the month. Each fit spends about 60,000 gradients a chain in warmup
-# and sampling together.
+# The priors allow a late share of 4-47% and flagged cells up to 43%, wide around the observed 16% and
+# 3%. The fits are clean: no divergences, $\hat R$ at most 1.01 (1.0104 on one October
+# hyperparameter), and bulk ESS above 6,000 on the logit means of the 50 flights ranked highest in
+# training and above 600 on the hyperparameters. Each fit takes about 4 minutes and spends about
+# 60,000 gradients a chain, warmup and sampling together.
 #
-# The checks redraw all 12 months and all the overdispersion, keeping flights' fitted effects.
-# Observed values sit inside the 5-95% range on all three measures at all three origins, with P(rep
-# >= obs) from 0.10 to 0.51. Keeping fitted flight effects makes this a weak test: it says the
-# month spread is plausible, not that the forecasts are good. Only held-out months can say that.
+# The checks on the training window redraw all 12 month effects and all the overdispersion, keeping
+# the flights' fitted effects. Observed values sit inside the 5-95% range on all three measures in all
+# three windows, with $P(\text{rep} \ge \text{obs})$ from 0.10 to 0.51. Keeping the flight effects
+# makes this a weak test: it says the spread between months is plausible, not that the forecasts are
+# good. Only held-out months can say that.
 #
-# ### The third failure: forecasting an average month
+# ### Failure 3: forecasting an average month
 #
-# The obvious forecast takes each flight's fitted effects, sets the month to its mean of zero, and
-# reads off the chance of passing 50%. Next month is a new month, so the right forecast draws a new
-# month effect from the fitted spread and new overdispersion, and new effects for flights and
-# airports the window never saw.
+# The obvious forecast takes each flight's fitted effects, sets the month effect to its mean of zero,
+# and reads off the chance of passing 50%. But next month is a new month. The right forecast draws a
+# new month effect from the fitted spread $\sigma_m$, new overdispersion from $\phi$, and, for flights
+# and airports the window never saw, new effects from the fitted scales.
 
 # %%
 for t, f in forecasts.items():
@@ -1249,27 +1241,30 @@ ax.set_title("A forecast that keeps an average month cannot see a bad one", loc=
 
 # %% [markdown]
 # The first version is sure of a narrow count and misses July: it expects about 7 flags where 39
-# happened. The redrawn forecast is honest about what it does not know, with 90% intervals from 0
-# to about 18-58. July's 39 falls inside, and its mean is still only about 14, because a new month
-# is drawn from all months alike, and the model does not know July is a bad month, though its
-# window held July 2024 with 1,562 flags and June 2025 with 1,312. That is the next improvement to
-# make, and it is not in this rung. The price of honesty shows too: the score improves by 0.040 in
-# July, is level in April, and is 0.003 worse in October. Two halves of the draws give lists
-# sharing 9-10 of 10, which is steady, but it does not settle a rule that turns on one flight:
-# section 7 tests that.
+# happened. The redrawn forecast admits what it does not know, with 90% intervals from 0 to 18-58
+# flags, and July's 39 falls inside. Its mean is still only about 14, because a new month is drawn
+# from all months alike: the model does not know July is a bad month, though its window held July 2024
+# with 1,562 flags and June 2025 with 1,312. A seasonal month effect is the obvious next step, and R2
+# does not have one. Honesty also has a price in the score: the redrawn forecast is better by 0.040 in
+# July, level in April and 0.003 worse in October.
 #
-# ## 7. Does the bigger model change the list?
+# Two halves of the posterior draws give lists of 10 that share 9-10 flights, so the list is steady
+# under Monte Carlo noise. That does not settle a rule that can turn on one flight, which part 7
+# tests.
 #
-# The rule was written down before any score was read. It is the cheapest rung whose log score is
-# within one bootstrap SE of the best, resampling origin airports, and whose list of 10 shares at
-# least 8 flights with the next rung's. A list of 50 is printed too, and decides nothing.
+# ## 7 · Does the bigger model change the list?
 #
-# File times are the only evidence for that order: the rule's file is stamped 03:16 and the first
-# scores appeared at 03:21. "Before any score" also leaves three things out. Counts of flagged
-# cells in the held-out months had already been seen as data checks (plan, section 12). The plan's
-# first rule used the overlap of a top 50, and this list of 10 replaced it. And 10 is the only
-# tested length where R1 wins any month: a list of 20 gives R2 at all three, and at 50 R1's overlap
-# of 20-28 misses the 80% bar.
+# For the carrier's list we use **10 flights**, not the charity's 50: 50 of about 600 flights is far
+# less selective than 50 of 20,000 nationally. To choose between R0, R1 and R2 in each test month we
+# take the cheapest model whose mean log score is within one bootstrap standard error of the best
+# (resampling origin airports). It must also share at least 8 of its 10 flights with the next model
+# up. Where the months disagree, two of three decide. The list of 50 is printed too, but it decides
+# nothing.
+#
+# The rule was fixed before any score was read, but not blind. The flag counts of the test months had
+# already been seen as data checks, and along the way the list it judges was shortened from 50 to 10.
+# The length matters: 10 is the only length we tried where R1 wins any month. A list of 20 gives R2 in
+# all three months, and at 50 R1's overlap of 20-28 misses the 80% bar.
 
 # %%
 def decide(list_size=LIST_SIZE, needed=NEEDED, resamples=2000):
@@ -1354,44 +1349,32 @@ fig.legend(handles=[Line2D([], [], color=ALARM, lw=2.2, marker="o", label="flagg
 fig.suptitle("Every flight on any rung's list. Red lines are the flights that really were flagged", x=0.01, ha="left", fontsize=11);
 
 # %% [markdown]
-# **The rule picks R1 for April, and R2 for July and October, so R2 for this carrier. Read that
-# with the margins.** Only in July is R2's gain larger than its noise: a gap of 0.031 against an SE
-# of 0.009. In April and October R1 is within one SE, and in October it fails by one flight of
-# overlap, 7 shared where 8 are needed. If a single flight moved in October, the answer on this
-# carrier would be R1.
+# **The rule picks R1 in April and R2 in July and October, so R2 for this carrier, but the margins are
+# thin.** Only in July is R2's gain larger than its noise: a gap of 0.031 in mean log score against a
+# standard error of 0.009. In April and October R1 is within one standard error, and in October it
+# fails only on overlap, by one flight: 7 shared where 8 are needed. Had one flight moved in October,
+# the answer on this carrier would be R1.
 #
-# **April's pick is not firm either.** Twelve other forecast seeds on these same draws keep July at
-# 8 and October at 7, and April at 8 in 11 of them and 7 in one. Two refits of April with other
-# sampler seeds, run outside this notebook (`fit_r2(TARGETS[0], seed=1)`, about 4 minutes each),
-# moved its overlap between 7 and 8 from one forecast seed to the next, 7 in 5 of 18. At 7 April
-# goes to R2. Integrating the month and the overdispersion exactly gave 8 on these draws and 7 on
-# both refits, while a refit of October stayed at 7. So R1 sits on the bar in April, and the picks
-# are best read as R2 at two months, possibly three. R2 on this carrier holds either way.
+# April's pick is fragile too: R1 sits right on the overlap bar, and a few other seeds move it to R2,
+# so R2 for this carrier holds either way.
 #
-# **The rule leans towards the dearer rung.** Its overlap test measures difference, not benefit: a
-# rung fails when the next rung's list differs, even if that list is no better. In October R2 is
-# bought with a gap inside one SE and 0 hits against 0. We keep the result, because the rule was
-# fixed in advance, but only July gives evidence that R2 is better.
+# **Only July is evidence that R2 is better, and part of that may be R1's slow 12-month window:** a
+# 3-month R1 scores -0.239 against R2's -0.217 on this carrier, where the 12-month R1 scores -0.248.
+# The overlap test measures difference, not benefit, so in October R2 is bought with a score gap
+# inside one standard error and 0 hits against 0. A short window is no free gain either: it is worse
+# in the calm months (-0.055 against -0.048 nationally in October).
 #
-# **July's win may be partly a slow R1.** The 12-month window was fixed, never tested. Printed
-# above, an R1 on 3 months reacts faster: in July it scores -0.240 against -0.270 nationally, and
-# -0.239 against -0.248 on this carrier, where R2 still leads at -0.217. A short window is no free
-# gain, since it is worse in the calm months: -0.055 against -0.048 nationally in October. So part
-# of R2's July margin may be speed and not structure, and only a test of windows on all carriers
-# could tell.
+# So **yes, the list changes**: R1 and R2 share 7-8 of 10 flights and 20-28 of 50. **Whether that
+# helps depends on the length.** In a list of 10 both catch the same 0, 4 and 0 flagged flights, and
+# the 11 flags of April and 3 of October fall outside every list of 10. In a list of 50 R2 catches 3,
+# 17 and 2 against R1's 0, 10 and 0. July's gain of 7 is noisy: resampling airports gives a 5-95%
+# range of about 0 to 14. On this carrier 50 is about a tenth of all flights, so the gain does not
+# carry over to a national list of 50.
 #
-# **Yes, the list changes:** R1 and R2 share 7-8 of 10 and 20-28 of 50. **Whether that helps
-# depends on the length.** In a list of 10 they catch the same 0, 4 and 0 flagged flights, while
-# the 3 flags of October and 11 of April fall outside every list of 10. In a list of 50 R2 catches
-# 3, 17 and 2 against R1's 0, 10 and 0. July's gain of 7 is noisy: its 5-95% range from resampling
-# airports runs from about 0 to 14. On this carrier 50 is about a tenth of all flights, far less
-# selective than a national 50, so this does not scale.
-#
-# R0 barely overlaps anything, because it lists last month's flags. About half of the lines on the
-# chart run from R0's floor up to R1, and that move, from one month to twelve, is the largest
-# change in rank on the page, for a tenth of a second. It is not the largest change in what the
-# list catches: R1 to R2 adds more top-50 hits in all three months, and more score in April and
-# July.
+# On the chart R0 barely overlaps anything, because it lists last month's flags. About half the lines
+# run from R0's floor up into R1's list: going from one month of history to twelve is the largest
+# change of rank on the page, for a tenth of a second. It is not the largest change in what the list
+# catches, which comes from R1 to R2.
 
 # %%
 fig, axes = plt.subplots(1, 3, figsize=(12, 4.3), sharex=True, layout="constrained")
@@ -1410,13 +1393,16 @@ fig.supxlabel("machine seconds for this rung, 2 cores", fontsize=11)
 fig.suptitle("Value for money, one carrier. R0 and R1 timed on all carriers, R2 on this one: a staircase climbs only when a rung pays", x=0.01, ha="left", fontsize=11);
 
 # %% [markdown]
-# Each step up the staircase is a purchase, and a higher score is better. R1 costs about a tenth of
-# a second on every carrier, and R2 about 4 minutes on this one. Each panel has its own vertical
-# scale, because the months cannot be compared. In April R1 sits below R0 and pays nothing on
-# score. Note the axis: R0 and R1 are timed on all carriers and R2 on one carrier, which flatters
-# R2 by about 26x. Its national price is below.
+# Each step up the staircase is a purchase, and a higher score is better. R1 costs about a tenth of a
+# second on every carrier, and R2 about 4 minutes on this one. Each panel has its own vertical scale,
+# because the months cannot be compared. In April R1 sits below R0 and buys nothing on score. Note the
+# horizontal axis: R0 and R1 are timed on all carriers and R2 on one carrier, which flatters R2 by
+# about 26x. Its national price is in the next table.
 #
-# ## 8. What this run cost, and what to tell the charity
+# ## 8 · What this run cost, and what to tell the charity
+#
+# The last cell adds up what this run spent and prices every model, for one forecast and for the three
+# test months. Each extrapolated line says what it rests on.
 
 # %%
 price = pd.Series(PRICE, name="seconds").round(0).astype(int)
@@ -1450,9 +1436,13 @@ store.save_json("decide", {"verdict": verdict.reset_index().to_dict("list"), "pi
                            "diagnostics": timing_free, "national": national_table.reset_index().to_dict("list")});
 
 # %% [markdown]
-# The table prices one forecast and the three test months. R3's one forecast uses all 24 months,
-# and its three test months use the 12-month window. Measured peak memory and wall time are in the
-# banner, and each extrapolated line says what it rests on.
+# The run took about 12 minutes, 725 seconds of it in the three fits of R2. R3's one forecast uses all
+# 24 months, and its three test months the 12-month window. Both national versions of R2 are
+# extrapolations, and neither is the R2 fitted here. ChEES on the cut model is a measured gradient
+# times an assumed count, on a sampler never run on R2. Nutpie with every flight scales this
+# carrier's time by 26x the cells at the same gradient count, with about 14x as many parameters.
+# Timings vary between runs, hence the ranges, and a result as thin as part 7's can move on another
+# machine.
 #
 # ### How to write a price someone can check
 #
@@ -1470,75 +1460,77 @@ store.save_json("decide", {"verdict": verdict.reset_index().to_dict("list"), "pi
 # > memory at 747,000 parameters, which E86's recipe does not. Nobody has shown what it does to the
 # > list."
 #
-# The second can be checked, argued with and refused. The series rule starts here: every large
-# notebook opens with its price table and the smallest model that could answer the question, and
-# says whether the big model changed the decision.
+# The second can be checked, argued with and refused. It is also the pattern for the rest of the
+# large-model series: each notebook opens with its price and the smallest model that could answer the
+# question, and says whether the big model changed the decision.
 #
 # ### What to tell the charity
 #
-# 1. **Do not approve the quote as written.** Ask the contractor to restate it with a measured
-#    gradient count, warmup included, a float32 test at 14 million rows, a sampler that fits in
-#    memory at this size, and three test months, not one.
-# 2. **Start the list now with a counting rule: rank by R0 and print R1's chance beside each
-#    flight.** Both take under a second. Built from last month's file, as a real list must be, R0's
-#    top 50 held 4, 35 and 15 flagged flights in the three months and R1's 6, 31 and 6. Over 12
-#    months R0 held 130 against 103, and R1 had the better log score in 11. Say "likely to be
-#    flagged", and say it is an estimate.
-# 3. **Buy one test next: R2 on all carriers, on the same three months.** Two versions price, and
-#    neither has run. ChEES on the 3-cell cut, where 24% of cells lose their flight's own effect,
-#    is about 16-43 minutes on the GPU plus any further warmup restarts. nutpie with every flight
-#    is about 4.8-5.1 hours or more on 2 cores. Either fits one night at those figures, and the
-#    CPU version has little room: one more tree doubling is about 10 hours. If its national list adds nothing to R1's, the row-level
-#    question goes away. On one carrier the evidence for R2 is real and thin.
-# 4. **Expect months, not flights, to decide how good a list looks.** Flags ran from 25 to 1,686 a
-#    month. No model here saw July coming, and a hit rate from one month should not be quoted
-#    alone.
+# So the research lead should not sign the quote as written. A price they could check would give a
+# measured gradient count, warmup included, a float32 test at 14 million rows, a sampler that fits in
+# memory at this size, and three test months. Meanwhile the counting rules make a list tonight: rank
+# by R0, print R1's chance beside each flight, and call it "likely to be flagged". Months, not models,
+# will decide how good that list looks, since flags ran from 25 to 1,686 a month and nothing here saw
+# July coming.
 #
-# ### What this notebook cannot claim
+# The one purchase worth making next is R2 on all carriers for the same three months, about 16-43
+# minutes on the GPU for the cut model or about 5 hours on 2 cores with every flight. That fits a
+# night, though the CPU version has little room to spare: one more tree doubling makes it about 10
+# hours. If its national list adds nothing to R1's, the row-level question goes away.
 #
-# - **That R3 changes a list, or does not.** R3 was never fitted, at any size, on any carrier.
-# - **That R2 is worth buying nationally.** It was fitted on one carrier, 3.9% of the cells, and
-#   three months, and neither national version has run.
-# - **That April's pick is firm, or that 12 months is the right window.** One flight decides it,
-#   and the window was never tested.
-# - **That 2.6-7.0 hours is what R3 would take.** The rate is measured to 10M rows. The gradient
-#   counts are assumptions, and further warmup restarts, float32 and R3's geometry are not priced.
-# - **That E86's recipe can run R3.** Its d x d table would need about 2,080 GiB, and the way
-#   around it is untested.
-# - **That float32 fails at 14M rows, or passes.** The spacing is arithmetic and the check was not
-#   run.
-# - **That the GPU beats a well-run CPU.** CPU figures are on 2 threads. The wider CPU test was not
-#   allowed on this machine.
-# - **That sorting never helps a GPU.** One scatter on one card, at 8 chains. The plan's bucket
-#   variant, a hand-written reverse pass over rows grouped in power-of-2 buckets, was not run.
-# - **A speed for your laptop.** Every CPU time here is from one Ryzen 5950X on 2 cores, 8 cores
-#   were not timed, and every GPU time is from one RTX 3090 Ti.
-# - **That a flagged flight is a violation, or a verdict on a carrier.** This is our coding of the
-#   rule, and only an estimate.
-# - **That the linking is right.** Flights are clusters linked across months by our own rule, and
-#   some real flights are split: 28% of new eligible flights had the same number in the same market
-#   the month before.
+# The plain order of work is the lesson: price before you buy, measure before you claim, and let the
+# smallest model that answers the question go first. It may be the answer.
 #
-# **The bigger lesson is the plain order of work.** Price before you buy, measure before you claim,
-# and let the smallest model that answers the question go first. It may be the answer.
+# ## Summary
+#
+# - **A price has three factors and two walls.** Time is time per gradient x gradients x fits, and
+#   memory and precision must hold. The contractor's 0.15 s a gradient is right by accident, a rate 5x
+#   too slow per lookup applied to 5x too few lookups, but two hours holds only below about 46,000
+#   gradients. One fit of R3 prices at 2.6-7.0 hours for 60,000-160,000 gradients, and a test on three
+#   months at 3.9-10.5 hours on a 12-month window. These are extrapolated from a gradient measured at
+#   10M rows, both gradient counts are assumed, and R3 was never fitted.
+# - **A rate belongs to a cost shape.** The same card is about 30-35x cheaper than 2 CPU threads on
+#   matched rows and about 200x dearer on a `scan`. The CPU side is 2 threads of one Ryzen 5950X and
+#   the GPU one RTX 3090 Ti, so this is neither a GPU against a well-run CPU nor a speed for your
+#   laptop.
+# - **Collapse first, then measure.** Collapsing rows into flight x month cells is worth about 15x a
+#   gradient. Sorting rows by flight, the planned fix, made one lookup at 10M rows 1.6-1.9x slower on
+#   the card, and a power law from small subsets hit the month only by straddling a step in the CPU
+#   timings.
+# - **The walls a rate cannot see.** Gradient memory is modest (about 5.7 GiB at 32 chains and 14M
+#   rows, scaled), but E86's ChEES warmup keeps a d x d table of about 2,080 GiB at R3's 747,000
+#   parameters. Near R3's log density, float32 numbers are 0.5 nats apart; whether that harms a fit
+#   was not tested.
+# - **The counting rules make a usable list today.** Built from last month's file, R0's national top
+#   50 caught 4, 35 and 15 flagged flights in the three test months and R1's 6, 31 and 6, against
+#   0.2-3.9 for a random list. Over 12 months R0 ranks better (130 hits against 103) and R1 states
+#   chances better (11 of 12 log scores).
+# - **Forecast a new month, not an average one.** R2 with the month redrawn gives 90% intervals of 0
+#   to 18-58 flags that cover July's 39, where the average-month version expected 7. It still cannot
+#   tell that July is a bad month.
+# - **R2 changes the list, and helps a little.** On one mid-size carrier (3.9% of the cells; no
+#   national R2 has run) with unusually many new flights, R1 and R2 share 7-8 of 10 flights and
+#   catch the same 0, 4 and 0 flags; in a list of 50 R2 catches 3, 17 and 2 against 0, 10 and 0.
+#   The rule fixed before scoring buys R2, but only July shows a clear gain, October turns on one
+#   flight and April's pick moves with the seed.
 #
 # ## Try it yourself
 #
-# Each of these ran as printed after the finished notebook, on 2 cores. The first two take under a
-# second, and the third about 75 seconds.
+# Each of these runs as printed at the end of the notebook on 2 cores. The first two take under a
+# second, the third about 75 seconds.
 #
-# 1. **A cost law from less.** `predict_month(fit_days=(3, 7))` and `predict_month(fit_days=(7,
-#    14), chains=1)` fit the law above on other sizes. One sits across the step and overshoots the
-#    month several times over; the other sits above it and lands within about 10%. Which is which,
-#    and could you have known in advance?
-# 2. **A longer list.** `decide(list_size=20, needed=16)[1]` reruns the rule with a list of 20 and
-#    the same 80% overlap, and it gives R2 at all three months. Print `decide(list_size=20,
-#    needed=16)[0]` to see what changed for April. Why would a rule be fixed before reading the
-#    scores, list length included?
-# 3. **Another carrier.** Take the 10th of 15 with `other = int(np.argsort(-sizes)[9])`, fit it
-#    with fewer draws with `small_fit = fit_r2(TARGETS[1], carrier=other, tune=400, draws=300)`,
-#    then compare `log_score(r2_forecast(small_fit, other)["R2"], targets_of(TARGETS[1],
-#    other)["flagged"]).mean()` with `log_score(r1_forecast(TARGETS[1], other),
-#    targets_of(TARGETS[1], other)["flagged"]).mean()`. Read `small_fit["stats"]` first: at these
-#    short settings the hyperparameters' r_hat is about 1.06, which fails this notebook's own bar.
-#    One more carrier is one more story, not a national answer.
+# 1. **A cost law from less.** `predict_month(fit_days=(3, 7))` and `predict_month(fit_days=(7, 14),
+#    chains=1)` fit the law of part 3 on other sizes. One sits across the step and overshoots the
+#    month several times over; the other sits above it and lands within about 10%. Which is which, and
+#    could you have known in advance?
+# 2. **A longer list.** `decide(list_size=20, needed=16)[1]` reruns the rule with a list of 20 and the
+#    same 80% overlap, and it gives R2 in all three months. Print `decide(list_size=20, needed=16)[0]`
+#    to see what changed for April. Why should a rule be fixed before reading the scores, list length
+#    included?
+# 3. **Another carrier.** Take the 10th of 15 with `other = int(np.argsort(-sizes)[9])`, fit it with
+#    fewer draws using `small_fit = fit_r2(TARGETS[1], carrier=other, tune=400, draws=300)`, then
+#    compare `log_score(r2_forecast(small_fit, other)["R2"], targets_of(TARGETS[1],
+#    other)["flagged"]).mean()` with `log_score(r1_forecast(TARGETS[1], other), targets_of(TARGETS[1],
+#    other)["flagged"]).mean()`. Read `small_fit["stats"]` first: at these short settings the
+#    hyperparameters' $\hat R$ is about 1.06, which fails the usual bar. One more carrier is one more
+#    story, not a national answer.

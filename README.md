@@ -280,7 +280,7 @@ What will a big model cost, and does it change the decision? The notebook tests 
 
 | | Topic | Data | Key techniques |
 |---|---|---|---|
-| **E87** | Pricing a model: should a charity buy a flight-level forecast? | BTS Reporting Carrier On-Time Performance 2024-2025 (14,080,680 rows, kept as 494,547 flight x month cells and one month of rows, with integer codes and no names); the stakeholder is fictional | price = rate x gradients + memory + precision, an iso-cost map, GPU and CPU rates by cost shape, a gather and scatter timed on real indices, float32 spacing and a VRAM grid, a rung ladder from persistence and a conjugate beta-binomial to a hierarchical beta-binomial under nutpie, redrawing the month in a forecast, a rung rule fixed before any score was read, slopegraph of ranks, writing a price someone can check |
+| **E87** | Pricing a model: should a charity buy a flight-level forecast? | BTS Reporting Carrier On-Time Performance 2024-2025 (14,080,680 rows, kept as 494,547 flight x month cells and one month of rows, with integer codes and no names) | price = rate x gradients + memory + precision, an iso-cost map, GPU and CPU rates by cost shape, a gather and scatter timed on real indices, float32 spacing and a VRAM grid, a ladder of forecasts from persistence and a conjugate beta-binomial to a hierarchical beta-binomial under nutpie, redrawing the month in a forecast, a decision rule fixed before any score was read, slopegraph of ranks, writing a price someone can check |
 
 #### A neural localiser, tried and failed (E88)
 
@@ -288,7 +288,7 @@ Would a neural network change how many frames a dSTORM movie needs? A DECODE-sty
 
 | | Topic | Data | Key techniques |
 |---|---|---|---|
-| **E88** | Every photon: a neural localiser tried on a full dSTORM movie, and how it failed | Two full 647 nm recordings of Unc-13 at *Drosophila* junctions (Mrestani 2022, Zenodo 7328805, CC BY 4.0; 15,000 frames each, kept as a 1.7 MB summary and small JSON tables of a stored run); the imaging lead is fictional | gates written before the run and printed when they fail, a frames decision rule recomputed live, a paired-frame test of error bars with no ground truth, companion halo, population replicate and a visual lineup, a live NUTS audit in PyMC with per-chain log density, a cross-correlation drift failure reproduced from stored renders, random against block split in Fourier ring correlation, a calibration certificate for a trained network |
+| **E88** | Every photon: a neural localiser tried on a full dSTORM movie, and how it failed | Two full 647 nm recordings of Unc-13 at *Drosophila* junctions (Mrestani 2022, Zenodo 7328805, CC BY 4.0; 15,000 frames each, kept as a 1.7 MB summary and small JSON tables of a stored run) | how many frames a movie needs, by a stability rule and a block bootstrap, DECODE-style networks trained on simulators, a paired-frame test of error bars with no ground truth, companion halo, population replicate and a visual lineup, a live NUTS audit in PyMC with per-chain log density, a cross-correlation drift failure reproduced from stored renders, random against block split in Fourier ring correlation, a calibration certificate for a trained network |
 
 #### Value of information on a map (E89)
 
@@ -300,11 +300,11 @@ Where should the next air monitors go? Uncertainty and decision value turn out t
 
 #### A price signal and a substation (E91)
 
-How many homes does it take to have a stated chance of a stated cut on the night? Nobody randomised who took the tariff, but Supply-Following event days were randomised, and a winter evening has only four of them. The notebook runs on 2 cores and about 1 GB, in about 3 minutes, at its small rung only: a reduced delivery estimate, reported as a range on the randomised evenings alone, because the pre-trial placebo failed, ending on "run a local trial first".
+How many homes does it take to have a stated chance of a stated cut on the night? Nobody randomised who took the tariff, but Supply-Following event days were randomised, and a winter evening has only four of them. The notebook runs on 2 cores and about 1 GB, in about 3 minutes. It gives a reduced delivery estimate, reported as a range on the randomised evenings alone, because the pre-trial placebo failed, ending on "run a local trial first".
 
 | | Topic | Data | Key techniques |
 |---|---|---|---|
-| **E91** | The price signal and the substation: how many homes for how many kilowatts? | Low Carbon London smart meters from UK Power Networks (London Datastore, CC BY 4.0; 1,088 tariff homes as a home x event table and 200 homes hourly) and the 2013 price file; the planner and substation are fictional | what was and was not randomised, naive group difference against a within-home closed-form fleet, a meter-clock failure, balance, placebo and benchmark gates, why a Student-t location misses a sum (quantile shift function), a Gaussian day-level model on randomised evenings with shared and own spreads, delivery curves and a planner's contour map, counting evenings instead of homes, cross-fitted targeting, ranking on earlier load, block-mean carpets, funnels and calendar rasters in plain matplotlib |
+| **E91** | The price signal and the substation: how many homes for how many kilowatts? | Low Carbon London smart meters from UK Power Networks (London Datastore, CC BY 4.0; 1,088 tariff homes as a home x event table and 200 homes hourly) and the 2013 price file | what was and was not randomised, naive group difference against a within-home closed-form fleet, a meter-clock failure, balance, placebo and benchmark checks, why a Student-t location misses a sum (quantile shift function), a Gaussian day-level model on randomised evenings with shared and own spreads, delivery curves and a planner's contour map, counting evenings instead of homes, cross-fitted targeting, ranking on earlier load, block-mean carpets, funnels and calendar rasters in plain matplotlib |
 
 ### Data work (D-series)
 

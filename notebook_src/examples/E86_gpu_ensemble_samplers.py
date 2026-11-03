@@ -14,46 +14,54 @@
 # | **Type** | Advanced worked example - read, run, modify |
 # | **Data** | Real: the 3,604 *Beilschmiedia pendula* trees of the Barro Colorado Island 50-ha plot, with elevation and slope on a 5 m grid (`spatstat.data`; Hubbell & Foster 1983, Condit et al. 1996) |
 # | **Time** | About 10 minutes with a GPU; about 6 minutes on 8 CPU cores, where it switches to a coarser 20 m lattice |
-# | **You will learn** | Which steps of Bayesian sampling a GPU speeds up and which it does not · why NUTS is awkward on a GPU · running **ChEES-HMC** and **MEADS** from `blackjax` on a PyMC model · why **float32** matters on a consumer GPU · how one bad chain can ruin an ensemble, and how to catch it · how to give a baseline a fair chance |
+# | **You will learn** | Which steps of Bayesian sampling a **GPU** speeds up and which it does not · why **NUTS** is awkward on a GPU · **ChEES-HMC** and **MEADS** from `blackjax` on a PyMC model · why **float32** matters on a consumer GPU · **stragglers**: how one bad chain can ruin an ensemble, and how to catch it · a **fair baseline** before quoting a speed-up · a **log-Gaussian Cox process** with spatially varying effects |
 #
-# ## The brief
+# > **Hardware.** The stored outputs come from one desktop: an NVIDIA RTX 3090 Ti and a 16-core
+# > Ryzen 5950X running on 15 cores. Without a GPU the notebook fits a coarser 20 m lattice and skips
+# > the GPU comparisons, so your numbers will differ from the prose. GPU runs are not bit-reproducible
+# > even with a fixed seed, so the prose gives rounded values, or ranges over repeated runs.
 #
-# A forest ecologist has mapped every *Beilschmiedia pendula* tree in a 1000 x 500 m plot and has
-# two questions. **Does the species' link to terrain hold across the whole plot, or only in parts of
-# it?** And **which five hectares should a recruitment survey use**, if the aim is the best habitat
-# rather than wherever a clump of trees happens to stand?
+# ## The setting
 #
-# Answering the first needs effects that vary over space. Answering both means separating habitat
-# from the fine clustering of a species whose seeds fall near their parents. That is a log-Gaussian
-# Cox process with four latent fields on a 5 m lattice: 20,000 cells and 24,810 parameters. It is
-# also a fair test of a GPU, because every gradient is a stack of dense matrix products.
+# Barro Colorado Island in Panama holds one of the best-studied pieces of tropical forest in the
+# world. In its 50-hectare plot, 1000 by 500 metres, every free-standing tree has been mapped and
+# measured (Hubbell & Foster 1983; Condit et al. 1996). One species, *Beilschmiedia pendula*, is a
+# classic of spatial statistics (Møller & Waagepetersen 2007): its 3,604 trees bunch into clumps and
+# seem to favour some kinds of ground over others.
 #
-# ## The idea
+# Suppose a forest ecologist asks two questions about it. **Does the species' link to terrain hold
+# across the whole plot, or only in parts of it?** And **which five hectares should a recruitment
+# survey use**, if the aim is the best habitat rather than wherever a clump of trees happens to stand?
 #
-# A GPU does thousands of identical operations at once. One NUTS chain cannot use that: each step depends on the one
-# before it. But **many chains** can, because a gradient for 128 chains is one big batched matrix product. That moves
-# the bottleneck, as Hoffman et al. point out: with many chains, ESS is plentiful and the limit is how fast the chains
-# reach and mix through the posterior. ChEES-HMC and MEADS tune their settings from the ensemble itself, so that all
-# chains can take the same number of steps in lock-step.
+# The first question needs effects that vary over space. Both need us to separate habitat from the
+# fine clustering of a species whose seeds fall near their parents. The natural model is a
+# **log-Gaussian Cox process** (Møller, Syversveen & Waagepetersen 1998): a Poisson count in every
+# cell of a lattice, with a log intensity built from Gaussian random fields. With four latent fields
+# on a 5 m lattice, that is 20,000 cells and 24,810 parameters.
 #
-# All timings quoted below come from one desktop: an NVIDIA RTX 3090 Ti and a 16-core Ryzen 5950X
-# running on 15 cores. On a CPU-only machine the notebook runs a smaller problem and skips the GPU
-# comparisons, so your printed numbers will differ from the prose, and the committed outputs are the
-# place to see those comparisons. GPU runs are not bit-reproducible, so even with the same seed,
-# numbers move between runs: the prose gives ranges or rounded values.
+# The model is also a fair test of a GPU, which is the second subject of this notebook, because every
+# gradient is a stack of dense matrix products. A GPU does thousands of identical operations at once.
+# One NUTS chain cannot use that, since each step depends on the one before it. **Many chains** can:
+# a gradient for 128 chains is one big batched matrix product. With many chains, effective sample
+# size is plentiful, and the limit moves to how fast the chains reach the posterior and mix through it
+# (Hoffman, Radul & Sountsov 2021). ChEES-HMC and MEADS are built for that regime. They tune their
+# settings from the ensemble itself, so that all chains take the same number of steps in lock-step.
+# We pit them against a well-configured NUTS run on the CPU.
 #
 # ## The plan
 #
-# 1. The trees, the terrain and the model
-# 2. The baseline: NUTS on the CPU
-# 3. Where the time goes: chains, problem size and precision
-# 4. ChEES-HMC: two ways to fail, and a fix
-# 5. Why not just run NUTS on the GPU?
-# 6. MEADS: fragile from a cold start, excellent from a warm one
-# 7. The scorecard, and how much of it is the hardware
-# 8. Is single precision safe?
-# 9. Back to the forest
-# 10. Which steps does a GPU speed up?
+# | part | question | tool |
+# |---|---|---|
+# | 1 | What do the trees look like, and what model fits them? | variance-to-mean ratios, Hilbert-space GPs |
+# | 2 | How fast is a good CPU sampler? | nutpie in float64 |
+# | 3 | Where does the time go on a GPU? | batched gradients: chains, size, precision |
+# | 4 | Can ChEES-HMC sample the model? | `blackjax.chees_adaptation`, culling stragglers |
+# | 5 | Why not just run NUTS on the GPU? | vectorised `blackjax.nuts` |
+# | 6 | What does MEADS add? | `blackjax.meads_adaptation`, a warm start |
+# | 7 | How large is the speed-up, and how much is hardware? | worst-case ESS per second |
+# | 8 | Is single precision safe? | float32 against float64 log densities |
+# | 9 | What does the model say about the forest? | posterior fields, a predictive check, hectare ranks |
+# | 10 | Which steps does a GPU speed up? | timing each stage |
 
 
 # %%
@@ -113,13 +121,13 @@ print(f"GPU build of JAX: {HAS_GPU}; lattice {CELL:.0f} m, {CHAINS} chains")
 
 
 # %% [markdown]
-# The configuration above picks the problem size. Note how the GPU is detected:
-# `jax.default_backend()` would start CUDA, which costs about 1.5 GB of memory, and about 2 GB after
+# The configuration above picks the problem size. Note how the GPU is detected: calling
+# `jax.default_backend()` would start CUDA, which takes about 1.5 GB of memory, and about 2 GB after
 # the first compile. Importing `blackjax` starts it too, so that import waits until after the CPU
-# baseline. `precision` below switches PyTensor and JAX together, because the two must agree;
-# importing PyMC turns JAX's x64 mode on, so we set it explicitly.
+# baseline. The `precision` helper below switches PyTensor and JAX together, because the two must
+# agree; importing PyMC turns JAX's x64 mode on, so we set it explicitly.
 #
-# ## 1. The trees, the terrain and the model
+# ## 1 · The trees, the terrain and the model
 
 # %%
 @contextlib.contextmanager
@@ -194,10 +202,13 @@ print(pd.DataFrame({"elevation": trees_per_ha(elev5), "log gradient": trees_per_
 # Trees avoid the centre of the plot and bunch into tight clumps. The contours show what that centre
 # is: a flat hollow, with a western rise, a higher plateau to the east and steep edges running
 # between them. Density climbs steadily with gradient, from 20 to 107 trees per hectare across the
-# quarters of the plot. Elevation shows no steady trend, and its highest quarter holds the fewest
-# trees, a first hint at the brief's question. (The R documentation says 3,605
-# trees; the file holds 3,604.) For a homogeneous Poisson process, counts across quadrats have
-# variance equal to their mean, whatever the quadrat size. Here:
+# quarters of the plot. Elevation shows no steady trend: density rises from about 60 to 108 trees per
+# hectare over the first three quarters, then the highest quarter holds the fewest trees of all. That
+# is a first hint that the link to elevation is not the same everywhere. (The R documentation says
+# 3,605 trees; the file holds 3,604.)
+#
+# For a homogeneous Poisson process, counts across quadrats have variance equal to their mean,
+# whatever the quadrat size. Here:
 
 # %%
 def vmr(counts, block):
@@ -211,38 +222,42 @@ print(pd.Series({f"{5 * b} m": vmr(y5, b) for b in (1, 2, 4, 10, 20)}, name="var
 
 
 # %% [markdown]
-# The ratio climbs from 2 at 5 m to 52 at 100 m: clustering at every scale, far more than terrain
-# covariates alone can produce (a covariate-only Poisson fit gives about 1 at 5 m and 10-14 at 100
-# m). This table becomes our predictive check.
+# The ratio climbs from 2 at 5 m to 52 at 100 m: clustering at every scale, far more than the
+# terrain alone can produce (a Poisson fit with only the terrain covariates gives about 1 at 5 m and
+# 10-14 at 100 m). This table will be our posterior predictive check in part 9.
 #
-# **The model.** Counts in each cell $i$ of area $a$ are Poisson with
+# ### The model
+#
+# Counts in each cell $i$ of area $a$ are Poisson with
 #
 # $$\log \lambda_i = \alpha + \big(b_e + g_e(s_i)\big)\,\text{elev}_i + \big(b_g + g_g(s_i)\big)\,\text{grad}_i
 # + f_{\text{broad}}(s_i) + f_{\text{fine}}(s_i) + \log a .$$
 #
-# - $g_e, g_g$: **spatially varying effects** of elevation and of log gradient (Matern 3/2, sharing a lengthscale).
-# - $f_{\text{broad}}$: large-scale variation the terrain does not explain (Matern 3/2).
-# - $f_{\text{fine}}$: clumps from local seed dispersal. It uses a **Matern 1/2**, which is much
-#   rougher, with 100 x 200 modes, reaching about 80% of the lattice's Nyquist frequency.
+# The fields $g_e$ and $g_g$ are **spatially varying effects** of elevation and of log gradient
+# (Matern 3/2, sharing one lengthscale), so the species' response to terrain can change across the
+# plot. $f_{\text{broad}}$ is large-scale variation that the terrain does not explain (Matern 3/2).
+# $f_{\text{fine}}$ holds the clumps left by local seed dispersal. It uses a much rougher
+# **Matern 1/2** kernel with 100 x 200 modes, reaching about 80% of the lattice's Nyquist frequency.
 #
-# Each field is a Hilbert-space GP (as in E05), written non-centred. On a grid the basis factorises, so a field is
+# Each field is a Hilbert-space GP (Solin & Särkkä 2020; as in E05), written non-centred. On a grid
+# the basis factorises, so a field is
 #
 # $$f = \Phi_y \,\big(\sqrt{S} \circ z\big)\, \Phi_x^\top,$$
 #
 # two dense matrix products per field per gradient. This is the operation a GPU likes best.
 #
-# Two fixes came from earlier drafts. The fine field first used a Matern 3/2 with 64 x 128 modes,
-# and its lengthscale came out near 6 m, against a 20 m prior and below what those modes can
-# resolve. The rougher kernel with more modes improved the fit, though the lengthscale, about 7 m,
-# remains close to the 5 m resolution. The basis realises about 75% of the nominal variance of such
-# a field, so `s_fine` is a nominal scale and the realised sd is about 0.95.
+# Two choices in the fields matter. With a smoother Matern 3/2 kernel and 64 x 128 modes, the fine
+# field's lengthscale comes out near 6 m, against a 20 m prior and below what those modes can
+# resolve. The rougher kernel with more modes fits better, though its lengthscale, about 7 m, stays
+# close to the 5 m resolution. The basis realises about 75% of the nominal variance of such a field,
+# so `s_fine` is a nominal scale and the realised sd is about 0.95.
 #
-# The smooth fields first used a box only 1.25 times the plot's size, and the boundary pulled their
-# variance to about 40% at the north and south edges: they were not stationary fields. They now use
-# a box of half-width 800 m, with modes to match, which is why the count reaches 24,810.
+# The smooth fields need room. In a box only 1.25 times the plot's size, the boundary pulls their
+# variance down to about 40% at the north and south edges, and they are no longer stationary. They
+# use a box of half-width 800 m instead, with modes to match, which is why the count reaches 24,810.
 #
 # **Priors.** Field sds are **LogNormal rather than half-normal**. The reason is sampling, not
-# ecology, and section 6 shows why it matters. A consequence to remember: these priors rule out
+# ecology, and part 6 shows why it matters. One consequence to remember: these priors rule out
 # exactly zero variation.
 
 # %%
@@ -307,7 +322,8 @@ model, y, outputs = make_model()
 print(f"{y.size:,} cells, {sum(v.size for v in model.initial_point().values()):,} parameters")
 
 # %% [markdown]
-# A prior predictive check. The total should cover the observed 3,604 without being dominated by absurd forests.
+# A prior predictive check: the total number of trees should cover the observed 3,604 without being
+# dominated by absurd forests.
 
 # %%
 HYPER = ["alpha", "b_elev", "b_grad", "s_broad", "ell_broad", "s_fine", "ell_fine",
@@ -322,20 +338,19 @@ del prior, prior_y
 
 
 # %% [markdown]
-# The prior is generous, with a 90% interval of about 900 to 220,000 trees, and 14% of draws put
-# more than 1,000 trees in a 25 square metre cell at least once. That upper tail is too wide to be
-# realistic, but 20,000 cells of data will overwhelm it, and the observed total sits comfortably
-# inside.
+# The prior is generous: a 90% interval of about 900 to 220,000 trees, and 14% of draws put more
+# than 1,000 trees in a single 25 square metre cell. That upper tail is unrealistic, but 20,000 cells
+# of data will overwhelm it, and the observed total sits comfortably inside.
 #
-# ## 2. The baseline: NUTS on the CPU
+# ## 2 · The baseline: NUTS on the CPU
 #
-# Every comparison needs a fair opponent, and a speed-up is only as honest as its baseline. nutpie
-# is a very good NUTS sampler, so we run it in double precision on the same model, and configure it
-# well. First, one BLAS thread per chain, set at the very top of the notebook: left alone, each
-# chain's matrix products compete on a 30-thread pool, and the first version of this notebook ran
-# about 2-3x slower for that reason alone. Second, more chains than the default: 8, one per physical
-# core, sharing 4,000 draws. Third, for memory: nutpie stores every free variable, because
-# `var_names` only filters derived ones, so the trace goes to a temporary zarr store on disk, a GB or so, and only the hyperparameters come back.
+# A speed-up is only as honest as its baseline. nutpie is a very good NUTS sampler, so we run it in
+# double precision on the same model and configure it well, in three ways. First, one BLAS thread
+# per chain, set at the very top of the notebook. Left alone, each chain's matrix products compete
+# for a 30-thread pool, and the run is about 2-3x slower for that reason alone. Second, more chains
+# than the default: 8, one per physical core, sharing 4,000 draws. Third, memory: nutpie stores every
+# free variable, because `var_names` only filters derived ones, so the trace goes to a temporary zarr
+# store on disk, a GB or so, and only the hyperparameters come back.
 
 # %%
 with precision("float64"):
@@ -366,19 +381,21 @@ print(summary_nuts.round(3).to_string())
 # %% [markdown]
 # It works: about 120 s, no divergences, and only about 63 leapfrog steps per draw, because the
 # non-centred posterior is well conditioned. The weakness is effective sample size. The worst
-# parameters reach an ESS of only about 140 with r_hat 1.05, which is the usual trouble with the
-# hyperparameters of a latent Gaussian model. Run once outside this notebook, 14 chains took 139 s
-# with a worst ESS of 187 and r_hat 1.10: about 20% more ESS per second, so the choice of 8 is not
-# hiding much.
+# parameter, `ell_broad`, reaches an ESS of only about 140 with r_hat 1.05, the usual trouble with
+# the hyperparameters of a latent Gaussian model. Are 8 chains too few? A separate run with 14
+# chains took 139 s and reached a worst ESS of 187 with r_hat 1.10: about 20% more ESS per second,
+# so the choice of 8 hides little.
 #
-# ## 3. Where the time goes
+# ## 3 · Where the time goes: chains, problem size and precision
 #
-# Now JAX starts. `get_jaxified_logp` turns the PyMC model into a JAX function, so the model stays in PyMC. Beware of its
-# flag: `negative_logp=True`, the default, returns **+logp**, and `False` flips the sign. We check against PyMC, on a
-# small lattice because `compile_logp` is memory-hungry at full size.
+# Now JAX starts. `get_jaxified_logp` turns the PyMC model into a JAX function, so the model stays
+# in PyMC. Beware of its flag: `negative_logp=True`, the default, returns **+logp**, and `False`
+# flips the sign. We check it against PyMC on a small lattice, because `compile_logp` is
+# memory-hungry at full size.
 #
-# We time `value_and_grad` under `vmap`, the unit of all gradient-based sampling. `block_until_ready` matters: JAX
-# dispatches work asynchronously, and without it you time the queueing rather than the arithmetic.
+# We time `value_and_grad` under `vmap`, the unit of all gradient-based sampling. `block_until_ready`
+# matters: JAX dispatches work asynchronously, and without it we would time the queueing rather than
+# the arithmetic.
 
 # %%
 import blackjax  # CUDA starts here, not before
@@ -457,10 +474,11 @@ print(timing.round(2).to_string())
 # %% [markdown]
 # Read the table in three directions.
 #
-# **Down the columns: chains.** GPU cost grows slowly at first. 128 chains cost about 6.5 times what
-# one chain costs, not 128 times. The GPU's advantage grows from about 5-6x with one chain to more
-# than **50x** with 128. The CPU, with a fixed number of cores, falls behind: from 32 to 128 chains
-# its time rises six- to sevenfold, not fourfold, which suggests the work no longer fits the cache.
+# **Down the columns: chains.** On the GPU, cost grows slowly at first: 128 chains cost about 6.5
+# times what one chain costs, not 128 times. The GPU's advantage grows from about 5x with one chain
+# to more than **50x** with 128. The CPU, with a fixed number of cores, falls behind: from 32 to 128
+# chains its time rises about eightfold, not fourfold, which suggests the work no longer fits in
+# cache.
 #
 # **Across: precision.** This is the surprise, and it is specific to consumer cards. The
 # double-precision hardware on this GPU is a small fraction of its single-precision hardware, so
@@ -502,22 +520,24 @@ if HAS_GPU:
     axes[1].legend();
 
 # %% [markdown]
-# The left panel shows the cost per chain falling with more chains on the GPU, and the right panel
-# gives the decision rule. **The GPU does not help a small problem with one chain** (0.5-0.8x the
-# CPU's speed across runs at 1,578 parameters), probably because every call pays a fixed cost to
-# reach the card. It wins everywhere with 128 chains, and increasingly so with size. So a GPU is not
-# simply faster. It is faster at large batches of large array operations.
+# The left panel shows the cost per chain falling as chains are added on the GPU, and the right
+# panel gives the decision rule. **The GPU does not help a small problem with one chain**: at 1,578
+# parameters it runs at 0.6x the CPU's speed here (0.5-0.8x across runs), probably because every call
+# pays a fixed cost to reach the card. With 128 chains it wins at every size, by 13x to 54x, and by
+# more as the problem grows. So a GPU is not simply faster. It is faster at large batches of large
+# array operations.
 #
-# ## 4. ChEES-HMC
+# ## 4 · ChEES-HMC: two ways to fail, and a fix
 #
-# HMC has two settings, step size and trajectory length. NUTS picks the length separately for each chain at each
-# iteration. **ChEES** (Hoffman, Radul & Sountsov, 2021) instead picks one length for all chains during warmup, by
-# maximising the *Change in the Estimator of the Expected Square*: how much a trajectory moves each chain's squared
-# distance from the ensemble mean. Every chain then runs the same number of leapfrog steps, jittered
-# from one iteration to the next, so nothing has to wait for anything else. The `L` printed below is
-# the maximum: each iteration draws a count that averages about L/2.
+# HMC has two settings, step size and trajectory length. NUTS picks the length separately for each
+# chain at each iteration. **ChEES** (Hoffman, Radul & Sountsov 2021) instead picks one length for all
+# chains during warmup, by maximising the *Change in the Estimator of the Expected Square*: how much
+# a trajectory moves each chain's squared distance from the ensemble mean. Every chain then runs the
+# same number of leapfrog steps, jittered from one iteration to the next, so no chain waits for
+# another. The `L` printed below is the maximum: each iteration draws a count that averages about L/2.
 #
-# All chains start from dispersed points, so that r_hat can detect problems. With the default settings, this happens:
+# All chains start from dispersed points, so that r_hat can detect problems. With the default
+# settings, this happens:
 
 # %%
 key, init_key = jax.random.split(key)
@@ -585,33 +605,33 @@ print({a: round(b, 4) for a, b in stats_id.items()})
 print(summary_id.round(3).to_string())
 
 # %% [markdown]
-# **The first failure is a quiet one.** Acceptance is a healthy 0.87 or so, and divergences swing
-# from none to a few hundred between identical runs. But the largest r_hat is well above the 1.01 we
-# want, and the worst ESS is roughly six to twenty times lower than after the fix below. Earlier versions of this
-# model did worse from the same settings: r_hat 1.24, 900 divergences, and one chain stranded at
-# half the others' `s_fine`. With the default identity metric nothing corrects for the scale
-# differences between parameters, so the step size stays small, near 0.010.
+# **Failure 1: no metric.** At first sight the run is healthy: acceptance is about 0.89 and there is
+# one divergence (identical runs give anything from none to a few hundred). But the largest r_hat,
+# 1.06, is well above the 1.01 we want, and the worst ESS, about 1,500, is roughly seven times lower
+# than after the fix below (six to twenty times across runs). With the default identity metric
+# nothing corrects for the different scales of the parameters, so the step size stays small, near
+# 0.010.
 #
-# `mass_matrix_estimation="diagonal"` estimates a diagonal metric from the ensemble and adds a
-# trajectory-length floor. The floor needs a d x d covariance accumulator: 2.3 GB of GPU memory in
-# float32 at this size, and 4.6 GB in float64.
+# The fix is `mass_matrix_estimation="diagonal"`, which estimates a diagonal metric from the ensemble
+# and adds a floor on the trajectory length. The floor needs a d x d covariance accumulator: 2.3 GB
+# of GPU memory in float32 at this size, and 4.6 GB in float64.
 #
-# **The second failure took longer to find.** With the metric on, an early complete run of this
-# notebook gave a maximum trajectory of 728 steps, 452 divergences and an expected total of 4,428
-# trees, against 3,604 observed. Other seeds were fine. Across runs the length went 181, 246, 265,
-# 661, 728, and high values went with bad results. A chain that gets stuck early has a log density
-# hundreds of robust sds from the rest, and the floor scales with the spread of the ensemble, so
-# **one straggler can inflate the trajectory for all the chains**. In a test of four seeds, two had
-# stragglers after 300 warmup steps, with lengths of 885 and 978, against 473 and 545 for the
-# others.
+# **Failure 2: one straggler.** With the metric on, most seeds are fine, but not all. Over complete
+# runs with different seeds, the maximum trajectory length came out at 181, 246, 265, 661 and 728
+# steps, and the high values went with bad results: the run at 728 had 452 divergences and an
+# expected total of 4,428 trees, against 3,604 observed. The cause is a chain that gets stuck early.
+# Its log density sits hundreds of robust sds from the rest, and the floor scales with the spread of
+# the ensemble, so **one straggler can inflate the trajectory for every chain**. In a test of four
+# seeds, two had stragglers after 300 warmup steps, with lengths of 885 and 978, against 473 and 545
+# for the other two.
 #
 # The fix is to warm up in two stages: flag chains far from the ensemble, restart them from copies
-# of healthy ones, then run a second, fresh warmup. All four seeds then settled at 105-115 steps.
-# The restart does part of this itself, because blackjax starts its adaptation again. Copies
-# separate immediately, because their momenta differ, and this happens **only during warmup**, so
-# the target distribution is untouched. There is a real risk, though: culling would hide a true
-# minor mode. In the seeds that had stragglers, the flagged chains had far lower log density than
-# the rest, so they were stuck rather than exploring. Check that before you copy this recipe.
+# of healthy ones, then run a second, fresh warmup. With it, all four seeds settled at 105-115 steps.
+# The restart does part of the work by itself, because blackjax starts its adaptation again. Copies
+# separate at once, because their momenta differ, and all of this happens **only during warmup**, so
+# the target distribution is untouched. The risk is real, though: culling would hide a true minor
+# mode. In the seeds with stragglers, the flagged chains had far lower log density than the rest, so
+# they were stuck rather than exploring. Check that before you reuse this recipe.
 
 # %%
 log_density_batch = jax.jit(jax.vmap(logdensity))
@@ -664,16 +684,17 @@ for ax, m, title in zip(axes, means, ("ChEES, default settings", "ChEES, diagona
 axes[0].set_ylabel("chains");
 
 # %% [markdown]
-# This seed has no stragglers, though the check stays because you cannot know that in advance.
-# Notice that L still falls from 600-650 to 150-180 with nothing culled: a high early L alone is
-# not proof of a straggler, and the second warmup does that work. The run has a handful of
-# divergences, r_hat at most about 1.01, and a worst ESS of 8,000-10,000: sixty to seventy-five times nutpie's, in about 130-140 s. Warmup takes about 85% of that. In the figure, the default run's chains are spread
-# more widely than the fixed run's, which is what a high r_hat looks like.
+# This seed has no stragglers, though the check stays, because nobody can know that in advance.
+# Notice that L still falls from about 600 to 180 with nothing culled: a high early L alone is not
+# proof of a straggler, and the second warmup does that work. The run has 2 divergences, r_hat at
+# most 1.01 and a worst ESS of about 10,000 (8,000-10,000 across runs), some seventy-five times
+# nutpie's, in about 140 s. Warmup takes over 80% of that time. In the figure, the default run's
+# chains are spread more widely than the fixed run's, which is what a high r_hat looks like.
 #
-# ## 5. Why not just run NUTS on the GPU?
+# ## 5 · Why not just run NUTS on the GPU?
 #
-# The usual explanation is that NUTS trees differ between chains, so under `vmap` every chain waits for the largest
-# tree. Let us measure that, on the same model with the same metric and step size.
+# The usual explanation is that NUTS trees differ between chains, so under `vmap` every chain waits
+# for the largest tree. Let us measure that, on the same model with the same metric and step size.
 
 # %%
 steps_nuts = 30 if HAS_GPU else 10
@@ -722,20 +743,23 @@ jax.clear_caches()
 
 
 # %% [markdown]
-# The usual explanation **does not apply here**. Trees here have 127 steps, with the odd exception
-# in some runs, so almost no work is wasted: this posterior is so homogeneous that the chains stop
-# at the same depth. On a model with more varied geometry the trees would differ, and that cost
-# would appear.
+# The usual explanation **does not apply here**. Almost every tree has 127 steps, with the odd
+# smaller one, so no work is wasted: this posterior is so homogeneous that the chains stop at the
+# same depth. On a model with more varied geometry the trees would differ, and that cost would
+# appear.
 #
-# The cost that does appear is **bookkeeping**. Each NUTS gradient costs about 3.6 ms against 0.86 ms for ChEES, which
-# matches a bare batched gradient. Building trees under `vmap` means saving and masking states, and `while_loop`s that
-# XLA cannot flatten. ChEES has almost no overhead at all: its time *is* its gradients. Note the benchmark's own trap:
-# `num_integration_steps` is a fixed sequence, so timing it alone lets XLA delete the entire sampler as dead code. We
-# return a statistic of the positions to keep the work alive.
+# The cost that does appear is **bookkeeping**. Each NUTS gradient costs about 3.6 ms, against
+# 0.86 ms for ChEES, which matches a bare batched gradient. Building trees under `vmap` means saving
+# and masking states, and `while_loop`s that XLA cannot flatten. ChEES has almost no overhead: its
+# time *is* its gradients.
 #
-# ## 6. MEADS
+# The benchmark has a trap of its own. `num_integration_steps` is a fixed sequence, so timing it
+# alone lets XLA delete the entire sampler as dead code. We return a statistic of the positions to
+# keep the work alive.
 #
-# **MEADS** (Hoffman & Sountsov, 2022) goes further and removes the trajectory altogether. It uses
+# ## 6 · MEADS: fragile from a cold start, excellent from a warm one
+#
+# **MEADS** (Hoffman & Sountsov 2022) goes further and removes the trajectory altogether. It uses
 # *generalised* HMC: a single leapfrog step per iteration, with momentum kept and only partly
 # refreshed. During warmup the chains are split into folds. Each fold takes its step size and metric
 # from a neighbouring fold and its damping from its own positions, one fold is frozen at each step,
@@ -769,33 +793,32 @@ print("MEADS, cold start:", {a: round(b, 5) for a, b in stats_cold.items()})
 print(summarise(kept_cold)[["r_hat", "ess"]].round(2).T.to_string())
 
 # %% [markdown]
-# **A clean-looking catastrophe.** Acceptance is near 0.8 and there are almost no divergences, yet
-# r_hat runs from about 10 into the hundreds or beyond, and ESS equals the number of chains. The
-# step size has collapsed to zero, so the chains are frozen, and a frozen chain *accepts* its
-# proposals. MEADS sets the step size from an estimate of the largest eigenvalue of the scaled
-# gradients, and from a dispersed start one chain with a huge gradient can dominate that estimate.
+# **Failure 3: a clean-looking catastrophe.** Acceptance is about 0.8 and there are no divergences,
+# yet r_hat runs from 15 to nearly 190, and ESS equals the number of chains. The step size has
+# collapsed to zero, so the chains are frozen, and a frozen chain *accepts* its proposals. MEADS sets
+# the step size from an estimate of the largest eigenvalue of the scaled gradients, and from a
+# dispersed start one chain with a huge gradient can dominate that estimate.
 #
-# A short Adam run does not help. It overshoots the typical set to a mode near -23,000, where real
-# draws then sat near -37,700, and gradients in that funnel are larger still. What helps is a start
-# *in* the typical set, which ChEES already gave us.
+# A short Adam optimisation beforehand does not help. In an earlier run it overshot the typical set
+# to a mode with log density near -23,000, where posterior draws sat near -37,700 in that run, and
+# gradients in that funnel are larger still. What helps is a start *in* the typical set, which ChEES
+# has already given us.
 #
-# Three more settings were needed, and getting to them taught something:
+# Three more settings matter. The first is `step_size_multiplier=0.25`: the default of 0.5 gives
+# acceptance of only 0.15-0.4 and r_hat from 1.2 to 2. The second is enough chains in each fold. On
+# the 20 m lattice, 32 chains (8 per fold) collapsed on one seed of three, while 64 chains (16 per
+# fold) held on all three, which is why the CPU configuration uses 64.
 #
-# - **`step_size_multiplier=0.25`.** The default of 0.5 gave acceptance of only 0.15-0.4, and r_hat
-#   from 1.2 to 2.
-#
-# - **Enough chains in a fold.** On the 20 m lattice, 32 chains (8 per fold) collapsed on one seed
-#   of three; 64 chains (16 per fold) held on all three. This is why the CPU configuration uses 64.
-#
-# - **The priors.** With half-normal and then Gamma priors on field sds, MEADS blew up: a log-sd ran
-#   to about -44 million. We first blamed float32, since GHMC's one-step Metropolis test compares
-#   tiny energy differences. That was wrong: the blow-up happened in float64 too. (float32 did go
-#   with far more divergences, 1,266 against 3 in one comparison, but rounding of this size cannot
-#   itself cause a divergence, and we did not find the mechanism.) Our best reading is this: those
-#   priors have a **linear tail in log sd**, with a nearly constant gradient, so nothing limits the
-#   step in that direction. A chain wanders down the tail, the fold's scale estimate grows, and that
-#   makes the next step bigger. A LogNormal prior has a *quadratic* tail, whose gradient grows with
-#   distance. With it, MEADS converged on all three seeds tried at 128 chains.
+# The third is the priors, and it is the instructive one. With half-normal and then Gamma priors on
+# the field sds, MEADS blew up: a log-sd ran to about -44 million. float32 is the obvious suspect,
+# since GHMC's one-step Metropolis test compares tiny energy differences, but the blow-up happens in
+# float64 too. (float32 does bring far more divergences, 1,266 against 3 in one comparison, but
+# rounding of this size cannot cause a divergence by itself, and the mechanism remains unknown.) The
+# most likely reading is this: those priors have a **linear tail in log sd**, with a nearly constant
+# gradient, so nothing limits the step in that direction. A chain wanders down the tail, the fold's
+# scale estimate grows, and that makes the next step bigger. A LogNormal prior has a *quadratic*
+# tail, whose gradient grows with distance. With it, MEADS converged on all three seeds tried at 128
+# chains.
 
 # %%
 key, k = jax.random.split(key)
@@ -805,12 +828,13 @@ print("MEADS, started from ChEES:", {a: round(b, 5) for a, b in stats_meads.item
 print(summary_meads.round(3).to_string())
 
 # %% [markdown]
-# From a clean ensemble, MEADS is excellent, though it varies between identical runs: acceptance
-# 0.94-0.98, no divergences, r_hat at most about 1.01, worst ESS 10,000-19,000. Its step size is
-# 0.016-0.03 and its damping small, so momentum persists for a hundred steps or more: long
-# trajectories, built one step at a time.
+# From a clean ensemble, MEADS is excellent: acceptance 0.98, no divergences, r_hat at most 1.01 and
+# a worst ESS of about 10,000. It varies between identical runs (acceptance 0.94-0.98, worst ESS
+# 10,000-19,000). Its step size is small, 0.016 here and up to 0.03 in other runs, and so is its
+# damping, so momentum persists for a hundred steps or more: long trajectories, built one step at a
+# time.
 #
-# ## 7. The scorecard
+# ## 7 · The scorecard, and how much of it is the hardware
 
 # %%
 where = "GPU" if HAS_GPU else "CPU"
@@ -838,34 +862,34 @@ for ax, name in zip(axes.flat, HYPER):
     ax.locator_params(axis="x", nbins=4);
 
 # %% [markdown]
-# All three samplers agree on all ten hyperparameters, in a figure where ChEES and MEADS ran float32
-# on a GPU and nutpie ran float64 on a CPU, and that independent agreement is what lets us trust the
-# speed-up. In **worst-case ESS per second**, ChEES is about **55-70x** NUTS and MEADS about
-# **40-50x**, varying from run to run. Using 14 chains for nutpie, as measured above, would lower
-# those by about a fifth.
+# All three samplers agree on all ten hyperparameters, although ChEES and MEADS ran in float32 on a
+# GPU and nutpie in float64 on a CPU. That independent agreement is what lets us trust the speed-up.
+# In **worst-case ESS per second**, ChEES is about **65x** NUTS in this run and MEADS about **40x**
+# (55-70x and 40-50x across runs). With 14 chains for nutpie, as measured in part 2, both would fall
+# by about a fifth.
 #
-# **The baseline is half the story.** An earlier version of this notebook quoted about 200x. It let
-# nutpie's chains fight over a BLAS thread pool and used only 4 chains. Nothing about the GPU
-# changed.
+# **The baseline is half the story.** Let nutpie's chains fight over a BLAS thread pool and give it
+# only 4 chains, and the same GPU runs look about 200x faster. Nothing about the GPU changes.
 #
-# **Do not read that as the GPU alone, either.** The last two rows separate the effects. They scale
-# ChEES's total time by a measured gradient-time ratio, so they are estimates, not runs. As one
-# 128-chain batch on the CPU, ChEES would take nearly two hours and match NUTS. In 32-chain batches,
-# the CPU's better regime, it would take about an hour and be about **2x** NUTS, assuming ESS and
-# adaptation hold. So the hardware gives roughly 25-30x and the algorithm roughly 2x. They also
-# depend on each other: the GPU's advantage exists only because the algorithm can use 128 chains in
-# lock-step. On the 20 m lattice, measured on 8 CPU cores without a GPU, nutpie simply wins: ChEES
-# reaches about 0.75x and MEADS about 0.5x of its ESS per second. MEADS's time here includes the
-# whole ChEES run it starts from.
+# **Nor is the speed-up the GPU alone.** The last two rows separate the effects. They scale ChEES's
+# total time by a measured ratio of gradient times, so they are estimates, not runs. As one
+# 128-chain batch on the CPU, ChEES would take about two hours and roughly match NUTS. In 32-chain
+# batches, the CPU's better regime, it would take about an hour and reach about **2.5x** NUTS,
+# assuming ESS and adaptation hold. So the hardware gives roughly 25-30x and the algorithm roughly
+# 2-2.5x. The two depend on each other: the GPU's advantage exists only because the algorithm can run
+# 128 chains in lock-step. On the 20 m lattice, measured on 8 CPU cores without a GPU, nutpie simply
+# wins: ChEES reaches about 0.75x and MEADS about 0.5x of its ESS per second. (MEADS's time includes
+# the whole ChEES run it starts from.)
 #
-# Two limits. "Worst ESS" here is across ten hyperparameters, and says nothing about multimodal
-# posteriors, where every ensemble method can agree confidently on the wrong answer. And ESS per
-# second is not the whole cost: nutpie needed no culling, no metric options and no special priors.
+# Two limits apply. The worst ESS is taken over ten hyperparameters, and says nothing about
+# multimodal posteriors, where every ensemble method can agree confidently on the wrong answer. And
+# ESS per second is not the whole cost: nutpie needed no culling, no metric options and no special
+# priors.
 #
-# ## 8. Is single precision safe?
+# ## 8 · Is single precision safe?
 #
-# float32 resolves log densities of this size to about 0.004. HMC needs energy *differences* to be right, so we compare
-# directly, at posterior draws, against float64.
+# float32 resolves log densities of this size to about 0.004. HMC needs energy *differences* to be
+# right, so we compare directly against float64 at posterior draws.
 
 # %%
 t0 = time.perf_counter()
@@ -879,18 +903,18 @@ lp32 = np.asarray(jax.vmap(logdensity)(pos_chees[-1]))
 print(f"log density float32 - float64 at {CHAINS} posterior draws: mean {np.mean(lp32 - lp64):+.3f}, sd {np.std(lp32 - lp64):.3f}, largest {np.abs(lp32 - lp64).max():.3f}")
 
 # %% [markdown]
-# The error has an sd of about 0.04, and at most 0.1-0.15. A ChEES trajectory has an energy error of
-# order 1, so this is negligible for a sampler with long trajectories, and figure 4 agrees. It
-# matters more for MEADS's one-step test, where the energy differences are tiny, so we rely on the
-# agreement of the posteriors instead of on this number. Two warnings. float32 has no margin for
-# extreme states: a stuck chain in an earlier run had an error of 16.7, so a sudden jump here is a
-# symptom worth checking. And float32 on sums of millions of terms can fail outright, so repeat this
-# check whenever data grow.
+# The error has an sd of about 0.04 and is at most about 0.12 (0.1-0.15 across runs). A ChEES
+# trajectory has an energy error of order 1, so this is negligible for a sampler with long
+# trajectories, and the agreement of the posteriors in part 7 confirms it. It matters more for
+# MEADS's one-step test, where the energy differences are tiny, so there we rely on that agreement
+# rather than on this number. Two warnings. float32 has no margin for extreme states: a stuck chain
+# in another run had an error of 16.7, so a sudden jump here is a symptom worth checking. And float32
+# sums of millions of terms can fail outright, so repeat this check whenever the data grow.
 #
-# ## 9. Back to the forest
+# ## 9 · Back to the forest
 #
-# We have 30 snapshots of 128 chains. `jax.vmap` turns them into four 20,000-cell fields per draw, and post-processing is
-# one more thing a GPU does well.
+# We have 30 snapshots of 128 chains. `jax.vmap` turns each draw into four 20,000-cell fields, and
+# this post-processing is one more thing a GPU does well.
 
 # %%
 graph = get_jaxified_graph(inputs=model.value_vars, outputs=model.replace_rvs_by_values(list(outputs.values())))
@@ -962,29 +986,28 @@ axes[2].set_xlabel("x (m)");
 # fine field, which has one coefficient for nearly every cell, so its match to the data is close to
 # guaranteed: it is only an in-sample consistency check. "New clumps" keeps the hyperparameters and
 # draws a **fresh** fine field, which is the fair test. The observed ratio sits inside that interval
-# at scales from 20 to 100 m, and at or just past its upper end at 5 and 10 m, depending on the run.
-# So the model captures the clustering at most scales, and its clumps may be slightly too weak at
-# the finest. The expected total matches the 3,604 observed, as a log link with a free intercept
-# should give.
+# from 10 to 100 m, and right at its upper end at 5 m (at or just past the upper end at 5 and 10 m in
+# other runs). So the model captures the clustering at most scales, and its clumps may be slightly
+# too weak at the finest. The expected total matches the 3,604 observed, as a log link with a free
+# intercept should give.
 #
-# **To the first question: no, the terrain link does not hold everywhere.** Averaged over the plot,
-# the species prefers higher, steeper ground (`b_elev` about 0.6 and `b_grad` about 0.5, per sd of
-# elevation and of log gradient). But the middle map shows the elevation effect changing across the
-# plot. It is confidently positive over much of the west (roughly x = 100-450) and in the far east,
-# weaker along the western edge, and on the central plateau, around x = 700 m, it is not clearly
-# different from zero and may reverse. The printed contrast tests this directly: the effect at (200,
-# 250) exceeds the effect at (680, 150) by about 2.1 (90% interval 0.5 to 4.0), with probability
-# about 0.99. The LogNormal prior excludes exactly zero variation, but a contrast this size comes
-# from the data. The elevation link is local. The gradient link is more general: probably positive
-# nearly everywhere, but confidently so over only about half the plot, and weakest around (450, 130)
-# and in the north-west.
+# **Does the terrain link hold everywhere? No.** Averaged over the plot, the species prefers higher,
+# steeper ground (`b_elev` about 0.6 and `b_grad` about 0.5, per sd of elevation and of log
+# gradient). But the middle map shows the elevation effect changing across the plot. It is
+# confidently positive over much of the west (roughly x = 100-450) and in the far east, weaker along
+# the western edge, and on the central plateau, around x = 700 m, it is not clearly different from
+# zero and may reverse. The printed contrast tests this directly: the effect at (200, 250) exceeds the
+# effect at (680, 150) by about 2.1 (90% interval 0.6 to 4.0), with probability 0.99. The LogNormal
+# prior excludes exactly zero variation, but a contrast this size comes from the data. The elevation
+# link is local. The gradient link is more general: probably positive nearly everywhere, but
+# confidently so over only about half the plot, and weakest around (450, 130) and in the north-west.
 #
 # These are associations in one census, not causes. Elevation here is also a proxy for drainage and
-# soil, and the `ell_slope` of about 165 m means that a feature much smaller than that cannot be
+# soil, and an `ell_slope` of about 165 m means that features much smaller than that cannot be
 # resolved.
 #
 # **The fine clumps are strong.** `s_fine` is about 1.1 (a realised sd near 0.95) with a lengthscale
-# near 7 m, the footprint of a clump of siblings, which is why the habitat map above excludes them.
+# near 7 m, the footprint of a clump of siblings, which is why the habitat map above leaves them out.
 # Now the survey.
 
 # %%
@@ -1011,17 +1034,18 @@ ax.set(xlabel="x (m)", ylabel="y (m)")
 ax.legend(loc="center", labelcolor="w", frameon=False);
 
 # %% [markdown]
-# Numbers first:
+# The elevation effect is confidently positive (posterior probability above 0.95) over about 39% of
+# the plot, and the gradient effect over about 52%. Neither is confidently negative anywhere.
 #
-# - **Elevation** is confidently positive over about 39% of the plot, and confidently negative
-#   nowhere. **Gradient** is confidently positive over about 52%, and confidently negative nowhere.
+# For the survey we rank hectares by a **habitat index**: the expected number of trees with the fine
+# field set to zero, so that a hectare scores for its conditions and not for one lucky family of
+# trees. The index sits below the count of every hectare in the table, by a factor of about 1.5-2.
+# That is expected, since the clumps are where the counted trees stand, and it does not mean the
+# model discounts half the trees.
 #
-# - We rank hectares by a **habitat index**: expected trees with the fine field set to zero, so that
-#   a hectare scores for its conditions and not for one lucky family of trees. The index sits well below the count of every hectare in the table, by a factor near 1.5-2. That is expected, and it does not mean the
-#   model discounts half the trees.
-#
-# **Recommendation for the survey: hectares 6, 20, 42 and 5** (probabilities of being in the top
-# five of about 0.99, 0.93, 0.91 and 0.7), plus **hectare 48** as the fifth, with less confidence (about 0.35).
+# **The recommendation is hectares 6, 20, 42 and 5**, with probabilities of being in the top five of
+# about 0.99, 0.93, 0.91 and 0.7, plus **hectare 48** as the fifth, with much less confidence (about
+# 0.35).
 #
 # Four of the five match the raw top counts. The disagreement is the interesting part. Hectare 28,
 # near (850, 250), makes the raw top five but has a low model probability, 0.13 (the white cross on
@@ -1033,7 +1057,9 @@ ax.legend(loc="center", labelcolor="w", frameon=False);
 # The fifth place is genuinely uncertain, and hectares along the northern edge compete for it, so a
 # survey that can afford it should add a sixth.
 #
-# ## 10. Which steps does a GPU speed up?
+# ## 10 · Which steps does a GPU speed up?
+#
+# To close, we time each stage of the ChEES workflow, from warmup to moving draws off the card.
 
 # %%
 t0 = time.perf_counter()
@@ -1048,48 +1074,68 @@ stages = pd.Series({"warmup (ChEES)": stats_chees["warmup s"], "sampling (ChEES)
 print(stages.round(2).to_string())
 
 # %% [markdown]
-# Almost all the time is warmup and sampling. Everything else, diagnostics included, takes seconds at most.
+# Almost all the time is warmup and sampling: about 113 s and 25 s. Everything else, diagnostics
+# included, takes a second or two at most. Putting together the numbers from every part:
 #
 # | step | GPU helps? | why, with this notebook's numbers |
 # |---|---|---|
 # | **Gradients, many chains, large arrays** | **Yes, by a lot** | more than 50x at 128 chains and 24,810 parameters |
 # | **Gradients, one chain, small model** | **No** | 0.5-0.8x at 1,578 parameters |
 # | **ChEES leapfrog steps** | Yes | 0.86 ms per gradient, the same as a bare gradient: no overhead |
-# | **NUTS tree building** | Partly | about 3.6 ms per gradient: bookkeeping cost, even with equal trees |
-# | **Warmup** | Yes, but it is the main cost | 85% of the ChEES run. A good start saves more than a faster GPU |
+# | **NUTS tree building** | Partly | about 3.6 ms per gradient: bookkeeping, even with equal trees |
+# | **Warmup** | Yes, but it is the main cost | over 80% of the ChEES run: a good start saves more than a faster GPU |
 # | **Posterior fields, predictions** | Yes | 3,840 draws of four 20,000-cell fields in about 1.5 s |
 # | **Diagnostics (r_hat, ESS)** | Not needed | a fraction of a second, on the CPU |
-# | **Moving draws to the host** | Not a bottleneck | a fraction of a second here; keep only what you need, as this adds up in memory |
+# | **Moving draws to the host** | Not a bottleneck | a fraction of a second; keep only what you need, as memory adds up |
 # | **Compilation** | Worse | 2 s against 0.4 s, and each new shape recompiles |
 # | **Python, I/O, data preparation** | No | not array arithmetic |
 #
-# **Use a GPU for ensemble sampling when** the gradient is dominated by large array operations, the posterior is roughly
-# unimodal, and you can use float32 or have a data-centre card. **Stay with nutpie on a CPU when** the model is small,
-# is full of `scan` and control flow, or has modes that a shared tuning would hide, or if one reliable run in five
-# minutes already answers the question.
+# **Use a GPU for ensemble sampling when** the gradient is dominated by large array operations, the
+# posterior is roughly unimodal, and you can use float32 or have a data-centre card. **Stay with
+# nutpie on a CPU when** the model is small, is full of `scan` and control flow, or has modes that a
+# shared tuning would hide, or when one reliable run in a few minutes already answers the question.
 #
-# Four cautions from this notebook:
+# ## Summary
 #
-# 1. **An ensemble is only as healthy as its worst chain.** Shared tuning means one stuck chain can
-#    ruin everything. Look for stragglers. They caused the worst failures here.
-#
-# 2. **Healthy-looking numbers can be wrong.** Acceptance looked fine in both failures run above,
-#    and frozen MEADS chains had almost no divergences. Trust r_hat from dispersed starts, and
-#    per-chain plots.
-#
-# 3. **Check one result across seeds.** The first apparently successful MEADS run was luck. Only a
-#    test over several seeds exposed it.
-#
-# 4. **Give the baseline its best chance before quoting a speed-up.** Fixing one thread setting and
-#    using more chains cut this notebook's headline from about 200x to about 55-70x.
+# * **The terrain link is local.** The elevation effect is confidently positive over about 39% of the
+#   plot and confidently negative nowhere; between the western rise and the central plateau it
+#   differs by about 2.1 (90% interval 0.6 to 4.0). The gradient effect is more general, confidently
+#   positive over about half the plot. These are associations in one census, and the fields cannot
+#   resolve features much smaller than about 165 m.
+# * **Clumps and habitat can be told apart.** The fine field has a lengthscale near 7 m and a realised
+#   sd near 0.95. With fresh clumps, the model reproduces the variance-to-mean ratio from 10 to 100 m,
+#   and its clumps may be slightly too weak at 5 m.
+# * **The survey should use hectares 6, 20, 42 and 5**, each with a probability of 0.7 or more of
+#   being in the top five, plus hectare 48 (about 0.35). Hectare 28 has more trees than hectare 48 but
+#   a lower habitat index; the fifth place is uncertain, so a sixth hectare is worth adding.
+# * **A GPU speeds up large batches of large arrays.** A batched gradient is more than 50x faster at
+#   128 chains and 24,810 parameters, but slower than the CPU for one chain on a small model. On a
+#   consumer card float32 is about 17x faster than float64, and its log-density error here (sd about
+#   0.04) is negligible for ChEES.
+# * **NUTS on a GPU pays for bookkeeping**, not for uneven trees: almost every tree here had 127
+#   steps, yet each NUTS gradient cost about 3.6 ms against 0.86 ms for ChEES.
+# * **ChEES-HMC needs a metric and a check for stragglers.** Without the diagonal metric, ESS is several
+#   times lower and r_hat too high; one stuck chain can inflate the trajectory for all of them, and
+#   restarting it from a healthy copy during warmup fixes that. The result is about 65x nutpie's
+#   worst-case ESS per second (55-70x across runs), with warmup taking over 80% of the time.
+# * **MEADS fails quietly from a cold start** (step size zero, r_hat in the hundreds, acceptance near
+#   0.8) and is excellent from the ChEES ensemble, at about 40x nutpie. It needed a smaller step-size
+#   multiplier, 16 chains per fold, and LogNormal rather than half-normal priors on field sds.
+# * **The speed-up is hardware and algorithm together**: an estimated 25-30x from the GPU and 2-2.5x
+#   from ChEES, each useless without the other. On 8 CPU cores nutpie wins. A poorly configured
+#   baseline would have inflated the headline to about 200x.
+# * **An ensemble is only as healthy as its worst chain.** Acceptance looked fine in both failures
+#   run here, and the stragglers appeared on some seeds but not others. Trust r_hat from dispersed
+#   starts, per-chain plots and checks over several seeds.
 #
 # ## Try it yourself
 #
 # 1. **Scale it up.** With a GPU, set `CHAINS` to 512 or 1024. (The CPU-estimate rows then drop out,
 #    as the CPU is not timed above 128 chains.) Does worst-case ESS per second keep rising, or does
 #    warmup, which does not get shorter, take over?
-# 2. **Pay for precision.** Run ChEES in float64 inside `precision("float64")`. How close does the time come to the 17x
-#    penalty, and does the posterior change?
-# 3. **Break it, then diagnose it.** Remove the culling step and run four or five seeds, printing `L` and the divergences
-#    each time. Then go back to `pm.HalfNormal` for the field sds and see what MEADS does.
+# 2. **Pay for precision.** Run ChEES in float64 inside `precision("float64")`. How close does the
+#    time come to the 17x penalty, and does the posterior change?
+# 3. **Break it, then diagnose it.** Remove the culling step and run four or five seeds, printing
+#    `L` and the divergences each time. Then go back to `pm.HalfNormal` for the field sds and see
+#    what MEADS does.
 
