@@ -196,7 +196,7 @@ for c in (2018, 2022, 2026):
 # %% [markdown]
 # FEC IDs for the 2026 nominees are matched by state, office, district and name against the FEC's
 # candidate list. A nominee without a match has unknown receipts, not zero: an earlier build set them to
-# $0, which pinned the money signal of 61 races at its extreme, and section 7 shows what that did to the
+# \$0, which pinned the money signal of 61 races at its extreme, and section 7 shows what that did to the
 # first frozen forecast. The two nominees still unmatched get a money signal imputed inside the model,
 # from a regression on lean, incumbency and office in the other 2026 races.
 
@@ -1206,11 +1206,11 @@ print("$M; 2026 'final' is what has been filed so far (nothing after the eve)")
 print(sp_show.to_string())
 
 # %% [markdown]
-# On the eve of 2018, the reports already filed held $1.68B of the nominees' spending; a month later the
-# total through the 30G was $2.12B. In 2022: $2.32B on the eve and $2.75B in the end. About a fifth of
-# nominee spending (21% and 16%) was unseen on the eve, and nearly all of it ($443M and $435M) arrived in
+# On the eve of 2018, the reports already filed held \$1.68B of the nominees' spending; a month later the
+# total through the 30G was \$2.12B. In 2022: \$2.32B on the eve and \$2.75B in the end. About a fifth of
+# nominee spending (21% and 16%) was unseen on the eve, and nearly all of it (\$443M and \$435M) arrived in
 # one report, the 30G. Outside money is the opposite: 99.6% (2018) and 99.2% (2022) of the eventual
-# general-election IE dollars had been received by the eve. 2026 has $2.41B of nominee spending and $3.17B
+# general-election IE dollars had been received by the eve. 2026 has \$2.41B of nominee spending and \$3.17B
 # of outside spending on file, twice the outside money of 2022.
 
 # %%
@@ -1259,7 +1259,7 @@ ax.legend(fontsize=8);
 # Outside money needs only a small correction, but it should be a learned one. Let $L$ be the number of
 # days between an item's dissemination date and the eve. For the dollars disseminated $L$ days before the
 # eve, the share already received by the eve is $f_L$, and we model the dollars received (in units of
-# $100k) as beta-binomial,
+# \$100k) as beta-binomial,
 #
 # $$
 # \text{seen}_L \sim \text{BetaBinomial}\big(n_L,\ f_L \kappa,\ (1 - f_L)\kappa\big),\qquad
@@ -1347,9 +1347,9 @@ for k, target in (("2018 -> 2022", 2022), ("2022 -> 2018", 2018)):
           f"final ${SPEND[target]['ie_final'] / 1e6:,.1f}M")
 
 # %% [markdown]
-# In the forward test, fitted on 2018, the model nowcast 2022's outside total at $1,622M (90% interval
-# 1,614 to 1,644) against $1,622.5M filed. Leaving out 2018 and fitting on 2022, it nowcast 2018 at $1,063M
-# (1,052 to 1,092) against $1,049M: too high by 1.3% and just outside the interval, because 2022 had more
+# In the forward test, fitted on 2018, the model nowcast 2022's outside total at \$1,622M (90% interval
+# 1,614 to 1,644) against \$1,622.5M filed. Leaving out 2018 and fitting on 2022, it nowcast 2018 at \$1,063M
+# (1,052 to 1,092) against \$1,049M: too high by 1.3% and just outside the interval, because 2022 had more
 # late filers than 2018. The error is tiny next to the candidate side.
 
 # %%
@@ -1388,11 +1388,11 @@ ax.set_title("IE reporting lag: dollars spent L days before the eve that were al
 # where $x^{\text{rate}}$ is the log of 20 days of spending at the 12G daily rate and $x^{\text{cash}}$
 # the log of cash on hand at the end of the 12G. Groups pool toward each other through $a_g$. A pilot with
 # Student-t errors had fine per-candidate coverage but tails that summed to absurd totals (its 90%
-# interval for the 2022 national total reached $470B); Normal errors on the log scale fix that. As for
+# interval for the 2022 national total reached \$470B); Normal errors on the log scale fix that. As for
 # outside money, a shared shift of all candidates in a cycle (a late surge of small donations, say) cannot
 # be estimated from two cycles, so the nowcast adds one with an assumed sd of 0.25 on the log scale. Both
 # choices, Normal errors and the sd of 0.25, were made after seeing the pilot's backtests (the pilot,
-# without a cycle shift, missed 2018 with $606M, 90% interval 480 to 790, against $443M filed). The
+# without a cycle shift, missed 2018 with \$606M, 90% interval 480 to 790, against \$443M filed). The
 # backtest totals below are therefore not out of sample for those two choices.
 #
 # **Failure 3, the hierarchy written the other way.** Every group has dozens to hundreds of candidates, so
@@ -1502,9 +1502,9 @@ for k, target in (("2018 -> 2022", 2022), ("2022 -> 2018", 2018)):
 print(pd.DataFrame(bt_rows).round(2).to_string(index=False))
 
 # %% [markdown]
-# In the forward test, fitted on 2018, the nowcast of 2022's late spending is $481M (90% interval 315 to
-# 726) against $434M filed: inside, a little high (PIT 0.34). Leaving out 2018, it nowcasts 2018 at $623M
-# (396 to 991) against $443M: inside, but in the lower tail (PIT 0.12). So the evidence on totals is two
+# In the forward test, fitted on 2018, the nowcast of 2022's late spending is \$481M (90% interval 315 to
+# 726) against \$434M filed: inside, a little high (PIT 0.34). Leaving out 2018, it nowcasts 2018 at \$623M
+# (396 to 991) against \$443M: inside, but in the lower tail (PIT 0.12). So the evidence on totals is two
 # totals, both over-predicted, one of them a forward test, and the cycle shift that puts both inside was
 # sized after the pilot had seen them. Per candidate, the 90% intervals cover 92-93% and the 50% intervals
 # 64-68%: a little too wide in the middle, as the humped PIT below shows.
@@ -1599,7 +1599,7 @@ ax.set_title("2022, per candidate", fontsize=10);
 #   notebook's code, at 19:18:45 UTC and committed in `77d2c05` at 19:18:56 UTC.
 #
 # v2 exists because of a mistake in v1's data. The builder matched 2026 nominees to FEC IDs by name, only
-# among candidates who had filed a pre-general report, and gave an unmatched nominee $0 of receipts. That
+# among candidates who had filed a pre-general report, and gave an unmatched nominee \$0 of receipts. That
 # missed 14% of Republican nominees, including Ashley Hinson in Iowa's Senate race (the FEC files her as
 # "ARENHOLZ, ASHLEY HINSON"), and pinned the money signal of 61 races at its clip, worth about 12 points
 # of margin. v2 matches against the FEC's full candidate list and treats the two nominees still unmatched
@@ -1781,16 +1781,16 @@ print("2026 spending nowcast: median [90%], through the post-general coverage (2
 print(nc.to_string())
 
 # %% [markdown]
-# In the corrected freeze, nominees had filed $2.41B by the eve, and their late spending through 23
-# November is nowcast at $0.64B (90% interval 0.42 to 0.97), for a nominee total of $3.05B (2.82 to 3.38).
-# Outside groups had filed $3.17B, plus an estimated $49M not yet on file (20 to 124). All together,
-# **$6.28B (6.04 to 6.62)**, against about $4.4B in 2022. v1 said $6.20B (5.99 to 6.52), for three fewer
+# In the corrected freeze, nominees had filed \$2.41B by the eve, and their late spending through 23
+# November is nowcast at \$0.64B (90% interval 0.42 to 0.97), for a nominee total of \$3.05B (2.82 to 3.38).
+# Outside groups had filed \$3.17B, plus an estimated \$49M not yet on file (20 to 124). All together,
+# **\$6.28B (6.04 to 6.62)**, against about \$4.4B in 2022. v1 said \$6.20B (5.99 to 6.52), for three fewer
 # nominees, with a point estimate for the outside part, so its interval leaves out the IE uncertainty.
 # The interval is set almost entirely by the candidates' late spending, and as section 6 says, the
 # backtests over-predicted that part in both cycles.
 #
 # The 2026 outside total rests partly on a few very large filings, among them a Texas group's media buys
-# of $20-28M each, split between support for one Senate nominee and opposition to the other in the same
+# of \$20-28M each, split between support for one Senate nominee and opposition to the other in the same
 # filing. The items are distinct in the file and add up to the spender's own total, but whether a
 # contrast ad was counted on both sides cannot be checked from the filings.
 
@@ -1950,12 +1950,12 @@ print({k: round(v) for k, v in TIMES.items()})
 # * **Spending can be nowcast, with care.** Outside money is 99% on file by the eve; candidates' last
 #   five weeks (about a fifth of their spending) arrive a month later. A late-spending model from the 12G
 #   burn rate and cash on hand covered 96% of race totals. On national totals the evidence is thin: two
-#   totals, both over-predicted ($481M against $434M, $623M against $443M), only one of them a forward
+#   totals, both over-predicted (\$481M against \$434M, \$623M against \$443M), only one of them a forward
 #   test, with the error family and the cycle shift chosen after the pilot had seen them.
 # * **2026 is frozen twice and waits.** The corrected freeze (v2): D+7.8 nationally (3.0 to 12.9), 236
 #   Democratic House seats (217 to 262, P = 0.94), 52 Democratic-caucus Senate seats (48 to 56, P = 0.78),
-#   and $6.28B of spending (6.04 to 6.62), $0.64B of it nominees' late spending not yet reported. The
-#   pre-registered v1 said D+7.9, 236 seats (P = 0.95), 52 seats (P = 0.83) and $6.20B; it counted
+#   and \$6.28B of spending (6.04 to 6.62), \$0.64B of it nominees' late spending not yet reported. The
+#   pre-registered v1 said D+7.9, 236 seats (P = 0.95), 52 seats (P = 0.83) and \$6.20B; it counted
 #   nominees without a matched FEC ID as raising nothing. Both were committed before the polls closed,
 #   and the scoring code prints "not yet available" until the results are in.
 #

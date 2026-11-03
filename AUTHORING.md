@@ -220,6 +220,8 @@ solution. Every check must be exercised by an `assert h.check(...)` in a solutio
   large data (and say so) rather than blow the budget.
 - matplotlib for custom figures; ArviZ for diagnostics. End plotting cells with `;`.
 - Plain ASCII hyphens in prose are fine; keep lines under ~100 characters.
+- Write amounts of money as `\$481M` in markdown and hints: a bare `$` opens maths, and `$481M against $434M` unescaped
+  renders as run-together italics. `tools/escape_dollars.py` finds unescaped ones.
 
 ## PyMC 6 / ArviZ 1 cheat-sheet (verified in this environment)
 

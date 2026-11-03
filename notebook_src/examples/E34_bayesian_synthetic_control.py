@@ -128,7 +128,7 @@ cands.sort_values("spend_per_day", ascending=False).reset_index(drop=True)
 #
 # - **The top three rows are one decision.** A UK women's-apparel brand (`784d6aa3`) stopped
 #   all Meta advertising on 10 October 2023 in both of its markets, the US and the UK. In the
-#   US, Meta was about $5,700 a day and about 90% of paid spend; paid spend fell by 90%
+#   US, Meta was about \$5,700 a day and about 90% of paid spend; paid spend fell by 90%
 #   overnight. No other switch in the dataset moves as much money, and it comes with three and
 #   a half years of history before it.
 # - An Australian apparel brand (`7c374835`) *launched* Meta at the end of July 2022 - but it
@@ -156,7 +156,7 @@ cands.sort_values("spend_per_day", ascending=False).reset_index(drop=True)
 # - the evidence on that last point cuts both ways. Meta's spend, clicks *and* impressions all
 #   become NaN (not 0) from 10 October, after a last day at about a third of normal spend -
 #   what a feed that broke mid-day would also produce. And in the same weeks this brand's
-#   Google PMax column alternates between NaN and $1,500-2,000 from one day to the next, so in
+#   Google PMax column alternates between NaN and \$1,500-2,000 from one day to the next, so in
 #   these rows NaN often means "not recorded" rather than "not used". E35 uses the same brand
 #   and treats 9 October as the end of the Meta feed. Read the result below as "did anything
 #   detectable change when Meta vanished from the data?": a lost feed (spend carried on)
@@ -204,7 +204,7 @@ ax.set_title("The brand's US market: weekly spend and new customers", loc="left"
 # In the US, the brand's Meta spend and its new customers moved together for three years -
 # which is exactly the ambiguity E32 was about: Meta may have been *buying* those customers,
 # or the brand may have spent more when demand was high anyway. The switch-off breaks that
-# link. Google carried on at about the same level (around $600 a day), and discounts stayed at
+# link. Google carried on at about the same level (around \$600 a day), and discounts stayed at
 # about 3% of list price, so the only big change on 10 October is Meta.
 #
 # The naive readings already disagree. New customers per day fell from 93 in the 8 weeks
@@ -693,12 +693,12 @@ fig.suptitle("Augmented + own control: bands are 50% and 90% posterior intervals
 # - or what a counterfactual that overshoots Black Friday would look like.
 #
 # In dollars the picture is sharper than in customers, because the saving was large: about
-# $800,000 of Meta spend at the pre-switch run rate (about $920,000 at last year's spend for the
-# same weeks), against about 22 customers lost per $10,000 not spent (median). If Meta had been
-# buying customers at the brand's blended $68, switching off would have cost roughly 11,800
+# \$800,000 of Meta spend at the pre-switch run rate (about \$920,000 at last year's spend for the
+# same weeks), against about 22 customers lost per \$10,000 not spent (median). If Meta had been
+# buying customers at the brand's blended \$68, switching off would have cost roughly 11,800
 # customers; the posterior puts about 95% of its mass below that. In other words: **either
-# Meta was buying few customers here, or it was buying them at well over $100 each** (median
-# about $240 per lost customer, given that some were lost).
+# Meta was buying few customers here, or it was buying them at well over \$100 each** (median
+# about \$240 per lost customer, given that some were lost).
 #
 # ## 6 · Would we have believed an effect? Placebos
 #
@@ -1060,8 +1060,8 @@ ax.set_title(f"Out of 100 equally likely versions of the 20 weeks:\n"
 #   nothing show bigger departures from their bands than our brand does; if a reader cannot
 #   spot the real one, the data do not "clearly show" an effect, whatever the headline says.
 # - **The dotplot and the curve** turn the customer count into the decision. About 14 of 20
-#   equally likely outcomes are a loss; but if a new customer is worth less than about $100 to
-#   the brand, the chance that switching off paid off is about 9 in 10 or better, and at $500
+#   equally likely outcomes are a loss; but if a new customer is worth less than about \$100 to
+#   the brand, the chance that switching off paid off is about 9 in 10 or better, and at \$500
 #   per customer it is roughly a coin flip.
 # - **The icon array** puts the one number people remember - the chance of any loss - next to
 #   the chance of a loss big enough to matter (more than 1,000 customers).
@@ -1145,7 +1145,7 @@ for v in HEADLINES.values():
 #   estimate in the middle of what untreated brands show. A good-looking counterfactual that
 #   fails its placebos is not evidence.
 # - **The decision can be clearer than the effect.** The loss in customers is uncertain, but
-#   $800,000 of spend was saved, and the posterior makes it very unlikely that Meta was buying
+#   \$800,000 of spend was saved, and the posterior makes it very unlikely that Meta was buying
 #   customers at anything like the brand's blended cost. "Probably worth switching off unless a
 #   customer is worth several hundred dollars" is a useful answer from an inconclusive effect.
 # - The next step is the one E33 ended with: a **randomised** geo test (switch Meta back on in a

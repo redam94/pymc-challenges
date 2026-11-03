@@ -971,14 +971,14 @@ gc.collect();
 # decide whether earnings are linear in age.
 #
 # C09 in three numbers: the randomised experiment says training raised 1978 earnings by about
-# **$1,760**; regression on the participants plus all 15,992 CPS men said about **$70**; and the
+# **\$1,760**; regression on the participants plus all 15,992 CPS men said about **\$70**; and the
 # same regression on the *trimmed* sample (CPS men with a propensity score of at least 0.05)
-# said about **$1,030**. We reuse the design: the 185 participants, and as controls either (a)
+# said about **\$1,030**. We reuse the design: the 185 participants, and as controls either (a)
 # the trimmed CPS men or (b) a random 2,000 of the CPS (the full 16,000 would work but costs
 # minutes). The propensity score is only needed for trimming, so a MAP logistic regression
 # with C09's covariates is enough.
 #
-# The likelihood is a plain Normal on earnings in $1,000s - crude for an outcome with 30% zeros
+# The likelihood is a plain Normal on earnings in \$1,000s - crude for an outcome with 30% zeros
 # (C09 used a hurdle-Gamma), but C09 also showed that a difference in *means* is insensitive to
 # that choice, and it keeps the focus on the response surface. The 0/1 covariates and `treat`
 # get `OneHotSplit`.
@@ -1097,7 +1097,7 @@ diff = individual[:, no_earnings].mean(axis=1) - individual[:, ~no_earnings].mea
 print(f"difference: {diff.mean():,.0f}, 94% interval {np.quantile(diff, 0.03):,.0f} to {np.quantile(diff, 0.97):,.0f}")
 
 # %% [markdown]
-# **A different regime for the sampler.** Earnings are noisy (residual sd about $6,600 on a
+# **A different regime for the sampler.** Earnings are noisy (residual sd about \$6,600 on a
 # mean of a few thousand), so random candidate trees are competitive and the forest turns over:
 # on the trimmed sample `r_hat` of $\mu(x_i)$ has a median of 1.01 to 1.02 and `sigma` mixes
 # like any scalar. On the larger untrimmed sample the chains agree less well (median about 1.2).
@@ -1105,19 +1105,19 @@ print(f"difference: {diff.mean():,.0f}, 94% interval {np.quantile(diff, 0.03):,.
 # `re75` are tied values under the continuous rule - but it is a tenth to a seventh of the
 # posterior sd.
 #
-# **Trimmed sample: about $900.** Over the executions of this notebook the ATT came out between
-# $760 and $1,000 with a posterior sd of $340 to $440. That is C09's trimmed regression ($1,030)
-# again, within the noise - and like it, **well short of the experimental $1,760**, which sits
+# **Trimmed sample: about \$900.** Over the executions of this notebook the ATT came out between
+# \$760 and \$1,000 with a posterior sd of \$340 to \$440. That is C09's trimmed regression (\$1,030)
+# again, within the noise - and like it, **well short of the experimental \$1,760**, which sits
 # at the very top of the 94% interval or beyond it, depending on the execution. Replacing a hand-built hurdle-Gamma regression with a forest
 # changed nothing of substance, which is reassuring about C09 and sobering about BART: the
 # gap to the benchmark was never a functional-form problem. The interval is about half as wide
 # as C09's; given how BART's prior shrinks towards "no `treat` split", that is not obviously a
 # virtue.
 #
-# **Untrimmed: about $600 ± $750** - a 94% interval from somewhere between -$700 and -$1,100 up
-# to about +$2,000, which contains zero, C09's estimate and the benchmark. (With other subsamples and split rules tried during
-# development this estimate ranged from about -$140 to +$670.) Compare with C09's regression on
-# all CPS men: $70 with an sd of $430, *confidently* wrong. The difference is the failure mode. A
+# **Untrimmed: about \$600 ± \$750** - a 94% interval from somewhere between -\$700 and -\$1,100 up
+# to about +\$2,000, which contains zero, C09's estimate and the benchmark. (With other subsamples and split rules tried during
+# development this estimate ranged from about -\$140 to +\$670.) Compare with C09's regression on
+# all CPS men: \$70 with an sd of \$430, *confidently* wrong. The difference is the failure mode. A
 # participant with no comparable CPS men gets his counterfactual from the leaf he falls into: a
 # **local average** of the nearest controls there are, held flat - not the value of a line
 # fitted through 15,000 men who look nothing like him. Here that is the better way to fail. It
@@ -1126,11 +1126,11 @@ print(f"difference: {diff.mean():,.0f}, 94% interval {np.quantile(diff, 0.03):,.
 # linear extrapolation into flat extrapolation.** Overlap diagnostics and trimming (C09, Task 4)
 # are needed exactly as before.
 #
-# **Heterogeneity.** The individual effects fall into two bands - around $1,000 to $1,300 for
+# **Heterogeneity.** The individual effects fall into two bands - around \$1,000 to \$1,300 for
 # the 111 participants without 1975 earnings, about half of that for those with - which is
 # again a staircase: a split on previous earnings below a split on `treat`. The difference
-# between the two groups is $400 to $700 with a 94% interval reaching from about zero to
-# well beyond $1,000: suggestive, not established. Every single interval is wide, and the
+# between the two groups is \$400 to \$700 with a 94% interval reaching from about zero to
+# well beyond \$1,000: suggestive, not established. Every single interval is wide, and the
 # many that exclude zero do so because they share the uncertainty of the *average* effect, not
 # because anything is known about the individual. BART makes effect heterogeneity cheap to look
 # at. It does not make 185 treated men enough to estimate it.

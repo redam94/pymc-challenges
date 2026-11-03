@@ -148,7 +148,10 @@ def render_markdown(src: str, attachments: dict | None = None) -> str:
         for name, data in attachments.items():
             for mime, b64 in data.items():
                 src = src.replace(f"attachment:{name}", f"data:{mime};base64,{b64}")
-    return markdown2html_mistune(src)
+    # mistune turns "\\$" into a bare "$", which MathJax then pairs as maths: keep the backslash
+    # (MathJax runs with processEscapes and shows a plain dollar sign)
+    token = "\x00ESCAPED-DOLLAR\x00"
+    return markdown2html_mistune(src.replace("\\$", token)).replace(token, "\\$")
 
 
 XREF_TARGETS: dict[str, str] = {}  # id -> url from the site root, filled by build()
@@ -246,6 +249,8 @@ class Page:
             cls = "out-html"
             if 'class="dataframe"' in h:
                 cls += " out-df"
+                if re.search(r"(?<!\\)\$\d", h):  # amounts of money, not maths: keep MathJax out
+                    cls += " tex2jax_ignore"
             elif "xr-wrap" in h or "xr-header" in h:
                 cls += " out-xr"
             return f'<div class="{cls}">{h}</div>'

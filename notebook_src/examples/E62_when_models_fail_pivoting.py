@@ -90,7 +90,7 @@ def q(x, probs=(0.05, 0.5, 0.95)):
 # ## A1 · The question
 #
 # The marketing lead of a US apparel brand spends on Google (search, shopping, Performance Max)
-# and Meta (Facebook, Instagram), about $22k a week together. They ask:
+# and Meta (Facebook, Instagram), about \$22k a week together. They ask:
 
 # %%
 QA = Question(
@@ -156,7 +156,7 @@ axes[1].set(xlabel="Google $k / week", ylabel="Meta $k / week", title="Weekly sp
 # where $a_{ct}$ is spend (in units of the channel's average week) carried over with a
 # geometric adstock of rate $\theta_c$ over 6 weeks, $\beta_c$ is the channel's maximum weekly
 # contribution and $\lambda_c$ its saturation rate. The question's quantities are deterministic
-# functions: ROI per channel (customers per $1000 over the period), their sum over both channels
+# functions: ROI per channel (customers per \$1000 over the period), their sum over both channels
 # (`roi_total`), and the **marginal** return of spending 10% more on both channels in the
 # historical mix (`mroi`). The builder takes the prior scale of $\beta$ and the baseline type as
 # arguments, because we will vary both.

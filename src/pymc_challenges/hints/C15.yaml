@@ -25,10 +25,10 @@ tasks:
         ```
     checks:
       share_promo:
-        what: share of purchases that are Parkay stick on trips where it costs at most $0.47, about 0.71
+        what: share of purchases that are Parkay stick on trips where it costs at most \$0.47, about 0.71
         range: [0.70, 0.72]
       share_regular:
-        what: share of purchases that are Parkay stick on trips where it costs at least $0.55, about 0.26
+        what: share of purchases that are Parkay stick on trips where it costs at least \$0.55, about 0.26
         range: [0.25, 0.27]
 
   task1:
@@ -237,5 +237,5 @@ tasks:
         what: posterior probability that the 20% promotion pays (hierarchical + lag), essentially 0
         range: [0.0, 0.05]
       breakeven_margin:
-        what: posterior median break-even stick margin (hierarchical + lag), about $0.33 per lb
+        what: posterior median break-even stick margin (hierarchical + lag), about \$0.33 per lb
         range: [0.305, 0.36]

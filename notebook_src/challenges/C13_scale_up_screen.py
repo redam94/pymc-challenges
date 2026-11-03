@@ -28,10 +28,10 @@
 #
 # The economics, agreed with finance:
 #
-# * every percentage point of yield at scale is worth **$5,000** over the planned campaigns
+# * every percentage point of yield at scale is worth **\$5,000** over the planned campaigns
 #   (assume screening yields carry over to the plant);
-# * one more screening reaction costs **$1,500** (materials, analysis, chemist time), and any
-#   extra round delays the pilot plant by a week, which costs **$10,000** whatever its size;
+# * one more screening reaction costs **\$1,500** (materials, analysis, chemist time), and any
+#   extra round delays the pilot plant by a week, which costs **\$10,000** whatever its size;
 # * only a condition that has actually been run can go to the plant: after an extra round they
 #   take the best *measured* condition (screen or new round). Treat recorded yields as exact - the
 #   table has no replicates.
@@ -824,9 +824,9 @@ assert h.check("task5", expected_gain_8=expected_gain_8, best_k=best_k_int, p_pa
 # %% [markdown] tags=["solution"]
 # **The two models disagree, and the reason is visible in the right panel.** The Gaussian expects 10
 # points of gain from 8 reactions and 18 from 48 - more than the 8.9 points that separate 91.1% from
-# 100%. Its 90% band for the net value reaches +$147k, a gain no condition can deliver. It recommends 16
-# reactions for an expected +$31k. The bounded interaction model knows the ceiling: its expected gain
-# flattens at 7-8 points, and the net value peaks at **4-8 reactions** (about +$7k either way, P(pays)
+# 100%. Its 90% band for the net value reaches +\$147k, a gain no condition can deliver. It recommends 16
+# reactions for an expected +\$31k. The bounded interaction model knows the ceiling: its expected gain
+# flattens at 7-8 points, and the net value peaks at **4-8 reactions** (about +\$7k either way, P(pays)
 # about 0.7), falls to zero by 16 and is negative with certainty from 24 on.
 #
 # The batch it builds is concentrated: CgMe-PPh in DMAc at 0.1 M with three different bases, each with
@@ -836,14 +836,14 @@ assert h.check("task5", expected_gain_8=expected_gain_8, best_k=best_k_int, p_pa
 # (Going further).
 #
 # **Recommendation to the head of the group.** One small round is worth buying, but only just: four to
-# eight reactions around CgMe-PPh in DMAc have an expected value of about $7k and a 70% chance of
+# eight reactions around CgMe-PPh in DMAc have an expected value of about \$7k and a 70% chance of
 # paying for themselves; any round larger than about 12 reactions loses money in expectation. If the
 # round does not beat 91% (a 1-in-5 chance by the model's account at k = 4), lock in today's best -
-# do not let the Gaussian's "16 more reactions, +$31k" argue for more.
+# do not let the Gaussian's "16 more reactions, +\$31k" argue for more.
 #
 # **The audit.** On this screen the small round did *not* pay: the best of the first four reactions
-# truly gives 83.8%, so k = 4 loses $16k (and k = 8 loses $22k). The Gaussian's 16 reactions happen to
-# include a reaction at essentially 100% and earn +$10k - for the wrong reasons, since it expected
+# truly gives 83.8%, so k = 4 loses \$16k (and k = 8 loses \$22k). The Gaussian's 16 reactions happen to
+# include a reaction at essentially 100% and earn +\$10k - for the wrong reasons, since it expected
 # three times that.
 # One screen is one draw from the posterior's own uncertainty; Task 6 asks whether the rules are good.
 
@@ -913,12 +913,12 @@ assert h.check("task6", mean_pit_logit=summ.loc["logit + interactions", "PIT"],
 # Over six replayed screens:
 #
 # * **The Gaussian's ceiling blindness costs real money.** On screen 1 the incumbent is already 98.5%;
-#   the Gaussian still recommends 16 more reactions (expected +$46k) and loses $34k. It lost money on
-#   three of the six screens and its recommendations realised about $16k on average against an
-#   expected $23k.
+#   the Gaussian still recommends 16 more reactions (expected +\$46k) and loses \$34k. It lost money on
+#   three of the six screens and its recommendations realised about \$16k on average against an
+#   expected \$23k.
 # * **The bounded interaction model never lost money on these six**, declining to screen when the
-#   incumbent was 96.5% or more and buying 4-12 reactions otherwise; it realised about $45k on
-#   average against an expected $31k.
+#   incumbent was 96.5% or more and buying 4-12 reactions otherwise; it realised about \$45k on
+#   average against an expected \$31k.
 # * **It is conservative.** Its PIT values are mostly high (0.6-0.97, mean about 0.8): the realised
 #   gains usually sat in the upper part of its predictive distribution. That is the same finding as the
 #   coverage audit in Task 4 - the best conditions are better than a shrunk 60-reaction model believes -
@@ -928,7 +928,7 @@ assert h.check("task6", mean_pit_logit=summ.loc["logit + interactions", "PIT"],
 # (One of the twelve replay fits had a few divergences - screen 3, interaction model; its numbers agree
 # with the others' pattern, but a careful analysis would refit it with a higher `target_accept`.)
 #
-# Six screens (plus the main one, where the bounded model's round lost $16k) are a small sample, and they
+# Six screens (plus the main one, where the bounded model's round lost \$16k) are a small sample, and they
 # share one table, so treat these as an illustration, not a benchmark. The lesson that survives: a
 # value-of-information calculation inherits every flaw of the model's tails, and a model that does not
 # know where yields end will always find the next round worth buying.

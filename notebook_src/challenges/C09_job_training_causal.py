@@ -22,7 +22,7 @@
 # wants to know: **did it raise participants' earnings, and by enough to justify the cost?**
 # The ministry's analysts have only what ministries usually have - records of the
 # participants, and a large national survey of people who did not take part. Their first
-# comparison says participants earn *$8,500 a year less* than non-participants, and someone
+# comparison says participants earn *\$8,500 a year less* than non-participants, and someone
 # has already drafted the memo closing the programme.
 #
 # You hold something they do not: the programme was in fact run as a **randomised
@@ -123,14 +123,14 @@ nsw.groupby("treat")[COVARIATES].mean().T.round(2)
 
 # %% [markdown] tags=["solution"]
 # A quarter to a third of the men earned **exactly nothing** in 1978 (35% of controls, 24% of
-# the trained), the rest are strongly right-skewed, and one man earned $60,000. A Normal
+# the trained), the rest are strongly right-skewed, and one man earned \$60,000. A Normal
 # puts mass on negative earnings and no point mass at zero; Gamma and LogNormal cannot
 # produce an exact zero at all. The outcome is really two outcomes: *did he work?* and *how
 # much did he earn if so?*
 #
 # The covariate means of the two arms agree closely, as randomisation promises (`nodegree`
 # differs a little - chance, with 445 people). Also note who these men are: average
-# pre-programme earnings of about $2,100 in 1974, and most of them earned nothing.
+# pre-programme earnings of about \$2,100 in 1974, and most of them earned nothing.
 
 # %% [markdown]
 # ## Task 1 · The experimental benchmark
@@ -145,7 +145,7 @@ nsw.groupby("treat")[COVARIATES].mean().T.round(2)
 #    and a posterior predictive check that passes where the first failed.
 # 3. The posterior of the **average treatment effect in dollars** (difference in *mean*
 #    earnings, zeros included), with a 94% interval and the probability that it exceeds
-#    $1,000 a year. This is the benchmark for everything that follows.
+#    \$1,000 a year. This is the benchmark for everything that follows.
 
 # %% tags=["task"]
 # YOUR CODE HERE
@@ -182,7 +182,7 @@ az.summary(normal_idata, var_names=["mean", "sigma", "ate"], ci_kind="hdi", ci_p
 # including the zeros are then $\psi\mu$, and the ATE is the difference of that product
 # between arms.
 #
-# Priors, on the $1000 scale: a full-time minimum-wage job paid about $5,500 a year in 1978,
+# Priors, on the \$1000 scale: a full-time minimum-wage job paid about \$5,500 a year in 1978,
 # and these are men on the margins of the labour market, so `Gamma(mu=8, sigma=5)` for mean
 # positive earnings covers roughly 1.5 to 19. `Beta(2, 2)` on $\psi$ says only "not 0, not 1".
 # The prior predictive check below turns those into an implied prior on the ATE.
@@ -247,10 +247,10 @@ assert h.check("task1", ate=1000 * ate_exp.mean(), p_ate_gt_1000=(ate_exp > 1).m
 # give nearly the same ATE, because a difference in means is robust to the likelihood - but
 # only the hurdle model tells the ministry *how* training works: about half of the effect is
 # more men in work ($\psi$ rises from 0.64 to 0.75) and half is higher earnings among those
-# who work (from about $7,100 to $8,400).
+# who work (from about \$7,100 to \$8,400).
 #
-# **The benchmark: training raised 1978 earnings by about $1,750, 94% interval roughly $600
-# to $3,000, and the probability that the effect exceeds $1,000 is about 0.89.** Because
+# **The benchmark: training raised 1978 earnings by about \$1,750, 94% interval roughly \$600
+# to \$3,000, and the probability that the effect exceeds \$1,000 is about 0.89.** Because
 # assignment was random this is also the effect *on the treated* (the ATT), which is what the
 # observational analysis below can hope to estimate.
 
@@ -321,17 +321,17 @@ for col in ["re74", "re75", "re78"]:
 assert h.check("task2", naive_diff=naive, smd_black=balance.loc["black", "SMD vs CPS"])
 
 # %% [markdown] tags=["solution"]
-# The naive comparison says training *costs* a man $8,500 a year. It is a comparison of two
+# The naive comparison says training *costs* a man \$8,500 a year. It is a comparison of two
 # different populations. Rule of thumb: an SMD beyond ±0.1 is worth worrying about. The
 # experiment stays inside ±0.3; against the CPS, *every* covariate except `hisp` is off by
 # 0.7 to 2.4 standard deviations. Participants are 84% Black (CPS: 7%), 19% married (71%),
-# and earned $2,100 in 1974 against $14,000. The programme **selected** men with poor
+# and earned \$2,100 in 1974 against \$14,000. The programme **selected** men with poor
 # earnings prospects, so they would have earned less than the average CPS man in 1978 with
 # or without training. Only 58 of the 15,992 CPS men share the most common participant
 # profile.
 #
 # Two more things a careful analyst notices. CPS earnings are **top-coded**: a quarter of CPS
-# men sit exactly at $25,565 in 1978 (and a fifth at the cap in 1974-75), so the CPS outcome is
+# men sit exactly at \$25,565 in 1978 (and a fifth at the cap in 1974-75), so the CPS outcome is
 # censored where the participants are not. And the two groups' earnings come from different
 # sources (programme records versus a household survey). Neither problem can be fixed by
 # regression; both matter less the more we restrict attention to low-earning CPS men.
@@ -483,9 +483,9 @@ pd.DataFrame(results).set_index("analysis").round({"mean": 0, "sd": 0, "lo94": 0
 assert h.check("task3", att_full=1000 * att_full.mean())
 
 # %% [markdown] tags=["solution"]
-# Regression adjustment has moved the estimate from −$8,500 to about **zero** - an
+# Regression adjustment has moved the estimate from −\$8,500 to about **zero** - an
 # improvement of eight thousand dollars, and still the wrong answer: the model is confident
-# (sd about $430) that the effect is below $1,000, while the experiment says it is probably
+# (sd about \$430) that the effect is below \$1,000, while the experiment says it is probably
 # above. The sampler is perfectly happy. Nothing in `r_hat` or ESS can tell you that a causal
 # estimate is wrong.
 
@@ -624,21 +624,21 @@ ax.legend();
 assert h.check("task4", cps_share_below_1pct=share_below, att_trimmed=1000 * att_trim.mean())
 
 # %% [markdown] tags=["solution"]
-# Both full-sample models over-predict what the look-alike CPS men earned by $700 to $1,000,
+# Both full-sample models over-predict what the look-alike CPS men earned by \$700 to \$1,000,
 # two to three standard errors of that average: the fit is dominated by men elsewhere in
 # covariate space. Over-predicting the untreated outcome of men like the participants is exactly what
 # biases the ATT downwards.
 #
 # After trimming, 404 of the 15,992 CPS men remain. Every SMD is now within ±0.25 (it was up
 # to 2.4), and fewer than 1% of the remaining controls are top-coded, so that problem has
-# gone too. The estimates move in the right direction at each step - about $70 with the
-# linear full-sample model, $850 once age squared and the zero-earnings indicators are
-# added, $1,030 on the common-support sample - and the posterior sd almost doubles, from
-# $430 to $770. That is the honest price: the full-sample posterior was narrow because
+# gone too. The estimates move in the right direction at each step - about \$70 with the
+# linear full-sample model, \$850 once age squared and the zero-earnings indicators are
+# added, \$1,030 on the common-support sample - and the posterior sd almost doubles, from
+# \$430 to \$770. That is the honest price: the full-sample posterior was narrow because
 # 15,000 irrelevant men were voting.
 #
-# The benchmark of $1,760 sits comfortably inside the trimmed model's 94% interval (about
-# −$370 to $2,470), but the point estimate is still $700 short of it, and zero is inside the
+# The benchmark of \$1,760 sits comfortably inside the trimmed model's 94% interval (about
+# −\$370 to \$2,470), but the point estimate is still \$700 short of it, and zero is inside the
 # interval too. **The estimand** is unchanged - the ATT for all 185 participants - but 28 of
 # them have a propensity below 0.05 and therefore few close comparisons, and at the other
 # end (propensity above one half) participants outnumber the CPS men they are compared
@@ -693,20 +693,20 @@ ax.set(xlabel="effect on 1978 earnings ($)", title="Posterior mean and 94% inter
 assert h.check("task5", att_no_earnings=1000 * sensitivity["ps >= 0.05, without re74 and re75"].mean())
 
 # %% [markdown] tags=["solution"]
-# **Trimming threshold.** Between 0.01 and 0.10 the posterior mean moves from about $1,030 to
-# $1,380, much less than one posterior sd ($650 to $860). Every interval contains the
+# **Trimming threshold.** Between 0.01 and 0.10 the posterior mean moves from about \$1,030 to
+# \$1,380, much less than one posterior sd (\$650 to \$860). Every interval contains the
 # benchmark and every interval contains zero. Tighter trimming trades bias for variance, as
 # it should.
 #
-# **Adjustment set.** Dropping `re74` alone changes nothing ($1,090): given `re75`, and given
+# **Adjustment set.** Dropping `re74` alone changes nothing (\$1,090): given `re75`, and given
 # a sample that was itself selected with a propensity score that knew `re74`, it carries
 # little extra information here. Dropping *both* years of earnings cuts the estimate to
-# about $240 and $P(\text{effect} > \$1{,}000)$ from roughly 0.5 to 0.14 - and this
+# about \$240 and $P(\text{effect} > \$1{,}000)$ from roughly 0.5 to 0.14 - and this
 # understates their importance, because the trimmed sample was still chosen using them.
 #
 # So what we adjust for matters more than how we trim. That is a statement about the DAG:
 # the whole analysis rests on having measured the confounders, and the one time we can test
-# that - by hiding a confounder we do have - the answer moves by $800. Nothing in the data
+# that - by hiding a confounder we do have - the answer moves by \$800. Nothing in the data
 # says `re75` was the last such variable; programme applicants typically enrol just after
 # their earnings have dipped, and two years of history may not capture that.
 
@@ -714,7 +714,7 @@ assert h.check("task5", att_no_earnings=1000 * sensitivity["ps >= 0.05, without 
 # ## Task 6 · What do you tell the ministry?
 #
 # The ministry's economists say the programme pays for itself if it raises participants'
-# earnings by more than **$1,000 a year** (an illustrative threshold).
+# earnings by more than **\$1,000 a year** (an illustrative threshold).
 #
 # **Deliver**
 # 1. $P(\text{effect} > \$1{,}000)$ under the experiment, under the naive full-sample
@@ -747,11 +747,11 @@ assert h.check("task6", p_observational=float((att_trim > 1).mean()))
 # %% [markdown] tags=["solution"]
 # **Note to the ministry**
 #
-# 1. *Do not send the memo.* The −$8,500 gap is a comparison of unemployed, mostly unmarried
+# 1. *Do not send the memo.* The −\$8,500 gap is a comparison of unemployed, mostly unmarried
 #    25-year-olds with the average American working man. It says nothing about the programme.
-# 2. *Our best observational estimate is about +$1,000 a year* (94% interval roughly −$400 to
-#    +$2,500). The probability that the programme clears the $1,000 bar is about one half on
-#    this evidence. The experiment puts it at 0.89, with an estimate of about $1,760. The
+# 2. *Our best observational estimate is about +\$1,000 a year* (94% interval roughly −\$400 to
+#    +\$2,500). The probability that the programme clears the \$1,000 bar is about one half on
+#    this evidence. The experiment puts it at 0.89, with an estimate of about \$1,760. The
 #    observational analysis gets the sign right and its interval covers the experimental
 #    answer, but its point estimate is some 40% too low, and we only know that because the
 #    experiment exists.

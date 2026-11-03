@@ -10,7 +10,7 @@ tasks:
       - |
         `nsw.groupby("treat").re78.agg(...)` with a lambda for the share of zeros gives the
         summary; `nsw.groupby("treat")[covariates].mean().T` is the balance table. A histogram
-        with `histtype="step"` per arm (clip the x axis - one man earned $60,000) shows the
+        with `histtype="step"` per arm (clip the x axis - one man earned \$60,000) shows the
         spike at zero and the long right tail.
 
   task1:
@@ -29,8 +29,8 @@ tasks:
         treatment indicator. With shape `alpha` and mean `mu`, the rate is `beta = alpha / mu`.
 
         Mean earnings in an arm are `psi * mu`; wrap the difference between arms in a
-        `pm.Deterministic("ate", ...)`. Work in $1000s so that priors are easy to state: a
-        full-time minimum-wage job paid about $5,500 in 1978.
+        `pm.Deterministic("ate", ...)`. Work in \$1000s so that priors are easy to state: a
+        full-time minimum-wage job paid about \$5,500 in 1978.
 
         For the PPC, `az.extract(idata, group="posterior_predictive", var_names="re78",
         num_samples=200)` gives replicated datasets; compare `np.mean(rep == 0)` and
@@ -54,10 +54,10 @@ tasks:
         ```
     checks:
       ate:
-        what: posterior mean of the experimental ATE in DOLLARS, roughly 1,800 (did you convert from $1000s?)
+        what: posterior mean of the experimental ATE in DOLLARS, roughly 1,800 (did you convert from \$1000s?)
         range: [1300, 2300]
       p_ate_gt_1000:
-        what: posterior probability that the experimental ATE exceeds $1,000, roughly 0.85-0.9
+        what: posterior probability that the experimental ATE exceeds \$1,000, roughly 0.85-0.9
         range: [0.75, 0.96]
 
   task2:
@@ -241,7 +241,7 @@ tasks:
         and the observational analyses, and which of them are reflected in the width of the
         posterior?
       - |
-        `(att > 1).mean()` on each posterior (in $1000s) gives the probabilities. For the note,
+        `(att > 1).mean()` on each posterior (in \$1000s) gives the probabilities. For the note,
         separate *statistical* uncertainty (in the posterior) from *specification* uncertainty
         (the spread across Task 5's rows) and *identification* uncertainty (unmeasured
         confounding, different data sources - in no posterior at all). Without an experiment,
@@ -258,5 +258,5 @@ tasks:
         ```
     checks:
       p_observational:
-        what: P(ATT > $1,000) from the trimmed observational analysis - around a coin flip to two in three, lower than the experiment's ~0.88
+        what: P(ATT > \$1,000) from the trimmed observational analysis - around a coin flip to two in three, lower than the experiment's ~0.88
         range: [0.3, 0.85]
