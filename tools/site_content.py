@@ -139,9 +139,15 @@ SERIES = [
                "chose the tariff but Supply-Following event days were randomised, and only those days carry the "
                "estimate. A closed-form fleet carries the answer, a robust model misreads the sum on two of three "
                "bands, and four winter evenings, not a thousand homes, set the limit."),
+    dict(key="midterms", range="E94", title="Polls, fundamentals and money", ids=["E94"],
+         intro="Election-eve forecasts of the 2018, 2022 and 2026 US midterms from ragged information: many national "
+               "polls, some Senate polls, few district polls and fundamentals everywhere. Backtests on two known "
+               "cycles, Jacobson's spending paradox and Levitt's rematches, a nowcast of campaign spending from "
+               "lagged FEC filings, and a 2026 forecast frozen before the polls closed, with the code that will "
+               "score it."),
 ]
 SERIES_BY_KEY = {s["key"]: s for s in SERIES}
-RECENT = ["E88", "E91", "E87", "E89", "E86", "E85", "E84"]          # newest first, shown on the home page
+RECENT = ["E94", "E88", "E91", "E87", "E89", "E86", "E85"]          # newest first, shown on the home page
 
 
 def _link(ctx, eid, text=None):
@@ -439,7 +445,9 @@ def guide_page(ctx):
         ("Measurements carry known error", "Measurement-error model; the error is data", f"{L('D02')}, {L('E17')}"),
         ("Species or cases can be missed", "Occupancy, N-mixture and capture–recapture models", f"{L('E28')}"),
         ("Raters disagree and there is no gold standard", "Latent class and Dawid-Skene models", f"{L('E69')}"),
-        ("Recent data are still arriving", "Nowcasting the reporting delay", f"{L('E38')}"),
+        ("Recent data are still arriving", "Nowcasting the reporting delay", f"{L('E38')}, {L('E94')}"),
+        ("Polls in some races, none in most", "Fundamentals learned on earlier cycles, polls where they exist, a shared error",
+         f"{L('E40')}, {L('E94')}"),
         ("The survey sample is unrepresentative", "Multilevel regression and poststratification", f"{L('E36')}"),
         ("Only published summaries, not individuals", "Meta-analysis on sufficient statistics", f"{L('E17')}"),
     ])
@@ -507,6 +515,8 @@ def guide_page(ctx):
         ("A policy changed for some units, at a threshold, or through an instrument",
          "Difference-in-differences, regression discontinuity, IV; the identifying assumption as a prior",
          f"{L('E63')}"),
+        ("Does spending cause the outcome, or follow it?", "Within-pair first differences (rematches) with hierarchical slopes",
+         f"{L('E94')}"),
         ("Which variant wins, and when can I stop the test?",
          "Hierarchical effect sizes as the prior, expected-loss stopping, Thompson sampling",
          f"{L('E66')}"),

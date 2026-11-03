@@ -1032,6 +1032,16 @@ doubt run `uv run python -c "..."` to check:
     nugget a monitored county keeps a real P(above): 89% of the people at risk were in monitored counties, so
     check where a value lands before saying what a shortlist buys. State borders need no GIS:
     an edge used by two groups of counties, or by one county only, is a border.
+  - **Election forecasts and spending nowcasts (E94).** `az.rhat(idata.posterior).to_dataset().to_dataarray().max()`
+    broadcasts every variable to the union of all dims (chain x draw x office x x x cycle x state x week x pollster x
+    polled) and a pilot was killed at 9 GB: take the max one variable at a time. The E40 rotation of the national
+    margin and the shared polling error was needed with nothing to warn: sampled directly, 0 divergences and r_hat
+    1.018, but ESS 350 against 5,000 rotated (1.05 at another seed). Six group intercepts with hundreds of rows each:
+    non-centred gave 13-87 divergences, centred with `target_accept=0.95` gave 0-4 (E25 again). Student-t log errors
+    on per-candidate spending had good per-candidate coverage, yet sums of draws reached $10^{11}$: check the sum of
+    heavy-tailed predictions, not only the marginals. Leakage: filter FiveThirtyEight polls by `created_at`, not end
+    date, and FEC filings by receipt date. The FEC report bulk file holds current versions only (an amendment after
+    the eve drops a report from "known by the eve"); the IE files hold prank filers with $10^{10}$ items.
 - Available and worth using where they fit: `pm.ZeroSumNormal`, `pm.Censored`,
   `pm.Truncated`, `pm.CustomDist`, `pm.Mixture`, `pm.NormalMixture`, `pm.OrderedLogistic`,
   `pm.LKJCholeskyCov`, `pm.GaussianRandomWalk`, `pm.AR`, `pm.gp.HSGP`, `pm.gp.HSGPPeriodic`,
