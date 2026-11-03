@@ -35,6 +35,8 @@ OUT = Path(__file__).resolve().parents[1] / "data"
 # and IE items received after the eve's end (23:59) are dropped from the "as of eve" columns.
 ELECTION = {2016: "2016-11-08", 2018: "2018-11-06", 2020: "2020-11-03", 2022: "2022-11-08", 2026: "2026-11-03"}
 EVE = {2018: "2018-11-05", 2022: "2022-11-07", 2026: "2026-11-02"}
+# gzip with a zero header timestamp, so a rebuild is byte-identical (the freeze records sha256 of the files).
+GZ = {"method": "gzip", "mtime": 0}
 LOG: dict = {"cutoffs": EVE, "election_days": ELECTION, "checks": {}, "counts": {}}
 
 STATES = {
@@ -92,9 +94,19 @@ def norm_name(s: str) -> str:
     return re.sub(r"[^a-z ]", " ", s)
 
 
-def last_tokens(s: str) -> set[str]:
-    stop = {"jr", "sr", "ii", "iii", "iv", "mr", "mrs", "ms", "dr", "the", "de", "la", "van", "von"}
-    return {t for t in norm_name(s).split() if len(t) > 2 and t not in stop}
+def last_tokens(s: str, minlen: int = 3) -> set[str]:
+    stop = {"jr", "sr", "ii", "iii", "iv", "mr", "mrs", "ms", "dr", "the", "de", "la", "van", "von", "phd"}
+    return {t for t in norm_name(s).split() if len(t) >= minlen and t not in stop}
+
+
+def read_cn(yy: int) -> pd.DataFrame:
+    """FEC candidate master file (cn), the first 10 fields."""
+    cols = ["CAND_ID", "CAND_NAME", "CAND_PTY_AFFILIATION", "CAND_ELECTION_YR", "CAND_OFFICE_ST", "CAND_OFFICE",
+            "CAND_OFFICE_DISTRICT", "CAND_ICI", "CAND_STATUS", "CAND_PCC"]
+    with zipfile.ZipFile(use(RAW / f"fec/cn{yy:02d}.zip")) as z:
+        raw = z.read(z.namelist()[0]).decode("latin-1")
+    rows = [ln.split("|")[:10] for ln in raw.splitlines() if ln.count("|") >= 9]
+    return pd.DataFrame(rows, columns=cols)
 
 
 # ---------------------------------------------------------------- stdlib readers
@@ -937,27 +949,59 @@ def main():
     w26["side"] = np.where(w26.CAND_PTY_AFFILIATION.str.startswith("DEM") | w26.CAND_PTY_AFFILIATION.eq("DFL"), "D",
                            np.where(w26.CAND_PTY_AFFILIATION.str.startswith("REP"), "R", "O"))
     w26["receipts_eve"] = w26.CAND_ID.map(m26.receipts).fillna(0.0)
-    ids, ok = {"d": [], "r": []}, {"d": [], "r": []}
+    # Candidate pool per race: everyone in the FEC candidate master (cn26) registered for that state, office
+    # and district, whether or not a pre-general report has arrived. (Matching only against candidates with
+    # a 12G found 86% of R nominees; a nominee who filed no 12G, or whose FEC party is UNK, was lost.)
+    cn = read_cn(26)
+    cn["dist"] = pd.to_numeric(cn.CAND_OFFICE_DISTRICT, errors="coerce").fillna(0).astype(int)
+    cn = cn[cn.CAND_OFFICE.isin(["H", "S"])].copy()
+    cn["race"] = np.where(cn.CAND_OFFICE == "S", cn.CAND_OFFICE_ST + "-S",
+                          cn.CAND_OFFICE_ST + "-" + cn.dist.map("{:02d}".format))
+    pty = cn.CAND_PTY_AFFILIATION.fillna("")
+    cn["side"] = np.where(pty.str.startswith("DEM") | pty.eq("DFL"), "D", np.where(pty.str.startswith("REP"), "R", "O"))
+    cn["receipts_eve"] = cn.CAND_ID.map(m26.receipts).fillna(0.0)
+    cn["has12"] = cn.CAND_ID.isin(g12)
+    cn["yr26"] = cn.CAND_ELECTION_YR.eq("2026")
+    ids, ok, how = {"d": [], "r": []}, {"d": [], "r": []}, {"d": [], "r": []}
     for _, row in fr.iterrows():
-        pool = w26[w26.race == row.race]
+        pool = cn[cn.race == row.race]
         for side, nm in (("d", row.d_name), ("r", row.r_name)):
-            want = "D" if side == "d" else "R"
-            p = pool[pool.side == want] if not (side == "d" and row.d_is_ind) else pool[pool.side == "O"]
-            toks = set().union(*[last_tokens(x) for x in nm.split("|")]) if nm else set()
-            hitmask = np.array([bool(last_tokens(n.split(",")[0]) & toks) for n in p.CAND_NAME], dtype=bool)
-            named = p[hitmask] if len(p) else p
-            # Only a candidate whose FEC name shares a name token with the Wikipedia nominee: a nominee
-            # with no filing (under $5,000 raised need not file) gets no ID and no money.
-            pick = named.sort_values("receipts_eve", ascending=False)
+            want = "D" if side == "d" and not row.d_is_ind else ("O" if side == "d" else "R")
+            other = "R" if want == "D" else "D"
+            p = pool[pool.side != other]       # the nominee's party, or an FEC party of UNK/other
+            names = nm.split("|") if nm else []
+            sur = set().union(*[last_tokens(x, 2) for x in names]) if names else set()
+            hit = []
+            for n in p.CAND_NAME:
+                fec_sur, _, fec_first = n.partition(",")
+                full = last_tokens(n, 2)
+                # surname tokens shared, or every name token of a Wikipedia name in the full FEC name
+                # (FEC files Ashley Hinson as "ARENHOLZ, ASHLEY HINSON")
+                hit.append(bool(last_tokens(fec_sur, 2) & sur) or any(
+                    len(last_tokens(x, 2)) >= 2 and last_tokens(x, 2) <= full for x in names))
+            named = p[np.array(hit, dtype=bool)] if len(p) else p
+            # Prefer the nominee's own party, a 12G on file, money reported, then a 2026 registration.
+            pick = named.assign(same=named.side.eq(want)).sort_values(
+                ["same", "has12", "receipts_eve", "yr26"], ascending=False)
             ids[side].append(pick.CAND_ID.iloc[0] if len(pick) else "")
             ok[side].append(len(named) > 0)
+            how[side].append("" if not len(pick) else ("12G" if pick.has12.iloc[0] else "cn26"))
     fr["d_id"], fr["r_id"] = ids["d"], ids["r"]
     fr["d_id_name_match"], fr["r_id_name_match"] = ok["d"], ok["r"]
-    LOG["checks"]["fec_id_2026_name_match_rate"] = {"d": float(np.mean(ok["d"])), "r": float(np.mean(ok["r"]))}
+    con = (fr.d_name != "") & (fr.r_name != "")
+    LOG["checks"]["fec_id_2026_name_match_rate"] = {
+        s: float(np.mean(np.array(ok[s])[con.to_numpy()])) for s in ("d", "r")}
+    LOG["checks"]["fec_id_2026_unmatched"] = {
+        s: [f"{a}: {b}" for a, b in fr.loc[con & ~fr[f"{s}_id_name_match"], ["race", f"{s}_name"]].itertuples(index=False)]
+        for s in ("d", "r")}
+    LOG["checks"]["fec_id_2026_matched_without_12G"] = {
+        s: int(sum(h == "cn26" for h, c in zip(how[s], con) if c)) for s in ("d", "r")}
     for side in ("d", "r"):
-        fr[f"{side}_rec_eve"] = fr[f"{side}_id"].map(m26.receipts).fillna(0.0)
-        fr[f"{side}_disb_eve"] = fr[f"{side}_id"].map(m26.disb).fillna(0.0)
-        fr[f"{side}_coh_eve"] = fr[f"{side}_id"].map(m26.coh).fillna(0.0)
+        # A nominee with no FEC ID is missing, not $0: the model treats the money signal as unknown.
+        # A matched candidate with no report received by the eve reported nothing: $0.
+        has = fr[f"{side}_id"] != ""
+        for col, src in (("rec_eve", m26.receipts), ("disb_eve", m26.disb), ("coh_eve", m26.coh)):
+            fr[f"{side}_{col}"] = np.where(has, fr[f"{side}_id"].map(src).fillna(0.0), np.nan)
     fr["lean"] = 2.0 * fr.pvi  # Cook PVI is on the two-party share scale; 538 lean on the margin scale.
     fr["region"] = fr.state.map(REGION)
     fr["inc_party"] = np.where(fr.inc_running, fr.member_party, "")
@@ -1015,7 +1059,7 @@ def main():
         x.insert(0, "cycle", y)
         keep.append(x)
     reports = pd.concat(keep, ignore_index=True).rename(columns={"CAND_ID": "cand_id", "RPT_TP": "rpt"})
-    reports.to_csv(OUT / "e94_reports.csv.gz", index=False, float_format="%.2f", date_format="%Y-%m-%d")
+    reports.to_csv(OUT / "e94_reports.csv.gz", index=False, compression=GZ, float_format="%.2f", date_format="%Y-%m-%d")
     LOG["counts"]["reports_rows"] = reports.groupby("cycle").size().astype(int).to_dict()
 
     # ---------- IE, aggregated by race, side, date and first receipt date
@@ -1034,7 +1078,7 @@ def main():
         agg.insert(0, "cycle", y)
         ies.append(agg)
     ie = pd.concat(ies, ignore_index=True)
-    ie.to_csv(OUT / "e94_ie.csv.gz", index=False, float_format="%.2f", date_format="%Y-%m-%d")
+    ie.to_csv(OUT / "e94_ie.csv.gz", index=False, compression=GZ, float_format="%.2f", date_format="%Y-%m-%d")
 
     # ---------- rematches: 2006-2010 and 2014 (MEDSL + weball names), 2016-2022 (FEC workbooks)
     MEDSL_HOUSE = pd.read_csv(use(RAW / "medsl_github/1976-2018-house.csv"), encoding="latin-1", low_memory=False)

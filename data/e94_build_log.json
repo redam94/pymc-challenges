@@ -18,8 +18,19 @@
    "max_abs_diff": 4.510833333333332
   },
   "fec_id_2026_name_match_rate": {
-   "d": 0.9744680851063829,
-   "r": 0.8553191489361702
+   "d": 1.0,
+   "r": 0.9955654101995566
+  },
+  "fec_id_2026_unmatched": {
+   "d": [],
+   "r": [
+    "KY-03: Maria Rodriquez",
+    "MD-04: George McDermott"
+   ]
+  },
+  "fec_id_2026_matched_without_12G": {
+   "d": 11,
+   "r": 45
   },
   "nominees_2022_with_12G": 0.907744874715262,
   "ie_2018_prank_spenders": {
@@ -134,7 +145,7 @@
   "reports_rows": {
    "2018": 8091,
    "2022": 8143,
-   "2026": 6629
+   "2026": 6705
   },
   "ie_2018": {
    "rows_raw": 45039,
@@ -243,6 +254,7 @@
   "fec_ccl/ccl26.zip": "ff72b3f8bd0437dbb8a5befb8ed375aea2d21a1f966e14905a7a5194451228c1",
   "wikipedia/asof_20261102/2026_United_States_House_of_Representatives_elections__rev1383470484.html": "ce25a9f027980753c68954f655d672404a1a5c89afef78cd82c5df569b5b2900",
   "wikipedia/asof_20261102/2026_United_States_Senate_elections__rev1383488048.html": "5d2e149464c8c95f042083505d427f3a11cac16fba4dea21bebe136619bbbd44",
+  "fec/cn26.zip": "97e057ca4b4f27f3a635181578075e68dae712f1b1ca616f3971afbbe19d6c89",
   "fte_wayback/generic_ballot_polls_historical__20250118200335.csv": "de12cfa6d606ad681c2b80f5fce9f44c36ec2a3e9421ac51620c5f9532239d16",
   "fte_wayback/senate_polls_historical__20250118200335.csv": "f0a6116fbe57e1edb41b5872a729124e320661eae0e3912a9aebc2a36a634707",
   "fte_wayback/house_polls_historical__20250118200335.csv": "653b575f817e06f026760df4a43790e0eca0981af23b9c54e80bd6863e69977e",
