@@ -80,6 +80,7 @@ from matplotlib import animation
 from matplotlib.collections import LineCollection, PolyCollection
 from matplotlib.lines import Line2D
 from matplotlib.ticker import MaxNLocator
+from scipy.stats import gaussian_kde
 
 from pymc_challenges import data
 
@@ -1939,33 +1940,48 @@ print(f"shortfall at which control is a coin flip: House {even['P(D House)']:.1f
 h0, h3 = (sweep.loc[sweep.shortfall == v, "H q50"].iat[0] for v in (0, 3))
 print(f"median House seats: {h0:.0f} with no shortfall, {h3:.0f} with 3 points ({(h0 - h3) / 3:.1f} seats per point)")
 
-fig, axes = plt.subplots(1, 3, figsize=(14, 3.9))
-ax = axes[0]
+fig, axes = plt.subplots(2, 2, figsize=(13, 7.6))
+ax = axes[0, 0]
+sd26 = PERR[2026]["shared"]
+ax.axhspan(-1.645 * sd26, 1.645 * sd26, color=D_C, alpha=0.08, label=f"the model's prior: 90% of Normal(0, {sd26:.1f})")
 ax.bar(hist.index, hist["generic ballot"], width=1.5, color=np.where(hist.midterm, GOLD, MUTED), alpha=0.85)
 ax.scatter(hist.index, hist["Senate, mean of races"], color=INK, s=14, zorder=5, label="Senate polls, mean of races")
 ax.axhline(0, color=INK, lw=0.6)
-ax.axhline(MID_GEN[2026], color=GOLD, lw=1, ls="--")
+ax.axhline(MID_GEN[2026], color=GOLD, lw=1, ls="--", label=f"midterm generic average, {MID_GEN[2026]:+.1f}")
 ax.set_ylabel("polls minus result, D margin\n(+: overstated the Democrats)")
-ax.set_title("generic-ballot polling error (gold bars: midterms)", fontsize=10)
-ax.legend(fontsize=8, loc="lower left")
-ax = axes[1]
-ax.plot(sweep.shortfall, sweep["P(D House)"], color=D_C, lw=2, label="House")
-ax.plot(sweep.shortfall, sweep["P(D Senate)"], color=GOLD, lw=2, label="Senate")
+ax.set_title("polling error by cycle (bars: generic ballot; gold: midterms)", fontsize=10)
+ax.legend(fontsize=7, loc="lower left")
+ax = axes[0, 1]
+for k, col, lab in (("P(D House)", D_C, "House"), ("P(D Senate)", GOLD, "Senate")):
+    ax.plot(sweep.shortfall, sweep[k], color=col, lw=2, label=f"{lab}: a coin flip at {even[k]:.1f} points")
+    ax.plot([even[k]], [0.5], "o", color=col, ms=7)
 for v, lab in ((MID_GEN[2026], "midterm\naverage"), (hist[hist.midterm]["generic ballot"].max(), "largest\n(2006)")):
     ax.axvline(v, color=MUTED, lw=0.8, ls=":")
     ax.text(v, 0.03, f" {lab}", fontsize=7, color=MUTED)
 ax.axhline(0.5, color=INK, lw=0.6, ls=":")
-ax.set_xlabel("Democratic shortfall in every race (points)")
+ax.set_ylim(0, 1)
 ax.set_ylabel("P(D control)")
 ax.set_title("chance of control against the shortfall", fontsize=10)
-ax.legend(fontsize=8)
-ax = axes[2]
-ax.fill_between(sweep.shortfall, sweep["H q5"], sweep["H q95"], color=D_C, alpha=0.2)
-ax.plot(sweep.shortfall, sweep["H q50"], color=D_C, lw=2)
-ax.axhline(217.5, color=INK, lw=0.6, ls=":")
-ax.set_xlabel("Democratic shortfall in every race (points)")
-ax.set_ylabel("House D seats, median and 90%")
-ax.set_title("House seats against the shortfall", fontsize=10)
+ax.legend(fontsize=8, loc="lower left")
+for ax, off, line, lab in ((axes[1, 0], "H", 217.5, "House D seats"), (axes[1, 1], "S", 50.5, "Senate D-caucus seats")):
+    sh = np.c_[[seats(fit26["d"], fit26["sim"] - dl)[off] for dl in shortfalls]].astype(float)
+    if off == "S":
+        sh += notup["Democratic"] + notup["Independent"]
+    q_ = np.quantile(sh, [0.05, 0.25, 0.5, 0.75, 0.95], axis=1)
+    col = D_C if off == "H" else GOLD
+    ax.fill_between(shortfalls, q_[0], q_[4], color=col, alpha=0.15, step="mid", label="90% of draws")
+    ax.fill_between(shortfalls, q_[1], q_[3], color=col, alpha=0.35, step="mid", label="50%")
+    ax.step(shortfalls, q_[2], where="mid", color=col, lw=2, label="median")
+    ax.axhline(line, color=INK, lw=0.8, ls=":")
+    ax.text(shortfalls[-1], line, " control", fontsize=7, va="bottom", ha="right", color=INK)
+    ax.axvline(MID_GEN[2026], color=MUTED, lw=0.8, ls=":")
+    ax.set_ylabel(lab)
+    ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+    ax.set_title(f"{lab} against the shortfall", fontsize=10)
+    ax.legend(fontsize=7, loc="upper right")
+for ax in axes[1]:
+    ax.set_xlabel("Democratic shortfall in every race (points)")
+axes[0, 1].set_xlabel("Democratic shortfall in every race (points)")
 fig.tight_layout();
 
 # %% [markdown]
@@ -1980,6 +1996,10 @@ fig.tight_layout();
 # deciding races in Iowa, Ohio and Alaska: 0.79 becomes 0.60 at 2 points, and control is a coin flip at 2.9,
 # about the size of an average midterm miss. If Democrats fall short of their polls by the historical
 # average, the House stays likely Democratic (about 0.8) and the Senate is a toss-up.
+#
+# The bottom panels show the spread around those medians. With no shortfall, the House's 90% band already
+# reaches down to 217 seats, and at 3 points the bottom of its 50% band reaches the majority line. The
+# Senate's 50% band straddles control from a shortfall of about half a point.
 #
 # A uniform shift is the hardest case for the forecast, because every race moves in the same direction.
 # A real polling error also varies from race to race, and the model already carries that part, with an sd
@@ -2030,6 +2050,176 @@ print(f"2026: the prior mean moved by {MID_GEN[2026]:+.1f}, the national median 
 # Democrats, by 2.3 points, but the midterm prior had already pulled the model's national estimate below
 # the polls, and the shifted prior pulled it too far. In both backtests the Democrats did better than the
 # unshifted model expected, not worse: the same lean as the PITs and the wrong calls in section 4.
+
+
+# %% [markdown]
+# One refit answers the question for one prior mean. A whole curve needs no more sampling. The prior mean
+# of the shared error $b$ enters the model only through the prior density of $b$, so the posterior under a
+# prior $\mathcal N(\mu, \sigma_b)$ is the mean-0 posterior multiplied by the ratio of the two priors:
+#
+# $$
+# w(b) \propto \frac{\mathcal N(b;\, \mu, \sigma_b)}{\mathcal N(b;\, 0, \sigma_b)}
+# = \exp\!\Big(\frac{\mu b - \mu^2/2}{\sigma_b^2}\Big).
+# $$
+#
+# Each draw of the mean-0 fit gets the weight $w$ for its own $b$, and every quantity (the national
+# margin, seats, chances of control, the scores of the backtest races) becomes a weighted average over
+# the same draws. This is exact importance sampling, not an approximation of the model. Its only limit is
+# Monte Carlo: when $\mu$ is far from 0, a few draws carry most of the weight. The effective sample size
+# $1/\sum w^2$ measures that, and the curves stop where it falls below 200 of the 4,000 draws. The refits
+# above are the check.
+
+# %%
+def prior_weights(f, c, mu):
+    """Importance weights that move the shared error's prior mean from 0 to mu (the only prior that changes)."""
+    lw = (mu * f["bias"] - mu**2 / 2) / PERR[c]["shared"] ** 2
+    w = np.exp(lw - lw.max())
+    return w / w.sum()
+
+
+def wq(x, w, qs):
+    """Weighted quantiles of draws x."""
+    o = np.argsort(x, kind="stable")
+    cw = np.cumsum(w[o])
+    return np.interp(qs, (cw - 0.5 * w[o]) / cw[-1], x[o])
+
+
+def log_score(sim, y, w):
+    """Mean log probability of each race's actual winner, from weighted draws."""
+    pD = w @ (sim > 0)
+    return float(np.mean(np.log(np.clip(np.where(y > 0, pD, 1 - pD), 0.5 / len(w), 1))))
+
+
+def reweighted(f, c, mu):
+    w = prior_weights(f, c, mu)
+    H = f["seats"]["H"].astype(float)
+    out = {"ESS": 1 / np.sum(w**2), "N q50": wq(f["N"], w, 0.5),
+           **dict(zip(("H q5", "H q25", "H q50", "H q75", "H q95"), wq(H, w, [0.05, 0.25, 0.5, 0.75, 0.95]))),
+           "P(D House)": float(w @ (H >= 218))}
+    if c < 2026:
+        out["log score"] = log_score(f["sim"], f["d"]["tm"].m.to_numpy(), w)
+    else:
+        sen_ = (f["seats"]["S"] + notup["Democratic"] + notup["Independent"]).astype(float)
+        out.update({"P(D Senate)": float(w @ (sen_ >= 51)),
+                    **dict(zip(("S q5", "S q25", "S q50", "S q75", "S q95"), wq(sen_, w, [0.05, 0.25, 0.5, 0.75, 0.95])))})
+    return out
+
+
+MU = np.arange(-5, 7.01, 0.25)
+BASE = {c: FITS[c, "full"] if c < 2026 else fit26 for c in (2018, 2022, 2026)}
+RW = {c: pd.DataFrame([{"mu": mu, **reweighted(BASE[c], c, mu)} for mu in MU]) for c in BASE}
+RW = {c: t_[t_.ESS >= 200].reset_index(drop=True) for c, t_ in RW.items()}   # too few effective draws beyond
+print("prior means kept (ESS of the weights >= 200):", {c: (t_.mu.min(), t_.mu.max()) for c, t_ in RW.items()})
+rows = []
+for c, f in BASE.items():
+    r_ = reweighted(f, c, MID_GEN[c])
+    g_ = SHIFTED[c]
+    rows.append({"cycle": c, "prior mean": round(MID_GEN[c], 2), "ESS of the weights": int(r_["ESS"]),
+                 "N median: reweighted": round(r_["N q50"], 2), "refit": round(float(np.median(g_["N"])), 2),
+                 "House median: reweighted": r_["H q50"], "refit ": float(np.median(g_["seats"]["H"])),
+                 "P(D House): reweighted": round(r_["P(D House)"], 3), "refit  ": round(float((g_["seats"]["H"] >= 218).mean()), 3)})
+print("check: reweighting the mean-0 fit against refitting with the shifted prior")
+print(pd.DataFrame(rows).to_string(index=False))
+for c in (2018, 2022):
+    t_ = RW[c]
+    best = t_.loc[t_["log score"].idxmax()]
+    print(f"{c}: race log score {t_.loc[t_.mu == 0, 'log score'].iat[0]:.4f} at prior mean 0, best "
+          f"{best['log score']:.4f} at {best.mu:+.2f}")
+t_ = RW[2026]
+for k_ in ("P(D House)", "P(D Senate)"):
+    print(f"2026 {k_}: " + ", ".join(f"{t_.loc[t_.mu == m, k_].iat[0]:.2f} at {m:+.0f}" for m in (-2, 0, 2, 4, 6)
+                                     if (t_.mu == m).any()))
+
+# %%
+fig, axes = plt.subplots(3, 3, figsize=(14, 10.8))
+for j, c in enumerate((2018, 2022, 2026)):
+    f0, f1, t_, mh = BASE[c], SHIFTED[c], RW[c], MID_GEN[c]
+    ax = axes[0, j]
+    lo_, hi_ = np.quantile(np.r_[f0["N"], f1["N"]], [0.001, 0.999])
+    xg = np.linspace(lo_ - 1, hi_ + 1, 300)
+    d0 = gaussian_kde(f0["N"])(xg)
+    ax.fill_between(xg, d0, color=D_C, alpha=0.25, label="prior mean 0 (as frozen)")
+    ax.plot(xg, gaussian_kde(f1["N"])(xg), color=R_C, lw=1.8, label=f"refit, prior mean {mh:+.1f}")
+    ax.plot(xg, gaussian_kde(f0["N"], weights=prior_weights(f0, c, mh))(xg), color=INK, ls="--", lw=1.2,
+            label="mean-0 fit, reweighted")
+    for v_, col in ((f0["N"], D_C), (f1["N"], R_C)):
+        q5, q95 = np.quantile(v_, [0.05, 0.95])
+        ax.plot([q5, q95], [-0.012 if col == D_C else -0.024] * 2, color=col, lw=3, solid_capstyle="butt")
+    ax.set_ylim(-0.035, None)
+    if c < 2026:
+        ax.axvline(MARGIN[c], color=INK, lw=2)
+        ax.text(MARGIN[c], ax.get_ylim()[1] * 0.9, " result", fontsize=8)
+    ax.set_title(f"{c}: national margin N (bars: 90% intervals)", fontsize=10)
+    ax.set_xlabel("D minus R, points", fontsize=9)
+    ax.set_yticks([])
+    ax = axes[1, j]
+    ax.fill_between(t_.mu, t_["H q5"], t_["H q95"], color=D_C, alpha=0.15, label="90%")
+    ax.fill_between(t_.mu, t_["H q25"], t_["H q75"], color=D_C, alpha=0.35, label="50%")
+    ax.plot(t_.mu, t_["H q50"], color=D_C, lw=2, label="median (reweighted)")
+    qh = np.quantile(f1["seats"]["H"], [0.05, 0.5, 0.95])
+    ax.errorbar([mh], [qh[1]], yerr=[[qh[1] - qh[0]], [qh[2] - qh[1]]], fmt="D", color=R_C, capsize=3,
+                label="refit, median and 90%")
+    ax.axhline(217.5, color=INK, lw=0.6, ls=":")
+    if c < 2026:
+        act = int((f0["d"]["tgt"].query("office == 'H'").winner == "D").sum())
+        ax.axhline(act, color=INK, lw=2)
+        ax.text(MU[0], act, f" won: {act}", fontsize=8, va="bottom")
+    ax.axvline(0, color=MUTED, lw=0.8, ls=":")
+    ax.set_title(f"{c}: House D seats against the prior mean", fontsize=10)
+    ax = axes[2, j]
+    if c < 2026:
+        ax.plot(t_.mu, t_["log score"], color=INK, lw=2)
+        b_ = t_.loc[t_["log score"].idxmax()]
+        ax.plot([b_.mu], [b_["log score"]], "o", color=INK)
+        ax.text(b_.mu, b_["log score"], f"  best at {b_.mu:+.1f}", fontsize=8, va="bottom")
+        y_ = f0["d"]["tm"].m.to_numpy()
+        ax.plot([mh], [log_score(f1["sim"], y_, np.full(len(f1["sim"]), 1 / len(f1["sim"])))], "D", color=R_C,
+                label="refit")
+        ax.set_title(f"{c}: how well the races were predicted", fontsize=10)
+    else:
+        for k_, col, lab in (("P(D House)", D_C, "House"), ("P(D Senate)", GOLD, "Senate")):
+            ax.plot(t_.mu, t_[k_], color=col, lw=2, label=f"{lab} (reweighted)")
+        ax.plot([mh], [(f1["seats"]["H"] >= 218).mean()], "D", color=D_C, mec=R_C, label="refits")
+        ax.plot([mh], [((f1["seats"]["S"] + notup["Democratic"] + notup["Independent"]) >= 51).mean()], "D",
+                color=GOLD, mec=R_C)
+        ax.axhline(0.5, color=INK, lw=0.6, ls=":")
+        ax.set_ylim(0, 1)
+        ax.set_ylabel("P(D control)", fontsize=9)
+        ax.set_title("2026: chance of control against the prior mean", fontsize=10)
+    ax.axvline(0, color=MUTED, lw=0.8, ls=":")
+    ax.axvline(mh, color=GOLD, lw=1, ls="--")
+    ax.legend(fontsize=7)
+for ax in axes[1:].ravel():
+    ax.set_xlabel("prior mean of the shared polling error", fontsize=9)
+for ax in axes[:, 0]:
+    ax.yaxis.label.set_size(9)
+axes[2, 0].set_ylabel("race log score (higher is better)", fontsize=9)
+axes[0, 2].legend(fontsize=7, loc="upper left")
+axes[1, 0].legend(fontsize=7, loc="lower left")
+fig.suptitle("Sensitivity to the prior mean of the shared polling error (+: the polls overstate the Democrats; "
+             "gold dashes: the midterm average before each cycle)", fontsize=10)
+fig.tight_layout();
+
+# %% [markdown]
+# The check passes. At the historical prior means the reweighted draws reproduce the refits: the same
+# House medians (211, 196 and 229), national medians within 0.2 points and chances of a Democratic House
+# within 0.03, using 900 to 1,200 effective draws. In the top row the dashed reweighted density lies on the
+# refit's red one. Both sit about 2 points to the left of the frozen forecast, and the 90% bars under them
+# are as wide as before: the prior mean moves the forecast without making it more certain.
+#
+# The middle row shows the whole response. In every cycle the House median falls by about 3 seats per point
+# of prior mean, a little less than the 4 seats of a uniform shortfall, because part of each point goes to
+# the polling error instead of to $N$. The 90% band stays 40 to 45 seats wide wherever it is drawn. The
+# seats the Democrats won in 2018 fall outside it once the prior mean passes about 3 points, and in 2022
+# they sit near its top.
+#
+# The bottom row gives the verdict of the backtests. The race log score is a smooth curve with its best
+# value at a prior mean of about -3.5 in 2018 and -3.2 in 2022, which says the polls understated the
+# Democrats, the opposite of the worry. Two cycles are a small sample, and in 2022 the generic polls did
+# overstate the Democrats. What the curve measures is the whole model: its midterm prior and fundamentals
+# already expected less than the Democrats got in both years, and a negative prior mean is how this
+# experiment pays that back. For 2026 the chance of a Democratic House stays above 0.7 for any prior mean up
+# to +4, while the Senate drops below 0.5 at about +4.
 #
 # So the tendency is real in the generic-ballot record, but it is small next to the swings from year to
 # year. Part of it is already absorbed by a midterm prior that is less enthusiastic than the polls, and two
@@ -2248,8 +2438,9 @@ print({k: round(v) for k, v in TIMES.items()})
 * **The Senate depends more than the House on whether the polls lean Democratic.** Generic-ballot polls
 #   overstated the Democrats in 5 of 7 midterms since 1998, by 2.6 points on average. With a uniform
 #   shortfall, House control becomes a coin flip at 4.9 points and Senate control at 2.9. Building the
-#   average into the prior moves 2026 to 229 seats ($P = 0.84$) and Senate $P = 0.61$, but it made both the
-#   2018 and 2022 backtests worse.
+#   average into the prior moves 2026 to 229 seats ($P = 0.84$) and Senate $P = 0.61$. Reweighting one fit
+#   by the ratio of priors traces every prior mean at once, matches the refits, and shows both backtests
+#   preferring a prior mean near -3: the Democrats beat this model in 2018 and 2022.
 #
 # ## Try it yourself
 #
