@@ -1,0 +1,54 @@
+{
+  "L_max": 357.8940124511719,
+  "acceptance": 0.9367945194244385,
+  "attempt": 0,
+  "chains": 32,
+  "cull1": {
+    "check_mode": 0,
+    "stuck": 0,
+    "worst_z": 5.75996527800619
+  },
+  "cull2": {
+    "check_mode": 0,
+    "stuck": 0,
+    "worst_z": 3.7463712365949453
+  },
+  "date": "2022-04-23",
+  "dim": 301,
+  "divergence_rate": 0.000125,
+  "divergences": 4,
+  "draws": 1000,
+  "dtype": "float32",
+  "finished_at": "2026-11-03T16:46:57Z",
+  "gate": {
+    "divergence": 0.000125,
+    "ess": 27380.63410599234,
+    "pass": true,
+    "r_hat": 1.0010058412743952
+  },
+  "gradients_per_chain": 179312.0,
+  "health": {
+    "machine_checks": 1,
+    "offline_cpus": [
+      10,
+      26
+    ]
+  },
+  "sampling_s": 46.654752400005236,
+  "seed": 2231,
+  "setup_s": 0.9775292220001575,
+  "step_size": 0.009813336655497551,
+  "target": 0.85,
+  "thin": 1,
+  "transitions": 32000,
+  "vram": {
+    "device": "cuda:0",
+    "in_use_gb": 2.384185791015625e-07,
+    "limit_gb": 16.564453125,
+    "peak_gb": 0.1725156307220459
+  },
+  "wall_s": 104.59066109001287,
+  "warmup": 1000,
+  "warmup_stage1_s": 30.27980564298923,
+  "warmup_stage2_s": 26.16140866401838
+}

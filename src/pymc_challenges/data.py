@@ -1716,6 +1716,25 @@ REGISTRY: dict[str, Dataset] = {
         "2012-07-01 00:00 GMT, energy in Wh as uint16, 65535 where a half-hour is missing. homes: public anonymous "
         "LCLid numbers, chosen by a hash of the id among homes with at least 95% of 2013. tou, clock, first_hour.",
     ),
+    # ---- examples (E90) ----
+    "e90_nowcasts": Dataset(
+        "e90_nowcasts.npz",
+        "https://github.com/KITmetricslab/hospitalization-nowcast-hub",  # the source: this derived file ships in git
+        "Robert Koch-Institut (2021-2022), COVID-19-Hospitalisierungen in Deutschland (github.com/robert-koch-"
+        "institut, CC BY 4.0, https://creativecommons.org/licenses/by/4.0/), in the unprocessed form of the German "
+        "COVID-19 Nowcast Hub (KIT; Wolffram et al. 2023, PLOS Computational Biology 19:e1011394; the hub's "
+        "repository has no licence file). Populations: Destatis, 31.12.2020. Changed: reduced to 7-day incidences "
+        "and E90's own nowcast summaries; no reporting triangle is included. DERIVED by tools/pack_e90.py from "
+        "tools/build_e90_data.py and a local FULL run (tools/run_e90_full.py) - keep the cached file. No "
+        "endorsement by RKI or KIT is implied.",
+        "NumPy archive, not a table: open data.path() with np.load. 16 states x 227 as-of dates (2021-09-15 to "
+        "2022-04-29), incidence per 100,000: frozen (as published that day), final (reported within 80 days), "
+        "factor, ladder, stale (revised, 7 days old); the nowcast's quantiles q (7 levels in `quantiles`), "
+        "p_cross (P(final >= 3, 6, 9)), q_recal and p_recal (recalibrated from 2021-12-17) and k (widening per "
+        "date); 200 draws per state on the 8 hard_dates for the honest, hindsight and strata fits "
+        "(hard_honest, hard_hindsight, hard_strata); feb16_failed and feb16_refit (500 draws each, chain by "
+        "chain); dates, states, population (Destatis). `notice` holds the attribution.",
+    ),
     # ---- examples (E94) ----
     "e94_races": Dataset(
         "e94_races.csv",

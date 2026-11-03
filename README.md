@@ -29,7 +29,7 @@ for every notebook, so this is optional. Later syncs drop it unless you repeat t
 
 ```
 notebooks/
-  examples/      E01-E89, E91, E94  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
+  examples/      E01-E91, E94  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
   challenges/    C01-C15  your workspace. Tasks, empty cells, hints on request.
   solutions/     C01-C15  full reference solutions, executed, with commentary.
 ```
@@ -297,6 +297,14 @@ Where should the next air monitors go? Uncertainty and decision value turn out t
 | | Topic | Data | Key techniques |
 |---|---|---|---|
 | **E89** | Where should the next air monitors go? | EPA AirData daily PM2.5 2023-2025 (419 sites in 19 states, superseded T640 series removed) and Census 2024 county populations | marginal Matern GP with known measurement error, exact county conditionals, closed-form EVSI checked by brute force, lazy greedy site selection, simulated joint value against summed gains, a search that lets county means move, a paired-instrument refit, split-half stability, alternative objectives, a band of sites rather than a ranked list, county maps with no GIS library |
+
+#### Hospital thresholds and decision curves (E90)
+
+Call it today or wait? German states tied measures to a 7-day hospitalisation incidence of 3, 6 and 9 that, as first published, later grew by a median of 83%. A hierarchical nowcast of the 16 states, refitted on each of 227 days, beats a simple correction factor on accuracy and, as an alarm, at most cost ratios (a probabilistic version of the factor, checked after the run, matches it as an alarm at 3 and 6), but its probabilities are not calibrated (80% intervals held 62%), so the standard set before the run is not met. The notebook replays that stored run on 2 cores and about 1.3 GB, in under 2 minutes, with no GPU. Do not rerun the heavy scripts on limited hardware: the run took 19.1 hours on a GPU.
+
+| | Topic | Data | Key techniques |
+|---|---|---|---|
+| **E90** | Call it today or wait? Hospital thresholds, nowcasts and decision curves | RKI COVID-19 hospitalisations by reporting date and delay, 16 German states, winter 2021-22 (Robert Koch-Institut, CC BY 4.0, via the German COVID-19 Nowcast Hub), kept as a 0.6 MB summary of 7-day incidences and nowcasts and small JSON tables of a stored run; E38's triangle | true vintages against a preprocessed file that knows the future, a hierarchical negative-binomial nowcast with a discrete-hazard delay model built live in PyMC, a prior predictive check that could not pass, GPU ChEES against nutpie by ESS per second and wall time per fit, a daily update that failed its test, a fit that failed with no divergences, CRPS, coverage and recalibration on past dates only, a hindsight variant, decision curves with a cluster bootstrap, lateness, flapping and release rules, age strata, a tile grid of Germany in plain matplotlib |
 
 #### A price signal and a substation (E91)
 

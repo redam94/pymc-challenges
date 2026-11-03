@@ -1,0 +1,48 @@
+[
+  {
+    "stage": "data",
+    "at": "2026-11-02T00:52:41Z",
+    "checked": 476,
+    "exact": 476
+  },
+  {
+    "stage": "baselines",
+    "at": "2026-11-03T18:53:47Z"
+  },
+  {
+    "stage": "pilot",
+    "at": "2026-11-03T18:53:47Z"
+  },
+  {
+    "stage": "state_fits",
+    "at": "2026-11-03T18:53:47Z",
+    "fits": 227
+  },
+  {
+    "stage": "hindsight",
+    "at": "2026-11-03T18:53:47Z",
+    "fits": 9
+  },
+  {
+    "stage": "strata",
+    "at": "2026-11-03T18:53:47Z",
+    "fits": 8
+  },
+  {
+    "stage": "failed_runs",
+    "at": "2026-11-03T18:53:47Z",
+    "runs": 12
+  },
+  {
+    "stage": "scores",
+    "at": "2026-11-03T18:53:47Z"
+  },
+  {
+    "stage": "decision",
+    "at": "2026-11-03T18:53:47Z"
+  },
+  {
+    "stage": "banner",
+    "at": "2026-11-03T18:53:47Z"
+  }
+]

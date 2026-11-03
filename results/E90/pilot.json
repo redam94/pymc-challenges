@@ -1,0 +1,431 @@
+{
+  "P0": {
+    "asof": {
+      "checked": 561,
+      "differ": 0,
+      "rows": 106029,
+      "rows_negative_left": 198,
+      "rows_negative_left_in_7d": 0
+    },
+    "go": true,
+    "vintages": {
+      "absent": [],
+      "all_age_failures": 0,
+      "by_date": {
+        "2021-12-15": {
+          "checked": 119,
+          "exact": 119
+        },
+        "2022-01-20": {
+          "checked": 119,
+          "exact": 119
+        },
+        "2022-02-10": {
+          "checked": 119,
+          "exact": 119
+        },
+        "2022-03-15": {
+          "checked": 119,
+          "exact": 119
+        }
+      },
+      "checked": 476,
+      "exact": 476,
+      "expected": 476,
+      "failures": [],
+      "worst_gap": 0
+    }
+  },
+  "P1": {
+    "absent": [],
+    "all_age_failures": 0,
+    "by_date": {
+      "2021-10-16": {
+        "checked": 119,
+        "exact": 119
+      },
+      "2021-11-21": {
+        "checked": 119,
+        "exact": 119
+      },
+      "2021-12-24": {
+        "checked": 119,
+        "exact": 119
+      },
+      "2021-12-25": {
+        "checked": 119,
+        "exact": 119
+      },
+      "2021-12-26": {
+        "checked": 119,
+        "exact": 119
+      },
+      "2021-12-27": {
+        "checked": 119,
+        "exact": 119
+      },
+      "2021-12-31": {
+        "checked": 119,
+        "exact": 119
+      },
+      "2022-01-01": {
+        "checked": 119,
+        "exact": 119
+      },
+      "2022-01-02": {
+        "checked": 119,
+        "exact": 119
+      },
+      "2022-01-03": {
+        "checked": 119,
+        "exact": 119
+      },
+      "2022-02-19": {
+        "checked": 119,
+        "exact": 119
+      },
+      "2022-03-27": {
+        "checked": 119,
+        "exact": 119
+      }
+    },
+    "checked": 1428,
+    "dates": [
+      "2021-12-24",
+      "2021-12-25",
+      "2021-12-26",
+      "2021-12-27",
+      "2021-12-31",
+      "2022-01-01",
+      "2022-01-02",
+      "2022-01-03",
+      "2021-10-16",
+      "2021-11-21",
+      "2022-02-19",
+      "2022-03-27"
+    ],
+    "exact": 1428,
+    "exact_dates": [
+      "2021-12-24",
+      "2021-12-25",
+      "2021-12-26",
+      "2021-12-27",
+      "2021-12-31",
+      "2022-01-01",
+      "2022-01-02",
+      "2022-01-03",
+      "2021-10-16",
+      "2021-11-21",
+      "2022-02-19",
+      "2022-03-27"
+    ],
+    "expected": 1428,
+    "failures": [],
+    "filled_in": [],
+    "go": true,
+    "missing_files": [],
+    "publication": {
+      "2021-10-16": {
+        "all_age_cases_on_diagonal": 906,
+        "locations_same_as_day_before": 1
+      },
+      "2021-11-21": {
+        "all_age_cases_on_diagonal": 1278,
+        "locations_same_as_day_before": 1
+      },
+      "2021-12-24": {
+        "all_age_cases_on_diagonal": 2546,
+        "locations_same_as_day_before": 1
+      },
+      "2021-12-25": {
+        "all_age_cases_on_diagonal": 940,
+        "locations_same_as_day_before": 1
+      },
+      "2021-12-26": {
+        "all_age_cases_on_diagonal": 604,
+        "locations_same_as_day_before": 1
+      },
+      "2021-12-27": {
+        "all_age_cases_on_diagonal": 864,
+        "locations_same_as_day_before": 0
+      },
+      "2021-12-31": {
+        "all_age_cases_on_diagonal": 2232,
+        "locations_same_as_day_before": 2
+      },
+      "2022-01-01": {
+        "all_age_cases_on_diagonal": 1136,
+        "locations_same_as_day_before": 1
+      },
+      "2022-01-02": {
+        "all_age_cases_on_diagonal": 482,
+        "locations_same_as_day_before": 0
+      },
+      "2022-01-03": {
+        "all_age_cases_on_diagonal": 638,
+        "locations_same_as_day_before": 1
+      },
+      "2022-02-19": {
+        "all_age_cases_on_diagonal": 3364,
+        "locations_same_as_day_before": 0
+      },
+      "2022-03-27": {
+        "all_age_cases_on_diagonal": 1072,
+        "locations_same_as_day_before": 0
+      }
+    },
+    "worst_gap": 0
+  },
+  "P2": {
+    "all_age_over_tolerance": [
+      {
+        "age": "00+",
+        "count": 98,
+        "date": "2021-11-20",
+        "gap": 0.0249,
+        "incidence": 3.37,
+        "location": "DE-SH"
+      },
+      {
+        "age": "00+",
+        "count": 165,
+        "date": "2021-11-20",
+        "gap": 0.0203,
+        "incidence": 4.03,
+        "location": "DE-RP"
+      },
+      {
+        "age": "00+",
+        "count": 101,
+        "date": "2021-11-20",
+        "gap": -0.0143,
+        "incidence": 3.99,
+        "location": "DE-BB"
+      },
+      {
+        "age": "00+",
+        "count": 95,
+        "date": "2021-11-20",
+        "gap": 0.0249,
+        "incidence": 5.9,
+        "location": "DE-MV"
+      },
+      {
+        "age": "00+",
+        "count": 137,
+        "date": "2021-11-20",
+        "gap": 0.0289,
+        "incidence": 3.38,
+        "location": "DE-SN"
+      },
+      {
+        "age": "00+",
+        "count": 174,
+        "date": "2022-01-30",
+        "gap": 0.0407,
+        "incidence": 5.98,
+        "location": "DE-SH"
+      },
+      {
+        "age": "00+",
+        "count": 151,
+        "date": "2022-01-30",
+        "gap": 0.0112,
+        "incidence": 8.15,
+        "location": "DE-HH"
+      },
+      {
+        "age": "00+",
+        "count": 185,
+        "date": "2022-01-30",
+        "gap": 0.0143,
+        "incidence": 4.51,
+        "location": "DE-RP"
+      },
+      {
+        "age": "00+",
+        "count": 83,
+        "date": "2022-01-30",
+        "gap": -0.0107,
+        "incidence": 3.28,
+        "location": "DE-BB"
+      },
+      {
+        "age": "00+",
+        "count": 130,
+        "date": "2022-01-30",
+        "gap": 0.0304,
+        "incidence": 8.07,
+        "location": "DE-MV"
+      },
+      {
+        "age": "00+",
+        "count": 144,
+        "date": "2022-01-30",
+        "gap": 0.0276,
+        "incidence": 3.55,
+        "location": "DE-SN"
+      },
+      {
+        "age": "00+",
+        "count": 150,
+        "date": "2022-02-08",
+        "gap": 0.03,
+        "incidence": 5.15,
+        "location": "DE-SH"
+      },
+      {
+        "age": "00+",
+        "count": 359,
+        "date": "2022-02-08",
+        "gap": 0.0138,
+        "incidence": 4.49,
+        "location": "DE-NI"
+      },
+      {
+        "age": "00+",
+        "count": 227,
+        "date": "2022-02-08",
+        "gap": 0.0236,
+        "incidence": 5.54,
+        "location": "DE-RP"
+      },
+      {
+        "age": "00+",
+        "count": 133,
+        "date": "2022-02-08",
+        "gap": -0.023,
+        "incidence": 5.25,
+        "location": "DE-BB"
+      },
+      {
+        "age": "00+",
+        "count": 181,
+        "date": "2022-02-08",
+        "gap": 0.0465,
+        "incidence": 11.24,
+        "location": "DE-MV"
+      },
+      {
+        "age": "00+",
+        "count": 160,
+        "date": "2022-02-08",
+        "gap": 0.0263,
+        "incidence": 3.94,
+        "location": "DE-SN"
+      }
+    ],
+    "all_age_values": 51,
+    "archive_counts_compared": 357,
+    "archive_counts_differ": [],
+    "dates": [
+      "2021-11-20",
+      "2022-01-30",
+      "2022-02-08"
+    ],
+    "destatis": {
+      "go": true,
+      "hub_minus_destatis_percent": {
+        "DE": -0.02,
+        "DE-BB": -0.347,
+        "DE-BE": -0.011,
+        "DE-BW": -0.049,
+        "DE-BY": 0.024,
+        "DE-HB": -0.011,
+        "DE-HE": -0.057,
+        "DE-HH": 0.153,
+        "DE-MV": 0.387,
+        "DE-NI": 0.21,
+        "DE-NW": 0.044,
+        "DE-RP": 0.406,
+        "DE-SH": 0.645,
+        "DE-SL": 0.156,
+        "DE-SN": 0.77,
+        "DE-ST": -0.034,
+        "DE-TH": 0.032
+      },
+      "largest_gap_all_age": 0.005,
+      "outside_range": [],
+      "ranges_checked": 85,
+      "source": "Destatis 02-bundeslaender.xlsx, 31.12.2020, capture 20211028170955"
+    },
+    "germany": [
+      {
+        "age": "00+",
+        "count": 4575,
+        "date": "2021-11-20",
+        "gap": -0.0029,
+        "incidence": 5.5,
+        "location": "DE"
+      },
+      {
+        "age": "00+",
+        "count": 3998,
+        "date": "2022-01-30",
+        "gap": 0.0011,
+        "incidence": 4.81,
+        "location": "DE"
+      },
+      {
+        "age": "00+",
+        "count": 4659,
+        "date": "2022-02-08",
+        "gap": -0.0039,
+        "incidence": 5.6,
+        "location": "DE"
+      }
+    ],
+    "go": false,
+    "largest_gap_all_age": 0.0465,
+    "largest_gap_strata": 0.0475,
+    "not_run": null,
+    "sensitivity": {
+      "state_days": 3632,
+      "tau_3": {
+        "destatis": {
+          "crossings": 17,
+          "frozen_fn": 742,
+          "frozen_fp": 1
+        },
+        "hub": {
+          "crossings": 17,
+          "frozen_fn": 742,
+          "frozen_fp": 1
+        },
+        "state_days_final_moved": 2,
+        "state_days_frozen_moved": 2
+      },
+      "tau_6": {
+        "destatis": {
+          "crossings": 35,
+          "frozen_fn": 1262,
+          "frozen_fp": 0
+        },
+        "hub": {
+          "crossings": 35,
+          "frozen_fn": 1263,
+          "frozen_fp": 0
+        },
+        "state_days_final_moved": 0,
+        "state_days_frozen_moved": 1
+      },
+      "tau_9": {
+        "destatis": {
+          "crossings": 29,
+          "frozen_fn": 1174,
+          "frozen_fp": 4
+        },
+        "hub": {
+          "crossings": 29,
+          "frozen_fn": 1170,
+          "frozen_fp": 4
+        },
+        "state_days_final_moved": 4,
+        "state_days_frozen_moved": 0
+      }
+    },
+    "strata_over_tolerance": 82,
+    "strata_values": 306,
+    "tolerance": 0.01
+  }
+}

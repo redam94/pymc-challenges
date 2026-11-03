@@ -1,0 +1,67 @@
+{
+  "dim": 621,
+  "floatX": "float32",
+  "gather_10M": {
+    "finite": true,
+    "first_s": 1.213827630999731,
+    "repeat": 5,
+    "run_ms": 0.21087299683131278
+  },
+  "gradient": [
+    {
+      "chains": 1,
+      "compile_s": 2.6711510909954086,
+      "device": "cuda:0",
+      "dtype": "float32",
+      "finite": true,
+      "ms_per_chain": 0.18785199790727347,
+      "run_ms": 0.18785199790727347
+    },
+    {
+      "chains": 8,
+      "compile_s": 3.5185898619965883,
+      "device": "cuda:0",
+      "dtype": "float32",
+      "finite": true,
+      "ms_per_chain": 0.04007937604910694,
+      "run_ms": 0.3206350083928555
+    },
+    {
+      "chains": 32,
+      "compile_s": 3.764403866007342,
+      "device": "cuda:0",
+      "dtype": "float32",
+      "finite": true,
+      "ms_per_chain": 0.0188405624612642,
+      "run_ms": 0.6028979987604544
+    },
+    {
+      "chains": 128,
+      "compile_s": 4.490549194000778,
+      "device": "cuda:0",
+      "dtype": "float32",
+      "finite": true,
+      "ms_per_chain": 0.021163351561881427,
+      "run_ms": 2.7089089999208227
+    }
+  ],
+  "health": {
+    "machine_checks": 1,
+    "offline_cpus": [
+      10,
+      26
+    ]
+  },
+  "scatter_10M": {
+    "finite": true,
+    "first_s": 1.2147347030113451,
+    "repeat": 5,
+    "run_ms": 0.4457159957382828
+  },
+  "vram": {
+    "device": "cuda:0",
+    "in_use_gb": 0.07483673095703125,
+    "limit_gb": 16.564453125,
+    "peak_gb": 0.26834845542907715
+  }
+}

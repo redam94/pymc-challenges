@@ -1,0 +1,138 @@
+{
+  "P3": {
+    "cpu_gradient": {
+      "line_ms": 3.0,
+      "what": "3 states (Bavaria, Bremen, Hamburg), 2022-01-13, float64, one core, nutpie numba logp+dlogp, median of 200 jittered points"
+    },
+    "gpu_route_steps": {
+      "precision": {
+        "line_sd_nats": 0.1,
+        "no_go": "run the GPU in float64 and price it",
+        "what": "precision_check float32 vs float64 at posterior draws of the 16-state model, 2022-01-13"
+      },
+      "scatter": {
+        "line": "finite and timed; no pass line in the plan",
+        "what": "one 10M-element scatter and gather timing on the GPU, section 7 step 3"
+      },
+      "time_gradient": {
+        "line": "all finite; no pass line in the plan, it is judged on ESS",
+        "what": "1, 8, 32 chains on the 16-state model, float32 and float64; output depends on positions"
+      }
+    },
+    "no_go": "Re-derive cost; cut bins; reduce states",
+    "prior_predictive": {
+      "go": "all 3 states",
+      "what": "95% central prior predictive interval of the final 7-day total, each of the 3 states, contains both 0.1x and 10x the observed final 7-day total"
+    }
+  },
+  "P4": {
+    "bulk_ess_min": 400,
+    "chain_count": {
+      "go": "|z| at most 2 on at least 15 states and at most 3 on all",
+      "meads": "MEADS only with 16+ chains per fold",
+      "no_go": "use 16+ chains",
+      "what": "ChEES two-stage warmup with straggler culling, 8 vs 32 chains on 2022-01-13",
+      "z": "(mean8-mean32)/sqrt(mcse8^2+mcse32^2) over 16 states' latent totals"
+    },
+    "divergence_max": 0.001,
+    "fit": "One 16-state fit on 2022-01-13 under memguard, on each route",
+    "no_go": "target_accept 0.95, low-rank, centred vs non-centred on drift. GPU route adds: more chains, longer warmup, more draws",
+    "over_60_min": "share drift across states",
+    "r_hat_max": 1.01,
+    "route_agreement": {
+      "go": "|z| at most 3 on all 16 latent totals, and P(final>=tau) within 0.05 for all 48 state x tau",
+      "no_go": "GPU route does not pass P4 until fixed; CPU pool stays the route for that model",
+      "what": "Added: GPU ChEES float32 vs nutpie float64 on the same model and date, so a fast wrong answer cannot pass"
+    },
+    "rss_max_gb": {
+      "cpu": 4.0,
+      "gpu": 6.0,
+      "gpu_note": "the plan's 4 GB plus CUDA_HOST_GB=2 from bigrun; section 7's 4 GB was written for a CPU process"
+    },
+    "vram_max_gib": 16.56,
+    "wall_max_min": 30,
+    "warmup_scan_max_min": 30
+  },
+  "P5": {
+    "dates": [
+      "2021-10-03",
+      "2021-11-14",
+      "2021-12-26",
+      "2022-02-18",
+      "2022-04-01"
+    ],
+    "dates_note": "k=3,10,17,26,33, fixed before any fit, spread over the window, away from 2022-01-13",
+    "each_wall_max_ratio_to_P4": 1.5,
+    "gpu": "the same five dates on the GPU, one at a time, each passing P4's sampler lines",
+    "no_go": "fall back to 2 concurrent; recompile if with_data disagrees",
+    "thermal": "no thermal event",
+    "with_data": {
+      "go": "|z| at most 3 on all 16 states (same reading of 'within MCSE' as above)",
+      "no_go": "recompile per date",
+      "what": "nutpie .with_data on a model compiled for another date vs a fresh compile, date 2022-01-13, latent totals"
+    }
+  },
+  "P6": {
+    "comparison": "P(final>=tau), 16 states x 3 taus x 5 dates = 240 values",
+    "gap_note": "5 days is the longest gap on a 6-day grid, so this is the worst case",
+    "max_abs_max": 0.1,
+    "median_abs_max": 0.03,
+    "no_go": "fit every 3rd day (double stage 1) or report lateness at 6-day resolution. With the GPU, a denser grid is costed if it fails",
+    "what": "Daily update from a fit at g to as-of g+5, against a full fit at g+5, for the 5 P5 dates g"
+  },
+  "P7": {
+    "bulk_ess_min": 400,
+    "divergence_max": 0.001,
+    "fit": "One 96-strata fit, 2022-01-13, GPU route",
+    "no_go": "Q7 ruling: strata are dropped first. Bavaria and Bremen by age only is the plan's fallback",
+    "only_if": "P8 goes",
+    "quantity": "all-age state latent totals, as P4",
+    "r_hat_max": 1.01,
+    "vram_max_gib": 16.56,
+    "wall_max_min": 120,
+    "warmup_scan_max_min": 30
+  },
+  "P8": {
+    "coverage_80": {
+      "high": 0.95,
+      "low": 0.6,
+      "what": "central 80% interval, 128 state-dates"
+    },
+    "dates": "the first 8 dates of stage 1 in date order: k=0..7, 2021-09-15 to 2021-10-27",
+    "diagnostic_only": "The same two numbers on the P5 dates and 2022-01-13 are printed, because k=0..7 are all quiet autumn dates. They do not change the verdict.",
+    "mae_log": {
+      "line": "at most factor MAE on the same state-dates + 0.03",
+      "what": "MAE of log(posterior median of final incidence) against log(final), all 128 state-dates, zeros excluded and counted"
+    },
+    "no_go": "Finish stage 1 anyway (the failure is the finding); drop stage 3 and skip P7"
+  },
+  "common": {
+    "divergence_note": "blackjax flags energy error above 1000 or NaN, as nutpie does; rate = divergent transitions / post-warmup transitions",
+    "ess_per_second": "min over 16 states of bulk ESS of the latent total / wall seconds of the whole fit (compile, warmup, sampling). Sampling-only is printed too. Same model and date on both routes.",
+    "gate_quantity": "latent state 7-day total: known cases so far + expected unreported cases over the 42-day bins, times the tail ratio mean. Without the NB draw, because NB noise would inflate ESS and make the gate easier. Noisy totals are also reported, and are what P(cross), coverage and CRPS use.",
+    "main_date": "2022-01-13",
+    "pool_for_comparison": "3 fits at once, 4 chains each, 12 threads (section 5): sum of ESS / pool wall. A scaled figure at 15/12 is also printed, labelled extrapolated, so the CPU gets its 15 cores.",
+    "safety": "offline must read 10,26 and machine-check count must be 1 before each job; a watcher kills all jobs if either changes",
+    "stage1_grid": "as-of 2021-09-15 + 6k days, k=0..37, last 2022-04-25; 2022-01-13 is k=20",
+    "thermal_event": "Tctl over 90 C, GPU over 92 C (max operating temp), or nvidia-smi hw_thermal_slowdown active, in 5 s samples"
+  },
+  "full_decision": "FULL can go on a rung if P3, P4, P5 and P6 pass on that route, or their no-go action is taken and priced. Stage 3 needs P8 and P7. Time comes from measured walls, labelled extrapolated.",
+  "gpu_overall": {
+    "line": "GPU wins on ESS per second by at least 3x over the pool",
+    "owner_ruling": "Printed and reported whatever it is. If the GPU does not win the notebook says so, and the run still happens on the GPU. This line no longer decides the route."
+  },
+  "immutable": "Not changed after this write. Any later reading is reported as a lapse, never edited in.",
+  "notebook_stop": "No P3-P8 gate stops the notebook on value: section 8 makes that a result. stopped=true only if no route produces a fit passing P4's sampler lines after all P4 no-go actions.",
+  "order": [
+    "P3",
+    "P4",
+    "P5",
+    "P6",
+    "P8",
+    "P7"
+  ],
+  "source": "plans/large/E90.md section 7, with the owner's ruling of 2026-11-02: GPU is the main route, CPU pool the measured baseline",
+  "value_headline": "If the model does not beat the section 4 bar, that is the headline.",
+  "written": "2026-11-02",
+  "written_before": "any model code ran; nothing here has seen a P3-P8 result"
+}

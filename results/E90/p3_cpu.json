@@ -1,0 +1,59 @@
+{
+  "cells": 3192,
+  "compile_s": 20.07049323200772,
+  "covers": [
+    false,
+    false,
+    false
+  ],
+  "final": [
+    602.0,
+    129.0,
+    227.0
+  ],
+  "finite": true,
+  "go": {
+    "gradient": true,
+    "prior": false
+  },
+  "gradient_ms_median": 0.7432650018017739,
+  "gradient_ms_min": 0.733990003936924,
+  "health": {
+    "machine_checks": 1,
+    "offline_cpus": [
+      10,
+      26
+    ]
+  },
+  "parameters": 153,
+  "prior_high": [
+    459706.6973369843,
+    4164.0473846613295,
+    21305.000564783186
+  ],
+  "prior_low": [
+    337.05354573072935,
+    82.48578803847302,
+    105.01050983820004
+  ],
+  "prior_q999": [
+    112607506.57113194,
+    1224694.9193918454,
+    4437944.8687518835
+  ],
+  "supplementary_covers": [
+    true,
+    true,
+    true
+  ],
+  "supplementary_expected_high": [
+    1118894.568184389,
+    11868.660976792919,
+    54703.43367752774
+  ],
+  "supplementary_expected_low": [
+    9.660224701857182,
+    0.10479412310466263,
+    0.46058244888668065
+  ]
+}

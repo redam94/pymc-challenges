@@ -1,0 +1,55 @@
+{
+  "dim": 621,
+  "floatX": "float64",
+  "gradient": [
+    {
+      "chains": 1,
+      "compile_s": 3.0474047919997247,
+      "device": "cuda:0",
+      "dtype": "float64",
+      "finite": true,
+      "ms_per_chain": 0.31527499959338456,
+      "run_ms": 0.31527499959338456
+    },
+    {
+      "chains": 8,
+      "compile_s": 4.316815913000028,
+      "device": "cuda:0",
+      "dtype": "float64",
+      "finite": true,
+      "ms_per_chain": 0.1345421260339208,
+      "run_ms": 1.0763370082713664
+    },
+    {
+      "chains": 32,
+      "compile_s": 4.601822683995124,
+      "device": "cuda:0",
+      "dtype": "float64",
+      "finite": true,
+      "ms_per_chain": 0.10357281234973925,
+      "run_ms": 3.314329995191656
+    },
+    {
+      "chains": 128,
+      "compile_s": 6.018663593000383,
+      "device": "cuda:0",
+      "dtype": "float64",
+      "finite": true,
+      "ms_per_chain": 0.1079072500260736,
+      "run_ms": 13.81212800333742
+    }
+  ],
+  "health": {
+    "machine_checks": 1,
+    "offline_cpus": [
+      10,
+      26
+    ]
+  },
+  "vram": {
+    "device": "cuda:0",
+    "in_use_gb": 0.0005240440368652344,
+    "limit_gb": 16.564453125,
+    "peak_gb": 0.4361889362335205
+  }
+}

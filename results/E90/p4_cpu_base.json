@@ -1,0 +1,18 @@
+{
+  "chains": 4,
+  "compile_s": 55.38745201200072,
+  "divergence_rate": 0.03975,
+  "divergences": 159,
+  "draws": 1000,
+  "health": {
+    "machine_checks": 1,
+    "offline_cpus": [
+      10,
+      26
+    ]
+  },
+  "mean_n_steps": 114.746,
+  "transitions": 4000,
+  "tune": 1000,
+  "wall_s": 1735.8170388220024
+}

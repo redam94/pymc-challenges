@@ -1,0 +1,17 @@
+{
+  "compared": 800,
+  "health": {
+    "machine_checks": 1,
+    "offline_cpus": [
+      10,
+      26
+    ]
+  },
+  "line": 0.1,
+  "max_abs": 0.07909896725686849,
+  "mean": 0.027585215115300342,
+  "n": 800,
+  "nonfinite32": 0,
+  "ok": true,
+  "sd": 0.012557838023847767
+}

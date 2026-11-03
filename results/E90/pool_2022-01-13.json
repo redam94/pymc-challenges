@@ -1,0 +1,21 @@
+{
+  "chains": 4,
+  "compile_s": 32.418019697011914,
+  "date": "2022-01-13",
+  "divergence_rate": 0.00025,
+  "divergences": 1,
+  "draws": 1000,
+  "ended": 1793654769.4295716,
+  "health": {
+    "machine_checks": 1,
+    "offline_cpus": [
+      10,
+      26
+    ]
+  },
+  "mean_n_steps": 276.764,
+  "started": 1793651404.9111166,
+  "transitions": 4000,
+  "tune": 1000,
+  "wall_s": 3362.6094133959996
+}

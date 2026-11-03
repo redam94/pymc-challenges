@@ -1,0 +1,17 @@
+{
+  "diagnostic_p5_dates": {
+    "coverage_80": 0.625,
+    "excluded": 0,
+    "mae_log": 0.13270932857785223,
+    "mae_log_factor": 0.1252130464049866,
+    "n": 80
+  },
+  "gate": {
+    "coverage_80": 0.6171875,
+    "excluded": 0,
+    "go": true,
+    "mae_log": 0.14778883000537452,
+    "mae_log_factor": 0.17471538240534457,
+    "n": 128
+  }
+}

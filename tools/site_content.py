@@ -134,6 +134,12 @@ SERIES = [
                "county conditionals and closed-form value of information show that a map of uncertainty and a map "
                "of decision value are different maps, on one 19-state crop, with a band of sites rather than a "
                "fixed list."),
+    dict(key="thresholds", range="E90", title="Hospital thresholds and decision curves", ids=["E90"],
+         intro="Call it today or wait? German states tied measures to a hospitalisation incidence whose first "
+               "published value later grew by a median of 83%. A stored run of 227 daily GPU fits of a 16-state "
+               "nowcast is judged where a ministry acts, at the thresholds: decision curves, lateness and release "
+               "rules against a simple correction factor. The nowcast is the better number, and the better alarm at "
+               "most cost ratios, and its probabilities are not calibrated."),
     dict(key="price-signal", range="E91", title="A price signal and a substation", ids=["E91"],
          intro="How many homes for how many kilowatts, on the night? Real London smart meters from a trial where homes "
                "chose the tariff but Supply-Following event days were randomised, and only those days carry the "
@@ -147,7 +153,7 @@ SERIES = [
                "score it."),
 ]
 SERIES_BY_KEY = {s["key"]: s for s in SERIES}
-RECENT = ["E94", "E88", "E91", "E87", "E89", "E86", "E85"]          # newest first, shown on the home page
+RECENT = ["E94", "E90", "E88", "E91", "E87", "E89", "E86"]          # newest first, shown on the home page
 
 
 def _link(ctx, eid, text=None):
@@ -415,6 +421,8 @@ def guide_page(ctx):
          f"{L('E87')}"),
         ("Whether a trained network's error bars hold on real data", "Paired-frame tests, a population replicate and a calibration certificate",
          f"{L('E88')}"),
+        ("Whether a better forecast makes a better alarm at a threshold", "Decision curves with a cluster bootstrap, lateness and release rules",
+         f"{L('E90')}"),
         ("A centile, not the mean (growth charts, thresholds)", "Bayesian quantile regression with calibration checks",
          f"{L('E83')}, {L('C14')}"),
         ("A quick two-way choice and its response time", "Drift diffusion model (Wiener first-passage time)",
@@ -445,7 +453,7 @@ def guide_page(ctx):
         ("Measurements carry known error", "Measurement-error model; the error is data", f"{L('D02')}, {L('E17')}"),
         ("Species or cases can be missed", "Occupancy, N-mixture and capture–recapture models", f"{L('E28')}"),
         ("Raters disagree and there is no gold standard", "Latent class and Dawid-Skene models", f"{L('E69')}"),
-        ("Recent data are still arriving", "Nowcasting the reporting delay", f"{L('E38')}, {L('E94')}"),
+        ("Recent data are still arriving", "Nowcasting the reporting delay", f"{L('E38')}, {L('E90')}, {L('E94')}"),
         ("Polls in some races, none in most", "Fundamentals learned on earlier cycles, polls where they exist, a shared error",
          f"{L('E40')}, {L('E94')}"),
         ("The survey sample is unrepresentative", "Multilevel regression and poststratification", f"{L('E36')}"),

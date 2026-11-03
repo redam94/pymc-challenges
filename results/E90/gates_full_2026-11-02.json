@@ -1,0 +1,133 @@
+{
+  "alert": {
+    "fp_fn": "section 4's definition; the model's row is at P = 0.5, also 0.2 and 0.33",
+    "model": "P(final >= tau) at or above alert probability",
+    "point_signals": "signal at or above tau"
+  },
+  "bar": {
+    "headline": "bar met only if all three lines are met; each is reported separately",
+    "net_benefit": {
+      "else": "section 8, failure 4: recommend the factor, say what the model added and what it costs",
+      "line": "P(NB model > NB factor) at least 0.9 in the bootstrap counts as a win, on all state-days in the clusters, at pt 0.2, 0.33, 0.5 for tau 3, 6, 9. Model beats factor if it wins at least 2 of 3 pt on at least 2 of 3 tau; the same test with recalibrated P from 2021-12-17 is reported beside it"
+    },
+    "note": "plan section 4: the nowcast has to earn its place through a calibrated probability, a chosen false-alarm rate and state behaviour. If it does not, that is the headline",
+    "point": {
+      "line": "model MAE log below factor and below ladder on all state-days",
+      "reference": "factor 0.1547, ladder 0.1681 on Destatis, baselines_summary.json"
+    },
+    "probability": {
+      "also": "raw coverage reported beside it, and 80% against P8's 0.6-0.95",
+      "line": "on dates from 2021-12-17, recalibrated central 50, 80, 95% coverage each within 0.05 of nominal"
+    }
+  },
+  "crossing": {
+    "definition": "final at or above tau for 3 days after 3 days below; wave by crossing date: Delta to 2021-12-14, BA.1 to 2022-02-28, BA.2 after",
+    "lateness": "first day the signal is up from 10 days before the crossing to the end of the window, days after the crossing; none means never. Early alerts censored at -10. This reading reproduces section 4's frozen row exactly (checked on 2026-11-02) and 81 crossings, 37 clusters",
+    "release": "alert off after 3 days below, and after 5 days below (Q6), each stated as false-alarm days, late days and number of alert periods"
+  },
+  "failure_2": {
+    "appears": "hindsight CRPS more than 5% below honest CRPS; within 5% means it did not appear",
+    "quantity": "mean CRPS on incidence over 8 dates x 16 states, variant 2 against variant 1"
+  },
+  "hard_dates": {
+    "dates": [
+      "2021-12-03",
+      "2021-12-17",
+      "2021-12-29",
+      "2022-01-13",
+      "2022-01-25",
+      "2022-02-04",
+      "2022-03-02",
+      "2022-04-23"
+    ],
+    "from_december": "so RKI's daily benchmark exists on every one",
+    "rule": "2022-01-13 (P4's hard date), then as-of dates from 2021-12-01 ranked by the number of state x tau within 25% of tau on the final series (section 9's definition), ties by date, each at least 10 days from those already picked, until 8. Data only, no model output",
+    "used_by": "hindsight and strata"
+  },
+  "hindsight_design": {
+    "finished_rows": [
+      "2021-09-25",
+      "2022-04-23"
+    ],
+    "fixed": "posterior mean logit hazard per state x row x delay bin from the one finished fit, and the tail ratio of the 28 rows ending on the as-of date read from the finished triangle",
+    "free": "level, growth, weekday, overdispersion, as the main model",
+    "note": "section 5 prices this as one more 249 s fit. It has 60,768 cells and 1,335 parameters, so it costs more; measured wall is reported",
+    "seen_from": "80 days after the last row"
+  },
+  "immutable": "Not changed after this write. Any later reading is reported as a lapse, never edited in.",
+  "machine": {
+    "disk_floor_gb": 30,
+    "machine_checks": 1,
+    "offline": "10,26",
+    "thermal_event": "Tctl over 90 C, GPU over 92 C, or hw_thermal_slowdown active, 5 s samples, as P5"
+  },
+  "net_benefit": {
+    "by": "tau, and wave",
+    "formula": "TP/N - FP/N * pt/(1-pt)",
+    "grid": "pt 0.05 to 0.95 by 0.05",
+    "rki": "probability approximated as lognormal from its mean and 95% interval, from December only: labelled",
+    "subset": "all state-days and days within 25% of tau",
+    "uncertainty": "Bayesian bootstrap over the 37 state x wave clusters with a crossing, 2,000 draws, seed 90. Point values on all 48 cells also printed"
+  },
+  "not_in_full": "CPU pool: measured in P5, a baseline, not rerun. Notebook, registry, README and site entries: the build",
+  "per_fit_lines": {
+    "bulk_ess_min": 400,
+    "divergence_max": 0.001,
+    "finished_fit_quantity": "share of cases reported within delay 0-6, mean over rows, per state (frac7); same three lines",
+    "gpu_rss_max_gb_16_states": 6.0,
+    "quantity": "latent state 7-day totals, as P4; strata on all-age state totals",
+    "r_hat_max": 1.01,
+    "restart": "a fit failing any line restarts once. Both are kept: the failure in failed_runs. A date failing twice keeps the restart, is flagged, listed and stays in the scores",
+    "strata_wall_max_min": 120,
+    "uncheckpointed_max_min": 30,
+    "vram_max_gib": 16.56
+  },
+  "pilot_fits_reused": {
+    "2021-12-26": "p4_gpu_r1226, the restart run in P5 with seed 99. It is the refit section 14 asks for, so no third fit is run. The failed chunk moves to failed_runs",
+    "2022-01-13": "p4_gpu_c32t85, seed 1",
+    "count": 23,
+    "strata_2022-01-13": "p7_gpu, seed 71"
+  },
+  "rules": "per state x tau: the signal and alert probability with the best net benefit at pt 0.33 among signals in the list, labelled in-sample; with its false-alarm days and median days late",
+  "rung": {
+    "daily_update": "dropped: P6 no-go and gap 2 also fails",
+    "hindsight": "1 finished fit + 8 dates",
+    "stage_fits": "16 states, every as-of date 2021-09-15 to 2022-04-29, 227 fits, 32 chains, ChEES, float32, target 0.85, warmup 1000, draws 1000",
+    "strata": "96 strata, 8 dates"
+  },
+  "scores": {
+    "coverage": "central 50, 80, 95% from the stored quantiles, whole window, per state, per wave; 95% also on RKI's interval from December",
+    "crps": "on incidence per 100,000, sample form, from each fit's stored noisy draws (about 500); point signals score absolute error",
+    "mae_log": "log posterior median of final incidence against log final, zeros excluded and counted",
+    "predictive_check": "section 6: cells revealed after the as-of date, without a refit. From each fit's stored draws, rebuild the last 7 rows, draw NegBinomial, compare with the cell 80 days on, for bins unknown on the as-of date. Central 80% coverage per cell",
+    "recalibration": {
+      "allowed": "as-of dates with truth known by then: at least 80 days before the date being recalibrated, section 6",
+      "no_tuning": "one method, set here, whatever it does",
+      "rule": "k(a) = 0.8 empirical quantile, over state-dates at least 80 days before a, of |log(final/median)| / half-width, half-width = (log q90 - log q10)/2. k floored at 1. Each draw x becomes median * (x/median)^k. One k per date across states",
+      "starts": "first date with at least 14 earlier dates: 2021-12-17. Before it the raw draws stand and scores name both spans"
+    },
+    "state_days": "227 as-of dates x 16 states = 3,632, Destatis populations"
+  },
+  "seeds": {
+    "finished": 9001,
+    "hindsight": "chunk id + 11 + 2000",
+    "note": "fixed by date; none is chosen by a result",
+    "restart": "seed + 1000",
+    "stage": "chunk id (days since 2021-09-15) + 11, the pilots' rule",
+    "strata": "chunk id + 11 + 4000"
+  },
+  "signals": [
+    "frozen",
+    "revised_7d_stale",
+    "factor",
+    "ladder",
+    "model",
+    "model_recalibrated",
+    "rki (from 2021-12-01, approx)"
+  ],
+  "source": "plans/large/E90.md sections 4, 6, 8, 9, 11, 14; gates_2026-11-02.json stays in force for what it defines",
+  "store": "Store.verify finds no problems at the end",
+  "strata_question": "how many of 8 x 16 x 3 alerts at P = 0.5 change against the state model on the same date; largest change in P(cross); CRPS on the 8 dates",
+  "written": "2026-11-02",
+  "written_before": "any FULL fit ran. The 23 pilot dates had been seen, including all_scores.json. Nothing here was set from a FULL result."
+}
