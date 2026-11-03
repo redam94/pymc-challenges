@@ -12,42 +12,36 @@
 # | | |
 # |---|---|
 # | **Type** | Advanced worked example - read, run, modify |
-# | **Data** | Real: US House and Senate races 2016-2026. Results, candidate reports and independent expenditures from the **FEC** (results workbooks and bulk files, public domain); polls, partisan lean and historical poll errors from **FiveThirtyEight** (CC BY 4.0); House returns 2004-2014 from **MEDSL** (GitHub copy, treated as CC0); 2026 nominees, Cook PVI, race polls and weekly aggregator averages from **Wikipedia** as of 2026-11-02 (CC BY-SA 4.0). Eight derived files, 2.2 MB |
-# | **You will learn** | Forecasting from **ragged information**: many national polls, some Senate polls, few district polls, fundamentals everywhere · a **midterm prior** from the swing against the president's party · a weekly **reverse random walk** with house effects and a **shared polling error**, and the **rotation** that makes the pair sampleable · fundamentals learned on **earlier cycles only**, so the backtests are out of sample · **state effects shared** by House and Senate races · honest **backtests** of 2018 and 2022 against four forecasts (PIT, coverage, Brier, log score, reliability, seat intervals) · **Jacobson's paradox** and why money follows close races · **Levitt's rematch design** for a small effect of spending with honest bounds · **nowcasting campaign spending** from lagged FEC filings: the spending curve, a beta-binomial **reporting-lag** model, a hierarchical model of **late spending**, eve-truncated backtests · a 2026 forecast **frozen** before the polls closed, with the code that will **score it later** |
+# | **Data** | Real: US House and Senate races 2016-2026. Results, candidate reports and independent expenditures from the **FEC** (results workbooks and bulk files, public domain); polls, partisan lean and historical poll errors from **FiveThirtyEight** (CC BY 4.0); House returns 2004-2014 from **MEDSL** (GitHub copy, treated as CC0); 2026 nominees, Cook PVI, race polls and weekly aggregator averages from **Wikipedia** as of 2026-11-02 (CC BY-SA 4.0). Seven derived files and three JSON records (build log and two frozen forecasts), 2.3 MB |
+# | **You will learn** | Forecasting from **ragged information**: many national polls, few district polls, fundamentals everywhere · a **midterm prior** and a weekly **reverse random walk** with house effects and a **shared polling error**, rotated to be sampleable · fundamentals learned on **earlier cycles only**, with **state effects** shared by House and Senate · **backtests** of 2018 and 2022 against three simpler forecasts · **Jacobson's paradox** and **Levitt's rematches** for the effect of spending · **nowcasting campaign spending** from lagged FEC filings, with a **reporting-lag** model and a hierarchical **late-spending** model · a 2026 forecast **frozen** before the polls closed, and the code that will **score it later** |
 #
 # ## The setting
 #
-# It is election day, 3 November 2026. The polls have not closed. By tonight there will be a new House and
-# a third of a new Senate, and by the end of the month the campaigns will report what they spent in the
-# last weeks. This notebook makes two forecasts on information that ends on 2 November: who wins the 435
-# House seats and 35 Senate races, and how much the campaigns will turn out to have spent. Both are
-# written to a file before any result exists, and the notebook ends with the code that will score them.
+# It is election day, 3 November 2026, and the polls have not closed. This notebook makes two forecasts
+# on information that ends on 2 November: who wins the 435 House seats and 35 Senate races, and how much
+# the campaigns will turn out to have spent. Both are written to a file before any result exists, and the
+# notebook ends with the code that will score them.
 #
-# The difficulty is that information about an election arrives unevenly. A midterm has around a thousand
-# national **generic-ballot** polls ("would you vote for the Democrat or the Republican for Congress?"), a
-# few hundred Senate polls spread over thirty races, and polls in perhaps a quarter of the House
-# districts, many of them paid for by a party or a campaign. Most districts have no poll at all. What
+# Information about an election arrives unevenly. A midterm has hundreds of national **generic-ballot**
+# polls ("would you vote for the Democrat or the Republican for Congress?"), a few hundred Senate polls,
+# and polls in perhaps a quarter of the House districts, many paid for by a party or a campaign. What
 # every district does have is **fundamentals**: its partisan lean, whether an incumbent runs, how much
-# money each side has raised, and the long habit of voters turning against the president's party in a
-# midterm. Political scientists have forecast from fundamentals for decades (Abramowitz 2010, on the
-# generic ballot and the midterm penalty), and poll aggregators combine polls with them (Linzer 2013;
-# Heidemanns, Gelman and Morris 2020 for the Economist's model). The statistical idea that ties it
-# together is partial pooling: one model in which each source speaks where it exists and the fundamentals
-# carry the rest, with errors that are shared where they really are shared.
+# money each side has raised, and the habit of voters turning against the president's party in a
+# midterm (Abramowitz 2010). Poll aggregators combine polls with fundamentals (Linzer 2013; Heidemanns,
+# Gelman and Morris 2020). The idea that ties it together is partial pooling: each source speaks where it
+# exists, the fundamentals carry the rest, and errors are shared where they really are shared.
 #
 # E40 built a poll aggregator for the 2016 presidential election: a reverse random walk, pollster house
-# effects and a polling error shared by all polls, with a rotation that makes the shared error sampleable.
-# This notebook builds on it and does not repeat its derivations. What is new is the ragged picture (most
-# races have no polls), backtests on two real midterms whose results are known, and money.
+# effects and a shared polling error, rotated to be sampleable. This notebook builds on it without
+# repeating its derivations. What is new is the ragged picture, backtests on two midterms, and money.
 #
-# Money enters three times, in three different roles. As a **forecast signal**, the ratio of the two
-# candidates' receipts predicts the vote beyond lean and incumbency. As a **cause**, it is mostly
-# confounded: Jacobson (1978, 1990) found that incumbents who spend more do worse, because money follows
-# close races. Levitt (1994) compared rematches between the same two candidates, which holds candidate
-# quality and district fixed, and found a small effect. And as a **quantity to nowcast**, total campaign
-# spending through election day is not known on election day: candidates report their October spending a
-# month later, and outside groups report within a day or two. This is the same problem as nowcasting an
-# epidemic from delayed case reports (E38; Höhle and an der Heiden 2014), with dollars instead of cases.
+# Money enters in three roles. As a **forecast signal**, the ratio of the two candidates' receipts
+# predicts the vote beyond lean and incumbency. As a **cause**, it is mostly confounded: Jacobson (1978,
+# 1990) found that incumbents who spend more do worse, because money follows close races, and Levitt
+# (1994) used rematches between the same two candidates to find a small effect. As a **quantity to
+# nowcast**, total spending through election day is not known on election day, because candidates report
+# their October spending a month later. This is the problem of nowcasting an epidemic from delayed case
+# reports (E38; Höhle and an der Heiden 2014), with dollars instead of cases.
 #
 # | part | question | tool |
 # |---|---|---|
@@ -57,7 +51,7 @@
 # | 4 | Do the forecasts hold up? | backtests of 2018 and 2022: the full model against aggregate-only, polls-only and fundamentals-only |
 # | 5 | Does money buy votes? | Jacobson's paradox (failure 2); Levitt's rematches with hierarchical slopes |
 # | 6 | How much was spent? | the spending curve, a reporting-lag model for outside money, a late-spending model (failure 3), backtests |
-# | 7 | 2026 | the frozen forecast and spending nowcast, recomputed |
+# | 7 | 2026 | two frozen forecasts and spending nowcasts (pre-registered and corrected), recomputed |
 # | 8 | Scoring 2026, later | the scorer, exercised on 2018 and 2022; "not yet available" for 2026 |
 
 # %%
@@ -67,6 +61,7 @@ for name in ("OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "MKL_NUM_THREADS"):
     os.environ.setdefault(name, "1")  # before NumPy: one BLAS thread per chain
 os.environ.setdefault("JAX_PLATFORMS", "cpu")  # nothing here uses a GPU
 
+import gzip
 import hashlib
 import json
 import logging
@@ -113,19 +108,17 @@ TIMES = {}
 # ## 1 · The data
 #
 # Everything comes from public sources and was processed by `tools/build_e94_data.py` from raw downloads
-# into eight small files. Every result in a backtest uses only what was public by the evening before the
-# election: **5 November 2018, 7 November 2022 and 2 November 2026**. FiveThirtyEight's polls are kept
-# only if they were entered in its database by the eve (80 generic polls of 2018 and 29 of 2022 were
-# entered later and are dropped), FEC reports and independent expenditures are kept by the date the FEC
-# received them, and the 2026 Wikipedia tables are read at their last revision on or before 2 November.
+# into small files. Every result in a backtest uses only what was public by the evening before the
+# election: **5 November 2018, 7 November 2022 and 2 November 2026**. Polls are kept only if
+# FiveThirtyEight had entered them by the eve, FEC reports and independent expenditures by the date the
+# FEC received them, and the 2026 Wikipedia tables at their last revision on or before 2 November.
 #
 # Some things could not be had. No openly licensed list of individual 2026 national polls exists, so 2026
-# uses weekly snapshots of the table of aggregator averages on Wikipedia (Decision Desk HQ,
-# RealClearPolitics, Silver Bulletin and others): averages, not polls. MEDSL's current House data sit
-# behind a guestbook that asks for a name and email, so the older GitHub copy is used, for 2004-2014 only,
-# because its 2018 national vote disagrees with the FEC's. The FEC report file keeps only the latest
-# version of each report, so a report amended after the eve drops out of "known by the eve" (about 1-2% of
-# pre-general reports): the one place where the backtest is slightly unfair to itself.
+# uses weekly snapshots of the aggregator averages on Wikipedia (Decision Desk HQ, RealClearPolitics,
+# Silver Bulletin and others): averages, not polls. MEDSL's current House data sit behind a guestbook, so
+# its older GitHub copy is used for 2004-2014 only. The FEC report file keeps only the latest version of
+# each report, so a report amended after the eve drops out of "known by the eve" (1-2% of pre-general
+# reports).
 
 # %%
 for name in ("e94_races", "e94_polls", "e94_reports", "e94_ie", "e94_rematch", "e94_pollerr"):
@@ -182,10 +175,9 @@ print(R.groupby(["cycle", "office"]).agg(races=("race", "size"), contested=("con
 # few jungle-style ballots (Louisiana's, Mississippi's 2018 Senate special and a handful of others) are
 # called by their lean, which gets every one of them right in 2018 and 2022.
 #
-# **Lean** is the race's partisan lean, the D-minus-R margin relative to the nation, on the margin scale.
-# For 2016-2022 it is FiveThirtyEight's; for 2026 it is twice Cook's Partisan Voting Index (PVI), which is
-# on the share scale. The builder checked that scale on the 368 districts whose lines did not change
-# between 2022 and 2024; the check and the other data checks it wrote are printed below.
+# **Lean** is the race's partisan lean relative to the nation, on the margin scale: FiveThirtyEight's for
+# 2016-2022, twice Cook's Partisan Voting Index for 2026. The builder's checks of that scale and of the
+# FEC IDs are printed below.
 
 # %%
 chk = build_log["checks"]
@@ -195,11 +187,18 @@ print(f"2022 lean (538) against 2 x Cook PVI on {lc['n']} unchanged districts: s
 sl = chk["state_lean_proxy_vs_538_2018"]
 print(f"state lean as the mean of district leans, 2018: correlation {sl['corr']:.3f} with 538's, "
       f"mean absolute difference {sl['mean_abs_diff']:.1f}")
-print(f"2026 FEC IDs found by name: D {chk['fec_id_2026_name_match_rate']['d']:.0%}, "
-      f"R {chk['fec_id_2026_name_match_rate']['r']:.0%}")
+print(f"2026 nominees of contested races with an FEC ID found: D {chk['fec_id_2026_name_match_rate']['d']:.1%}, "
+      f"R {chk['fec_id_2026_name_match_rate']['r']:.1%}; not found: {chk['fec_id_2026_unmatched']['r'] + chk['fec_id_2026_unmatched']['d']}")
 for c in (2018, 2022, 2026):
     p = chk[f"ie_{c}_prank_spenders"]
     print(f"IE {c}: {p['spenders']} prank spender(s) dropped, ${p['dollars'] / 1e9:,.1f}B claimed")
+
+# %% [markdown]
+# FEC IDs for the 2026 nominees are matched by state, office, district and name against the FEC's
+# candidate list. A nominee without a match has unknown receipts, not zero: an earlier build set them to
+# $0, which pinned the money signal of 61 races at its extreme, and section 7 shows what that did to the
+# first frozen forecast. The two nominees still unmatched get a money signal imputed inside the model,
+# from a regression on lean, incumbency and office in the other 2026 races.
 
 # %% [markdown]
 # ## 2 · What information exists, and where
@@ -402,9 +401,8 @@ ax.set_title("Swing against the president's party in each midterm (blue bars: Re
 #
 # where incumbent is +1 for a Democratic incumbent, -1 for a Republican and 0 for an open seat, and money
 # is $\log\big((D + \$50\text{k})/(R + \$50\text{k})\big)$ for the receipts each side had reported by the
-# eve. The state effect $u_s$ is shared by every House district in a state and by its Senate race: when a
-# state's electorate moves, all its races move together. This is the model's correlated race error, on top
-# of $N$, which moves every race.
+# eve. The state effect $u_s$ is shared by every House district in a state and by its Senate race: the
+# model's correlated race error, on top of $N$, which moves every race.
 #
 # The coefficients $\beta_o$, $\gamma_o$, the residual scales $\sigma_o$ and the scales of the cycle and
 # state effects are learned from **earlier cycles only**: 2016 for the 2018 forecast, 2016-2020 for 2022
@@ -420,8 +418,7 @@ ax.set_title("Swing against the president's party in each midterm (blue bars: Re
 # the race's margin, moved by the national walk in the poll's week, plus the shared error, a race-level
 # polling error with the historical scale, the pollster's house effect and a sponsor effect $\delta$ for
 # polls marked D (+1) or R (-1). Only polled races carry a margin in the sampler; every other race is
-# simulated afterwards from the posterior, which is cheap and exact for a model like this. Seats follow by
-# counting, per draw, the races each side wins plus the seats with only one side on the ballot.
+# simulated afterwards from the posterior. Seats follow by counting, per draw.
 
 # %%
 def prepare(target, mode="full"):
@@ -604,9 +601,6 @@ print(f"2026: {d26['gp'].pollster.nunique()} aggregators, {len(d26['gp'])} weekl
       f"{len(d26['rp'])} race polls in {len(d26['polled'])} races")
 
 # %% [markdown]
-# The 2018 model has 338 training races from 2016, 424 target races, 326 generic polls from the last 22
-# weeks and 742 race polls from the last 10 weeks, in 162 races, by 158 pollsters.
-#
 # ### 3.3 Failure 1: the polls cannot tell the electorate from their own error
 #
 # Every poll sees $N + b$, never $N$ alone. With $N = \mu_N + \sigma_N z_N$ and $b = \sigma_b z_b$ sampled
@@ -642,12 +636,12 @@ print(az.summary(fit26["idata"], var_names=["N", "bias", "s_rw", "s_x_gen"], rou
 
 # %% [markdown]
 # Both fits finish without divergences and agree on the answer, but the direct one mixes badly along the
-# ridge: an effective sample size of about 350 for $N$ and for the shared error against about 5,000 after
-# rotating, and an $\hat R$ of 1.018 for $N$ against 1.001. (A pilot run with another seed reached $\hat
+# ridge: an effective sample size of about 300 for $N$ and for the shared error against about 5,500 after
+# rotating, and an $\hat R$ of 1.008 for $N$ against 1.001. (A pilot run with another seed reached $\hat
 # R$ = 1.05.) Nothing warns about a ridge except the ESS, which is why the diagnostics are read for every
 # variable. The two are almost perfectly confounded in the posterior: their correlation is -0.97, because
 # the polls fix $N + b$ at about 9 points with an sd under a point, while each of $N$ and $b$ keeps an sd
-# near 3. The national margin of 2026 is D+7.8, with a 90% interval of 3 to 12 points; most of that width
+# near 3. The national margin of 2026 is D+7.8, with a 90% interval of 3 to 13 points; most of that width
 # is the shared polling error the polls cannot see. Every fit below is rotated.
 
 # %%
@@ -691,21 +685,20 @@ for ax, (v, obs, lab) in zip(axes, (("gen", fit26["d"]["gp"].two, "aggregator sn
     ax.axhline(1, color=INK, lw=0.7, ls=":")
     lo, hi = np.quantile(rep, [0.05, 0.95], 0)
     cov = np.mean((obs.to_numpy() >= lo) & (obs.to_numpy() <= hi))
-    ax.set_title(f"2026 {lab}: {len(obs)} values, {cov:.0%} inside their 90% interval", fontsize=10)
+    ax.set_title(f"2026 {lab}\n{len(obs)} values, {cov:.0%} inside their 90% interval", fontsize=10)
     ax.set_xlabel("PIT of each observed value")
     print(f"{lab}: 90% predictive interval covers {cov:.1%} of {len(obs)}")
+axes[0].set_ylabel("density")
+fig.tight_layout()
 del ppc26;
 
 # %% [markdown]
 # Almost all 2026 aggregator snapshots (99%) and 97% of race polls fall inside their 90% predictive
 # intervals, and both PIT histograms are humped: the predictive spread is too wide in poll space. For the
-# snapshots that is by construction. Each is given an sd of 1 point, but an average moves slowly from one
-# week to the next, so consecutive snapshots are far closer than that, and the excess noise $\tau$ shrinks
-# to about 0.1. Seven aggregators averaging largely the same polls are also counted as seven measurements,
-# which overstates how much the snapshots know about the week-to-week walk. That matters little for the
-# forecast, whose uncertainty is dominated by the shared error, but it is the price of having no
-# individual national polls in 2026. For race polls the humped PIT says the noise allowed for a poll is
-# generous, which makes the forecast slightly cautious where polls exist.
+# snapshots that is by construction: each is given an sd of 1 point, but an average moves slowly from week
+# to week, and seven aggregators averaging largely the same polls count as seven measurements. That
+# matters little next to the shared error, but it is the price of having no individual national polls in
+# 2026. For race polls the noise allowed is generous, which makes the forecast slightly cautious.
 
 # %% [markdown]
 # ## 4 · The 2018 and 2022 backtests
@@ -816,23 +809,16 @@ print()
 print(scores[["cycle", "model", "cover 50%", "cover 80%", "cover 90%", "Brier", "log score", "MAE", "wrong calls"]].to_string(index=False))
 
 # %% [markdown]
-# The full model's 90% seat intervals contain the result in both cycles: 222 [203, 244] House seats for
-# the Democrats in 2018 against 235 won, and 204 [184, 222] in 2022 against 213. Senate seats up for
-# election: 24 [20, 28] against 24, and 14 [11, 17] against 15. The national margin landed within a point
-# of the posterior median both times: D+8.0 against D+8.8, and R+2.0 against R+2.7. Race by race, its 90%
-# intervals covered 93% and 92% of races, close to nominal, with a Brier score of 0.042 and 0.031 and a
-# median absolute error of about 5 points. It gave the Democrats a 65% chance of the House in 2018, which
-# they won, and 12% in 2022, which they lost.
+# The full model's 90% seat and national intervals contain the result in both cycles, and its 90% race
+# intervals cover 93% and 92% of races, close to nominal. It gave the Democrats a 65% chance of the House
+# in 2018, which they won, and 12% in 2022, which they lost.
 #
 # The comparison is the lesson. Without any poll the forecast is right on average but twice as uncertain
-# about seats (a 90% interval of 81 seats in 2018 against 41) and makes more wrong calls (30 and 29
-# against 26 and 21). Polls only gets the 2018 House almost exactly (236), but its intervals are wider,
-# its 50% intervals cover 66-72% (too wide) and its log score is no better than the fundamentals-only
-# forecast in 2018 and the worst of the four in 2022: where a district has no poll, lean alone is a blunt
-# instrument. Aggregate only loses nothing on races (its 2018 race scores are even slightly better), but
-# its national median was more than 2 points short in 2018 and its 2022 national interval is wider. Two
-# cycles are two draws of the shared polling error, so differences of a few hundredths in Brier score are
-# noise; the gaps to the fundamentals-only forecast are not.
+# about seats and makes more wrong calls. Polls only gets the 2018 House almost exactly, but its intervals
+# are too wide and its log score is the worst of the four in 2022: where a district has no poll, lean
+# alone is a blunt instrument. Aggregate only loses nothing on races, but its national median was more
+# than 2 points short in 2018. Two cycles are two draws of the shared polling error, so differences of a
+# few hundredths in Brier score are noise; the gaps to the fundamentals-only forecast are not.
 
 # %%
 fig, axes = plt.subplots(1, 2, figsize=(13, 5.2), sharey=True)
@@ -861,11 +847,9 @@ axes[0].set_ylabel("actual margin (D minus R, points)")
 axes[0].legend(fontsize=8, loc="upper left");
 
 # %% [markdown]
-# Most wrong calls sit where both the forecast and the result are within a few points of zero, and they
-# are mostly in polled races (all 26 in 2018, 15 of 21 in 2022): the races that are close get polled, and
-# close races are the ones a forecast can call wrongly. In both years most wrong calls (21 of 26, and 15
-# of 21) are Democrats who won races the forecast expected them to lose: Democrats did better than
-# forecast in many close districts at once, which is what a shared error looks like race by race.
+# Most wrong calls sit near zero on both axes and in polled races, because close races get polled. In
+# both years most of them (21 of 26, and 15 of 21) are Democrats who won races the forecast expected them
+# to lose: a shared error, seen race by race.
 
 # %%
 fig, axes = plt.subplots(1, 3, figsize=(13, 3.8))
@@ -900,15 +884,11 @@ ax.set_ylabel("share won by D")
 ax.set_title("reliability, 2018 and 2022 pooled", fontsize=10);
 
 # %% [markdown]
-# The PIT histograms say the same. In 2018 the full model's PIT is nearly flat, a little light in its
-# lowest tenth; in 2022 it rises to the right, because results came in more Democratic than forecast
-# across many races (the national polls erred toward the Democrats, but district results erred toward
-# them too, relative to the model). The
-# fundamentals-only PIT is humped in 2018: its intervals were wider than they needed to be. The
-# reliability diagram pools both cycles. Under the full model, Democrats won 36% of the 22 races given
-# them about a 27% chance and 63% of the 27 races given about 44%: across the middle they won more often
-# than forecast, the same lean as the PITs. Polls only errs the other way at the bottom (5% won among
-# races given 11%, 16% among races given 26%): its chances are too close to a coin toss.
+# In 2018 the full model's PIT is nearly flat; in 2022 it rises to the right, because results came in more
+# Democratic than forecast across many races. The fundamentals-only PIT is humped: its intervals were
+# wider than needed. In the reliability diagram, which pools both cycles, Democrats won 36% of the 22 races
+# the full model gave them about a 27% chance and 63% of the 27 given about 44%: across the middle they
+# won more often than forecast, the same lean as the PITs.
 
 # %%
 fig, axes = plt.subplots(2, 2, figsize=(13, 5.6))
@@ -933,10 +913,8 @@ for ax in axes[:, 0]:
     ax.set_ylabel("probability");
 
 # %% [markdown]
-# The seat distributions put the result in context. In both years the full model's House distribution sits
-# a few seats below the result, with the result inside its central region; the fundamentals-only
-# distributions are far wider. The Senate distributions of the four forecasts are close to each other,
-# because Senate races have polls in every variant except fundamentals-only.
+# In both years the full model's House distribution sits a few seats below the result, with the result
+# inside its central region; the fundamentals-only distributions are far wider.
 
 # %%
 def coef_frame(f, label):
@@ -970,13 +948,10 @@ print(cf.assign(est=lambda t: t.med.round(2).astype(str) + " [" + t.lo.round(2).
 
 # %% [markdown]
 # The fundamentals are stable across training sets. Ten points of lean move a House margin by about 8
-# points, so a race tracks its lean almost one for one after the national swing. Incumbency is worth about
-# 3-4 points of margin in the House when trained on 2016-2020 or 2016-2022 (5.6 from 2016 alone) and about
-# 2.5 points in the Senate, with wide intervals. The **money** coefficient is about 2.4-2.9 points of
-# margin per unit of the log receipts ratio in the House: a race where the Democrat has raised $e \approx
-# 2.7$ times as much as the Republican leans 2-3 points further toward the Democrat than lean and
-# incumbency predict. This is a forecast signal, not an effect of spending: donors give to candidates they
-# expect to do well and to races they expect to be close. Section 5 takes the causal question seriously.
+# points; incumbency is worth about 3-4 points in the House and 2.5 in the Senate. The **money**
+# coefficient is about 2.4-2.9 points of House margin per unit of the log receipts ratio: a Democrat who
+# has raised $e \approx 2.7$ times as much leans 2-3 points further than lean and incumbency predict. That
+# is a forecast signal, not an effect of spending: donors give to candidates they expect to do well.
 
 # %%
 fig, axes = plt.subplots(1, 3, figsize=(13, 3.8), sharey=True)
@@ -1004,13 +979,10 @@ fig.legend(h_ + axes[2].get_legend_handles_labels()[0][-1:], l_ + ["aggregator s
 fig.suptitle("The weekly national walk: 90% bands for the walk and for what the polls measure", fontsize=10);
 
 # %% [markdown]
-# The national walk in 2018 moved within a few points over the summer and ended near D+8; the band of what
-# the polls measure (walk plus shared error) is narrow, while the walk itself is wider, because the shared
-# error is still unknown. In 2022 the polls drifted toward the Republicans in the last month, and the
-# result (the star) fell below what the polls measured but inside the walk's band: the model had allowed
-# for the polls leaning Democratic. The 2026 band is smooth because its inputs are averages; it sits near
-# D+8 at the end. Each panel's grey band is what the polls see; the blue band is what the model believes
-# about the electorate.
+# What the polls measure (walk plus shared error) is a narrow band; the walk itself is wider, because the
+# shared error is unknown. In 2022 the result fell below what the polls measured but inside the walk's
+# band: the model had allowed for the polls leaning Democratic. The 2026 band is smooth because its inputs
+# are averages, and ends near D+8.
 
 # %% [markdown]
 # ## 5 · Money and votes
@@ -1142,12 +1114,10 @@ print(f"P(D slope > 0) = {(bmu[0] > 0).mean():.2f}, P(R slope < 0) = {(bmu[1] < 
 # spending in a rematch is worth about +0.7 points of share, with a 90% interval of 0.2 to 1.1: real, and
 # small. The sampler had no divergences.
 #
-# The bounds are worth stating. Candidate quality can still change between meetings (a scandal, a better
-# campaign, a challenger who has grown into the job), and a change in spending is not randomly assigned: a
-# challenger who raises more the second time may be a challenger whose prospects improved for other
-# reasons, which would bias the slope **up**. Rematches are a selected sample (losers who try again, often
-# in close districts), and spending is measured as cycle totals including primaries. Levitt read his
-# estimates as an upper bound on a small effect; ours points the same way. The asymmetry between the
+# The bounds are worth stating. Candidate quality can still change between meetings, and a challenger who
+# raises more the second time may be one whose prospects improved for other reasons, which would bias the
+# slope **up**. Rematches are a selected sample, and spending is measured as cycle totals including
+# primaries. Levitt read his estimates as an upper bound on a small effect; ours points the same way. The asymmetry between the
 # parties should not be over-read: in size, the two slopes' intervals overlap between about 0.3 and 0.7.
 
 # %%
@@ -1187,23 +1157,17 @@ ax.set_title("the hierarchical rematch slopes", fontsize=10);
 # %% [markdown]
 # ## 6 · Nowcasting campaign spending
 #
-# How much did the 2026 campaigns spend? On election day nobody knows, and the reason is the reporting
-# calendar. A House or Senate candidate's committee files quarterly reports, a **pre-general report
-# (12G)** that covers the period to the 20th day before the election (14 October 2026) and is due 12 days
-# before it, and a **post-general report (30G)** that covers from there to the 20th day after the election
-# (23 November 2026) and is due 30 days after it (3 December 2026). The busiest five weeks of spending are
-# therefore reported a month after the election. Outside groups that make **independent expenditures**
-# (IE) for or against a candidate file 24- or 48-hour reports, by the date of public dissemination, so
-# outside money is visible almost at once. The FEC's 48-hour notices of large contributions are receipts,
-# not spending, and are not in any bulk file; they are not used.
+# On election day nobody knows how much the campaigns spent, because of the reporting calendar. A
+# candidate's committee files a **pre-general report (12G)** covering the period to 14 October 2026, and
+# a **post-general report (30G)** covering from there to 23 November, due on 3 December. The busiest five
+# weeks are reported a month after the election. Outside groups making **independent expenditures** (IE)
+# file 24- or 48-hour reports, so outside money is visible almost at once. The 48-hour notices of large
+# contributions are receipts, not spending, and are in no bulk file; they are not used.
 #
-# The target is defined so that it can be checked: for each general-election Democratic and Republican
-# nominee, the disbursements of the candidate's committees over the cycle through the end of the 30G
-# period, plus general-election independent expenditures dated through election day. "Through election
-# day" itself is never reported for candidates, since the 30G runs 20 days past it, so the candidate part
-# is through 20 days after. A backtest truncates the 2018 and 2022 filings at what the FEC had
-# **received** by each eve, so nothing from after the eve leaks in, and compares the nowcast with what was
-# eventually filed.
+# The target is defined so that it can be checked: the disbursements of each Democratic and Republican
+# nominee's committees through the end of the 30G period, plus general-election IE dated through
+# election day. A backtest truncates the 2018 and 2022 filings at what the FEC had **received** by each
+# eve, so nothing from after the eve leaks in, and compares the nowcast with what was eventually filed.
 
 # %%
 def spend_window(cycle):
@@ -1246,7 +1210,7 @@ print(sp_show.to_string())
 # total through the 30G was $2.12B. In 2022: $2.32B on the eve and $2.75B in the end. About a fifth of
 # nominee spending (21% and 16%) was unseen on the eve, and nearly all of it ($443M and $435M) arrived in
 # one report, the 30G. Outside money is the opposite: 99.6% (2018) and 99.2% (2022) of the eventual
-# general-election IE dollars had been received by the eve. 2026 has $2.39B of nominee spending and $3.17B
+# general-election IE dollars had been received by the eve. 2026 has $2.41B of nominee spending and $3.17B
 # of outside spending on file, twice the outside money of 2022.
 
 # %%
@@ -1285,12 +1249,10 @@ ax.set_title("independent expenditures are filed within a day or two", fontsize=
 ax.legend(fontsize=8);
 
 # %% [markdown]
-# The left panel is the spending curve of the cycle: cumulative disbursements of all nominees by day, with
-# each report's spending spread evenly over the period it covers. On the eve the curve is known up to 20
-# days before the election (solid) and the rest arrives later (dotted). 2026's curve, known to the same
-# point, runs almost exactly on top of 2022's. The right panel shows outside spending per day in the last
-# two months: filed by the eve (solid) and final (dotted) are nearly the same line, with a weekly rhythm
-# of ad buys.
+# The left panel is the spending curve: cumulative disbursements of all nominees by day, each report
+# spread evenly over its period. On the eve it is known to 20 days before the election, and 2026's curve
+# runs almost on top of 2022's. On the right, outside spending filed by the eve and final are nearly the
+# same line.
 #
 # ### 6.1 The reporting lag of outside money
 #
@@ -1305,11 +1267,13 @@ ax.legend(fontsize=8);
 # $$
 #
 # over daily bins up to two weeks and wider bins beyond. The overdispersion $\kappa$ is there because
-# dollars arrive in lumps: one $5M buy is filed or not. Dollars dated on election day are not on the eve's
-# books at all; we model them as a share $r$ of the last week's dollars, beta-binomial across cycles. For
-# a new cycle, the curve is shifted by a cycle effect on the logit scale with an assumed sd of 0.5: the
-# two cycles cannot estimate how much the lag varies from one cycle to the next. The backtest fits on one
-# cycle and nowcasts the other; the 2026 nowcast fits on both.
+# dollars arrive in lumps. Dollars dated on election day are modelled as a share $r$ of the last week's
+# dollars. For a new cycle, the curve is shifted by a cycle effect on the logit scale with an assumed sd of 0.5: the
+# two cycles cannot estimate how much the lag varies from one cycle to the next. Only one backtest is a
+# forward test: fitted on 2018, nowcasting 2022 from what had been filed by its eve. The other, fitted on
+# 2022 and nowcasting 2018, runs backwards in time: the 2018 filings are cut at its eve, but the parameters
+# come from a later cycle, so it is a leave-one-cycle-out check. Report files for other cycles were not
+# downloaded, so there is no second forward test. The 2026 nowcast fits on both.
 
 # %%
 LAG_BINS = [(L, L) for L in range(15)] + [(15, 30), (31, 60), (61, 2000)]
@@ -1383,12 +1347,10 @@ for k, target in (("2018 -> 2022", 2022), ("2022 -> 2018", 2018)):
           f"final ${SPEND[target]['ie_final'] / 1e6:,.1f}M")
 
 # %% [markdown]
-# Fitted on 2018, the model nowcast 2022's outside total at $1,622M (90% interval 1,614 to 1,644) against
-# $1,622.5M filed. Fitted on 2022, it nowcast 2018 at $1,063M (1,052 to 1,092) against $1,049M: too high
-# by $14M, 1.3% of the total, and just outside the interval. 2022 had more late filers than 2018 (0.8% of
-# dollars unseen against 0.4%), and with two cycles there is no telling which is typical. The fit on both
-# cycles puts 79% of dollars dated on the eve itself on file by the eve, 89% of those dated a day earlier
-# and about 97% of those a week earlier. The error is tiny next to the candidate side.
+# In the forward test, fitted on 2018, the model nowcast 2022's outside total at $1,622M (90% interval
+# 1,614 to 1,644) against $1,622.5M filed. Leaving out 2018 and fitting on 2022, it nowcast 2018 at $1,063M
+# (1,052 to 1,092) against $1,049M: too high by 1.3% and just outside the interval, because 2022 had more
+# late filers than 2018. The error is tiny next to the candidate side.
 
 # %%
 fig, ax = plt.subplots(figsize=(7.5, 3.6))
@@ -1413,11 +1375,10 @@ ax.set_title("IE reporting lag: dollars spent L days before the eve that were al
 #
 # ### 6.2 Candidates' late spending
 #
-# The sketch for this part was a hierarchical growth curve for each race over the whole cycle. On the eve
-# that is more than the problem needs: every nominee's curve is observed up to mid-October, and only its
-# tail is unknown. What predicts the tail is how fast the campaign was spending in the 12G period and how
-# much cash it had left. So the model is for the late spending itself. For nominee $j$ in group $g$
-# (office x competitiveness: |lean| below 8, 8-20, above 20), with the 30G disbursements $y_j$,
+# A hierarchical growth curve for each race over the whole cycle is more than the eve needs: every
+# nominee's curve is observed up to mid-October, and only its tail is unknown. The tail is predicted by
+# how fast the campaign was spending in the 12G period and how much cash it had left. For nominee $j$ in
+# group $g$ (office x competitiveness: |lean| below 8, 8-20, above 20), with 30G disbursements $y_j$,
 #
 # $$
 # \log(1 + y_j) \sim \mathcal N\big(a_g + b_{1g}(x^{\text{rate}}_j - 10) + b_2 (x^{\text{cash}}_j - 12)
@@ -1429,7 +1390,10 @@ ax.set_title("IE reporting lag: dollars spent L days before the eve that were al
 # Student-t errors had fine per-candidate coverage but tails that summed to absurd totals (its 90%
 # interval for the 2022 national total reached $470B); Normal errors on the log scale fix that. As for
 # outside money, a shared shift of all candidates in a cycle (a late surge of small donations, say) cannot
-# be estimated from two cycles, so the nowcast adds one with an assumed sd of 0.25 on the log scale.
+# be estimated from two cycles, so the nowcast adds one with an assumed sd of 0.25 on the log scale. Both
+# choices, Normal errors and the sd of 0.25, were made after seeing the pilot's backtests (the pilot,
+# without a cycle shift, missed 2018 with $606M, 90% interval 480 to 790, against $443M filed). The
+# backtest totals below are therefore not out of sample for those two choices.
 #
 # **Failure 3, the hierarchy written the other way.** Every group has dozens to hundreds of candidates, so
 # the data pin each $a_g$ tightly, and that is where the centred form is the right one (E25). The
@@ -1538,12 +1502,12 @@ for k, target in (("2018 -> 2022", 2022), ("2022 -> 2018", 2018)):
 print(pd.DataFrame(bt_rows).round(2).to_string(index=False))
 
 # %% [markdown]
-# Fitted on 2018, the nowcast of 2022's late spending is $481M (90% interval 315 to 726) against $434M
-# filed: inside, a little high. Fitted on 2022, it nowcasts 2018 at $623M (396 to 991) against $443M:
-# inside, but in the lower tail (the total's PIT is 0.12). The miss in one direction across hundreds of
-# candidates is the cycle shift, which is exactly the part two cycles cannot estimate; with it at sd 0.25
-# both totals fall inside their intervals. Per candidate, the 90% intervals cover 92-93%, and the 50%
-# intervals 64-68%: a little too wide in the middle, as the humped PIT below shows.
+# In the forward test, fitted on 2018, the nowcast of 2022's late spending is $481M (90% interval 315 to
+# 726) against $434M filed: inside, a little high (PIT 0.34). Leaving out 2018, it nowcasts 2018 at $623M
+# (396 to 991) against $443M: inside, but in the lower tail (PIT 0.12). So the evidence on totals is two
+# totals, both over-predicted, one of them a forward test, and the cycle shift that puts both inside was
+# sized after the pilot had seen them. Per candidate, the 90% intervals cover 92-93% and the 50% intervals
+# 64-68%: a little too wide in the middle, as the humped PIT below shows.
 
 # %%
 def race_totals(cycle, late, df, ie_tot=None):
@@ -1593,7 +1557,7 @@ for k, target in enumerate((2018, 2022)):
     ax.plot([parts[1], parts[3]], [k, k], color=D_C, lw=5)
     ax.plot(parts[2], k, "o", color="white", mec=D_C)
     ax.plot(truth.sum() / 1e6, k, "*", color=R_C, ms=14)
-ax.set_yticks([0, 1], ["2018\n(fitted on 2022)", "2022\n(fitted on 2018)"])
+ax.set_yticks([0, 1], ["2018 (fitted on 2022,\nleave-one-cycle-out)", "2022 (fitted on 2018,\nforward test)"])
 ax.set_xlabel("nominees' late spending, $M (50% and 90%)")
 ax.set_title("backtest of the late-spending nowcast\n(star: filed in the post-general report)", fontsize=10)
 ax = axes[1]
@@ -1626,35 +1590,64 @@ ax.set_title("2022, per candidate", fontsize=10);
 # %% [markdown]
 # ## 7 · 2026: the frozen forecast and nowcast
 #
-# At 18:17 UTC on 3 November 2026, before any polls closed, the pilot version of this notebook's code
-# wrote its forecast and spending nowcast to `e94_freeze_2026.json`, with the sha256 of every input file.
-# That file is the forecast; this section recomputes it with the notebook's code and the same data, shows
-# the two side by side, and the scoring section scores the frozen file only. Nothing after 2 November was
-# used. First, the file and its inputs.
+# There are two frozen forecasts, both made on 3 November 2026 before any polls closed, both from
+# information dated up to 2 November, and both will be scored.
+#
+# * **v1, pre-registered** (`e94_freeze_2026.json`): written by the pilot code in `tools/e94_pilot/` at
+#   18:17 UTC and committed with its inputs and code in `e9c37e7` at 19:09:40 UTC.
+# * **v2, corrected** (`e94_freeze_2026_v2.json`): written by `tools/e94_freeze_v2.py`, which runs this
+#   notebook's code, at 19:18:45 UTC and committed in `77d2c05` at 19:18:56 UTC.
+#
+# v2 exists because of a mistake in v1's data. The builder matched 2026 nominees to FEC IDs by name, only
+# among candidates who had filed a pre-general report, and gave an unmatched nominee $0 of receipts. That
+# missed 14% of Republican nominees, including Ashley Hinson in Iowa's Senate race (the FEC files her as
+# "ARENHOLZ, ASHLEY HINSON"), and pinned the money signal of 61 races at its clip, worth about 12 points
+# of margin. v2 matches against the FEC's full candidate list and treats the two nominees still unmatched
+# as missing. v1 stays the pre-registered record; scoring both shows what the mistake cost. Each file
+# stores the sha256 of its inputs.
 
 # %%
-frozen_path = data.path("e94_freeze_2026")
-FROZEN = json.load(open(frozen_path))
-print("frozen at", FROZEN["frozen_at_utc"], "| information cutoff:", FROZEN["information_cutoff"])
-print("sha256 of the frozen file:", hashlib.sha256(open(frozen_path, "rb").read()).hexdigest())
+def sha(p, content=False):
+    b = open(p, "rb").read()
+    return hashlib.sha256(gzip.decompress(b) if content and str(p).endswith(".gz") else b).hexdigest()
+
+
+FROZEN1 = json.load(open(data.path("e94_freeze_2026")))        # v1: pre-registered, commit e9c37e7
+FROZEN = json.load(open(data.path("e94_freeze_2026_v2")))      # v2: corrected, same information cutoff
+V1_INPUTS = json.load(open(data.path("e94_freeze_2026_v1_inputs")))
+for lab, fz_ in (("v1", FROZEN1), ("v2", FROZEN)):
+    print(f"{lab}: frozen at {fz_['frozen_at_utc']} | information cutoff: {fz_['information_cutoff'][:10]} | "
+          f"sha256 {sha(data.path('e94_freeze_2026' + ('_v2' if lab == 'v2' else '')))[:16]}...")
 for fname, h in FROZEN["inputs_sha256"].items():
-    now = hashlib.sha256(open(data.DATA_DIR / fname, "rb").read()).hexdigest()
-    print(f"  input {fname:20s} {'unchanged' if now == h else 'CHANGED'} since the freeze")
+    p = data.DATA_DIR / fname
+    same_raw = sha(p) == h
+    same_v2 = sha(p, True) == FROZEN["inputs_sha256_content"][fname]
+    same_v1 = sha(p, True) == V1_INPUTS["content_sha256"][fname]
+    print(f"  input {fname:20s} v2: {'unchanged' if same_v2 else 'CHANGED'} (content), "
+          f"{'same bytes' if same_raw else 'other bytes'}; v1 ({V1_INPUTS['commit'][:7]}): "
+          f"{'unchanged' if same_v1 else 'rebuilt since'}")
 
 # %% [markdown]
-# The inputs are byte for byte the files the freeze was computed from.
+# The inputs on disk are exactly v2's. Three of v1's inputs were rebuilt for v2, by design; v1's own
+# inputs are in commit `e9c37e7`, and the content hashes of all five are kept in a separate file so that
+# a rebuild that only changes gzip header bytes does not look like a change.
 
 # %%
 s26 = fit26["seats"]
 notup = {k: int(v) for k, v in build_log["senate_2026_not_up"].items()}
 sen26 = s26["S"] + notup["Democratic"] + notup["Independent"]
 q = lambda v: np.quantile(v, [0.05, 0.5, 0.95])  # noqa: E731
+
+
+def frozen_col(f):
+    fs_ = f["seats"]
+    iv = lambda v, fmt: f"{v[1]:{fmt}} [{v[0]:{fmt}}, {v[2]:{fmt}}]"  # noqa: E731
+    return [iv(fs_["N_q05_q50_q95"], "+.1f"), iv(fs_["H"]["D_seats_q05_q50_q95"], ".0f"),
+            iv(fs_["S"]["D_seats_q05_q50_q95"], ".0f"), f"{fs_['H']['P_D_control']:.2f}", f"{fs_['S']['P_D_control']:.2f}"]
+
+
 cmp = pd.DataFrame({
-    "frozen (pilot run)": [f"{FROZEN['seats']['N_q05_q50_q95'][1]:+.1f} [{FROZEN['seats']['N_q05_q50_q95'][0]:+.1f}, "
-                           f"{FROZEN['seats']['N_q05_q50_q95'][2]:+.1f}]"]
-    + [f"{FROZEN['seats'][o]['D_seats_q05_q50_q95'][1]:.0f} [{FROZEN['seats'][o]['D_seats_q05_q50_q95'][0]:.0f}, "
-       f"{FROZEN['seats'][o]['D_seats_q05_q50_q95'][2]:.0f}]" for o in ("H", "S")]
-    + [f"{FROZEN['seats'][o]['P_D_control']:.2f}" for o in ("H", "S")],
+    "v1 (pre-registered)": frozen_col(FROZEN1), "v2 (corrected)": frozen_col(FROZEN),
     "this run": [f"{q(fit26['N'])[1]:+.1f} [{q(fit26['N'])[0]:+.1f}, {q(fit26['N'])[2]:+.1f}]",
                  f"{q(s26['H'])[1]:.0f} [{q(s26['H'])[0]:.0f}, {q(s26['H'])[2]:.0f}]",
                  f"{q(sen26)[1]:.0f} [{q(sen26)[0]:.0f}, {q(sen26)[2]:.0f}]",
@@ -1662,23 +1655,29 @@ cmp = pd.DataFrame({
     index=["national margin N", "House D seats", "Senate D-caucus seats", "P(D House majority)", "P(D Senate control)"])
 print(cmp.to_string())
 fz = pd.DataFrame(FROZEN["races"]).set_index("race")
+fz1 = pd.DataFrame(FROZEN1["races"]).set_index("race")
 tm26 = fit26["d"]["tm"].assign(pD=(fit26["sim"] > 0).mean(0), med=np.median(fit26["sim"], 0))
 j = tm26.join(fz, on="race", rsuffix="_frozen")
-print(f"race by race: P(D) differs from the frozen run by {np.abs(j.pD - j.pD_frozen).mean():.3f} on average "
+print(f"race by race, this run against v2: P(D) differs by {np.abs(j.pD - j.pD_frozen).mean():.3f} on average "
       f"(largest {np.abs(j.pD - j.pD_frozen).max():.2f}); median margins by {np.abs(j.med - j.pred).mean():.2f} points")
+v12 = fz1[["pD", "pred"]].join(fz[["pD", "pred"]], rsuffix="_v2").join(tm26.set_index("race")[["r_name"]])
+v12["shift"] = v12.pred_v2 - v12.pred
+print("largest changes from v1 to v2 (median D margin, points):")
+print(v12.reindex(v12["shift"].abs().sort_values(ascending=False).index).head(8).round(2).to_string())
 
 # %% [markdown]
-# The recomputed forecast matches the frozen one to within sampling noise: a national House margin of
-# D+7.8 (90% interval 3.2 to 12.2), 236 Democratic House seats (218 to 260) with a 95% chance of a
-# majority, and 52 Democratic-caucus Senate seats (49 to 56) with an 82-83% chance of control. Race by
-# race the chances differ by 0.003 on average. The Senate count includes the 34 seats not up (32 Democrats
-# and 2 independents who caucus with them), and a 50-50 Senate goes to the Republicans through Vice
-# President Vance. Races with an independent on the Democratic side count as Democratic, which would
-# overstate the caucus if such a winner sat with neither party.
+# The corrected freeze, v2, puts the national House margin at D+7.8 (90% interval 3.0 to 12.9) and the
+# Democrats at 236 House seats (217 to 262) with a 0.94 chance of a majority, and 52 Democratic-caucus
+# Senate seats (48 to 56) with a 0.78 chance of control. The pre-registered v1 said D+7.9 (3.2 to 12.8),
+# 236 (217 to 261), 0.95, and 52 (49 to 56) with 0.83. This run matches v2 within sampling noise. The
+# Senate count includes the 34 seats not up (32 Democrats and 2 independents who caucus with them), and a
+# 50-50 Senate goes to the Republicans through Vice President Vance.
 #
-# These are the numbers of a model whose national information is seven aggregators' averages, whose
-# largest single uncertainty is a polling error it cannot see, and which in both backtests put the
-# Democrats a few House seats below what they won.
+# The correction moves the races whose nominee was missed. Iowa's Senate race goes from D+5.5 with
+# P(D) = 0.87 to D+0.8 with 0.57, closer to its polls, and Idaho's moves 5 points toward Jim Risch (whose
+# FEC party is "UNK"); together they lower the chance of Senate control from 0.83 to 0.78. California's
+# 45th moves 7 points toward the Republican. The House totals hardly move, because most of the missed
+# nominees ran in safe seats.
 
 # %%
 fig, axes = plt.subplots(1, 2, figsize=(13, 3.6))
@@ -1691,13 +1690,13 @@ for ax, v, off, line, lab in ((axes[0], s26["H"], "H", 217.5, "House D seats"),
     ax.bar(e[:-1], cnt, width=w_, align="edge", color=np.where(e[:-1] + w_ / 2 > line, D_C, R_C), alpha=0.75)
     fq = FROZEN["seats"][off]["D_seats_q05_q50_q95"]
     ax.errorbar(fq[1], cnt.max() * 1.1, xerr=[[fq[1] - fq[0]], [fq[2] - fq[1]]], fmt="D", color=INK, capsize=3,
-                label="frozen 90% interval")
+                label="frozen v2, 90% interval")
     ax.axvline(line, color=INK, lw=0.7, ls=":")
     ax.xaxis.set_major_locator(MaxNLocator(integer=True))
     ax.set_xlabel(lab)
     ax.legend(fontsize=8, loc="upper right")
 axes[0].set_ylabel("probability")
-fig.suptitle("2026 on the eve: seat distributions (this run) and the frozen intervals", fontsize=10);
+fig.suptitle("2026 on the eve: seat distributions (this run) and the frozen v2 intervals", fontsize=10);
 
 # %% [markdown]
 # The House distribution is wide and right-skewed, with most of its mass above the 218 line; the Senate
@@ -1749,11 +1748,9 @@ axs.set_title("the 35 Senate races", fontsize=9);
 
 # %% [markdown]
 # The grid shows every House seat as one tile, ordered from the safest Republican seat to the safest
-# Democratic one, coloured by the frozen chance of a Democratic win. Most seats are settled; the pale band
-# in the middle holds the competitive ones, and the gold tile, the 218th seat counted from the Democratic
-# end, sits in the light blue: the seat that decides the majority leans Democratic. The right panel lists
-# the 30 closest races of the frozen forecast with their 80% intervals and chances. Of these, 22 have race
-# polls (marked *); the other 8 rest on the fundamentals alone, and their intervals are among the widest.
+# Democratic one, coloured by v2's chance of a Democratic win. The gold tile, the 218th seat counted from
+# the Democratic end, sits in the light blue: the seat that decides the majority leans Democratic. Of the
+# 30 closest races on the right, 22 have race polls (marked *); the other 8 rest on the fundamentals.
 
 # %%
 late26 = predict_late(LATE_FIT["both -> 2026"], CT[2026])
@@ -1761,34 +1758,41 @@ ie26, ie26_seen = ie_nowcast(IE_FIT["both -> 2026"], 2026)
 known26 = CT[2026].disb_known.sum()
 cand26 = known26 + late26.sum(1)
 all26 = cand26 + ie26
-fs = FROZEN["spending_nowcast"]
 f3 = lambda v: f"{np.quantile(v, 0.5) / 1e9:.2f} [{np.quantile(v, 0.05) / 1e9:.2f}, {np.quantile(v, 0.95) / 1e9:.2f}]"  # noqa: E731
-g3 = lambda k: f"{fs[k][1] / 1e9:.2f} [{fs[k][0] / 1e9:.2f}, {fs[k][2] / 1e9:.2f}]"  # noqa: E731
-nc = pd.DataFrame({"frozen (pilot run)": [f"{fs['candidates_known_to_12G'] / 1e9:.2f}", g3("candidates_late_q05_q50_q95"),
-                                          g3("candidates_total_q05_q50_q95"),
-                                          f"{fs['ie_seen_by_eve'] / 1e9:.2f} + {fs['ie_unseen_estimate'] / 1e6:.0f}M",
-                                          g3("all_q05_q50_q95")],
-                   "this run": [f"{known26 / 1e9:.2f}", f3(late26.sum(1)), f3(cand26),
-                                f"{ie26_seen / 1e9:.2f} + {np.median(ie26 - ie26_seen) / 1e6:.0f}M "
-                                f"[{np.quantile(ie26 - ie26_seen, 0.05) / 1e6:.0f}, {np.quantile(ie26 - ie26_seen, 0.95) / 1e6:.0f}]",
-                                f3(all26)]},
-                  index=["nominees, filed by the eve ($B)", "nominees, late ($B)", "nominees, total ($B)",
-                         "independent expenditures ($B)", "all ($B)"])
+g3 = lambda v: f"{v[1] / 1e9:.2f} [{v[0] / 1e9:.2f}, {v[2] / 1e9:.2f}]"  # noqa: E731
+fs1, fs = FROZEN1["spending_nowcast"], FROZEN["spending_nowcast"]
+nc = pd.DataFrame({
+    "v1 (pre-registered)": [f"{fs1['candidates_known_to_12G'] / 1e9:.2f}", g3(fs1["candidates_late_q05_q50_q95"]),
+                            g3(fs1["candidates_total_q05_q50_q95"]),
+                            f"{fs1['ie_seen_by_eve'] / 1e9:.2f} + {fs1['ie_unseen_estimate'] / 1e6:.0f}M (point)",
+                            g3(fs1["all_q05_q50_q95"]) + " (no IE spread)", fs1["n_candidates"]],
+    "v2 (corrected)": [f"{fs['candidates_known_to_12G'] / 1e9:.2f}", g3(fs["candidates_late_q05_q50_q95"]),
+                       g3(fs["candidates_total_q05_q50_q95"]),
+                       f"{fs['ie_seen_by_eve'] / 1e9:.2f} + {fs['ie_unseen_q05_q50_q95'][1] / 1e6:.0f}M "
+                       f"[{fs['ie_unseen_q05_q50_q95'][0] / 1e6:.0f}, {fs['ie_unseen_q05_q50_q95'][2] / 1e6:.0f}]",
+                       g3(fs["all_q05_q50_q95"]), fs["n_candidates"]],
+    "this run": [f"{known26 / 1e9:.2f}", f3(late26.sum(1)), f3(cand26),
+                 f"{ie26_seen / 1e9:.2f} + {np.median(ie26 - ie26_seen) / 1e6:.0f}M "
+                 f"[{np.quantile(ie26 - ie26_seen, 0.05) / 1e6:.0f}, {np.quantile(ie26 - ie26_seen, 0.95) / 1e6:.0f}]",
+                 f3(all26), len(CT[2026])]},
+    index=["nominees, filed by the eve ($B)", "nominees, late ($B)", "nominees, total ($B)",
+           "independent expenditures ($B)", "all ($B)", "nominees in the table"])
 print("2026 spending nowcast: median [90%], through the post-general coverage (2026-11-23) for nominees")
 print(nc.to_string())
 
 # %% [markdown]
-# The spending nowcast for 2026 also matches its frozen version. Nominees had filed $2.39B by the eve;
-# their late spending through 23 November is nowcast at $0.64B (90% interval 0.41 to 0.98), for a nominee
-# total of $3.02B (2.80 to 3.37). Outside groups had filed $3.17B, plus an estimated $49M not yet on file
-# (20 to 120; the pilot used a point estimate of $22M from posterior means and a shorter range of lags).
-# All together, **$6.25B (6.07 to 6.57)** for the general-election nominees and the outside groups around
-# them, against about $4.4B in 2022. The interval is set almost entirely by the candidates' late spending.
+# In the corrected freeze, nominees had filed $2.41B by the eve, and their late spending through 23
+# November is nowcast at $0.64B (90% interval 0.42 to 0.97), for a nominee total of $3.05B (2.82 to 3.38).
+# Outside groups had filed $3.17B, plus an estimated $49M not yet on file (20 to 124). All together,
+# **$6.28B (6.04 to 6.62)**, against about $4.4B in 2022. v1 said $6.20B (5.99 to 6.52), for three fewer
+# nominees, with a point estimate for the outside part, so its interval leaves out the IE uncertainty.
+# The interval is set almost entirely by the candidates' late spending, and as section 6 says, the
+# backtests over-predicted that part in both cycles.
 #
 # The 2026 outside total rests partly on a few very large filings, among them a Texas group's media buys
 # of $20-28M each, split between support for one Senate nominee and opposition to the other in the same
-# filing. The items are distinct in the file and add up to the spender's own reported aggregate, but
-# whether a contrast ad was counted on both sides cannot be checked from the filings.
+# filing. The items are distinct in the file and add up to the spender's own total, but whether a
+# contrast ad was counted on both sides cannot be checked from the filings.
 
 # %%
 races26, draws26 = race_totals(2026, late26, CT[2026], ie26)
@@ -1832,24 +1836,27 @@ ax.set_title("2026 nominees: the curve so far and the nowcast tail (median, 90%)
 
 # %% [markdown]
 # The costliest races are Senate races, led by Texas, Ohio and Michigan, where outside money (gold) dwarfs
-# what the nominees spent; the nowcast adds the candidates' late spending, which is why the intervals sit
-# to the right of the bars. The right panel shows the 2026 nominee curve to 20 days before the election
-# and the nowcast tail, drawn with the shape of 2022's last weeks.
+# what the nominees spent. The right panel draws the nowcast tail with the shape of 2022's last weeks.
 
 # %% [markdown]
 # ## 8 · Scoring 2026, later
 #
 # A frozen forecast is worth something only if it is scored the same way whatever happens. The scorer
-# below takes the frozen file's format and a table of results (race and margin, with the seat totals and
-# the national margin attached), and reports the 80% coverage of race margins, the Brier score of the
-# chances, wrong calls overall and among races given between 20% and 80%, and whether the seat totals and
-# the national margin fall in their frozen 90% intervals; for spending, whether the nominees' late
-# spending in the 30G reports falls in its frozen interval. To make sure the code path works, it runs
-# first on the 2018 and 2022 backtests, written in the same format.
+# takes a frozen file and a table of results (race and margin, with the seat totals and the national
+# margin attached). It reports the 80% coverage of race margins, the Brier score of the race chances and
+# the wrong calls; whether the seat totals and the national margin fall in their frozen 90% intervals;
+# the Brier and log scores of the chances of House and Senate control; and whether the nominees' 30G
+# spending falls in its frozen interval. It runs first on the 2018 and 2022 backtests, written in the
+# same format.
 
 # %%
 def score_frozen(frozen, results, nominee_late=None):
-    """Score a frozen forecast dict against results: a DataFrame with race and margin (D minus R, points)."""
+    """Score a frozen forecast dict against results.
+
+    results: a DataFrame with race and margin (D minus R, points); its attrs may hold "House seats" (D seats),
+    "Senate seats" (on the same definition as the frozen file: for 2026 the D caucus including the 34 seats
+    not up; for the backtests the seats up only) and "N" (national House margin). nominee_late: the
+    nominees' 30G disbursements in dollars."""
     fz_ = pd.DataFrame(frozen["races"]).merge(results, on="race")
     y = fz_.margin.to_numpy()
     out = {"races scored": len(fz_),
@@ -1857,10 +1864,16 @@ def score_frozen(frozen, results, nominee_late=None):
            "Brier": float(np.mean((fz_.pD - (y > 0)) ** 2)),
            "wrong calls": int(np.sum((fz_.pD > 0.5) != (y > 0))),
            "wrong calls, 0.2 < P(D) < 0.8": int(np.sum(((fz_.pD > 0.5) != (y > 0)) & (np.abs(fz_.pD - 0.5) < 0.3)))}
-    for off, key in (("H", "House"), ("S", "Senate")):
+    for off, key, need in (("H", "House", 218), ("S", "Senate", 51)):
         if f"{key} seats" in results.attrs:
+            seats_ = results.attrs[f"{key} seats"]
             lo, _, hi = frozen["seats"][off]["D_seats_q05_q50_q95"]
-            out[f"{key} seats in 90%"] = bool(lo <= results.attrs[f"{key} seats"] <= hi)
+            out[f"{key} seats in 90%"] = bool(lo <= seats_ <= hi)
+            p = frozen["seats"][off].get("P_D_control")
+            if p is not None and (off == "H" or results.attrs.get("Senate counts all seats")):
+                won = float(seats_ >= need)
+                out[f"{key} control: Brier"] = round((p - won) ** 2, 4)
+                out[f"{key} control: log score"] = round(float(np.log(max(p if won else 1 - p, 1e-6))), 3)
     if "N" in results.attrs:
         lo, _, hi = frozen["seats"]["N_q05_q50_q95"]
         out["national margin in 90%"] = bool(lo <= results.attrs["N"] <= hi)
@@ -1876,7 +1889,8 @@ def as_frozen(f, cycle):
     q10, med, q90 = np.quantile(f["sim"], [0.1, 0.5, 0.9], 0)
     return {"races": pd.DataFrame({"race": tm.race, "office": tm.office, "pD": (f["sim"] > 0).mean(0), "pred": med,
                                    "q10": q10, "q90": q90}).to_dict("records"),
-            "seats": {"H": {"D_seats_q05_q50_q95": list(np.quantile(f["seats"]["H"], [0.05, 0.5, 0.95]))},
+            "seats": {"H": {"D_seats_q05_q50_q95": list(np.quantile(f["seats"]["H"], [0.05, 0.5, 0.95])),
+                            "P_D_control": float((f["seats"]["H"] >= 218).mean())},
                       "S": {"D_seats_q05_q50_q95": list(np.quantile(f["seats"]["S"], [0.05, 0.5, 0.95]))},
                       "N_q05_q50_q95": list(np.quantile(f["N"], [0.05, 0.5, 0.95]))}}
 
@@ -1890,24 +1904,31 @@ for c in (2018, 2022):
 
 # %% [markdown]
 # It reproduces the backtest: 80% intervals covered 85% and 83% of races, 18 wrong calls each year among
-# races given a 20-80% chance, and every seat total and national margin inside its 90% interval. For 2026
-# it will compare the frozen House and Senate seats and control chances with the outcome, the national
-# House margin with the official count, every race's margin with its frozen interval, and the
-# late-spending interval with the 30G reports due on 3 December 2026. Results will come from the FEC's
-# official workbook when it appears, and from published tallies before that. Until a results file is
-# added, the cell says so.
+# races given a 20-80% chance, every seat total and national margin inside its 90% interval, and a Brier
+# score for House control of 0.12 in 2018 and 0.01 in 2022. In the backtests the Senate count is the seats
+# up, which says nothing about control, so only the House control is scored there.
+#
+# For 2026 the cell scores v1 and v2 side by side once two files exist: `e94_results_2026.csv` (race,
+# margin) and `e94_results_2026_totals.json` with "House seats", "Senate seats" (the Democratic caucus
+# including the 34 seats not up, as in the frozen files) and "N". The late-spending check needs
+# `e94_30g_2026.csv` from the 30G reports due on 3 December; it sums v2's nominees, three more than v1's.
 
 # %%
-RESULTS_2026 = data.DATA_DIR / "e94_results_2026.csv"        # does not exist on 2026-11-03
-LATE_2026 = data.DATA_DIR / "e94_30g_2026.csv"               # post-general reports are due 2026-12-03
-if RESULTS_2026.exists():
+RESULTS_2026 = data.DATA_DIR / "e94_results_2026.csv"         # race, margin: does not exist on 2026-11-03
+TOTALS_2026 = data.DATA_DIR / "e94_results_2026_totals.json"  # House seats, Senate seats (D caucus incl. not up), N
+LATE_2026 = data.DATA_DIR / "e94_30g_2026.csv"                # cand_id, disb: post-general reports due 2026-12-03
+if RESULTS_2026.exists() and TOTALS_2026.exists():
     res26 = pd.read_csv(RESULTS_2026)
-    print("2026 scored against", RESULTS_2026.name, score_frozen(FROZEN, res26))
+    res26.attrs = {**json.load(open(TOTALS_2026)), "Senate counts all seats": True}
+    late_true = None
+    if LATE_2026.exists():
+        g30 = pd.read_csv(LATE_2026)
+        late_true = float(g30[g30.cand_id.isin(FROZEN["spending_nowcast"]["late_per_candidate_q05_q50_q95"])].disb.sum())
+    for lab, fz_ in (("v1 (pre-registered)", FROZEN1), ("v2 (corrected)", FROZEN)):
+        print(f"2026 {lab}:", score_frozen(fz_, res26, late_true))
 else:
-    print("2026 election results: not yet available. The frozen forecast waits to be scored.")
-if LATE_2026.exists():
-    print("2026 post-general reports: found", LATE_2026.name)
-else:
+    print("2026 election results: not yet available. Both frozen forecasts wait to be scored.")
+if not LATE_2026.exists():
     print("2026 post-general (30G) reports: not yet available (due 2026-12-03).")
 TIMES["total"] = time.time() - T_START
 print({k: round(v) for k, v in TIMES.items()})
@@ -1915,32 +1936,28 @@ print({k: round(v) for k, v in TIMES.items()})
 # %% [markdown]
 # ## Summary
 #
-# * **Information is ragged.** On the eve of 2018, 31 of 33 contested Senate races but only 146 of 391
-#   contested House districts had a race poll; in 2026, 97 of 416, with 42 of those having only partisan
-#   polls and 30 of 70 close districts having none. Polls go where races are close, and fundamentals must
-#   carry the rest.
-# * **The national environment** came from a midterm prior (the previous margin plus about 7 points
-#   against the president's party, sd about 6) updated by a weekly walk of generic polls with house
-#   effects and a shared polling error. Sampled directly, the margin and the shared error formed a ridge
-#   (ESS about 350, $\hat R$ 1.02); rotated as in E40, ESS 5,000.
+# * **Information is ragged.** In 2026, 97 of 416 contested House districts have a race poll, 42 of
+#   them only partisan ones, and 30 of 70 close districts have none. Fundamentals carry the rest.
+# * **The national environment** came from a midterm prior updated by a weekly walk of generic polls
+#   with house effects and a shared polling error. Sampled directly, the margin and the shared error
+#   formed a ridge (ESS about 300); rotated as in E40, ESS 5,500.
 # * **The backtests held.** Learned on earlier cycles only, the full model's 90% intervals covered 93% and
-#   92% of race margins, and the seat intervals contained the results: 222 [203, 244] against 235 House
-#   seats in 2018, 204 [184, 222] against 213 in 2022, and the Senate within a seat of the median both
-#   times. Fundamentals alone doubled the width of the seat interval; polls alone gave wider, worse
-#   calibrated forecasts. Both cycles put the Democrats a few seats short, and two cycles are two draws of
-#   the shared error.
-# * **Money is a signal, not a lever.** The naive regression shows Jacobson's paradox (incumbent spending
-#   -0.7 points per tenfold) because money follows close races. In 232 rematches, with national swings per
-#   cycle and hierarchical slopes, an e-fold of Democratic spending is worth +0.95 points of share (89%:
-#   0.32 to 1.57) and doubling it about +0.7: a small effect, and if anything an upper bound.
-# * **Spending can be nowcast.** Outside money is 99% on file by the eve; candidates' last five weeks
-#   (about a fifth of their spending) arrive a month later. A late-spending model from the 12G burn rate
-#   and cash on hand, with an assumed cycle shift, covered both backtest totals ($481M against $434M,
-#   $623M against $443M) and 96% of race totals; the IE lag model was 1.3% too high on 2018. For 2026:
-#   $6.25B (6.07 to 6.57) including $0.64B of nominees' late spending not yet reported.
-# * **2026 is frozen and waits.** D+7.8 nationally (3.2 to 12.2), 236 Democratic House seats (218 to 260,
-#   P = 0.95), 52 Democratic-caucus Senate seats (49 to 56, P = 0.82-0.83), written down before the polls
-#   closed. The scoring code runs on 2018 and 2022 today and prints "not yet available" for 2026.
+#   92% of race margins, and its seat intervals contained the results (222 [203, 244] against 235 House
+#   seats in 2018, 204 [184, 222] against 213 in 2022). Both cycles put the Democrats a few seats short.
+# * **Money is a signal, not a lever.** The naive regression shows Jacobson's paradox because money
+#   follows close races. In 232 rematches, doubling the Democrat's spending is worth about +0.7 points of
+#   share: a small effect, and if anything an upper bound.
+# * **Spending can be nowcast, with care.** Outside money is 99% on file by the eve; candidates' last
+#   five weeks (about a fifth of their spending) arrive a month later. A late-spending model from the 12G
+#   burn rate and cash on hand covered 96% of race totals. On national totals the evidence is thin: two
+#   totals, both over-predicted ($481M against $434M, $623M against $443M), only one of them a forward
+#   test, with the error family and the cycle shift chosen after the pilot had seen them.
+# * **2026 is frozen twice and waits.** The corrected freeze (v2): D+7.8 nationally (3.0 to 12.9), 236
+#   Democratic House seats (217 to 262, P = 0.94), 52 Democratic-caucus Senate seats (48 to 56, P = 0.78),
+#   and $6.28B of spending (6.04 to 6.62), $0.64B of it nominees' late spending not yet reported. The
+#   pre-registered v1 said D+7.9, 236 seats (P = 0.95), 52 seats (P = 0.83) and $6.20B; it counted
+#   nominees without a matched FEC ID as raising nothing. Both were committed before the polls closed,
+#   and the scoring code prints "not yet available" until the results are in.
 #
 # ## Try it yourself
 #

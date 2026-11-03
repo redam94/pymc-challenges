@@ -1716,6 +1716,126 @@ REGISTRY: dict[str, Dataset] = {
         "2012-07-01 00:00 GMT, energy in Wh as uint16, 65535 where a half-hour is missing. homes: public anonymous "
         "LCLid numbers, chosen by a hash of the id among homes with at least 95% of 2013. tou, clock, first_hour.",
     ),
+    # ---- examples (E94) ----
+    "e94_races": Dataset(
+        "e94_races.csv",
+        "https://www.fec.gov/introduction-campaign-finance/election-results-and-voting-information/",
+        "US House and Senate races 2016-2022 from the FEC's official 'Federal Elections' results workbooks (US "
+        "government work, public domain), money from FEC bulk files (weball, House/Senate campaign reports, "
+        "candidate-committee linkage; public domain), partisan lean from FiveThirtyEight's partisan-lean files "
+        "(github.com/fivethirtyeight/data, CC BY 4.0). The 2026 rows come from Wikipedia's '2026 United States "
+        "House of Representatives elections' (revision 1383470484) and '2026 United States Senate elections' "
+        "(revision 1383488048) as of 2026-11-02, CC BY-SA 4.0, whose PVI column reproduces the Cook Political "
+        "Report's Partisan Voting Index (credit Cook). Changed: parsed, joined and summarised. DERIVED by "
+        "tools/build_e94_data.py - keep the cached file. No endorsement by any source is implied.",
+        "One row per race: cycle (2016-2026), office (H/S), state, race (e.g. PA-07, OH-S, MN-S2 for a special), "
+        "region (Census), special, seat (counts toward the next Congress), lean (D-minus-R points on the margin scale: "
+        "538 lean for 2016-2022, 2 x Cook PVI for 2026; blank where the lines differ), pvi (2026), inc_party (D, R or "
+        "blank for an open seat), open, d_inc, r_inc, d_id/r_id (FEC candidate IDs) and names of the top D-side and R "
+        "candidates, d_is_ind (independent on the D side), contested (both sides on the ballot), split (jungle-style "
+        "ballot), dem2 (D share of the two-party vote; blank for 2026), winner, rcv (ranked-choice final round used), "
+        "d_votes, r_votes, *_rec_eve / *_disb_eve / *_coh_eve (receipts, disbursements, cash on hand in reports the FEC "
+        "had received by the eve: 2018-11-05, 2022-11-07, 2026-11-02), *_rec_final / *_disb_final (cycle totals from "
+        "weball), member and status (2026), multi_cands (2026: several candidates of one side on the November ballot, as in Louisiana), *_id_name_match (2026: FEC ID found by name).",
+    ),
+    "e94_polls": Dataset(
+        "e94_polls.csv",
+        "https://github.com/fivethirtyeight/data/tree/master/polls",
+        "2018 and 2022: FiveThirtyEight's poll database (generic_ballot, senate and house _polls_historical.csv, "
+        "Wayback snapshot of 2025-01-18; CC BY 4.0, github.com/fivethirtyeight/data). 2026: poll tables in 85 "
+        "Wikipedia race articles and weekly snapshots of the generic-ballot aggregate table, each at its last "
+        "revision on or before 2026-11-02 (CC BY-SA 4.0; the aggregates are third-party averages). Changed: one "
+        "question per poll and race, nominees matched by name, polls created (2018/2022) or ending (2026) after the "
+        "eve dropped. DERIVED by tools/build_e94_data.py - keep the cached file. No endorsement is implied.",
+        "One row per poll: cycle, kind (generic, senate, house; 2026 also generic_avg = an aggregator's average and "
+        "state_generic), race (US or a race key from e94_races), pollster, partisan (D/R sponsor or pollster), "
+        "internal (538's campaign-internal flag), start, end, created (538's entry time; for 2026 averages the "
+        "snapshot date), n, population (lv/rv/a/v), dem, rep (percent), source, poll_id, admin (aggregate window).",
+    ),
+    "e94_reports": Dataset(
+        "e94_reports.csv.gz",
+        "https://www.fec.gov/data/browse-data/?tab=bulk-data",
+        "FEC bulk 'House/Senate current campaigns' report files for 2018, 2022 and 2026 (one row per Form 3 "
+        "report, current version only; public domain), with the candidate-committee linkage file. Changed: rows "
+        "for the general-election D and R candidates in e94_races, summed over a candidate's committees. DERIVED by "
+        "tools/build_e94_data.py - keep the cached file.",
+        "One row per candidate and report: cycle, cand_id, rpt (Q1-Q3, 12P, 12G pre-general, 30G post-general, "
+        "YE, TER, ...), cvg_start, cvg_end (period covered), receipt (date the FEC received the current version), "
+        "disb, receipts, coh (cash on hand at the end), race, office, side. The 2026 file was read on 2026-11-03.",
+    ),
+    "e94_ie": Dataset(
+        "e94_ie.csv.gz",
+        "https://www.fec.gov/data/browse-data/?tab=bulk-data",
+        "FEC bulk independent-expenditure files 2018, 2022, 2026 (24/48-hour reports and Schedule E items with "
+        "receipt and dissemination dates; public domain). Changed: general-election House/Senate items only; "
+        "prank filers (any single item of $100M or more; 2022: 1 spender, $20B; 2026: 2 spenders, $14B) dropped; "
+        "filings replaced by an amendment dropped; repeats of the same spender, candidate, amount and date merged "
+        "keeping the first receipt. DERIVED by tools/build_e94_data.py - keep the cached file.",
+        "Dollars by version (final = as filed by 2026-11-03; eve = only filings received by the eve), cycle, race, "
+        "pro (side helped: support for or opposition to the other), nominee (item names a general-election "
+        "candidate), date (dissemination, else expenditure date), first_receipt (when the item was first "
+        "received), amt.",
+    ),
+    "e94_rematch": Dataset(
+        "e94_rematch.csv",
+        "https://github.com/MEDSL/constituency-returns",
+        "House rematches between the same two FEC candidate IDs in consecutive cycles, 2006-2020. Votes: MEDSL "
+        "constituency returns 1976-2018 on GitHub (the same data as MEDSL's CC0 Dataverse release; the repository "
+        "carries no licence file) for 2004-2014, FEC results workbooks for 2016-2020; candidates matched to FEC IDs "
+        "by name within district and party for 2004-2014; spending from FEC weball. Cycles across a redistricting "
+        "(2012, 2022) and court redraws (GA, TX 2006; FL, NC, VA 2016; PA 2018; NC 2020) excluded. DERIVED by "
+        "tools/build_e94_data.py - keep the cached file.",
+        "One row per rematch: cycle, state, race, d_id, r_id, names, dem2 and dem2_prev (D two-party share now and "
+        "in the first meeting), d_inc, r_inc (now and _prev), d_disb, r_disb (cycle disbursements, dollars, now and "
+        "_prev).",
+    ),
+    "e94_pollerr": Dataset(
+        "e94_pollerr.csv",
+        "https://github.com/fivethirtyeight/data/tree/master/pollster-ratings",
+        "FiveThirtyEight pollster-ratings raw_polls.csv (CC BY 4.0). Changed: polls in the last 21 days of House "
+        "generic (House-G), national generic ballot (House-G-US) and Senate (Sen-G) races, averaged per race. DERIVED by tools/build_e94_data.py - keep "
+        "the cached file.",
+        "One row per race and cycle (1998-2022): cycle, type_simple, generic (national generic ballot), race_id, "
+        "location, err (mean signed error of the polls on the D-minus-R margin, points), n (polls).",
+    ),
+    "e94_freeze_2026": Dataset(
+        "e94_freeze_2026.json",
+        "https://www.fec.gov/data/browse-data/?tab=bulk-data",
+        "E94's pilot election-eve forecast of the 2026 US House and Senate and the pilot nowcast of 2026 campaign "
+        "spending, computed from e94_races, e94_polls, e94_reports, e94_ie and e94_pollerr (their sha256 inside) "
+        "with tools/e94_pilot/, frozen on 2026-11-03 before any results (freeze v1, committed in e9c37e7 at "
+        "19:09:40 UTC; its inputs are the data files of that commit). Not data: a record to be scored.",
+        "JSON, not a table: open data.path() with json. what, frozen_at_utc, information_cutoff, inputs_sha256, "
+        "seats (House and Senate D seats q05/q50/q95, P(D control), national margin N), spending_nowcast "
+        "(dollars), notes, and races (race, office, pD, pred = median D margin, q10, q90).",
+    ),
+    "e94_freeze_2026_v2": Dataset(
+        "e94_freeze_2026_v2.json",
+        "https://www.fec.gov/data/browse-data/?tab=bulk-data",
+        "E94's corrected (v2) election-eve forecast of 2026 and spending nowcast, written by tools/e94_freeze_v2.py "
+        "with the notebook's code on 2026-11-03 before any results, same information cutoff (2026-11-02). v1 set "
+        "the receipts of nominees without a matched FEC ID to $0; v2 matches IDs on the FEC candidate master and "
+        "imputes the money of the two still unmatched. Not data: a record to be scored.",
+        "JSON, not a table: as e94_freeze_2026, plus version, supersedes, why_v2, inputs_sha256_content (of the "
+        "decompressed files), money_missing_races, fit_diagnostics, Senate seats up only, IE intervals, and "
+        "per-candidate and per-race spending intervals.",
+    ),
+    "e94_freeze_2026_v1_inputs": Dataset(
+        "e94_freeze_2026_v1_inputs.json",
+        "https://www.fec.gov/data/browse-data/?tab=bulk-data",
+        "sha256 of the decompressed content of the five inputs of freeze v1, as committed in e9c37e7, written after "
+        "the freeze so the frozen JSON itself is never edited. A rebuild that changes only gzip header bytes keeps "
+        "these hashes.",
+        "JSON: commit, and content_sha256 per input file.",
+    ),
+    "e94_build_log": Dataset(
+        "e94_build_log.json",
+        "https://www.fec.gov/data/browse-data/?tab=bulk-data",
+        "Written by tools/build_e94_data.py - keep the cached file.",
+        "JSON, not a table: open data.path() with json. Cutoffs, counts, checks (IE pranks and largest items, "
+        "name-match rates, the state-lean proxy), national House two-party vote by cycle, the 2026 Senate seats not "
+        "up, and the sha256 of every raw file read.",
+    ),
     # ---- examples (E71) ----
     "speed_acc": Dataset(
         "wagenmakers2008_speed_acc.csv",
