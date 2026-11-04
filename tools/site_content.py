@@ -163,9 +163,13 @@ SERIES = [
          intro="A Colorado snow pillow fails in February: how much snow is there on April 1? A weekly snow budget "
                "in PyMC fuses the pillow, a depth sensor, a precipitation gauge and a manual snow course through a "
                "Kalman filter, and a backtest over 19 real seasons beats every quick fix on the drought call."),
+    dict(key="sealevel", range="E97", title="Is the sea rising or is the city sinking?", ids=["E97"],
+         intro="Galveston's tide gauge sees the sea minus the land, satellites see the ocean, GPS sees the land. "
+               "One state-space model gives each instrument its own view and shows the ocean-land split moving "
+               "from prior to measurement as each one arrives, then picks a 2050 planning scenario."),
 ]
 SERIES_BY_KEY = {s["key"]: s for s in SERIES}
-RECENT = ["E96", "E92", "E95", "E94", "E90", "E88", "E91", "E87", "E89"]          # newest first, shown on the home page
+RECENT = ["E97", "E96", "E92", "E95", "E94", "E90", "E88", "E91", "E87", "E89"]          # newest first, shown on the home page
 
 
 # The figure shown on each example's card: the k-th image the notebook outputs (1-based, in notebook

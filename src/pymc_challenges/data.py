@@ -1972,6 +1972,42 @@ REGISTRY: dict[str, Dataset] = {
         "Manual snow surveys 1938-2025: course, date (collection date), survey (the report it serves: Feb 1, "
         "Mar 1, Apr 1, May 1, ...), swe (in, mean of the cores along the course), depth (in).",
     ),
+    # ---- examples (E97) ----
+    "e97_galveston_sea_land": Dataset(
+        "e97_galveston_sea_land.csv",
+        "https://psmsl.org/data/obtaining/rlr.monthly.data/161.rlrdata",  # one of three sources
+        "Three instruments near Galveston, Texas, read 2026-11-04. (1) Tide gauge: Permanent Service for Mean "
+        "Sea Level (PSMSL, 2026), 'Tide Gauge Data', Revised Local Reference monthly means of station 161 "
+        "GALVESTON II, PIER 21, TX (the URL); Holgate et al. (2013), J. Coastal Research 29:493-504; free with "
+        "acknowledgement. (2) Altimetry: NOAA Laboratory for Satellite Altimetry, Gulf of Mexico mean sea-level "
+        "anomaly, annual signals retained, "
+        "https://www.star.nesdis.noaa.gov/socd/lsa/SeaLevelRise/slr/slr_sla_gom_keep_ref_90.csv; its header "
+        "(dropped from the cache) states '#trend = 4.32 mm/year (no glacial isostatic adjustment correction)'. "
+        "'Altimetry data are provided by NOAA Laboratory for Satellite Altimetry.' (3) GPS: Nevada Geodetic Laboratory daily "
+        "IGS20 positions of stations GAL2 and TXGA (https://geodesy.unr.edu/gps_timeseries/IGS20/tenv3/IGS20/) "
+        "and its equipment-change list (NGLStationPages/steps.txt); Blewitt, Hammond & Kreemer (2018), Eos 99, "
+        "doi:10.1029/2018EO104623. Changed: GPS daily heights averaged by month and split at antenna changes. "
+        "DERIVED by tools/build_e97_data.py from three servers - keep the cached file.",
+        "One row per observation: source (tide_gauge, altimetry, gps), segment (PSMSL161; the altimetry mission "
+        "TOPEX/Poseidon, Jason-1, Jason-2, Jason-3, Sentinel-6MF; GPS station and antenna period GAL2-1, TXGA-1 "
+        "to TXGA-4, TXGA antennas changed 2011-06-13, 2017-04-24, 2021-04-28), t (decimal year), value_mm "
+        "(tide gauge: monthly mean height above the RLR datum, about 7,000 mm, 1908-2025; altimetry: Gulf "
+        "basin-mean sea-surface anomaly per ~10-day cycle, 1992.8-2025.1; GPS: monthly mean ellipsoidal "
+        "height of the antenna, up positive, 1997-2003 and 2005-2026), n (days in the month for the tide gauge "
+        "and GPS, 1 for altimetry).",
+    ),
+    "e97_noaa2022_scenarios": Dataset(
+        "e97_noaa2022_scenarios.csv",
+        "https://api.tidesandcurrents.noaa.gov/dpapi/prod/webapi/product/slr_projections.json?station=8771450"
+        "&units=metric",
+        "NOAA CO-OPS API, read 2026-11-04: the 2022 Sea Level Rise Technical Report scenarios (Sweet et al. "
+        "2022, NOAA Technical Report NOS 01) at Galveston Pier 21 (station 8771450, PSMSL 161). US government "
+        "work, public domain. CONVERTED from the JSON answer by tools/build_e97_data.py - keep the cached file.",
+        "scenario (Low, Intermediate-Low, Intermediate, Intermediate-High, High), year (2005, 2020, 2030, ..., "
+        "2150), rsl_cm (median relative sea level in cm above the 2005 baseline), lo_cm and hi_cm (the "
+        "report's likely range, 17th-83rd percentiles), background_cm_per_yr (the API's backgroundRslPerYear "
+        "field, the same for all rows).",
+    ),
 }
 
 

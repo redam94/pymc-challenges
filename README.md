@@ -29,7 +29,7 @@ for every notebook, so this is optional. Later syncs drop it unless you repeat t
 
 ```
 notebooks/
-  examples/      E01-E92, E94-E96  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
+  examples/      E01-E92, E94-E97  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
   challenges/    C01-C15  your workspace. Tasks, empty cells, hints on request.
   solutions/     C01-C15  full reference solutions, executed, with commentary.
 ```
@@ -338,6 +338,14 @@ A Colorado SNOTEL site loses its snow pillow in February: what is the April 1 sn
 | | Topic | Data | Key techniques |
 |---|---|---|---|
 | **E96** | Sensor fusion for a dead snow pillow | USDA NRCS SNOTEL University Camp (CO) and four neighbours, water years 2006-2025, and its snow course since 1938 (public domain, AWDB REST API) | a state-space snow budget with four observation models, a Kalman filter inside `pm.Potential`, a latent density and gauge catch ratio, quick fixes as baselines, an eight-week backtest that exposes overconfidence and a slowly drifting sensor error as its fix, which sensors matter, gating a real pillow fault, a drought decision |
+
+#### Is the sea rising or is the city sinking? (E97)
+
+Galveston's tide gauge has recorded more than a century of rising water, but it sees only the sea minus the land. Satellite altimetry sees the Gulf's ocean since 1993, with an offset for each mission, and GPS sees the land since 2005, with steps at antenna changes. One PyMC state-space model gives each instrument its own linear view of the latent ocean and land, and shows the split moving from prior to measurement as each instrument arrives: the posterior correlation between ocean and land rates falls from about 0.9 to near zero. GPS pins the land at about -4.5 mm/yr, and the decision is which NOAA 2050 scenario to plan on. Runs in under 2 minutes, about 1 GB.
+
+| | Topic | Data | Key techniques |
+|---|---|---|---|
+| **E97** | Separating sea-level rise from subsidence with three instruments | PSMSL tide gauge 161 Galveston Pier 21 (1908-2025), NOAA LSA Gulf altimetry by mission (1992-2025), NGL GPS TXGA and GAL2 (1997-2025), NOAA 2022 sea-level scenarios | an observation matrix whose rank changes by era, random-walk rates for ocean and land, mission offsets and antenna steps as parameters, a divergent gauge-only model and its fix, posterior correlation as a measure of identification, swapping priors to see what is measured, a 2050 planning decision |
 
 ### Data work (D-series)
 
