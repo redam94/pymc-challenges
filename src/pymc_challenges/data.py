@@ -1865,6 +1865,16 @@ REGISTRY: dict[str, Dataset] = {
         "(as in e94_races), status (called or too close), winner (D or R), reported_by, as_of_et (the snapshot), the "
         "partial count where one was given (d_pct, r_pct, pct_expected_in), source_url.",
     ),
+    "e95_cd120_districts": Dataset(
+        "e95_cd120_districts.npz",
+        "https://www2.census.gov/geo/tiger/TIGER2026/CD/",
+        "US Census Bureau TIGER/Line 2026: congressional districts of the 120th Congress (the lines used in "
+        "the November 2026 elections, including the maps redrawn mid-decade), built by "
+        "tools/build_e95_districts.py.",
+        "npz: xy (longitude, latitude; outer rings only, snapped to a 0.02-degree grid), start (ring offsets "
+        "into xy, one longer than code), code (race code per ring, as in e94_races: TX-07, AK-00). All 435 "
+        "districts.",
+    ),
     # ---- examples (E71) ----
     "speed_acc": Dataset(
         "wagenmakers2008_speed_acc.csv",

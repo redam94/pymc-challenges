@@ -607,7 +607,7 @@ ax.set_title("what each call did", fontsize=10);
 # calls usually does. So the change is measured on the same 4,000 draws, reweighted for each snapshot:
 # the noise then cancels, and the difference is exactly what the new rows did (the ESS column of the
 # replay says whether the weights can be trusted). The cell lists the races whose chances moved most and
-# maps the change in every Senate race. It also asks how much the latest calls mattered: the closest race
+# maps the change in every Senate race (and, in section 4.1, every House district). It also asks how much the latest calls mattered: the closest race
 # called in the latest snapshot, or so far if none of the new calls was in doubt, had it gone the other
 # way, by refit.
 
@@ -719,8 +719,81 @@ fig.suptitle("Senate races: letters mark called races (D, R) and races too close
 # The left map is the state of the Senate race by race; called states carry their letter. The middle map
 # is the latest batch's effect on the races still open: a call that runs ahead of the forecast for one
 # party tints the whole map that party's colour, most strongly in the states whose races were close. The
-# right map is the same picture for the counterfactual. The maps show only Senate races; as in E94 there
-# is no district map, and the counties are drawn only to build the states.
+# right map is the same picture for the counterfactual. These maps show only the Senate. The counties are
+# drawn only to build the states.
+
+# %% [markdown]
+# ### 4.1 The House, district by district
+#
+# The House gets the same treatment with its own geography: the 435 districts as the Census Bureau drew
+# them for the 120th Congress. These are the lines on tonight's ballots, including the maps that Texas,
+# California and others redrew in the middle of the decade. Each district is shaded by its latest P(D),
+# and called districts are outlined in black. A map of districts misleads in one known way. The districts
+# hold the same number of people, not the same area, so the big rural districts look important and the
+# cities, where most of the close suburban seats sit, shrink to specks. The insets enlarge four of those
+# metro areas. The 19 districts that only one party is contesting are not in the model; they are
+# shaded as certain for that party.
+
+# %%
+cd = np.load(data.path("e95_cd120_districts"))
+d_rings = [place(cd["xy"][a:b].astype(float), c[:2]) for a, b, c in zip(cd["start"][:-1], cd["start"][1:], cd["code"])]
+d_idx = np.array([RACE.get(c, -1) for c in cd["code"]])
+r26 = pd.read_csv(data.path("e94_races")).query("cycle == 2026 and office == 'H'").set_index("race")
+d_fixed = np.array([float(r26.d_name.notna()[c]) for c in cd["code"]])   # uncontested: not modelled, certain
+
+
+def by_district(v, fixed):
+    return np.where(d_idx >= 0, np.asarray(v)[np.maximum(d_idx, 0)], fixed)
+
+
+called_h = {race for race, lo, hi in INFO if not race.endswith("-S") and (np.isinf(lo) or np.isinf(hi))}
+d_called = np.array([c in called_h for c in cd["code"]])
+INSETS = (("New York", (-74.6, -73.0, 40.3, 41.3)), ("Philadelphia", (-76.2, -74.6, 39.6, 40.6)),
+          ("Los Angeles", (-118.9, -117.3, 33.5, 34.5)), ("Miami", (-80.9, -79.9, 25.4, 26.6)))
+
+fig = plt.figure(figsize=(15, 8.6))
+gs = fig.add_gridspec(2, 4, height_ratios=[3.2, 1], hspace=0.05, wspace=0.08)
+panels = ((fig.add_subplot(gs[0, :2]), S0["pD"], plt.Normalize(0, 1), f"P(D) in each House district at {AS_OF[-5:]}",
+           "P(D)"),
+          (fig.add_subplot(gs[0, 2:]), S_LAST["pD"] - S_PREV["pD"], plt.Normalize(-0.3, 0.3),
+           f"change since {prev_lab}", "change in P(D), clipped at 0.3"))
+for k, (ax, v, nrm, title, lab) in enumerate(panels):
+    ax.add_collection(PolyCollection(d_rings, array=(by_district(v, d_fixed) if k == 0 else
+                                            np.ma.masked_array(by_district(v, 0.0), d_called | (d_idx < 0))), cmap=cmap, norm=nrm, edgecolor="white", linewidth=0.15))
+    ax.add_collection(PolyCollection([r for r, c_ in zip(d_rings, d_called) if c_], facecolor="none",
+                                     edgecolor=INK, linewidth=0.6))
+    ax.add_collection(LineCollection(borders, color="white", lw=0.6))
+    ax.set_xlim(-125, -66)
+    ax.set_ylim(17, 50)
+    ax.set_aspect(1 / np.cos(np.radians(38)))
+    ax.set_axis_off()
+    ax.set_title(title, fontsize=10)
+    fig.colorbar(plt.cm.ScalarMappable(nrm, cmap), ax=ax, orientation="horizontal", fraction=0.03, pad=0.0,
+                 shrink=0.5, label=lab)
+    if k == 0:
+        for name, (x0, x1, y0, y1) in INSETS:
+            ax.add_patch(plt.Rectangle((x0, y0), x1 - x0, y1 - y0, fill=False, ec=INK, lw=0.6))
+for j, (name, (x0, x1, y0, y1)) in enumerate(INSETS):
+    ax = fig.add_subplot(gs[1, j])
+    ax.add_collection(PolyCollection(d_rings, array=by_district(S0["pD"], d_fixed), cmap=cmap, norm=plt.Normalize(0, 1),
+                                     edgecolor="white", linewidth=0.3))
+    ax.add_collection(PolyCollection([r for r, c_ in zip(d_rings, d_called) if c_], facecolor="none",
+                                     edgecolor=INK, linewidth=0.9))
+    ax.set_xlim(x0, x1)
+    ax.set_ylim(y0, y1)
+    ax.set_aspect(1 / np.cos(np.radians((y0 + y1) / 2)))
+    ax.set_xticks([])
+    ax.set_yticks([])
+    ax.set_title(f"{name}: P(D)", fontsize=9)
+fig.suptitle(f"House districts: {len(called_h)} tracked districts called (outlined in black)",
+             fontsize=10);
+
+# %% [markdown]
+# Read the left map for where the House stands, and the right one for what the latest batch of calls did to
+# the districts not yet called (called and uncontested districts are grey there). Because each call is read partly as news about the shared polling error, a
+# batch that runs ahead of the forecast for one party tints every open district toward that party, not
+# only the neighbours of the called seats. The outlines show how few of the called House races the log
+# holds: only the competitive ones are logged, and safe seats carry no information.
 
 # %% [markdown]
 # ## 5 · What is still out
@@ -778,13 +851,15 @@ axes[1].set_title("the 15 House races that matter most to the House\n(note the a
 fig.tight_layout();
 
 # %% [markdown]
-# Two patterns hold whatever the snapshot. A race matters most when it is likely to go one way and its
+# Two patterns hold while control is in doubt. A race matters most when it is likely to go one way and its
 # loss would be a surprise: a Democratic loss in a race the Democrats were expected to win removes a seat
 # they were counting on and says the polls were off. So the Senate races at the top of the left panel are
 # often not the closest ones, but the likely Democratic wins that the Senate majority counts on. On the
 # right, no single House race moves House control by much, because the majority is a sum of hundreds of
 # races; the races at the top are likely Democratic seats whose loss would signal a broader miss. Watch
-# the axis: it starts well above zero.
+# the axis: it starts well above zero. Once control of a chamber is all but certain, as both are at the
+# latest snapshot, the two answers for every race coincide and the panels collapse onto the dotted line:
+# no race still out can change control, only the size of the majority.
 
 # %% [markdown]
 # ## 6 · Silences and partial counts
@@ -905,7 +980,7 @@ fig.tight_layout();
 # points and the chance of each chamber with it: a winner who runs ahead of the forecast says the polls
 # understated their party, and every race still out moves toward it. The reweighting ESS column is the
 # failure in numbers: conditioning on a margin known to within a point keeps only the eve draws that
-# happened to land near it, a few hundred near the eve's median and single or double figures away from
+# happened to land near it: a few dozen near the eve's median at best, and single figures far from
 # it. A margin is strong data, and strong data need a refit.
 
 # %% [markdown]
@@ -1021,8 +1096,10 @@ print({k: round(v) for k, v in TIMES.items()})
 #   than the call did.
 # * **Conditional forecasts tell you what to watch.** For each race still out, the chance of control if
 #   either side wins it measures how much it matters, through the seat and through what it says about the
-#   polls. Senate control hangs most on the likely Democratic wins that the majority counts on; no single
-#   House race moves House control by much.
+#   polls. While control was in doubt, Senate control hung most on the likely Democratic wins the
+#   majority counted on, and no single House race moved House control by much. By 23:18, with Democratic
+#   wins in Ohio, Texas and South Carolina, the calls had settled both chambers in the model, and the races
+#   still out decide only the size of the majorities.
 #
 # ## Try it yourself
 #
