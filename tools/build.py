@@ -99,7 +99,10 @@ def main() -> int:
 
     sources = sorted(SRC.glob("*/*.py"))
     if args.ids:
-        sources = [s for s in sources if any(s.name.startswith(i) for i in args.ids)]
+        # a prefix that ends in a digit must not run into another digit: "E10" builds E10, not E100
+        sources = [s for s in sources if any(
+            s.name.startswith(i) and not (i[-1:].isdigit() and s.name[len(i):len(i) + 1].isdigit())
+            for i in args.ids)]
     if not sources:
         print("No matching sources.")
         return 1

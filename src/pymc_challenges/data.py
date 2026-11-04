@@ -2051,6 +2051,21 @@ REGISTRY: dict[str, Dataset] = {
         "beacon positions; ids 0, 1, 5, 6 in both runs, placed differently), p{k}_td (time, robot id, "
         "beacon id, range m: the UWB time-of-flight range log; 3,529 and 1,816 ranges).",
     ),
+    "safecast_iitate": Dataset(
+        "safecast_iitate_2011_2013.csv.gz",
+        "https://api.safecast.org/en-US/measurements.json",
+        "Safecast (https://safecast.org) volunteer bGeigie mobile radiation logs, CC0 1.0 (public domain "
+        "dedication). Snapshot of the public API on 2026-11-04: every reading within 12 km of Iitate village "
+        "(37.66 N, 140.72 E) captured 2011-09-01 to 2013-06-30, and within 6 km of western Minamisoma "
+        "(37.633 N, 140.913 E) captured in 2012, kept inside the box 37.54-37.78 N, 140.58-141.00 E. Values "
+        "unchanged; rows not deduplicated (logs uploaded twice appear twice). DERIVED by "
+        "tools/build_e100_data.py - keep the cached file (the API is slow and live).",
+        "One row per reading: id (Safecast measurement id), captured_at (UTC), latitude, longitude, cpm "
+        "(counts per minute of the LND 7317 tube, a rolling one-minute count reported every 5 s; Safecast "
+        "converts 334 cpm = 1 uSv/h for Cs-137), import_id (the uploaded log file: one device on one trip), "
+        "user_id (uploader).",
+        {"compression": "gzip"},
+    ),
 }
 
 

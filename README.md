@@ -29,7 +29,7 @@ for every notebook, so this is optional. Later syncs drop it unless you repeat t
 
 ```
 notebooks/
-  examples/      E01-E92, E94-E99  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
+  examples/      E01-E92, E94-E100  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
   challenges/    C01-C15  your workspace. Tasks, empty cells, hints on request.
   solutions/     C01-C15  full reference solutions, executed, with commentary.
 ```
@@ -362,6 +362,14 @@ A robot on a campus plaza may ask one radio beacon for a range every two seconds
 | | Topic | Data | Key techniques |
 |---|---|---|---|
 | **E99** | Which beacon to ping: range-only localisation on real radio logs | CMU Plaza ultra-wideband range logs with odometry and GPS/INS truth (Djugash, Hamner & Roth 2009, via EPFL Infoscience), kept as a 0.95 MB extract of the two Plaza runs | range calibration against ground truth with offset, scale and ex-Gaussian NLOS mixture models, LOO and posterior predictive checks, PIT on a held-out run, a gyro drift the calibration run could not show, a particle filter for ring-shaped beliefs with a gyro-bias state, global localisation and sensor resetting, expected information gain by nested Monte Carlo against round-robin, random, nearest and predicted-range spread, counterfactual pings on a real log, fusion against odometry alone, range-only beacon SLAM |
+
+#### Chasing the hotspot (E100)
+
+Where is the worst radiation in a Fukushima district, and which cells must stay closed? A survey team gets 40 readings, and each one is a real Safecast reading revealed only where the agent chooses to drive. An HSGP field with trip effects and Student-t noise, checked by posterior predictive checks of trip-to-trip spread, is the belief; policies from a fixed grid to UCB, Thompson sampling and a decision-aware lookahead act on it. Finding the hotspot and bounding the closure list turn out to be different jobs: UCB restricted to nearby cells finds the hotspot in 92% of surveys against the grid's 15%, while a lookahead on the closure loss beats the grid there (17 against 46). Adaptive designs also expose where the field model is wrong. Runs in about 2 minutes, about 1.2 GB.
+
+| | Topic | Data | Key techniques |
+|---|---|---|---|
+| **E100** | Acting on a noisy belief: an adaptive radiation survey | Safecast bGeigie volunteer radiation logs around Iitate and Minamisoma, 2011-2013 (CC0), 301,693 readings | cleaning duplicated citizen-science logs, decay correction, an HSGP field with trip effects and Student-t noise, predictive checks that catch trip noise, counterfactual replay that reveals one real reading per stop, UCB, Thompson sampling and a closure-loss lookahead against a grid, finding versus bounding, when an adaptive design is not ignorable |
 
 ### Data work (D-series)
 
