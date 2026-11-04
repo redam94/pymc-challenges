@@ -2032,6 +2032,25 @@ REGISTRY: dict[str, Dataset] = {
         "value of each quarter 2014Q3-2019Q4 of gdp and gdi, at the first monthly vintage (requested "
         "on the 15th) containing it.",
     ),
+    # ---- examples (E99) ----
+    "e99_plaza_uwb": Dataset(
+        "e99_plaza_uwb.npz",
+        "https://infoscience.epfl.ch/record/283435",
+        "Djugash, Hamner & Roth (2009), 'Navigating with ranging radios: Five data sets with ground "
+        "truth', Journal of Field Robotics 26(9):689-707; mirror of the original CMU release at EPFL "
+        "Infoscience, record 283435 (RangeOnlyDataset.zip, 3,616,837 bytes, md5 "
+        "e8e8fb60c96f0c3ab6f9e47d87418df3; licence field 'n/a': cite the paper). No licence is stated; "
+        "redistributing this small extract relies on the authors having released the data publicly for "
+        "research. The bitstream answers scripts with a captcha, so the zip was fetched once and CONVERTED "
+        "by tools/build_e99_data.py (the two Plaza runs, values unchanged; the cached npz has md5 "
+        "2877d26ce76c458f273719ba1031fabd) - keep the cached file in data/.",
+        "npz, two runs of a robot driving on a campus plaza with four ultra-wideband (UWB) radio beacons, "
+        "k = 1 (1,932 s) and 2 (410 s): p{k}_gt (time s, x m, y m, heading rad; GPS/INS ground truth, "
+        "~2 cm), p{k}_dr (time, distance travelled m, heading change rad, per odometry step), p{k}_drp "
+        "(time, x, y, heading of the integrated dead-reckoned path), p{k}_tl (beacon id, x, y: surveyed "
+        "beacon positions; ids 0, 1, 5, 6 in both runs, placed differently), p{k}_td (time, robot id, "
+        "beacon id, range m: the UWB time-of-flight range log; 3,529 and 1,816 ranges).",
+    ),
 }
 
 

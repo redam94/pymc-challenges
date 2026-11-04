@@ -29,7 +29,7 @@ for every notebook, so this is optional. Later syncs drop it unless you repeat t
 
 ```
 notebooks/
-  examples/      E01-E92, E94-E98  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
+  examples/      E01-E92, E94-E99  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
   challenges/    C01-C15  your workspace. Tasks, empty cells, hints on request.
   solutions/     C01-C15  full reference solutions, executed, with commentary.
 ```
@@ -354,6 +354,14 @@ In July 2022 GDP had fallen for two quarters while GDI, payrolls and industrial 
 | | Topic | Data | Key techniques |
 |---|---|---|---|
 | **E98** | Mixed-frequency sensor fusion on real-time data vintages | FRED/ALFRED real-time vintages of real GDP, real GDI, payrolls, industrial production, real retail sales and real personal income less transfers (St. Louis Fed) | a monthly latent AR(1) path, Mariano-Murasawa aggregation of quarterly sensors, correlated GDP-GDI errors, a ragged edge and masked pandemic months as missing rows, integrating the path out with banded precision matrices, revision noise, a residual check that misses a persistent sensor error, held-out conflict checks, a warn-or-wait decision across vintages |
+
+#### Which beacon to ping (E99)
+
+A robot on a campus plaza may ask one radio beacon for a range every two seconds: which one? PyMC calibrates the ranges on one real drive (a 7% scale error, not a constant bias; no non-line-of-sight tail in these logs) and a particle filter replays a second drive, revealing only the logged range the rule chooses. Belief-driven rules find the robot from an unknown start two to three times as fast as round-robin, a cheap predicted-range spread rule does as well as expected information gain, and pinging the nearest beacon fails in three quarters of the episodes. The agent chooses what to reveal, not where to drive. The notebook runs on 2 cores and under 1 GB, in about 3 minutes, with no GPU.
+
+| | Topic | Data | Key techniques |
+|---|---|---|---|
+| **E99** | Which beacon to ping: range-only localisation on real radio logs | CMU Plaza ultra-wideband range logs with odometry and GPS/INS truth (Djugash, Hamner & Roth 2009, via EPFL Infoscience), kept as a 0.95 MB extract of the two Plaza runs | range calibration against ground truth with offset, scale and ex-Gaussian NLOS mixture models, LOO and posterior predictive checks, PIT on a held-out run, a gyro drift the calibration run could not show, a particle filter for ring-shaped beliefs with a gyro-bias state, global localisation and sensor resetting, expected information gain by nested Monte Carlo against round-robin, random, nearest and predicted-range spread, counterfactual pings on a real log, fusion against odometry alone, range-only beacon SLAM |
 
 ### Data work (D-series)
 
