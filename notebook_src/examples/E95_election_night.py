@@ -980,8 +980,8 @@ fig.tight_layout();
 # points and the chance of each chamber with it: a winner who runs ahead of the forecast says the polls
 # understated their party, and every race still out moves toward it. The reweighting ESS column is the
 # failure in numbers: conditioning on a margin known to within a point keeps only the eve draws that
-# happened to land near it: a few dozen near the eve's median at best, and single figures far from
-# it. A margin is strong data, and strong data need a refit.
+# happened to land near it: a few dozen at best, and only a handful late in the night, when the calls
+# have already narrowed the draws. A margin is strong data, and strong data need a refit.
 
 # %% [markdown]
 # ## 7 · Where the night stands
