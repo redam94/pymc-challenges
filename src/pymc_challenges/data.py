@@ -1861,8 +1861,9 @@ REGISTRY: dict[str, Dataset] = {
         "Election-night race calls (projections by the AP and the networks, not certified results) for the 2026 "
         "US midterms, entered by hand from the outlets' live pages named in each row; a snapshot that grows "
         "through the night.",
-        "race (as in e94_races), status (called or too close), winner (D or R), reported_by, as_of_et, the partial "
-        "count where one was given (d_pct, r_pct, pct_expected_in), source_url.",
+        "A log: one row each time a race is called or listed as too close; a race's latest row is its state. race "
+        "(as in e94_races), status (called or too close), winner (D or R), reported_by, as_of_et (the snapshot), the "
+        "partial count where one was given (d_pct, r_pct, pct_expected_in), source_url.",
     ),
     # ---- examples (E71) ----
     "speed_acc": Dataset(
