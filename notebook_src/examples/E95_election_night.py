@@ -606,16 +606,32 @@ ax.set_title("what each call did", fontsize=10);
 # by their own sampling noise, a couple of hundredths per race, which is as large as what one batch of
 # calls usually does. So the change is measured on the same 4,000 draws, reweighted for each snapshot:
 # the noise then cancels, and the difference is exactly what the new rows did (the ESS column of the
-# replay says whether the weights can be trusted). The cell lists the races whose chances moved most and
+# replay says whether the weights can be trusted). Late in the night that trust runs out: once the
+# latest snapshot's reweighting ESS falls below 300, a handful of draws carry all the weight and the
+# reweighted change is mostly noise. From then on the change is measured between two NUTS refits, the
+# previous snapshot's and the latest, and moves of a couple of hundredths should be read as noise. The
+# cell lists the races whose chances moved most and
 # maps the change in every Senate race (and, in section 4.1, every House district). It also asks how much the latest calls mattered: the closest race
 # called in the latest snapshot, or so far if none of the new calls was in doubt, had it gone the other
 # way, by refit.
 
 # %%
 PREV = SNAPS[-2] if len(SNAPS) > 1 else None
-S_PREV = S_snap[PREV] if PREV is not None else EVE      # reweighted: the same draws as the latest snapshot
-S_LAST = S_snap[SNAPS[-1]]
+REFIT_ESS = 300
+REFITTED = {}                                            # refits by snapshot, reused by the slider (7.1)
 t0 = time.time()
+if S_snap[SNAPS[-1]]["ess"] >= REFIT_ESS:
+    MOVE_HOW = "reweighted"
+    S_PREV = S_snap[PREV] if PREV is not None else EVE  # the same draws as the latest snapshot
+    S_LAST = S_snap[SNAPS[-1]]
+else:
+    MOVE_HOW = "refit"
+    if PREV is None:
+        S_PREV = EVE
+    else:
+        st_prev = state_at(PREV)
+        S_PREV = REFITTED[PREV] = refit(info_from(st_prev), margins_from(st_prev))
+    S_LAST = S0
 new_rows = log[log.t == SNAPS[-1]]
 doubt = calls[(calls.status == "called") & calls.pD.between(0.02, 0.98)]   # a reversal must be possible
 new_doubt = doubt[doubt.race.isin(new_rows.race)]
@@ -627,7 +643,7 @@ INFO_F = [x for x in INFO if x[0] != flip] + [(flip, 0.0, np.inf) if flip_win ==
 S_FLIP = refit(INFO_F, [m_ for m_ in MARG if m_[0] != flip])
 TIMES["counterfactual refit"] = time.time() - t0
 prev_lab = PREV.strftime("%H:%M") if PREV is not None else "eve"
-print(f"reweighted, previous snapshot {prev_lab}: P(D House) {S_PREV['P(House)']:.3f}, P(D Senate) "
+print(f"{MOVE_HOW} (latest reweighting ESS {S_snap[SNAPS[-1]]['ess']:.0f}), previous snapshot {prev_lab}: P(D House) {S_PREV['P(House)']:.3f}, P(D Senate) "
       f"{S_PREV['P(Senate)']:.3f}; latest {AS_OF[-5:]}: {S_LAST['P(House)']:.3f}, {S_LAST['P(Senate)']:.3f}")
 print("rows added at the latest snapshot:", ", ".join(f"{r.race} {r.status} {r.winner if r.status == 'called' else ''}"
                                                     .strip() for r in new_rows.itertuples()))
@@ -1013,7 +1029,7 @@ New since {prev_lab}: {", ".join(f"{r.race} {r.winner if r.status == 'called' el
   House margin {iv(S0['N'], '+.1f')} (eve {iv(EVE['N'], '+.1f')}).
 * **Most surprising calls so far:** {"; ".join(f"{r_} for the {'Democrat' if w_ == 'D' else 'Republican'} "
   f"(eve chance {p_:.3f})" for r_, w_, p_ in zip(surpr.race, surpr.winner, surpr["P(result)"]))}.
-* **Races still out that moved most since {prev_lab}:** {"; ".join(f"{r.race} {r.previous:.2f} to {r.latest:.2f}"
+* **Races still out that moved most since {prev_lab}** ({"two refits compared" if MOVE_HOW == "refit" else "reweighted draws"}): {"; ".join(f"{r.race} {r.previous:.2f} to {r.latest:.2f}"
   for r in mv_top.itertuples())}.
 * **Had {flip} gone the other way:** P(D House) {S_FLIP['P(House)']:.2f}, P(D Senate) {S_FLIP['P(Senate)']:.2f}.
 * **Senate races to watch:** {"; ".join(f"{r.race} (P(D) {r._3:.2f}; control {r._6:.2f} if D, {r._7:.2f} if R)"
@@ -1096,6 +1112,8 @@ for t in SNAPS:
     st_ = state_at(t)
     if t == SNAPS[-1]:
         S_ = S0
+    elif t in REFITTED:
+        S_ = REFITTED[t]
     elif S_snap[t]["ess"] >= 1000:
         S_ = S_snap[t]
     else:
