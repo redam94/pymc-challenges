@@ -1047,18 +1047,22 @@ def gauge(ax, p, p_eve, label):
     ax.set_axis_off()
 
 
-def seat_bars(ax, v, need, total, label):
+def seat_bars(ax, v, need, total, label, w=None, xlim=None):
+    w = np.full(len(v), 1 / len(v)) if w is None else w
     e = np.arange(v.min() - 0.5, v.max() + 1.5)
-    cnt, _ = np.histogram(v, e)
+    cnt, _ = np.histogram(v, e, weights=w)
     mid = e[:-1] + 0.5
-    ax.bar(mid, cnt / len(v), width=1.0, color=np.where(mid >= need, D_C, R_C), alpha=0.8)
+    ax.bar(mid, cnt, width=1.0, color=np.where(mid >= need, D_C, R_C), alpha=0.8)
     ax.axvline(need - 0.5, color=INK, lw=1, ls=":")
-    lo, med, hi = np.quantile(v, [0.05, 0.5, 0.95])
+    if xlim is not None:
+        ax.set_xlim(*xlim)
+    lo, med, hi = np.round(wq(v.astype(float), w))
     spare = int(round(med)) - need
     how = (f"{spare} more than the {need} a majority needs" if spare > 0 else
            "exactly a majority" if spare == 0 else f"{-spare} short of the {need} a majority needs")
     ax.set_title(f"{label}: {med:.0f} Democratic seats (90%: {lo:.0f} to {hi:.0f}),\n{how}", fontsize=10)
     ax.set_yticks([])
+    ax.xaxis.set_major_locator(plt.MaxNLocator(integer=True))
     ax.set_xlabel("Democratic seats (dotted: majority line)")
 
 
@@ -1072,6 +1076,66 @@ fig.suptitle(f"Election night, as of {AS_OF[-5:]} ET on 3 November: {ncall} trac
              f"(eve forecast: House {EVE['P(House)']:.0%}, Senate {EVE['P(Senate)']:.0%}, gold ticks)", fontsize=12)
 GLANCE.update(fig)
 plt.close(fig)
+
+# %% [markdown]
+# ### 7.1 The night as it came in
+#
+# The same gauges, one frame per snapshot, from the eve forecast to the latest; drag the slider or press
+# play. Each frame is the forecast with the rows logged up to that time. A snapshot whose reweighted
+# draws keep an ESS of at least 1,000 is drawn from the reweighted eve draws; one below that is refitted
+# by NUTS, because a seat histogram resting on a hundred effective draws is mostly noise. The latest frame
+# is the refit that the gauges at the top show.
+
+# %%
+from matplotlib import animation
+from IPython.display import HTML
+
+t0 = time.time()
+FRAMES = [("eve", EVE)]
+for t in SNAPS:
+    st_ = state_at(t)
+    if t == SNAPS[-1]:
+        S_ = S0
+    elif S_snap[t]["ess"] >= 1000:
+        S_ = S_snap[t]
+    else:
+        m_ = margins_from(st_)
+        S_ = refit(info_from(st_), m_)
+    FRAMES.append((t.strftime("%H:%M"), S_))
+TIMES["slider refits"] = time.time() - t0
+h_lim = (min(np.quantile(S_["H"], 0.001) for _, S_ in FRAMES) - 3, max(np.quantile(S_["H"], 0.999) for _, S_ in FRAMES) + 3)
+s_lim = (min(S_["S"].min() for _, S_ in FRAMES) - 1, max(S_["S"].max() for _, S_ in FRAMES) + 1)
+fig = plt.figure(figsize=(12, 5.8))
+gs_ = fig.add_gridspec(2, 2, height_ratios=[1.25, 0.75], hspace=0.05)
+axs = [fig.add_subplot(gs_[0, 0]), fig.add_subplot(gs_[0, 1]), fig.add_subplot(gs_[1, 0]), fig.add_subplot(gs_[1, 1])]
+title = fig.suptitle("", fontsize=12)
+
+
+def show_frame(k):
+    lab, S_ = FRAMES[k]
+    for ax in axs:
+        ax.clear()
+    gauge(axs[0], S_["P(House)"], EVE["P(House)"], "chance the Democrats win the House")
+    gauge(axs[1], S_["P(Senate)"], EVE["P(Senate)"], "chance the Democrats control the Senate")
+    seat_bars(axs[2], S_["H"], 218, 435, "House", S_["w"], h_lim)
+    seat_bars(axs[3], S_["S"], 51, 100, "Senate (34 not up included)", S_["w"], s_lim)
+    n_ = 0 if lab == "eve" else int((state_at(SNAPS[k - 1]).status == "called").sum())
+    title.set_text("The eve forecast (gold ticks)" if lab == "eve" else
+                   f"As of {lab} ET: {n_} tracked races called (gold ticks: the eve)")
+    return axs
+
+
+show_frame(0)
+anim = animation.FuncAnimation(fig, show_frame, frames=len(FRAMES), interval=1200)
+plt.close(fig)
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore", UserWarning)
+    anim_html = anim.to_jshtml(default_mode="once")
+print(f"{len(FRAMES)} frames: " + ", ".join(f"{lab} House {S_['P(House)']:.2f} Senate {S_['P(Senate)']:.2f}"
+                                           for lab, S_ in FRAMES))
+HTML(anim_html)
+
+# %%
 TIMES["total"] = time.time() - T_START
 print({k: round(v) for k, v in TIMES.items()})
 
