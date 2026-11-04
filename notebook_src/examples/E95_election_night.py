@@ -197,11 +197,22 @@ print(f"{E['mu'].shape[0]} draws x {E['mu'].shape[1]} races ({len(d['polled'])} 
 #
 # The calls come from the outlets' live pages, entered by hand with the outlet that made each call and
 # the time of the snapshot. A call is a projection, not a count: the AP declares a winner when its
-# analysts are sure who leads, often with most of the vote uncounted. Some pages also give a partial
-# count, which we keep but do not use until a race is at least 95% counted. Early counts are not a random
-# sample of the vote: in Georgia the early and mail ballots, which lean Democratic, are reported first,
-# so the 64-36 Ossoff led by with 56% of the expected vote in overstates his final margin by an unknown
-# amount. "Too close to call" is information too, and section 3.2 treats it as such.
+# analysts are sure who leads, often with most of the vote uncounted, and their models know which ballots
+# are still out. A partial count is a different thing. Ballots are counted in batches whose order depends
+# on the state's rules, and the batches lean differently, because the voters who vote early, by mail and
+# on the day are not the same people. In Georgia, Florida and North Carolina the early and mail ballots,
+# which lean Democratic, are counted and reported first, so the early count runs blue and drifts red as
+# election-day precincts come in; the 64-36 Ossoff led by with 56% of the expected vote overstates his
+# final margin by an amount nobody knows on the night. In Pennsylvania and Wisconsin mail ballots may not
+# be processed before election day and often come last, so the drift runs the other way; in Arizona,
+# Nevada and California, late-arriving mail and provisional ballots are counted for days. The same share
+# counted means different things in different states.
+#
+# So we keep partial counts but use a margin only once a race is at least 95% counted, and even then the
+# ballots still out may differ from those counted. If the outstanding share $u$ could lean up to $k = 30$
+# points differently from the counted ballots, the final margin could differ from the count by about
+# $k\,u$, so a near-final margin enters with sd $\sqrt{0.5^2 + (k u)^2}$: 1.5 points at 95% counted, 0.5
+# when the count is complete. "Too close to call" is information too, and section 3.2 treats it as such.
 #
 # The **surprise** of a result is $-\log P(\text{result})$ under the frozen forecast, in nats. It is the
 # amount of information the result carries, and it bounds how far the result can move anything else.
@@ -254,7 +265,12 @@ print(calls[["race", "status", "winner", "reported_by", "pD", "pred", "q10", "q9
 TAU = 0.5     # points: how far on the wrong side of zero a called race could still be (a soft edge)
 CLOSE = 3.0   # points: "too close to call" read as |margin| < CLOSE (an assumption, varied in section 3.2)
 FINAL = 95    # a race counts as counted once this share of the expected vote is in; its margin is then data
-TAU_M = 1.0   # points: the sd of a near-final margin around the final one
+SKEW = 30.0   # points: how differently the ballots still out could lean from those counted (any direction)
+
+
+def tau_m(pct_in):
+    """sd of a counted margin around the final one: counting noise plus the skew of the uncounted share."""
+    return float(np.hypot(0.5, SKEW * (1 - pct_in / 100)))
 
 
 def info_from(calls, close=CLOSE):
@@ -271,7 +287,8 @@ def info_from(calls, close=CLOSE):
 def margins_from(calls):
     """(race, two-party margin) for the races counted to at least FINAL percent."""
     ok = calls[(calls.pct_expected_in >= FINAL) & calls.d_pct.notna() & calls.r_pct.notna()]
-    return [(r.race, 100 * (r.d_pct - r.r_pct) / (r.d_pct + r.r_pct)) for r in ok.itertuples()]
+    return [(r.race, 100 * (r.d_pct - r.r_pct) / (r.d_pct + r.r_pct), tau_m(r.pct_expected_in))
+            for r in ok.itertuples()]
 
 
 def loglik(mu, sd, lo, hi):
@@ -410,7 +427,8 @@ fig.tight_layout();
 # $m_r$; for a race without polls it is a function of $\mu_r(\theta)$, built from the model's own
 # variables, with the race noise integrated out as above. `pm.logcdf` of a standard normal keeps the tails
 # stable, and `pm.math.logdiffexp` gives the log probability of an interval. A race counted to 95% or more
-# also gets its margin as data, a normal likelihood with sd $\sqrt{\sigma^2 + 1}$.
+# also gets its margin as data, a normal likelihood whose sd adds the race noise and the
+# uncounted-ballot term of section 2.
 #
 # The refit and the reweighting answer the same question by different routes, so agreement between them is
 # a check on both.
@@ -419,7 +437,7 @@ fig.tight_layout();
 def night_fit(d, info=(), margins=(), seed=RANDOM_SEED):
     """Refit E94's 2026 model with the night's results as extra likelihood terms.
 
-    info: (race, lo, hi) intervals on the true margin; margins: (race, observed two-party margin)."""
+    info: (race, lo, hi) intervals on the true margin; margins: (race, observed two-party margin, its sd)."""
     m = build_model(d)
     tm = d["tm"]
     isS = (tm.office == "S").to_numpy().astype(int)
@@ -448,9 +466,9 @@ def night_fit(d, info=(), margins=(), seed=RANDOM_SEED):
                 terms.append(pm.logcdf(std, (hi - mu) / s))
             else:
                 terms.append(pm.math.logdiffexp(pm.logcdf(std, (hi - mu) / s), pm.logcdf(std, (lo - mu) / s)))
-        for race, y in margins:
+        for race, y, tm_sd in margins:
             mu, sd = mean_sd(race)
-            terms.append(pm.logp(pm.Normal.dist(mu, pt.sqrt(sd**2 + TAU_M**2)), y))
+            terms.append(pm.logp(pm.Normal.dist(mu, pt.sqrt(sd**2 + tm_sd**2)), y))
         pm.Potential("night", pt.sum(pt.stack(terms)))
         idata = pm.sample(random_seed=seed, progressbar=False, target_accept=0.9)
     return idata
@@ -469,7 +487,7 @@ print("refit, calls only:", E94["diagnostics"](night_calls))
 rows = [line("eve", EVE), line("calls so far: reweighted", S_RW), line("calls so far: NUTS refit", S_CALLS)]
 if MARG:
     print("refit, calls and counted margins:", E94["diagnostics"](night), "| margins used:",
-          {r: round(y, 1) for r, y in MARG})
+          {r: (round(y, 1), round(s, 1)) for r, y, s in MARG})
     rows.append(line("calls and counted margins: NUTS refit", S0))
 print(pd.DataFrame(rows).set_index("").to_string())
 cmp = pd.DataFrame({"race": tm.race, "eve": EVE["pD"], "reweighted": S_RW["pD"], "refit": S_CALLS["pD"]})
@@ -512,13 +530,19 @@ print("races too close to call:", closes or "none")
 print(pd.DataFrame(rows).to_string(index=False))
 
 # %% [markdown]
-# Read the first row against the others. With the too-close races ignored, the night's calls on their own
-# move little, because every call so far was expected. A Republican-leaning race that is too close is a
-# different matter: it says the Republican is not winning there by the margin the forecast expected, which
-# points to a polling error in the Democrats' favour, and through the shared error that lifts the
-# Democrats everywhere. The narrower the reading, the stronger the pull. This is the largest effect of the
-# evening so far, and it rests on an assumption about what the AP's silence means, so it is worth
-# watching the "no information" row alongside it.
+# When no race is listed as too close, every row of the table is the same. When one is, read the first
+# row against the others. A Republican-leaning race that is too close says the Republican is not winning
+# there by the margin the forecast expected, which points to a polling error in the Democrats' favour, and
+# through the shared error that lifts the Democrats everywhere. The narrower the reading, the stronger the
+# pull.
+#
+# Florida showed how much this can matter and how fragile it is. In the 20:20 snapshot its Senate race
+# was too close to call. Read as $|m_r| < 3$, that one silence moved the chance of a Democratic Senate
+# from 0.82 (calls only) to 0.93, far more than all the calls together, because Moody had been expected to
+# win by about five points. Half an hour later Fox called Florida for Moody, the interval became a
+# one-sided call the forecast had expected, and most of that rise went away. An uncalled race is evidence,
+# but how much depends on an assumption about what the silence means, so the "no information" row belongs
+# next to it.
 
 # %% [markdown]
 # ## 4 · The margin is the message
@@ -529,7 +553,7 @@ print(pd.DataFrame(rows).to_string(index=False))
 # polling error is shared, it would pull every other race toward the Republicans. A margin of D+28, what
 # the first half of the count showed, would say the opposite.
 #
-# The cell refits the model for five possible final margins, each a normal likelihood with sd 1 point
+# The cell refits the model for five possible final margins, each treated as a complete count (sd 0.5 points)
 # on top of the night's calls, and also reports the ESS that reweighting would have had. The answer is a
 # curve, not a number, because the final margin is not yet known.
 
@@ -539,9 +563,9 @@ other_marg = [m_ for m_ in MARG if m_[0] != "GA-S"]
 rows, sweep = [], {}
 t0 = time.time()
 for y in GA_FINAL:
-    idt = night_fit(d, INFO, margins=[("GA-S", y)] + other_marg)
+    idt = night_fit(d, INFO, margins=[("GA-S", y, tau_m(100))] + other_marg)
     S = summarise(eve_draws(d, idt), INFO)
-    lw = np.log(weights(E, INFO)) + norm.logpdf(y, E["mu"][:, RACE["GA-S"]], TAU_M)
+    lw = np.log(weights(E, INFO)) + norm.logpdf(y, E["mu"][:, RACE["GA-S"]], tau_m(100))
     w_ = np.exp(lw - lw.max())
     sweep[y] = S
     rows.append({"Ossoff's final margin": f"D+{y:.0f}", "P(D House)": round(S["P(House)"], 3),
@@ -762,7 +786,7 @@ surpr = calls[calls.status == "called"].sort_values("surprise", ascending=False)
 top_s = watch[watch.office == "S"].sort_values("Senate swing", ascending=False).head(3)
 text = f"""**As of {AS_OF} ET**: {ncall} races called ({", ".join(calls[calls.status == "called"].race)}),
 {len(closes)} too close to call ({", ".join(closes) or "none"}){"" if not MARG else
-f", and {len(MARG)} counted to at least {FINAL}% ({', '.join(r for r, _ in MARG)})"}.
+f", and {len(MARG)} counted to at least {FINAL}% ({', '.join(r for r, *_ in MARG)})"}.
 
 * **House:** P(Democratic majority) {S0['P(House)']:.2f} (eve {EVE['P(House)']:.2f}); Democratic seats
   {iv(S0['H'], '.0f')}.
