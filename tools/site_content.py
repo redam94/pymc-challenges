@@ -167,9 +167,13 @@ SERIES = [
          intro="Galveston's tide gauge sees the sea minus the land, satellites see the ocean, GPS sees the land. "
                "One state-space model gives each instrument its own view and shows the ocean-land split moving "
                "from prior to measurement as each one arrives, then picks a 2050 planning scenario."),
+    dict(key="recession", range="E98", title="Was 2022 a recession?", ids=["E98"],
+         intro="GDP fell for two quarters in 2022 while GDI, payrolls and output kept growing. Six noisy sensors "
+               "of one monthly economy, fitted to the data as known on six real dates, give a contraction "
+               "probability that stays low while GDP alone swings with every revision."),
 ]
 SERIES_BY_KEY = {s["key"]: s for s in SERIES}
-RECENT = ["E97", "E96", "E92", "E95", "E94", "E90", "E88", "E91", "E87", "E89"]          # newest first, shown on the home page
+RECENT = ["E98", "E97", "E96", "E92", "E95", "E94", "E90", "E88", "E91", "E87", "E89"]          # newest first, shown on the home page
 
 
 # The figure shown on each example's card: the k-th image the notebook outputs (1-based, in notebook

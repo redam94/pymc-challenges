@@ -2008,6 +2008,30 @@ REGISTRY: dict[str, Dataset] = {
         "report's likely range, 17th-83rd percentiles), background_cm_per_yr (the API's backgroundRslPerYear "
         "field, the same for all rows).",
     ),
+    # ---- examples (E98) ----
+    "e98_alfred_vintages": Dataset(
+        "e98_alfred_vintages.csv",
+        "https://alfred.stlouisfed.org/graph/alfredgraph.csv?id=A191RL1Q225SBEA&vintage_date=2022-07-28",
+        "ALFRED (ArchivaL Federal Reserve Economic Data), Federal Reserve Bank of St. Louis "
+        "(alfred.stlouisfed.org); the series are US government statistics in the public domain, compiled by "
+        "BEA (real GDP growth A191RL1Q225SBEA, real GDI growth A261RL1Q225SBEA, real personal income "
+        "excluding current transfer receipts W875RX1), BLS (total nonfarm payrolls PAYEMS), the Federal "
+        "Reserve Board (industrial production INDPRO) and the Census Bureau (advance retail and food "
+        "services sales RSAFS, which FRED deflates by the CPI, CPIAUCSL, to give real retail sales RRSFS). "
+        "The URL is one of about 190 vintage requests (6 series x 6 dates, plus 75 monthly vintages of "
+        "the two growth-rate series); SNAPSHOT assembled by "
+        "tools/build_e98_data.py - keep the cached file in data/.",
+        "US output indicators as they stood on given dates. Long format: series (gdp, gdi = annualised "
+        "quarterly % growth of real GDP / real GDI, dated by the first day of the quarter; payrolls "
+        "(thousands), indpro (index), income_ex_transfers (billions of chained dollars, SAAR), "
+        "retail_sales (millions of 1982-84 dollars, deflated by the CPI), all seasonally adjusted "
+        "monthly levels, dated by the first day of the month), vintage (the date at which the value "
+        "stood; ALFRED serves the latest release on or before it), date, value. Six vintages hold "
+        "complete histories 2011-10 to 2022-12 (2022-07-28, 2022-08-25, 2022-09-29, 2023-10-01, "
+        "2024-10-01, 2026-10-01; later observations dropped); the other rows are the FIRST published "
+        "value of each quarter 2014Q3-2019Q4 of gdp and gdi, at the first monthly vintage (requested "
+        "on the 15th) containing it.",
+    ),
 }
 
 

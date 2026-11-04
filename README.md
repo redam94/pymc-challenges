@@ -29,7 +29,7 @@ for every notebook, so this is optional. Later syncs drop it unless you repeat t
 
 ```
 notebooks/
-  examples/      E01-E92, E94-E97  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
+  examples/      E01-E92, E94-E98  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
   challenges/    C01-C15  your workspace. Tasks, empty cells, hints on request.
   solutions/     C01-C15  full reference solutions, executed, with commentary.
 ```
@@ -346,6 +346,14 @@ Galveston's tide gauge has recorded more than a century of rising water, but it 
 | | Topic | Data | Key techniques |
 |---|---|---|---|
 | **E97** | Separating sea-level rise from subsidence with three instruments | PSMSL tide gauge 161 Galveston Pier 21 (1908-2025), NOAA LSA Gulf altimetry by mission (1992-2025), NGL GPS TXGA and GAL2 (1997-2025), NOAA 2022 sea-level scenarios | an observation matrix whose rank changes by era, random-walk rates for ocean and land, mission offsets and antenna steps as parameters, a divergent gauge-only model and its fix, posterior correlation as a measure of identification, swapping priors to see what is measured, a 2050 planning decision |
+
+#### Was 2022 a recession? (E98)
+
+In July 2022 GDP had fallen for two quarters while GDI, payrolls and industrial production said the economy was growing. Treating all six as noisy sensors of one monthly path of output, a PyMC model with quarterly GDP and GDI as weighted sums of the monthly path, correlated errors and a ragged edge is fitted to the real-time ALFRED vintages as they were known on six dates. GDP alone puts the chance of a first-half contraction anywhere from 0.09 to 0.4 as it is revised; the fused model stays below 0.02 throughout. Along the way a naive fused model is confidently wrong because payroll errors persist, and the fused July 2022 interval still misses the 2026 estimate, because the monthly sensors were revised too. Runs in under 4 minutes, about 1 GB.
+
+| | Topic | Data | Key techniques |
+|---|---|---|---|
+| **E98** | Mixed-frequency sensor fusion on real-time data vintages | FRED/ALFRED real-time vintages of real GDP, real GDI, payrolls, industrial production, real retail sales and real personal income less transfers (St. Louis Fed) | a monthly latent AR(1) path, Mariano-Murasawa aggregation of quarterly sensors, correlated GDP-GDI errors, a ragged edge and masked pandemic months as missing rows, integrating the path out with banded precision matrices, revision noise, a residual check that misses a persistent sensor error, held-out conflict checks, a warn-or-wait decision across vintages |
 
 ### Data work (D-series)
 
