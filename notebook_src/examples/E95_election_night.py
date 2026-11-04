@@ -1088,7 +1088,7 @@ gauge(fig.add_subplot(gs_[0, 0]), S0["P(House)"], EVE["P(House)"], "chance the D
 gauge(fig.add_subplot(gs_[0, 1]), S0["P(Senate)"], EVE["P(Senate)"], "chance the Democrats control the Senate")
 seat_bars(fig.add_subplot(gs_[1, 0]), S0["H"], 218, 435, "House")
 seat_bars(fig.add_subplot(gs_[1, 1]), S0["S"], 51, 100, "Senate (34 seats not up included)")
-fig.suptitle(f"Election night, as of {AS_OF[-5:]} ET on 3 November: {ncall} tracked races called "
+fig.suptitle(f"Election night, as of {AS_OF[-5:]} ET on {int(AS_OF[8:10])} November: {ncall} tracked races called "
              f"(eve forecast: House {EVE['P(House)']:.0%}, Senate {EVE['P(Senate)']:.0%}, gold ticks)", fontsize=12)
 GLANCE.update(fig)
 plt.close(fig)
