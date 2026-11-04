@@ -1764,7 +1764,10 @@ axs.set_title("the 35 Senate races", fontsize=9);
 # House seats (the draws at the 2nd, 5th, 8th and so on up to the 98th percentile), so a Republican House
 # turns up about as often as the forecast says it should, and they run from the worst Democratic outcome to
 # the best. The left panel colours each state with a Senate race by its margin in that draw. The right panel
-# is the House grid from above, coloured by margin instead of by probability. The states are drawn from the
+# is the House grid from above, coloured by margin, and re-sorted in every frame: first the seats the
+# Republicans win in that draw, then the seats the Democrats win, each group in order of the seat's chance
+# of a Democratic win. The boundary between red and blue is then the seat count, and control changes hands
+# when it crosses the gold tile, the 218th seat from the Democratic end. The states are drawn from the
 # county outlines used in E16 and E89; a state border is any county edge the state shares with another
 # state. There is no district map, because several states redrew their lines for 2026 and the repository
 # has no boundary file for the new districts.
@@ -1812,12 +1815,12 @@ sen_i = np.flatnonzero((tm_a.office == "S").to_numpy())
 sen_col = {st: i for st, i in zip(tm_a.state.to_numpy()[sen_i], sen_i)}
 ring_race = np.array([sen_col.get(st, -1) for st in ring_state])
 h_i = np.flatnonzero((tm_a.office == "H").to_numpy())
-h_i = h_i[np.argsort(np.median(sim26[:, h_i], 0))]               # safest R to safest D
 tgt26 = fit26["d"]["tgt"]
 unc = tgt26[(tgt26.office == "H") & ~tgt26.modelled]
 n_r, n_d = int((unc.d_name.fillna("") == "").sum()), int((unc.d_name.fillna("") != "").sum())
 ncol = 29
 n_tiles = n_r + len(h_i) + n_d
+p_seat = np.r_[np.zeros(n_r), (sim26[:, h_i] > 0).mean(0), np.ones(n_d)]   # each tile's P(D)
 gx, gy = np.arange(n_tiles) % ncol, np.arange(n_tiles) // ncol
 
 n_frames = 30
@@ -1842,7 +1845,7 @@ k218 = n_tiles - 218
 axh.scatter([gx[k218]], [-gy[k218]], marker="s", s=64, facecolor="none", edgecolor=GOLD, lw=1.6)
 axh.set_axis_off()
 axh.set_aspect("equal")
-axh.set_title("House: 435 seats, safest R to safest D\n(gold: the 218th seat from the D end)", fontsize=9)
+axh.set_title("House: R wins, then D wins, each sorted by P(D)\n(gold: the 218th seat from the D end)", fontsize=9)
 fig.colorbar(plt.cm.ScalarMappable(norm, cmap), ax=[axm, axh], orientation="horizontal", fraction=0.04, pad=0.02,
              label="D minus R margin in this draw (points; clipped at 20)")
 title = fig.suptitle("", fontsize=10)
@@ -1851,7 +1854,8 @@ title = fig.suptitle("", fontsize=10)
 def show_draw(k):
     s_ = sim26[pick[k]]
     pc.set_array(np.ma.masked_array(np.where(ring_race >= 0, s_[ring_race], 0.0), ring_race < 0))
-    tiles.set_array(np.r_[np.full(n_r, -100.0), s_[h_i], np.full(n_d, 100.0)])
+    m_ = np.r_[np.full(n_r, -100.0), s_[h_i], np.full(n_d, 100.0)]
+    tiles.set_array(m_[np.lexsort((p_seat, m_ > 0))])           # re-sorted every frame: who won, then P(D)
     hd = n_d + int((s_[h_i] > 0).sum())
     sd = int((s_[sen_i] > 0).sum()) + notup["Democratic"] + notup["Independent"]
     title.set_text(f"Draw {k + 1} of {n_frames}, from fewest to most D House seats: House D {hd} "
@@ -1876,10 +1880,13 @@ HTML(anim_html)
 # The Democrats hold the House in 28 of the 30 frames, close to the forecast's 0.94. They hold the Senate in
 # 20, fewer than the 24 that 0.79 implies, but the frames were chosen to cover the House distribution, and
 # thirty frames are a small sample of the Senate. The point of watching is that the races move together.
-# In the early frames the middle rows of the grid turn red together, and Iowa, Ohio, Alaska and Texas move
-# the same way, because $N$, the shared error and the state effects shift every race at once. Each race
-# also has its own noise, so a few seats and states go against the tide in every frame. Between them,
-# those two kinds of variation make the seat distribution wide.
+# In the first two frames the red block runs past the gold tile and the House goes Republican; as the
+# frames move on, the boundary slides back about two rows, from 213 Democratic seats to 270. Iowa, Ohio,
+# Alaska and Texas change colour with it, because $N$, the shared error and the state effects shift every
+# race at once. Each race also has its own noise. Inside each block the seats are in order of their
+# chance, so the first tiles of the blue block are the Democrats' least likely wins, and most of them are
+# pale: narrow upsets. Between them, the shared shift and the noise of each race make the seat distribution
+# wide.
 
 # %% [markdown]
 # ### 7.1 If the Democrats fall short of their polls
