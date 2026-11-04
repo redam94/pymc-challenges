@@ -29,7 +29,7 @@ for every notebook, so this is optional. Later syncs drop it unless you repeat t
 
 ```
 notebooks/
-  examples/      E01-E92, E94, E95  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
+  examples/      E01-E92, E94-E96  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
   challenges/    C01-C15  your workspace. Tasks, empty cells, hints on request.
   solutions/     C01-C15  full reference solutions, executed, with commentary.
 ```
@@ -330,6 +330,14 @@ Who wins the 2026 House and Senate, and how much will the campaigns turn out to 
 |---|---|---|---|
 | **E94** | Ragged information: polls, fundamentals and money in the US midterms | FEC results workbooks, candidate reports and independent expenditures 2016-2026 (public domain), FiveThirtyEight polls, partisan lean and poll errors (CC BY 4.0), MEDSL House returns, Wikipedia 2026 nominees, Cook PVI, race polls and aggregator averages as of 2026-11-02 (CC BY-SA 4.0) | a midterm prior, a weekly reverse random walk with house effects and a shared polling error, the E40 rotation, fundamentals learned on earlier cycles only, state effects shared by House and Senate, backtests against aggregate-only, polls-only and fundamentals-only forecasts, Jacobson's paradox, Levitt's rematches with hierarchical slopes, a beta-binomial reporting-lag model and a hierarchical late-spending model for a nowcast of campaign spending, a frozen forecast and its scorer, an animated map of predictive draws, sensitivity to a polling error that favours one party |
 | **E95** | Election night: updating a frozen forecast as the races are called | E94's data and frozen 2026 forecast, and election-night race calls by the AP and the networks (hand-entered from their live pages) | a race call as an interval on the margin with the race noise integrated out, importance reweighting of a frozen posterior and its effective sample size, the same update as a PyMC refit with a Potential, "too close to call" as data, a final margin as data, conditional control probabilities for the races still out, a state map of the update |
+
+#### The snow pillow died in February (E96)
+
+A Colorado SNOTEL site loses its snow pillow in February: what is the April 1 snowpack, and is it a drought year? A weekly snow budget in PyMC fuses the pillow, an ultrasonic depth sensor seen through a latent density, a storage gauge with a learned catch ratio, and a manual snow course, with a Kalman filter in a `Potential` integrating out the weekly states. Hiding the pillow from February 4 in 19 real seasons, the budget misses April 1 by about 0.45 in and makes no wrong drought calls, where carrying the last reading forward misses by 5.9 in and calls a drought wrongly in 14 seasons. At this site the gauge does most of the work and the course adds nothing. Runs in about 2.5 minutes under 1 GB.
+
+| | Topic | Data | Key techniques |
+|---|---|---|---|
+| **E96** | Sensor fusion for a dead snow pillow | USDA NRCS SNOTEL University Camp (CO) and four neighbours, water years 2006-2025, and its snow course since 1938 (public domain, AWDB REST API) | a state-space snow budget with four observation models, a Kalman filter inside `pm.Potential`, a latent density and gauge catch ratio, quick fixes as baselines, an eight-week backtest that exposes overconfidence and a slowly drifting sensor error as its fix, which sensors matter, gating a real pillow fault, a drought decision |
 
 ### Data work (D-series)
 

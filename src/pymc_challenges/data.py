@@ -1948,6 +1948,30 @@ REGISTRY: dict[str, Dataset] = {
         "error = invalid key), rt (seconds), censor (1 for the 171 trials the authors excluded: "
         "RT < 0.18 s or > 3 s, or an invalid response).",
     ),
+    # ---- E96 ----
+    "e96_snotel_daily": Dataset(
+        "e96_snotel_daily.csv",
+        "https://wcc.sc.egov.usda.gov/awdbRestApi/swagger-ui/index.html",
+        "USDA NRCS National Water and Climate Center, SNOTEL network, through the Air and Water Database "
+        "(AWDB) REST API (public domain, no key). An API snapshot written by tools/build_e96_data.py on "
+        "2026-11-04 - keep the cached CSV in data/ (NRCS re-edits published values over time).",
+        "Daily SNOTEL records, water years 2006-2025, October 1 to June 30, for University Camp (station 838, "
+        "10,330 ft, Boulder Creek headwaters, Colorado) and four neighbours (Niwot 663, Lake Eldora 564, Wild "
+        "Basin 1042, Bear Lake 322). Columns: station_id, station, elevation_ft, date, wteq (snow-pillow snow "
+        "water equivalent as published, in), wteq_flag (QC flag: V validated, E edited/estimated), wteq_raw (the "
+        "original real-time value before NRCS editing, in), wteq_median (1991-2020 median for that calendar "
+        "day, in); for University Camp only: snwd (ultrasonic snow depth, in), prec (storage-gauge precipitation "
+        "accumulated since October 1, in), tavg (daily mean air temperature, deg F), each with a _flag column.",
+    ),
+    "e96_snow_course": Dataset(
+        "e96_snow_course.csv",
+        "https://wcc.sc.egov.usda.gov/awdbRestApi/swagger-ui/index.html",
+        "USDA NRCS snow course University Camp (05J08:CO:SNOW, 10,310 ft, beside the SNOTEL site), AWDB REST "
+        "API, duration SEMIMONTHLY (real collection dates; public domain). Written by tools/build_e96_data.py "
+        "on 2026-11-04 - keep the cached CSV in data/.",
+        "Manual snow surveys 1938-2025: course, date (collection date), survey (the report it serves: Feb 1, "
+        "Mar 1, Apr 1, May 1, ...), swe (in, mean of the cores along the course), depth (in).",
+    ),
 }
 
 

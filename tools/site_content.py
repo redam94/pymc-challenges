@@ -159,9 +159,13 @@ SERIES = [
                "score it, an animated map of its predictive draws, and how far it moves if Democrats fall short of "
                "their polls. E95 updates the frozen forecast on election night as the races are called: a call as an "
                "interval on the margin, importance reweighting against a refit, and what each race still out decides."),
+    dict(key="snowpack", range="E96", title="The snow pillow died in February", ids=["E96"],
+         intro="A Colorado snow pillow fails in February: how much snow is there on April 1? A weekly snow budget "
+               "in PyMC fuses the pillow, a depth sensor, a precipitation gauge and a manual snow course through a "
+               "Kalman filter, and a backtest over 19 real seasons beats every quick fix on the drought call."),
 ]
 SERIES_BY_KEY = {s["key"]: s for s in SERIES}
-RECENT = ["E92", "E95", "E94", "E90", "E88", "E91", "E87", "E89"]          # newest first, shown on the home page
+RECENT = ["E96", "E92", "E95", "E94", "E90", "E88", "E91", "E87", "E89"]          # newest first, shown on the home page
 
 
 # The figure shown on each example's card: the k-th image the notebook outputs (1-based, in notebook
