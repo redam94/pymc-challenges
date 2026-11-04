@@ -618,7 +618,7 @@ ax.set_title("what each call did", fontsize=10);
 # %%
 PREV = SNAPS[-2] if len(SNAPS) > 1 else None
 REFIT_ESS = 300
-REFITTED = {}                                            # refits by snapshot, reused by the slider (7.1)
+REFITTED = {}                                            # refits by snapshot
 t0 = time.time()
 if S_snap[SNAPS[-1]]["ess"] >= REFIT_ESS:
     MOVE_HOW = "reweighted"
@@ -1096,61 +1096,122 @@ plt.close(fig)
 # %% [markdown]
 # ### 7.1 The night as it came in
 #
-# The same gauges, one frame per snapshot, from the eve forecast to the latest; drag the slider or press
-# play. Each frame is the forecast with the rows logged up to that time. A snapshot whose reweighted
-# draws keep an ESS of at least 1,000 is drawn from the reweighted eve draws; one below that is refitted
-# by NUTS, because a seat histogram resting on a hundred effective draws is mostly noise. The latest frame
-# is the refit that the gauges at the top show.
+# The same gauges, one frame per row of the log, from the eve forecast to the latest; press play, or
+# drag the slider to step through the night one call at a time. The strip at the bottom traces both
+# chances across the calls, with the hourly snapshots marked, so a call that moved a chamber shows as a
+# step. The log records the snapshot a call was entered in, not its minute, so within a snapshot the
+# calls appear in the order they were logged.
+#
+# Refitting at every call would cost half a minute of sampling per frame. Instead each frame reweights the
+# draws of the most recent fit (the eve, to begin with) by what the log has added since it, with the
+# likelihood ratio of the new information to the old; that is exact importance sampling, and it stays
+# cheap while only a few calls separate a frame from its fit. When the ESS falls below 500, the frame is
+# refitted by NUTS and the later frames reweight that refit instead. The last frame is the refit the
+# gauges at the top show.
 
 # %%
 from matplotlib import animation
 from IPython.display import HTML
 
+FRAME_ESS = 500
+WHO = {"D": "the Democrat", "R": "the Republican"}
+
+
+def loglik_all(E_, info, margins):
+    """Log likelihood of the night's information (calls, too-close intervals, counted margins), per draw."""
+    lw = np.zeros(E_["mu"].shape[0])
+    for race, lo, hi in info:
+        i = RACE[race]
+        lw += loglik(E_["mu"][:, i], E_["sd"][:, i], lo, hi)
+    for race, y, m_sd in margins:
+        i = RACE[race]
+        lw += norm.logpdf(y, E_["mu"][:, i], np.sqrt(E_["sd"][:, i] ** 2 + m_sd**2))
+    return lw
+
+
+def describe_row(r):
+    what = (f"called for {WHO[r.winner]}" if r.status == "called" else "too close to call")
+    if pd.notna(r.pct_expected_in):
+        what += f", {r.d_pct:g}-{r.r_pct:g} with {r.pct_expected_in:g}% counted"
+    return f"{r.race} {what} ({r.reported_by})"
+
+
 t0 = time.time()
-FRAMES = [("eve", EVE)]
-for t in SNAPS:
-    st_ = state_at(t)
-    if t == SNAPS[-1]:
+FRAMES = [("The eve forecast", EVE, "eve")]
+E_a, info_a, marg_a, ll_a = E, [], [], np.zeros(E["mu"].shape[0])
+n_refit = 0
+for k, r in enumerate(log.itertuples()):
+    st_ = log.iloc[: k + 1].groupby("race", sort=False).tail(1)
+    info_k, marg_k = info_from(st_), margins_from(st_)
+    if k == len(log) - 1:
         S_ = S0
-    elif t in REFITTED:
-        S_ = REFITTED[t]
-    elif S_snap[t]["ess"] >= 1000:
-        S_ = S_snap[t]
     else:
-        m_ = margins_from(st_)
-        S_ = refit(info_from(st_), m_)
-    FRAMES.append((t.strftime("%H:%M"), S_))
-TIMES["slider refits"] = time.time() - t0
-h_lim = (min(np.quantile(S_["H"], 0.001) for _, S_ in FRAMES) - 3, max(np.quantile(S_["H"], 0.999) for _, S_ in FRAMES) + 3)
-s_lim = (min(S_["S"].min() for _, S_ in FRAMES) - 1, max(S_["S"].max() for _, S_ in FRAMES) + 1)
-fig = plt.figure(figsize=(12, 5.8))
-gs_ = fig.add_gridspec(2, 2, height_ratios=[1.25, 0.75], hspace=0.05)
-axs = [fig.add_subplot(gs_[0, 0]), fig.add_subplot(gs_[0, 1]), fig.add_subplot(gs_[1, 0]), fig.add_subplot(gs_[1, 1])]
+        lw = loglik_all(E_a, info_k, marg_k) - ll_a
+        w = np.exp(lw - lw.max())
+        w /= w.sum()
+        if ess(w) >= FRAME_ESS:
+            S_ = summarise(E_a, info_k, w)
+        else:
+            E_a = eve_draws(d, night_fit(d, info_k, marg_k))
+            info_a, marg_a, ll_a = info_k, marg_k, loglik_all(E_a, info_k, marg_k)
+            S_ = summarise(E_a, info_k)
+            n_refit += 1
+    n_ = int((st_.status == "called").sum())
+    FRAMES.append((f"Row {k + 1} of {len(log)}, logged at {r.t:%H:%M} ET: {describe_row(r)}\n"
+                   f"{n_} tracked races called", S_, r.t.strftime("%H:%M")))
+del E_a
+TIMES["call-by-call refits"] = time.time() - t0
+TRACE = pd.DataFrame({"House": [S_["P(House)"] for _, S_, _ in FRAMES],
+                      "Senate": [S_["P(Senate)"] for _, S_, _ in FRAMES]})
+snap_at = [k for k in range(1, len(FRAMES)) if k == len(FRAMES) - 1 or FRAMES[k + 1][2] != FRAMES[k][2]]
+h_lim = (min(np.quantile(S_["H"], 0.001) for _, S_, _ in FRAMES) - 3,
+         max(np.quantile(S_["H"], 0.999) for _, S_, _ in FRAMES) + 3)
+s_lim = (min(S_["S"].min() for _, S_, _ in FRAMES) - 1, max(S_["S"].max() for _, S_, _ in FRAMES) + 1)
+fig = plt.figure(figsize=(12, 9.8), dpi=72, layout="none")      # fixed axes, so the frames do not jump
+gs_ = fig.add_gridspec(3, 2, height_ratios=[1.4, 0.75, 0.45], hspace=0.6, wspace=0.08,
+                       top=0.9, bottom=0.08, left=0.05, right=0.98)
+axs = [fig.add_subplot(gs_[0, 0]), fig.add_subplot(gs_[0, 1]), fig.add_subplot(gs_[1, 0]),
+       fig.add_subplot(gs_[1, 1]), fig.add_subplot(gs_[2, :])]
 title = fig.suptitle("", fontsize=12)
 
 
 def show_frame(k):
-    lab, S_ = FRAMES[k]
+    lab, S_, _ = FRAMES[k]
     for ax in axs:
         ax.clear()
     gauge(axs[0], S_["P(House)"], EVE["P(House)"], "chance the Democrats win the House")
     gauge(axs[1], S_["P(Senate)"], EVE["P(Senate)"], "chance the Democrats control the Senate")
     seat_bars(axs[2], S_["H"], 218, 435, "House", S_["w"], h_lim)
     seat_bars(axs[3], S_["S"], 51, 100, "Senate (34 not up included)", S_["w"], s_lim)
-    n_ = 0 if lab == "eve" else int((state_at(SNAPS[k - 1]).status == "called").sum())
-    title.set_text("The eve forecast (gold ticks)" if lab == "eve" else
-                   f"As of {lab} ET: {n_} tracked races called (gold ticks: the eve)")
+    ax = axs[4]
+    for j in snap_at:
+        ax.axvline(j, color=INK, lw=0.5, alpha=0.25)
+        ax.text(j, 1.01, FRAMES[j][2], fontsize=7, ha="center", va="bottom", rotation=90, color=INK, alpha=0.7)
+    ax.plot(TRACE.index, TRACE.House, color=D_C, lw=1, alpha=0.35)
+    ax.plot(TRACE.index, TRACE.Senate, color=D_C, lw=1, ls="--", alpha=0.35)
+    ax.plot(TRACE.index[: k + 1], TRACE.House[: k + 1], color=D_C, lw=2, label="P(D House)")
+    ax.plot(TRACE.index[: k + 1], TRACE.Senate[: k + 1], color=D_C, lw=2, ls="--", label="P(D Senate)")
+    ax.axvline(k, color=INK, lw=1.2)
+    ax.set_xlim(-0.5, len(FRAMES) - 0.5)
+    ax.set_ylim(min(0.4, TRACE.values.min() - 0.05), 1.0)
+    ax.set_xlabel("rows of the log (thin lines: the hourly snapshots, labelled by their time)")
+    ax.legend(loc="lower right", fontsize=8, frameon=False)
+    title.set_text(lab if k else "The eve forecast (gold ticks); each frame after it adds one row of the log")
     return axs
 
 
 show_frame(0)
-anim = animation.FuncAnimation(fig, show_frame, frames=len(FRAMES), interval=1200)
+anim = animation.FuncAnimation(fig, show_frame, frames=len(FRAMES), interval=700)
 plt.close(fig)
-with warnings.catch_warnings():
+with warnings.catch_warnings(), plt.rc_context({"figure.constrained_layout.use": False}):  # saving re-reads the style
     warnings.simplefilter("ignore", UserWarning)
     anim_html = anim.to_jshtml(default_mode="once")
-print(f"{len(FRAMES)} frames: " + ", ".join(f"{lab} House {S_['P(House)']:.2f} Senate {S_['P(Senate)']:.2f}"
-                                           for lab, S_ in FRAMES))
+step = TRACE.diff().abs()
+print(f"{len(FRAMES)} frames, {n_refit} refits along the way (ESS floor {FRAME_ESS})")
+for c in ["House", "Senate"]:
+    j = int(step[c].idxmax())
+    print(f"largest single-row step in P(D {c}): {TRACE[c][j - 1]:.3f} -> {TRACE[c][j]:.3f}, "
+          f"{FRAMES[j][0].splitlines()[0]}")
 HTML(anim_html)
 
 # %%
