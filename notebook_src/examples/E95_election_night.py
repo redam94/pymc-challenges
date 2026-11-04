@@ -14,7 +14,21 @@
 # | **Type** | Advanced worked example - read, run, modify |
 # | **Data** | Real: E94's data and its corrected frozen forecast of the 2026 US midterms (see E94 for sources and licences), and a log of the race calls made on election night, 3 November 2026, by the AP and the networks, entered by hand from their live pages (one small CSV that grows through the night) |
 # | **You will learn** | A **race call as data**: an interval on the true margin, with the race's own noise integrated out · **importance reweighting** of a frozen posterior, with the **effective sample size** as the warning light · the same update as a **PyMC refit** with a `Potential` · replaying the night **snapshot by snapshot**, and **what each call did** on its own · what the **latest calls** changed in every other race, and what they would have changed had they gone the other way · reading **"too close to call"** and **partial counts**, whose lean depends on the order the ballots are counted · **conditional forecasts** for the races still out |
+
+# %% [markdown]
+# ## The night at a glance
 #
+# The gauges show the chance that the Democrats win each chamber at the latest snapshot of the night,
+# from the refitted model; the gold tick is the frozen eve forecast. Below each gauge is the distribution
+# of Democratic seats, coloured by which side of the majority line it falls on. They are drawn at the end
+# of the run and placed here.
+
+# %%
+from IPython.display import Markdown, display
+
+GLANCE = display(Markdown("*The gauges are drawn at the end of the run, from the latest snapshot.*"), display_id=True)
+
+# %% [markdown]
 # ## The setting
 #
 # E94 froze a forecast of the 2026 midterms on the afternoon of election day: 237 Democratic House seats
@@ -73,6 +87,7 @@ import pymc as pm
 import pytensor.tensor as pt
 from IPython.display import Markdown, display
 from matplotlib.collections import LineCollection, PolyCollection
+from matplotlib.patches import Circle, Wedge
 from scipy.stats import gaussian_kde, norm
 
 from pymc_challenges import data
@@ -932,6 +947,56 @@ New since {prev_lab}: {", ".join(f"{r.race} {r.winner if r.status == 'called' el
   {S_snap[SNAPS[-1]]['ess']:.0f} of {len(EVE['w'])}).
 """
 display(Markdown(text))
+
+
+def gauge(ax, p, p_eve, label):
+    """A half-dial from a certain Republican win (left) to a certain Democratic win (right)."""
+    rb = plt.get_cmap("RdBu")
+    for k in range(90):
+        ax.add_patch(Wedge((0, 0), 1, 180 - 2 * (k + 1), 180 - 2 * k, width=0.28, color=rb(0.08 + 0.84 * k / 89)))
+    for q, a in ((p_eve, GOLD), (p, INK)):
+        ang = np.radians(180 * (1 - q))
+        if a == GOLD:
+            ax.plot([0.68 * np.cos(ang), 1.06 * np.cos(ang)], [0.68 * np.sin(ang), 1.06 * np.sin(ang)], color=GOLD, lw=3)
+        else:
+            ax.plot([0, 0.86 * np.cos(ang)], [0, 0.86 * np.sin(ang)], color=INK, lw=4, solid_capstyle="round")
+    ax.add_patch(Circle((0, 0), 0.06, color=INK))
+    pct = "> 99%" if p > 0.995 else ("< 1%" if p < 0.005 else f"{100 * p:.0f}%")
+    ax.text(0, -0.3, pct, ha="center", va="center", fontsize=34, weight="bold", color=D_C if p >= 0.5 else R_C)
+    ax.text(0, -0.58, label, ha="center", va="center", fontsize=11, color=INK)
+    ax.text(-1.0, -0.1, "R", ha="center", fontsize=12, weight="bold", color=R_C)
+    ax.text(1.0, -0.1, "D", ha="center", fontsize=12, weight="bold", color=D_C)
+    ax.set_xlim(-1.2, 1.2)
+    ax.set_ylim(-0.72, 1.12)
+    ax.set_aspect("equal")
+    ax.set_axis_off()
+
+
+def seat_bars(ax, v, need, total, label):
+    e = np.arange(v.min() - 0.5, v.max() + 1.5)
+    cnt, _ = np.histogram(v, e)
+    mid = e[:-1] + 0.5
+    ax.bar(mid, cnt / len(v), width=1.0, color=np.where(mid >= need, D_C, R_C), alpha=0.8)
+    ax.axvline(need - 0.5, color=INK, lw=1, ls=":")
+    lo, med, hi = np.quantile(v, [0.05, 0.5, 0.95])
+    spare = int(round(med)) - need
+    how = (f"{spare} more than the {need} a majority needs" if spare > 0 else
+           "exactly a majority" if spare == 0 else f"{-spare} short of the {need} a majority needs")
+    ax.set_title(f"{label}: {med:.0f} Democratic seats (90%: {lo:.0f} to {hi:.0f}),\n{how}", fontsize=10)
+    ax.set_yticks([])
+    ax.set_xlabel("Democratic seats (dotted: majority line)")
+
+
+fig = plt.figure(figsize=(12, 5.8))
+gs_ = fig.add_gridspec(2, 2, height_ratios=[1.25, 0.75], hspace=0.05)
+gauge(fig.add_subplot(gs_[0, 0]), S0["P(House)"], EVE["P(House)"], "chance the Democrats win the House")
+gauge(fig.add_subplot(gs_[0, 1]), S0["P(Senate)"], EVE["P(Senate)"], "chance the Democrats control the Senate")
+seat_bars(fig.add_subplot(gs_[1, 0]), S0["H"], 218, 435, "House")
+seat_bars(fig.add_subplot(gs_[1, 1]), S0["S"], 51, 100, "Senate (34 seats not up included)")
+fig.suptitle(f"Election night, as of {AS_OF[-5:]} ET on 3 November: {ncall} tracked races called "
+             f"(eve forecast: House {EVE['P(House)']:.0%}, Senate {EVE['P(Senate)']:.0%}, gold ticks)", fontsize=12)
+GLANCE.update(fig)
+plt.close(fig)
 TIMES["total"] = time.time() - T_START
 print({k: round(v) for k, v in TIMES.items()})
 
