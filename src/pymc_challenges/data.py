@@ -1855,6 +1855,15 @@ REGISTRY: dict[str, Dataset] = {
         "name-match rates, the state-lean proxy), national House two-party vote by cycle, the 2026 Senate seats not "
         "up, and the sha256 of every raw file read.",
     ),
+    "e95_calls_2026": Dataset(
+        "e95_calls_2026.csv",
+        "https://abcnews.com/Politics/live-updates/midterm-elections-live-updates/?id=137782085",
+        "Election-night race calls (projections by the AP and the networks, not certified results) for the 2026 "
+        "US midterms, entered by hand from the outlets' live pages named in each row; a snapshot that grows "
+        "through the night.",
+        "race (as in e94_races), status (called or too close), winner (D or R), reported_by, as_of_et, the partial "
+        "count where one was given (d_pct, r_pct, pct_expected_in), source_url.",
+    ),
     # ---- examples (E71) ----
     "speed_acc": Dataset(
         "wagenmakers2008_speed_acc.csv",

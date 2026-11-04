@@ -145,16 +145,17 @@ SERIES = [
                "chose the tariff but Supply-Following event days were randomised, and only those days carry the "
                "estimate. A closed-form fleet carries the answer, a robust model misreads the sum on two of three "
                "bands, and four winter evenings, not a thousand homes, set the limit."),
-    dict(key="midterms", range="E94", title="Polls, fundamentals and money", ids=["E94"],
+    dict(key="midterms", range="E94-E95", title="Polls, fundamentals and money", ids=["E94", "E95"],
          intro="Election-eve forecasts of the 2018, 2022 and 2026 US midterms from ragged information: many national "
                "polls, some Senate polls, few district polls and fundamentals everywhere. Backtests on two known "
                "cycles, Jacobson's spending paradox and Levitt's rematches, a nowcast of campaign spending from "
                "lagged FEC filings, and a 2026 forecast frozen before the polls closed, with the code that will "
                "score it, an animated map of its predictive draws, and how far it moves if Democrats fall short of "
-               "their polls."),
+               "their polls. E95 updates the frozen forecast on election night as the races are called: a call as an "
+               "interval on the margin, importance reweighting against a refit, and what each race still out decides."),
 ]
 SERIES_BY_KEY = {s["key"]: s for s in SERIES}
-RECENT = ["E94", "E90", "E88", "E91", "E87", "E89", "E86"]          # newest first, shown on the home page
+RECENT = ["E95", "E94", "E90", "E88", "E91", "E87", "E89", "E86"]          # newest first, shown on the home page
 
 
 def _link(ctx, eid, text=None):

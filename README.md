@@ -29,7 +29,7 @@ for every notebook, so this is optional. Later syncs drop it unless you repeat t
 
 ```
 notebooks/
-  examples/      E01-E91, E94  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
+  examples/      E01-E91, E94, E95  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
   challenges/    C01-C15  your workspace. Tasks, empty cells, hints on request.
   solutions/     C01-C15  full reference solutions, executed, with commentary.
 ```
@@ -314,13 +314,14 @@ How many homes does it take to have a stated chance of a stated cut on the night
 |---|---|---|---|
 | **E91** | The price signal and the substation: how many homes for how many kilowatts? | Low Carbon London smart meters from UK Power Networks (London Datastore, CC BY 4.0; 1,088 tariff homes as a home x event table and 200 homes hourly) and the 2013 price file | what was and was not randomised, naive group difference against a within-home closed-form fleet, a meter-clock failure, balance, placebo and benchmark checks, why a Student-t location misses a sum (quantile shift function), a Gaussian day-level model on randomised evenings with shared and own spreads, delivery curves and a planner's contour map, counting evenings instead of homes, cross-fitted targeting, ranking on earlier load, block-mean carpets, funnels and calendar rasters in plain matplotlib |
 
-#### Polls, fundamentals and money (E94)
+#### Polls, fundamentals and money (E94-E95)
 
-Who wins the 2026 House and Senate, and how much will the campaigns turn out to have spent? Forecasts made on the eve of the 2018 and 2022 midterms from what was public by then hold up against the results, and the 2026 forecast and spending nowcast were frozen on election day before the polls closed, with the code that will score them. The notebook runs on 2 cores and under 1.5 GB, in about 2.5 minutes, with no GPU.
+Who wins the 2026 House and Senate, and how much will the campaigns turn out to have spent? Forecasts made on the eve of the 2018 and 2022 midterms from what was public by then hold up against the results, and the 2026 forecast and spending nowcast were frozen on election day before the polls closed, with the code that will score them. E95 updates the frozen forecast on election night as the races are called. Each notebook runs on 2 cores and under 2 GB, in about 2.5 and 4.5 minutes, with no GPU.
 
 | | Topic | Data | Key techniques |
 |---|---|---|---|
 | **E94** | Ragged information: polls, fundamentals and money in the US midterms | FEC results workbooks, candidate reports and independent expenditures 2016-2026 (public domain), FiveThirtyEight polls, partisan lean and poll errors (CC BY 4.0), MEDSL House returns, Wikipedia 2026 nominees, Cook PVI, race polls and aggregator averages as of 2026-11-02 (CC BY-SA 4.0) | a midterm prior, a weekly reverse random walk with house effects and a shared polling error, the E40 rotation, fundamentals learned on earlier cycles only, state effects shared by House and Senate, backtests against aggregate-only, polls-only and fundamentals-only forecasts, Jacobson's paradox, Levitt's rematches with hierarchical slopes, a beta-binomial reporting-lag model and a hierarchical late-spending model for a nowcast of campaign spending, a frozen forecast and its scorer, an animated map of predictive draws, sensitivity to a polling error that favours one party |
+| **E95** | Election night: updating a frozen forecast as the races are called | E94's data and frozen 2026 forecast, and election-night race calls by the AP and the networks (hand-entered from their live pages) | a race call as an interval on the margin with the race noise integrated out, importance reweighting of a frozen posterior and its effective sample size, the same update as a PyMC refit with a Potential, "too close to call" as data, a final margin as data, conditional control probabilities for the races still out, a state map of the update |
 
 ### Data work (D-series)
 
