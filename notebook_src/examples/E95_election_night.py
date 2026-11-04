@@ -1107,7 +1107,8 @@ plt.close(fig)
 # likelihood ratio of the new information to the old; that is exact importance sampling, and it stays
 # cheap while only a few calls separate a frame from its fit. When the ESS falls below 500, the frame is
 # refitted by NUTS and the later frames reweight that refit instead. The last frame is the refit the
-# gauges at the top show.
+# gauges at the top show. The same frames are saved as an animated GIF,
+# [E95_election_night.gif](E95_election_night.gif), to paste into a message or a slide.
 
 # %%
 from matplotlib import animation
@@ -1212,6 +1213,21 @@ for c in ["House", "Senate"]:
     j = int(step[c].idxmax())
     print(f"largest single-row step in P(D {c}): {TRACE[c][j - 1]:.3f} -> {TRACE[c][j]:.3f}, "
           f"{FRAMES[j][0].splitlines()[0]}")
+
+from PIL import Image                                    # installed with matplotlib
+
+GIF = "E95_election_night.gif"                           # written next to the notebook, to paste elsewhere
+gif = []
+with plt.rc_context({"figure.constrained_layout.use": False}):
+    for k in range(len(FRAMES)):
+        show_frame(k)
+        buf = io.BytesIO()
+        fig.savefig(buf, format="png", dpi=fig.dpi)      # the figure is closed, so save rather than draw
+        rgb = Image.open(buf).convert("RGB")
+        gif.append(rgb.quantize(colors=128, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE))
+gif[0].save(GIF, save_all=True, append_images=gif[1:], loop=0, optimize=True,
+            duration=[2000] + [700] * (len(gif) - 2) + [4000])   # hold the eve and the latest frame
+print(f"wrote {GIF}: {len(gif)} frames, {os.path.getsize(GIF) / 1e6:.1f} MB")
 HTML(anim_html)
 
 # %%

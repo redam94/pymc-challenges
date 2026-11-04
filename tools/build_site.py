@@ -66,6 +66,7 @@ class Entry:
     series: str = ""
     solution_path: Path | None = None
     meta: dict = field(default_factory=dict)
+    card_img: str = ""  # from the site root, set by card_images()
 
     @property
     def slug(self) -> str:
@@ -434,6 +435,8 @@ def render_example(e: Entry, out: Path, prev, nxt, repo_url) -> None:
                      depth=1, active="examples", head_extra=head, toc=toc,
                      description=re.sub("<[^>]+>|`", "", e.techniques)[:300])
     (out / "examples" / f"{e.slug}.html").write_text(html_doc)
+    for f in e.nb_path.parent.glob(f"{e.slug}*.gif"):  # animations the notebook saved beside itself
+        shutil.copy(f, out / "examples" / f.name)
 
 
 def hints_block(task: str, spec: dict) -> str:
@@ -534,12 +537,48 @@ def render_solution(e: Entry, out: Path, repo_url) -> None:
 # --------------------------------------------------------------------------- index pages
 
 
+def png_size(raw: bytes) -> tuple[int, int]:
+    return int.from_bytes(raw[16:20], "big"), int.from_bytes(raw[20:24], "big")
+
+
+def card_images(examples: list[Entry], out: Path) -> None:
+    """Copy one figure per example to assets/cards/ for its card (content.CARD_FIGURE, else a guess)."""
+    (out / "assets" / "cards").mkdir(parents=True, exist_ok=True)
+    for e in examples:
+        pick = content.CARD_FIGURE.get(e.id)
+        if isinstance(pick, str) and (e.nb_path.parent / pick).exists():
+            ext = Path(pick).suffix.lstrip(".")
+            shutil.copy(e.nb_path.parent / pick, out / "assets" / "cards" / f"{e.id}.{ext}")
+            e.card_img = f"assets/cards/{e.id}.{ext}"
+            continue
+        figs = []
+        for cell in nbformat.read(e.nb_path, 4).cells:
+            for o in cell.get("outputs", []) if cell.cell_type == "code" else []:
+                d = o.get("data", {})
+                for mime, ext in (("image/png", "png"), ("image/jpeg", "jpg")):
+                    if mime in d:
+                        figs.append((base64.b64decode(d[mime]), ext))
+        if not figs:
+            continue
+        if isinstance(pick, int) and 1 <= pick <= len(figs):
+            raw, ext = figs[pick - 1]
+        else:  # the largest figure, by bytes, that is wider than tall and not a thin strip
+            def score(f):
+                w, h = png_size(f[0]) if f[1] == "png" else (16, 9)
+                return (1.1 <= w / max(h, 1) <= 2.8, len(f[0]))
+            raw, ext = max(figs, key=score)
+        (out / "assets" / "cards" / f"{e.id}.{ext}").write_bytes(raw)
+        e.card_img = f"assets/cards/{e.id}.{ext}"
+
+
 def card(e: Entry, depth: int = 0) -> str:
     up = "../" * depth
     tech = e.techniques
     if len(tech) > 260:
         tech = tech[:260].rsplit(",", 1)[0] + ", …"
-    return (f'<a class="card" href="{up}{e.url}"><span class="card-id">{e.id}</span>'
+    img = (f'<span class="card-img"><img src="{up}{e.card_img}" alt="" loading="lazy" decoding="async"></span>'
+           if e.card_img else "")
+    return (f'<a class="card" href="{up}{e.url}">{img}<span class="card-id">{e.id}</span>'
             f"<span class=\"card-title\">{md_inline(e.title)}</span>"
             f'<span class="card-data">{md_inline(e.data)}</span>'
             f'<span class="card-tech">{md_inline(tech)}</span></a>')
@@ -585,6 +624,7 @@ def build(out: Path, repo_url: str | None, only: list[str] | None) -> None:
     for f in ASSETS.iterdir():
         shutil.copy(f, out / "assets" / f.name)
     (out / ".nojekyll").write_text("")
+    card_images(examples, out)
 
     def wanted(e):
         return not only or e.id in only
