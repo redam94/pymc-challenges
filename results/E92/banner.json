@@ -1,0 +1,57 @@
+{
+  "build_date": {
+    "label": "measured",
+    "unit": "",
+    "value": "2026-11-03"
+  },
+  "chains": {
+    "label": "measured",
+    "unit": "",
+    "value": "4, in the PyMC audit only"
+  },
+  "disk": {
+    "label": "measured",
+    "unit": "",
+    "value": "7 MB stored results (replay arrays 0.8 MB); 23 MB raw pull in the cache"
+  },
+  "download": {
+    "label": "measured",
+    "unit": "",
+    "value": "214 MB raw from the Argo ERDDAP mirror (once); 1.1 MB table in git"
+  },
+  "git_hash": {
+    "label": "measured",
+    "unit": "",
+    "value": "e0a113302209-dirty"
+  },
+  "hardware": {
+    "label": "measured",
+    "unit": "",
+    "value": "Ryzen 9 5950X (15 cores online), 64 GB, RTX 3090 Ti"
+  },
+  "peak_ram": {
+    "label": "measured",
+    "unit": "",
+    "value": "2.5 GB (GPU jobs), 1.4 GB (one audit chain)"
+  },
+  "peak_vram": {
+    "label": "measured",
+    "unit": "",
+    "value": "14.1 GiB of the 16.6 GiB JAX pool"
+  },
+  "precision": {
+    "label": "measured",
+    "unit": "",
+    "value": "float32 for exploration and the design, float64 for the last optimiser steps, Hessian and Sobol points"
+  },
+  "smaller_machine": {
+    "label": "estimated",
+    "unit": "",
+    "value": "replay needs no GPU and loads the stored run on 2 cores; a full run without the GPU pays 48 s per float64 gradient at n = 20,000 on 15 cores against 0.9 s in float32 on the GPU (P3), so roughly 50x longer for the fits"
+  },
+  "wall_time": {
+    "label": "measured",
+    "unit": "",
+    "value": "7.2 h end to end (GPU stages 2.9 h; PyMC audit beside them)"
+  }
+}

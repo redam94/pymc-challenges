@@ -1,0 +1,234 @@
+{
+  "climatology": {
+    "checks": {
+      "adaptive_400": {
+        "anomaly_mean_by_year_c": {
+          "2023": 0.10089997714423826,
+          "2024": 0.08272934821495721,
+          "2025": 0.17715930932381432
+        },
+        "anomaly_mean_fit_c": 0.0916037006665059,
+        "anomaly_sd_fit_c": 1.6926419996716149,
+        "bandwidth_km_quantiles": [
+          150.0,
+          150.0,
+          174.86885480438448,
+          250.6798614094468,
+          777.2961632644892
+        ],
+        "base_missing_clim": 0,
+        "base_profiles": 95990,
+        "base_resid_sd_c": 1.1860133401502213,
+        "cells_fitted": 2191,
+        "fit_profiles": 26055,
+        "fit_s": 1.1,
+        "gulf_stream": {
+          "cells": 91,
+          "excess_rms_c": 0.0,
+          "max_abs_cell_mean_c": 0.4740400070701667,
+          "rms_cell_mean_c": 0.07887860910764781
+        },
+        "gulf_stream_heldout_2021_2022": {
+          "cells": 1,
+          "excess_rms_c": 0.3796518700880087,
+          "max_abs_cell_mean_c": 0.38686388079368716,
+          "rms_cell_mean_c": 0.38686388079368716
+        },
+        "missing_clim_by_year": {
+          "2024": 1,
+          "2025": 19
+        },
+        "mode_offset": {
+          "bootstrap_se_c": 0.07198390066235257,
+          "cells": 92,
+          "difference_c": -0.14072953941669994,
+          "n_da": 18689,
+          "n_r": 7366,
+          "raw_difference_c": -0.11388036420757475
+        },
+        "rule": {
+          "adaptive_k": 400.0,
+          "bandwidth_km": 1000.0,
+          "h_min": 150.0
+        }
+      },
+      "fixed_1000km": {
+        "anomaly_mean_by_year_c": {
+          "2023": 0.006680253010233876,
+          "2024": 0.030236025103789827,
+          "2025": 0.05562259746693786
+        },
+        "anomaly_mean_fit_c": 0.018732064407961633,
+        "anomaly_sd_fit_c": 1.8254819000996807,
+        "bandwidth_km_quantiles": [
+          1000.0,
+          1000.0,
+          1000.0,
+          1000.0,
+          1000.0
+        ],
+        "base_missing_clim": 0,
+        "base_profiles": 95990,
+        "base_resid_sd_c": 1.5134973356285446,
+        "cells_fitted": 2602,
+        "fit_profiles": 26056,
+        "fit_s": 10.3,
+        "gulf_stream": {
+          "cells": 91,
+          "excess_rms_c": 0.8636906981910227,
+          "max_abs_cell_mean_c": 6.309873181097059,
+          "rms_cell_mean_c": 0.874522725893374
+        },
+        "gulf_stream_heldout_2021_2022": {
+          "cells": 1,
+          "excess_rms_c": 0.0,
+          "max_abs_cell_mean_c": 0.007498090279117814,
+          "rms_cell_mean_c": 0.007498090279117814
+        },
+        "missing_clim_by_year": {},
+        "mode_offset": {
+          "bootstrap_se_c": 0.10628986053120502,
+          "cells": 92,
+          "difference_c": -0.34368022837828305,
+          "n_da": 18689,
+          "n_r": 7367,
+          "raw_difference_c": -0.2829050588826915
+        },
+        "rule": {
+          "bandwidth_km": 1000.0
+        }
+      },
+      "fixed_500km": {
+        "anomaly_mean_by_year_c": {
+          "2023": 0.07552120879271597,
+          "2024": 0.0795586708464288,
+          "2025": 0.15259138775121528
+        },
+        "anomaly_mean_fit_c": 0.07758689065631919,
+        "anomaly_sd_fit_c": 1.7133336839153481,
+        "bandwidth_km_quantiles": [
+          500.0,
+          500.0,
+          500.0,
+          500.0,
+          500.0
+        ],
+        "base_missing_clim": 0,
+        "base_profiles": 95990,
+        "base_resid_sd_c": 1.3564729387351184,
+        "cells_fitted": 2311,
+        "fit_profiles": 26056,
+        "fit_s": 3.1,
+        "gulf_stream": {
+          "cells": 91,
+          "excess_rms_c": 0.49331321363734637,
+          "max_abs_cell_mean_c": 3.2233276633626198,
+          "rms_cell_mean_c": 0.510907794959687
+        },
+        "gulf_stream_heldout_2021_2022": {
+          "cells": 1,
+          "excess_rms_c": 0.2189761105987756,
+          "max_abs_cell_mean_c": 0.23082053624673343,
+          "rms_cell_mean_c": 0.23082053624673343
+        },
+        "missing_clim_by_year": {},
+        "mode_offset": {
+          "bootstrap_se_c": 0.0824877006279633,
+          "cells": 92,
+          "difference_c": -0.21726487124797647,
+          "n_da": 18689,
+          "n_r": 7367,
+          "raw_difference_c": -0.14806529771821117
+        },
+        "rule": {
+          "bandwidth_km": 500.0
+        }
+      }
+    },
+    "clim_sha256": "0f4dc771d3afe31b9861330329a2db1c3c2ece815a5f195a2217ed356c5be8de",
+    "gates": [
+      "gates_2026-11-03.json P2_data",
+      "gates_2026-11-03b.json"
+    ],
+    "labels": "all measured",
+    "land_sha256": "a98b2e6e8c49b2fc3709a2366e9f2407486d850969af5199c39e33e89d26bfe5",
+    "published_by_year": {
+      "2023": 12725,
+      "2024": 13330,
+      "2025": 14288
+    },
+    "published_rows": 40343,
+    "published_rule": "adaptive_400",
+    "table_sha256": "bc11b8fffcddb66f5a2f4be70358962c051c015974b66aea97f9868b0dad4efe",
+    "verdict_gates_2026-11-03_fixed_1000km": {
+      "anomaly_sd": false,
+      "fit_profiles": true,
+      "gulf_stream_mean": false,
+      "mode_offset": false
+    },
+    "verdict_gates_2026-11-03b_adaptive": {
+      "anomaly_sd": false,
+      "beats_1000km_on_both": false,
+      "fit_profiles": true,
+      "gulf_stream_heldout": true,
+      "gulf_stream_mean": true,
+      "mode_offset": false
+    }
+  },
+  "climatology_heldout_posthoc": {
+    "adaptive_400": {
+      "cells_min30": 77,
+      "excess_rms_c": 0.4021968213789194,
+      "heldout_mean_box_c": 0.21929499663232235,
+      "heldout_rmse_box_c": 1.309206268015002,
+      "heldout_rmse_gs_c": 1.9905033127516572
+    },
+    "fixed_1000km": {
+      "cells_min30": 77,
+      "excess_rms_c": 0.9189173383293601,
+      "heldout_mean_box_c": 0.19209622929760586,
+      "heldout_rmse_box_c": 1.4354940655132142,
+      "heldout_rmse_gs_c": 2.128419380935363
+    },
+    "fixed_500km": {
+      "cells_min30": 77,
+      "excess_rms_c": 0.5737026663144361,
+      "heldout_mean_box_c": 0.20961526485634072,
+      "heldout_rmse_box_c": 1.3142402609028538,
+      "heldout_rmse_gs_c": 1.9931834169717895
+    },
+    "note": "chosen after seeing that the gates_b held-out line had 1 qualifying cell: same measure with cells of 30+ profiles, plus held-out rmse; fit 2015-2020, score 2021-2022"
+  },
+  "derive": {
+    "ascending_good_position_profiles_in_rows_by_year": {
+      "2015": 12983,
+      "2016": 14180,
+      "2017": 12351,
+      "2018": 12713,
+      "2019": 12956,
+      "2020": 11261,
+      "2021": 12724,
+      "2022": 13443,
+      "2023": 13513,
+      "2024": 14034,
+      "2025": 14899
+    },
+    "at": "2026-11-03T20:04:01+00:00",
+    "labels": "all measured",
+    "profiles_by_year": {
+      "2015": 11916,
+      "2016": 12901,
+      "2017": 11805,
+      "2018": 12071,
+      "2019": 11639,
+      "2020": 10794,
+      "2021": 12100,
+      "2022": 12764,
+      "2023": 12725,
+      "2024": 13331,
+      "2025": 14307
+    },
+    "raw_files": 132,
+    "raw_gz_bytes": 19795162
+  }
+}

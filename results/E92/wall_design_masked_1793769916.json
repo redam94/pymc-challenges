@@ -1,0 +1,14 @@
+{
+  "args": [
+    "8"
+  ],
+  "job": "design_masked",
+  "started": "2026-11-04T05:21:26Z",
+  "vram": {
+    "device": "cuda:0",
+    "in_use_gb": 0.0,
+    "limit_gb": 16.564453125,
+    "peak_gb": 13.971939086914062
+  },
+  "wall_s": 230.3116030189849
+}

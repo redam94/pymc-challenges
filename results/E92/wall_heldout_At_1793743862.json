@@ -1,0 +1,12 @@
+{
+  "args": [],
+  "job": "heldout_At",
+  "started": "2026-11-03T22:10:01Z",
+  "vram": {
+    "device": "cuda:0",
+    "in_use_gb": 0.0,
+    "limit_gb": 16.564453125,
+    "peak_gb": 12.857187032699585
+  },
+  "wall_s": 60.82025534499553
+}

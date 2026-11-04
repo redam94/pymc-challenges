@@ -1,0 +1,14 @@
+{
+  "args": [
+    "4"
+  ],
+  "job": "failure_runs",
+  "started": "2026-11-04T00:17:32Z",
+  "vram": {
+    "device": "cuda:0",
+    "in_use_gb": 0.0,
+    "limit_gb": 16.564453125,
+    "peak_gb": 0.5901927947998047
+  },
+  "wall_s": 3.382831153983716
+}

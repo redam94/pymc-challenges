@@ -1,0 +1,455 @@
+{
+  "gpu_peak_projection": {
+    "chol": {
+      "at_23939": 8.547502441290042,
+      "at_30000": 13.334273905981158,
+      "intercept": 0.1566220919291198,
+      "peaks": [
+        0.5000934600830078,
+        1.6490237712860107,
+        6.0077126026153564
+      ],
+      "slope": 3.9303877485714294
+    },
+    "logp": {
+      "at_23939": 6.403905318798259,
+      "at_30000": 9.982903355643865,
+      "intercept": 0.13016851743062396,
+      "peaks": [
+        0.3750934600830078,
+        1.2608695030212402,
+        4.501971244812012
+      ],
+      "slope": 2.938692632380953
+    },
+    "vg": {
+      "at_23939": 6.41080695975594,
+      "at_30000": 9.99991956211272,
+      "intercept": 0.11934002240498895,
+      "peaks": [
+        0.35885071754455566,
+        1.2608695030212402,
+        4.501971244812012
+      ],
+      "slope": 2.9469976380952385
+    }
+  },
+  "labels": "measured, projections extrapolated",
+  "line": {
+    "cpu_f64_rate": {
+      "go": ">= 200 Gflop/s",
+      "what": "scipy or JAX CPU f64 Cholesky at n = 20000, 15 threads, best of the two"
+    },
+    "devices": "GPU f32, GPU f64, JAX CPU f32 and f64 (15 threads, cores 0-9,11-15), scipy LAPACK f32 and f64 (15 OpenBLAS threads, same cores)",
+    "gpu_f32_rate": {
+      "go": ">= 0.5 Tflop/s",
+      "what": "Cholesky flops n^3/3 over best wall time at n = 20000"
+    },
+    "gpu_peak_30k": {
+      "go": "gradient projection <= 16.5 GiB",
+      "no_go": "a blocked K^-1 (column blocks, only L held) or n = 20000 cap, whichever P3 times better",
+      "what": "least-squares line peak_GiB = a x matrix_GiB + b over the measured GPU f32 gradient peaks at n = 5000, 10000, 20000, evaluated at n = 30000; and the same for Cholesky alone"
+    },
+    "stop": "GPU fails both rate and memory AND CPU fails its rate: stop, n = 20000 cap (plan stop rule)",
+    "what": "n = 2000, 5000, 10000, 20000 real 2023-2024 locations (first n in time order of a fixed shuffle), Matern 3/2 two-scale kernel at the plan's illustrative scales; Cholesky, K^-1 from the factor, and the hand value-and-gradient; each GPU configuration in a fresh process with no previous result held; every output depends on the factor"
+  },
+  "notes": [
+    "GPU f64 logp and vg at n=20000 ran out of memory with XLA_PYTHON_CLIENT_PREALLOCATE=false (an 8.94 GiB request); with a preallocated pool they ran, peak 8.97 GiB",
+    "E92_MATMUL=highest rows (added after seeing the f32 rates, to test for TF32) ran at the same speed as the default to within 2%",
+    "the bench line 4.0 x matrix + 0.047 GiB matched the f32 Cholesky alone (input held: 6.01 GiB at 20k); logp and vg peak at about 3 x matrix"
+  ],
+  "table": {
+    "cpu_f32_chol_10000": {
+      "gflops": 533.2794994071294,
+      "peak_gib": null,
+      "s": 0.6250630930007901
+    },
+    "cpu_f32_chol_2000": {
+      "gflops": 116.82560131029001,
+      "peak_gib": null,
+      "s": 0.022826047003036365
+    },
+    "cpu_f32_chol_20000": {
+      "gflops": 764.3027309311119,
+      "peak_gib": null,
+      "s": 3.489018891006708
+    },
+    "cpu_f32_chol_5000": {
+      "gflops": 301.05609971067855,
+      "peak_gib": null,
+      "s": 0.13840166901354678
+    },
+    "cpu_f32_kinv_10000": {
+      "gflops": 1235.0433243168059,
+      "peak_gib": null,
+      "s": 1.619376389979152
+    },
+    "cpu_f32_kinv_2000": {
+      "gflops": 767.6611233811315,
+      "peak_gib": null,
+      "s": 0.020842530007939786
+    },
+    "cpu_f32_kinv_20000": {
+      "gflops": 1348.3936365841914,
+      "peak_gib": null,
+      "s": 11.865971157007152
+    },
+    "cpu_f32_kinv_5000": {
+      "gflops": 977.8456855758533,
+      "peak_gib": null,
+      "s": 0.2556640620168764
+    },
+    "cpu_f32_logp_10000": {
+      "gflops": 349.5097841477608,
+      "peak_gib": null,
+      "s": 0.9537167439993937
+    },
+    "cpu_f32_logp_2000": {
+      "gflops": 83.41899677799532,
+      "peak_gib": null,
+      "s": 0.03196713901706971
+    },
+    "cpu_f32_logp_20000": {
+      "gflops": 553.6834330570092,
+      "peak_gib": null,
+      "s": 4.816229830001248
+    },
+    "cpu_f32_logp_5000": {
+      "gflops": 197.57262993668812,
+      "peak_gib": null,
+      "s": 0.21089290900272317
+    },
+    "cpu_f32_vg_10000": {
+      "gflops": 595.9631429331254,
+      "peak_gib": null,
+      "s": 3.91523093500291
+    },
+    "cpu_f32_vg_2000": {
+      "gflops": 160.70026471047723,
+      "peak_gib": null,
+      "s": 0.1161582820059266
+    },
+    "cpu_f32_vg_20000": {
+      "gflops": 840.337914308238,
+      "peak_gib": null,
+      "s": 22.213286284997594
+    },
+    "cpu_f32_vg_5000": {
+      "gflops": 374.4277700019599,
+      "peak_gib": null,
+      "s": 0.7789664390147664
+    },
+    "cpu_f64_chol_10000": {
+      "gflops": 285.76740187395984,
+      "peak_gib": null,
+      "s": 1.1664498159952927
+    },
+    "cpu_f64_chol_2000": {
+      "gflops": 117.73506742526165,
+      "peak_gib": null,
+      "s": 0.02264972301782109
+    },
+    "cpu_f64_chol_20000": {
+      "gflops": 400.9359041188717,
+      "peak_gib": null,
+      "s": 6.651104676013347
+    },
+    "cpu_f64_chol_5000": {
+      "gflops": 187.31988846507207,
+      "peak_gib": null,
+      "s": 0.2224358929961454
+    },
+    "cpu_f64_kinv_10000": {
+      "gflops": 546.9046544912514,
+      "peak_gib": null,
+      "s": 3.6569445580244064
+    },
+    "cpu_f64_kinv_2000": {
+      "gflops": 419.405889432426,
+      "peak_gib": null,
+      "s": 0.038149202009662986
+    },
+    "cpu_f64_kinv_20000": {
+      "gflops": 576.8401295310414,
+      "peak_gib": null,
+      "s": 27.737321280001197
+    },
+    "cpu_f64_kinv_5000": {
+      "gflops": 484.8412793341907,
+      "peak_gib": null,
+      "s": 0.5156326630094554
+    },
+    "cpu_f64_logp_10000": {
+      "gflops": 162.85166464898643,
+      "peak_gib": null,
+      "s": 2.046852478000801
+    },
+    "cpu_f64_logp_2000": {
+      "gflops": 34.21737031785103,
+      "peak_gib": null,
+      "s": 0.07793312700232491
+    },
+    "cpu_f64_logp_20000": {
+      "gflops": 261.34254168284787,
+      "peak_gib": null,
+      "s": 10.203722093981924
+    },
+    "cpu_f64_logp_5000": {
+      "gflops": 96.6775483615472,
+      "peak_gib": null,
+      "s": 0.43098596698837355
+    },
+    "cpu_f64_vg_10000": {
+      "gflops": 275.7390411699051,
+      "peak_gib": null,
+      "s": 8.46210722802789
+    },
+    "cpu_f64_vg_2000": {
+      "gflops": 75.80095303471965,
+      "peak_gib": null,
+      "s": 0.24625899700913578
+    },
+    "cpu_f64_vg_20000": {
+      "gflops": 386.6556774555169,
+      "peak_gib": null,
+      "s": 48.2772341259988
+    },
+    "cpu_f64_vg_5000": {
+      "gflops": 182.23810210563312,
+      "peak_gib": null,
+      "s": 1.6004702819918748
+    },
+    "gpu_f32_chol_10000": {
+      "gflops": 6312.633593434667,
+      "peak_gib": 1.6490237712860107,
+      "s": 0.05280416301684454
+    },
+    "gpu_f32_chol_2000": {
+      "gflops": 3138.609998796065,
+      "peak_gib": 0.14066243171691895,
+      "s": 0.0008496330119669437
+    },
+    "gpu_f32_chol_20000": {
+      "gflops": 11087.5158620948,
+      "peak_gib": 6.0077126026153564,
+      "s": 0.2405107419763226
+    },
+    "gpu_f32_chol_5000": {
+      "gflops": 6681.048555295314,
+      "peak_gib": 0.5000934600830078,
+      "s": 0.006236546003492549
+    },
+    "gpu_f32_kinv_10000": {
+      "gflops": 14670.535422772784,
+      "peak_gib": 1.6490237712860107,
+      "s": 0.13632767600938678
+    },
+    "gpu_f32_kinv_2000": {
+      "gflops": 5847.991671313985,
+      "peak_gib": 0.14066243171691895,
+      "s": 0.002735982008744031
+    },
+    "gpu_f32_kinv_20000": {
+      "gflops": 19446.568171434672,
+      "peak_gib": 6.0077126026153564,
+      "s": 0.8227672800130676
+    },
+    "gpu_f32_kinv_5000": {
+      "gflops": 12657.007008976354,
+      "peak_gib": 0.5000934600830078,
+      "s": 0.019751904997974634
+    },
+    "gpu_f32_logp_10000": {
+      "gflops": 11545.720508876222,
+      "peak_gib": 1.2608695030212402,
+      "s": 0.028870726004242897
+    },
+    "gpu_f32_logp_2000": {
+      "gflops": 2205.209061026577,
+      "peak_gib": 0.14066290855407715,
+      "s": 0.0012092579854652286
+    },
+    "gpu_f32_logp_20000": {
+      "gflops": 16324.171671117945,
+      "peak_gib": 4.501971244812012,
+      "s": 0.16335693598375656
+    },
+    "gpu_f32_logp_5000": {
+      "gflops": 5616.480905278895,
+      "peak_gib": 0.3750934600830078,
+      "s": 0.007418642984703183
+    },
+    "gpu_f32_vg_10000": {
+      "gflops": 16302.351954049991,
+      "peak_gib": 1.2608695030212402,
+      "s": 0.14312863198574632
+    },
+    "gpu_f32_vg_2000": {
+      "gflops": 4551.952918988532,
+      "peak_gib": 0.14066290855407715,
+      "s": 0.004100803984329104
+    },
+    "gpu_f32_vg_20000": {
+      "gflops": 20364.630231755575,
+      "peak_gib": 4.501971244812012,
+      "s": 0.9166219299950171
+    },
+    "gpu_f32_vg_5000": {
+      "gflops": 10397.234237306644,
+      "peak_gib": 0.35885071754455566,
+      "s": 0.028052331996150315
+    },
+    "gpu_f64_chol_10000": {
+      "gflops": 494.05267247983573,
+      "peak_gib": 3.0274059772491455,
+      "s": 0.6746918940043543
+    },
+    "gpu_f64_chol_2000": {
+      "gflops": 284.75459235876843,
+      "peak_gib": 0.2017374038696289,
+      "s": 0.00936478897347115
+    },
+    "gpu_f64_chol_20000": {
+      "gflops": 541.7772228271693,
+      "peak_gib": 11.968400478363037,
+      "s": 4.922072310000658
+    },
+    "gpu_f64_chol_5000": {
+      "gflops": 493.66340761453534,
+      "peak_gib": 1.0001494884490967,
+      "s": 0.08440298799541779
+    },
+    "gpu_f64_kinv_10000": {
+      "gflops": 534.8187922468009,
+      "peak_gib": 3.0274059772491455,
+      "s": 3.739584376977291
+    },
+    "gpu_f64_kinv_2000": {
+      "gflops": 367.090072272677,
+      "peak_gib": 0.2017374038696289,
+      "s": 0.04358603298896924
+    },
+    "gpu_f64_kinv_20000": {
+      "gflops": 562.5409255863714,
+      "peak_gib": 11.968400478363037,
+      "s": 28.44237507399521
+    },
+    "gpu_f64_kinv_5000": {
+      "gflops": 491.4265942286955,
+      "peak_gib": 1.0001494884490967,
+      "s": 0.5087229770142585
+    },
+    "gpu_f64_logp_10000": {
+      "gflops": 491.9729995275466,
+      "peak_gib": 2.2667226791381836,
+      "s": 0.677543958008755
+    },
+    "gpu_f64_logp_2000": {
+      "gflops": 221.5371188470504,
+      "peak_gib": 0.1406855583190918,
+      "s": 0.012037109991069883
+    },
+    "gpu_f64_logp_20000": {
+      "gflops": 544.0454900155629,
+      "peak_gib": 8.972543001174927,
+      "s": 4.9015509099990595
+    },
+    "gpu_f64_logp_5000": {
+      "gflops": 431.36155897889057,
+      "peak_gib": 0.7020390033721924,
+      "s": 0.09659336999175139
+    },
+    "gpu_f64_vg_10000": {
+      "gflops": 527.3354794951282,
+      "peak_gib": 2.2667226791381836,
+      "s": 4.424760752997827
+    },
+    "gpu_f64_vg_2000": {
+      "gflops": 333.2258739607769,
+      "peak_gib": 0.3045947551727295,
+      "s": 0.056018058996414766
+    },
+    "gpu_f64_vg_20000": {
+      "gflops": 559.6645938317072,
+      "peak_gib": 8.972543001174927,
+      "s": 33.353309950995026
+    },
+    "gpu_f64_vg_5000": {
+      "gflops": 467.61993871681545,
+      "peak_gib": 0.8732783794403076,
+      "s": 0.6237258990004193
+    },
+    "scipy_f32_chol_10000": {
+      "gflops": 1063.4194566847686,
+      "s": 0.31345423599123023
+    },
+    "scipy_f32_chol_2000": {
+      "gflops": 511.9737876960963,
+      "s": 0.005208599992329255
+    },
+    "scipy_f32_chol_20000": {
+      "gflops": 1190.9991885251852,
+      "s": 2.2390163590025622
+    },
+    "scipy_f32_chol_5000": {
+      "gflops": 904.4484508958996,
+      "s": 0.0460685919970274
+    },
+    "scipy_f32_kinv_10000": {
+      "gflops": 1213.6003747407083,
+      "s": 0.5493296479980927
+    },
+    "scipy_f32_kinv_2000": {
+      "gflops": 601.4364466339044,
+      "s": 0.008867659023962915
+    },
+    "scipy_f32_kinv_20000": {
+      "gflops": 1309.282967852303,
+      "s": 4.073476448014844
+    },
+    "scipy_f32_kinv_5000": {
+      "gflops": 1154.637975754303,
+      "s": 0.07217269402462989
+    },
+    "scipy_f64_chol_10000": {
+      "gflops": 450.8218063815709,
+      "s": 0.7393904390046373
+    },
+    "scipy_f64_chol_2000": {
+      "gflops": 274.68329877112,
+      "s": 0.00970814999891445
+    },
+    "scipy_f64_chol_20000": {
+      "gflops": 526.5005659883508,
+      "s": 5.064888509019511
+    },
+    "scipy_f64_chol_5000": {
+      "gflops": 442.3599171340663,
+      "s": 0.09419177699601278
+    },
+    "scipy_f64_kinv_10000": {
+      "gflops": 513.287510881091,
+      "s": 1.2988172369950917
+    },
+    "scipy_f64_kinv_2000": {
+      "gflops": 341.15778673553393,
+      "s": 0.015633040020475164
+    },
+    "scipy_f64_kinv_20000": {
+      "gflops": 559.6963023728006,
+      "s": 9.52897725199
+    },
+    "scipy_f64_kinv_5000": {
+      "gflops": 509.2275225155544,
+      "s": 0.16364656199584715
+    }
+  },
+  "verdict": {
+    "cpu_f64_gflops_20k": 526.5005659883508,
+    "cpu_f64_pass": true,
+    "gpu_f32_rate_pass": true,
+    "gpu_f32_rate_tflops_20k": 11.0875158620948,
+    "gpu_peak_30k_vg_gib": 9.99991956211272,
+    "gpu_peak_pass": true
+  }
+}

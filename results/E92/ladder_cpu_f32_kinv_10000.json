@@ -1,0 +1,36 @@
+{
+  "bench_line_gib": 1.5371161193847656,
+  "best_s": 1.619376389979152,
+  "device": "cpu",
+  "finite": true,
+  "first_s": 1.7479645980056375,
+  "flops": 2000000000000,
+  "gflops": 1235.0433243168059,
+  "head": [
+    [
+      2.280569314956665,
+      -0.0003198188787791878,
+      -0.0004466025566216558
+    ]
+  ],
+  "health": {
+    "machine_checks": 1,
+    "offline_cpus": [
+      10,
+      26
+    ]
+  },
+  "inputs_gib_before": null,
+  "labels": "measured; flops are nominal counts",
+  "matmul_precision": "default",
+  "matrix_gib": 0.3725290298461914,
+  "n": 10000,
+  "op": "kinv",
+  "peak_gib": null,
+  "preallocate": "false",
+  "prec": 32,
+  "runs_s": [
+    1.619376389979152
+  ],
+  "threads": "15"
+}

@@ -1,0 +1,12 @@
+{
+  "args": [],
+  "job": "fit_At_final",
+  "started": "2026-11-03T21:58:27Z",
+  "vram": {
+    "device": "cuda:0",
+    "in_use_gb": 0.0,
+    "limit_gb": 16.564453125,
+    "peak_gb": 12.841561794281006
+  },
+  "wall_s": 691.2664215489931
+}

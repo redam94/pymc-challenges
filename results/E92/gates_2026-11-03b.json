@@ -1,0 +1,15 @@
+{
+  "change": {
+    "R_rows": "kept; the mode-offset line stays failed and is printed, and the reason above is stated where R rows are used",
+    "climatology": "adaptive bandwidth: at each 1 degree cell h = clip(distance to the 400th nearest base profile, 150, 1000) km; otherwise as gates_2026-11-03 (tricube, local quadratic, 3 harmonics, base years only, same blend)"
+  },
+  "if_fails": "use this climatology anyway if it beats 1000 km on both Gulf Stream measures, say in the plan and notebook that a mean error remains along the front, and let the GP's basin-scale term carry it; no further retuning",
+  "lines": {
+    "anomaly_sd": "unchanged line (< 1.5 C) and reported; it was an assumed bound",
+    "gulf_stream_heldout": "added: the same measure on 2021-2022 residuals of a climatology fitted to 2015-2020 with the same rule; line < 0.4 C (a held-out mean also carries two years of real change)",
+    "gulf_stream_mean": "same measure and line as before (excess rms < 0.3 C), in-sample on 2015-2022",
+    "mode_offset": "unchanged line and reported"
+  },
+  "why": "1000 km and 500 km fixed-bandwidth climatologies leave 0.86 and 0.49 C excess rms along the Gulf Stream (line 0.3); the mode-offset line failed at -0.34 C but a direct measure (raw minus adjusted 100 dbar temperature on the same 19,212 D and A profiles: mean -0.0003 C, sd 0.006 C) shows the real-time correction is negligible, so the cell offset is geography (R floats sit at 35-50N, across the fronts), not calibration. These diagnostics were chosen after seeing the failure.",
+  "written": "2026-11-03, after the P2 climatology lines of gates_2026-11-03 failed (3 of 4), before the change below was run"
+}

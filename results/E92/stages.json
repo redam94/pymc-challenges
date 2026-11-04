@@ -1,0 +1,193 @@
+[
+  {
+    "stage": "small_choices",
+    "at": "2026-11-03T20:19:01Z",
+    "nu": 0.5,
+    "proj": "mercator"
+  },
+  {
+    "stage": "pymc_audit_laplace_800",
+    "at": "2026-11-03T21:08:59Z"
+  },
+  {
+    "stage": "data_fingerprint",
+    "at": "2026-11-03T21:21:00Z",
+    "n_train": 23939
+  },
+  {
+    "stage": "p8",
+    "at": "2026-11-03T21:21:06Z",
+    "passed": true,
+    "m_for_C": 30
+  },
+  {
+    "stage": "p10",
+    "at": "2026-11-03T21:22:16Z",
+    "passed": true,
+    "best_over_random": 2.110209650793521
+  },
+  {
+    "stage": "fit_A_f32",
+    "at": "2026-11-03T21:24:31Z",
+    "edges": [
+      "log_sn"
+    ],
+    "F": 35659.74092511331,
+    "evaluations": 76
+  },
+  {
+    "stage": "fit_A_f64",
+    "at": "2026-11-03T21:48:30Z",
+    "edges": [
+      "log_sn"
+    ],
+    "F": 35659.68312776666,
+    "evaluations": 25
+  },
+  {
+    "stage": "heldout_A",
+    "at": "2026-11-03T21:51:12Z",
+    "share_abs_z_over_3": 0.04017013232514178
+  },
+  {
+    "stage": "fit_At_rounds",
+    "at": "2026-11-03T21:58:25Z"
+  },
+  {
+    "stage": "pymc_audit_800",
+    "at": "2026-11-03T22:04:23Z",
+    "passed": false
+  },
+  {
+    "stage": "pymc_audit_laplace_2000",
+    "at": "2026-11-03T22:04:53Z"
+  },
+  {
+    "stage": "fit_At_final",
+    "at": "2026-11-03T22:09:59Z",
+    "edges": [
+      "log_sn"
+    ],
+    "F": 35659.5812541158,
+    "evaluations": 12
+  },
+  {
+    "stage": "heldout_At",
+    "at": "2026-11-03T22:11:02Z",
+    "share_abs_z_over_3": 0.04017013232514178
+  },
+  {
+    "stage": "hessian",
+    "at": "2026-11-03T22:30:14Z",
+    "model": "A",
+    "negative_definite": true
+  },
+  {
+    "stage": "sobol",
+    "at": "2026-11-03T22:39:13Z",
+    "pareto_k": 0.7643849041570785,
+    "passed": false
+  },
+  {
+    "stage": "design",
+    "at": "2026-11-03T23:03:22Z"
+  },
+  {
+    "stage": "fit_B",
+    "at": "2026-11-03T23:19:17Z",
+    "windows": 79
+  },
+  {
+    "stage": "heldout_B",
+    "at": "2026-11-03T23:20:44Z"
+  },
+  {
+    "stage": "fit_Afix_f32",
+    "at": "2026-11-03T23:22:53Z",
+    "edges": [
+      "log_sn"
+    ],
+    "F": 27501.652038641892,
+    "evaluations": 72
+  },
+  {
+    "stage": "fit_Afix_f64",
+    "at": "2026-11-03T23:46:53Z",
+    "edges": [
+      "log_sn"
+    ],
+    "F": 27500.367668280018,
+    "evaluations": 25
+  },
+  {
+    "stage": "heldout_Afix",
+    "at": "2026-11-03T23:48:01Z",
+    "share_abs_z_over_3": 0.015595463137996219
+  },
+  {
+    "stage": "fit_Afixt_rounds",
+    "at": "2026-11-03T23:58:22Z"
+  },
+  {
+    "stage": "fit_Afixt_final",
+    "at": "2026-11-04T00:09:53Z",
+    "edges": [
+      "log_sn"
+    ],
+    "F": 27500.239361593434,
+    "evaluations": 12
+  },
+  {
+    "stage": "heldout_Afixt",
+    "at": "2026-11-04T00:10:57Z",
+    "share_abs_z_over_3": 0.015595463137996219
+  },
+  {
+    "stage": "maps",
+    "at": "2026-11-04T00:11:07Z",
+    "models": [
+      "A",
+      "Afix"
+    ]
+  },
+  {
+    "stage": "design_alt",
+    "at": "2026-11-04T00:15:24Z",
+    "models": [
+      "Afix",
+      "Afixt"
+    ]
+  },
+  {
+    "stage": "fit_C",
+    "at": "2026-11-04T00:17:29Z",
+    "m": 30,
+    "edges": [
+      "log_sn"
+    ]
+  },
+  {
+    "stage": "heldout_C",
+    "at": "2026-11-04T00:17:29Z"
+  },
+  {
+    "stage": "failure_runs",
+    "at": "2026-11-04T00:18:25Z"
+  },
+  {
+    "stage": "natural_experiment",
+    "at": "2026-11-04T00:23:06Z",
+    "predicted": 0.029451077674718433,
+    "realised": 0.22979486186426654
+  },
+  {
+    "stage": "pymc_audit_2000",
+    "at": "2026-11-04T04:21:20Z",
+    "passed": false
+  },
+  {
+    "stage": "design_masked",
+    "at": "2026-11-04T05:40:04Z",
+    "excluded_sites": 10
+  }
+]

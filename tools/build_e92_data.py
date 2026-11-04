@@ -1,15 +1,17 @@
 """Build the E92 dataset: Argo temperature at 100 dbar in the open North Atlantic, one row a profile.
 
-SKELETON. The stages below are written and were tested on small samples only (`check`). The full
-pull has not been run, and `climatology` is a specification until the pilot in plans/large/E92.md
-reaches it. Nothing here needs a new dependency.
+All stages ran on 2026-11-02 and 2026-11-03 (pull, then derive and climatology under the gates in
+results/E92/gates_2026-11-03*.json; see plans/large/E92.md, "Pilot results"). Run each through
+tools/e92_job.sh. Nothing here needs a new dependency.
 
     uv run python tools/build_e92_data.py plan                   # print the requests; no network
     uv run python tools/build_e92_data.py check SAMPLE_DIR       # run the derive step on samples
     uv run python tools/build_e92_data.py land                   # fetch the Natural Earth land
     uv run python tools/build_e92_data.py meta --go              # one metadata file per year
+    uv run python tools/build_e92_data.py summary                # results/E92/pilot_meta.json
     uv run python tools/build_e92_data.py pull --go              # one CSV per month, resumable
-    uv run python tools/build_e92_data.py derive                 # write data/argo_natl_t100.csv.gz
+    uv run python tools/build_e92_data.py derive                 # reduce rows; base years to the cache
+    uv run python tools/build_e92_data.py climatology            # write data/argo_natl_t100*.{csv.gz,npz}
 
 Source: Argo float data and metadata from the Global Data Assembly Centre (Argo GDAC), SEANOE,
 https://doi.org/10.17882/42182, CC BY 4.0, read through the Ifremer ERDDAP mirror of the GDAC. The
@@ -30,14 +32,19 @@ Facts this script depends on, each confirmed on samples on 2026-11-01 (plans/lar
 - The dataset's stated coverage ends in December 2026 and its metadata hold fill values, so
   ranges are checked here and never taken from the metadata.
 
-Raw pulls go to .scratch/e92/ (not committed). Every file is written atomically and the machine may
-crash at any point: rerunning a stage skips what is finished.
+Land boundaries: Natural Earth 1:50m land, public domain by its terms of use (read 2026-11-01), so
+no credit is required; the page suggests "Made with Natural Earth."
+
+Raw pulls and the land rings go to ~/.cache/pymc-challenges/e92/ (not in git). Every file is written
+atomically and the machine may crash at any point: rerunning a stage skips what is finished.
 """
 
 from __future__ import annotations
 
 import argparse
+import datetime
 import gzip
+import hashlib
 import io
 import struct
 import sys
@@ -52,13 +59,17 @@ import numpy as np
 import pandas as pd
 from matplotlib.path import Path as Polygon
 
-from pymc_challenges.bigrun import atomic_write, sha256_file
+from pymc_challenges.bigrun import CACHE_DIR, Store, atomic_write, sha256_file
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data"
-RAW = ROOT / ".scratch" / "e92"
+RAW = CACHE_DIR / "e92"
 OUT = DATA / "argo_natl_t100.csv.gz"
-LAND_OUT = DATA / "natural_earth_50m_land_natl.npz"
+LAND_ZIP = RAW / "ne_50m_land.zip"
+LAND_OUT = RAW / "natural_earth_50m_land_natl.npz"
+CLIM_OUT = DATA / "argo_natl_t100_climatology.npz"
+BASE = RAW / "base_years.csv.gz"
+DERIVED = RAW / "derived_2023_2025.csv.gz"
 
 ERDDAP = "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv"
 LAND_URL = "https://naciscdn.org/naturalearth/50m/physical/ne_50m_land.zip"
@@ -226,16 +237,107 @@ def open_atlantic(lat, lon, rings: list[np.ndarray]) -> np.ndarray:
     return inside
 
 
-def climatology(rows: pd.DataFrame) -> pd.DataFrame:
-    """SPECIFICATION, not written yet: the mean field the anomalies are taken from.
+EARTH_KM = 6371.0
+KM_PER_DEG = np.pi * EARTH_KM / 180
+CELL_LAT = np.arange(BOX["lat_min"] + 0.5, BOX["lat_max"], 1.0)  # 1 degree cell centres
+CELL_LON = np.arange(BOX["lon_min"] + 0.5, BOX["lon_max"], 1.0)
+CLIM_MIN_PROFILES = 200  # a cell with fewer base profiles inside the bandwidth is left empty
+CLIM_MIN_WEIGHT = 50.0  # ... or with a smaller tricube weight sum
+N_COEF = 12  # 1, u, v, u^2, uv, v^2, then sin and cos of 1, 2, 3 cycles a year
 
-    From BASE_YEARS rows only, so that no fitted or scored value enters its own mean: at each 1
-    degree cell, weighted least squares on points within 1,000 km (tricube weight), with a local
-    quadratic in position and three annual harmonics, as in Kuusela and Stein. Store the coefficients
-    per cell and evaluate at each profile's place and date. The 2023-2025 anomalies then include
-    the warming since the base period, so the model keeps a marginalised intercept and trend.
+
+def year_phase(time: pd.Series) -> np.ndarray:
+    """Fraction of the calendar year elapsed, 0 to 1, from ERDDAP's ISO times."""
+    t = pd.to_datetime(time, utc=True)
+    start = pd.to_datetime(t.dt.year.astype(str) + "-01-01", utc=True)
+    length = np.where(t.dt.is_leap_year, 366.0, 365.0)
+    return ((t - start).dt.total_seconds() / 86400.0 / length).to_numpy()
+
+
+def _unit(lat, lon) -> np.ndarray:
+    lat, lon = np.radians(lat), np.radians(lon)
+    return np.c_[np.cos(lat) * np.cos(lon), np.cos(lat) * np.sin(lon), np.sin(lat)]
+
+
+def _design(lat, lon, phase, lat0, lon0) -> np.ndarray:
+    """Local quadratic in position (units of 1,000 km about the cell centre) and 3 annual harmonics."""
+    u = (np.asarray(lon) - lon0) * np.cos(np.radians(lat0)) * KM_PER_DEG / 1000
+    v = (np.asarray(lat) - lat0) * KM_PER_DEG / 1000
+    w = 2 * np.pi * np.asarray(phase)
+    return np.column_stack([np.ones_like(u), u, v, u * u, u * v, v * v,
+                            np.sin(w), np.cos(w), np.sin(2 * w), np.cos(2 * w),
+                            np.sin(3 * w), np.cos(3 * w)])
+
+
+def climatology(base: pd.DataFrame, bandwidth_km: float = 1000.0, adaptive_k: int | None = None,
+                h_min: float = 150.0) -> dict:
+    """The mean field the anomalies are taken from, fitted on BASE_YEARS rows only.
+
+    At each 1 degree cell centre: weighted least squares on base profiles within ``bandwidth_km``
+    (great-circle), tricube weight in distance, with a local quadratic in position and three annual
+    harmonics, as in Kuusela and Stein (2018). With ``adaptive_k`` the bandwidth of each cell is the
+    distance to its k-th nearest base profile, clipped to ``h_min``-``bandwidth_km`` (gates_2026-11-03b:
+    fixed 1,000 and 500 km left a mean error along the Gulf Stream). Returns per-cell coefficients (NaN where the cell has
+    too little data) and the counts behind them. The 2023-2025 anomalies then include the warming
+    since the base period, so the model keeps a marginalised intercept and trend.
     """
-    raise NotImplementedError("Write this at pilot P2 of plans/large/E92.md, against real rows.")
+    from scipy.spatial import cKDTree
+
+    lat, lon = base["lat"].to_numpy(), base["lon"].to_numpy()
+    phase, y = year_phase(base["time"]), base["t100"].to_numpy()
+    tree = cKDTree(_unit(lat, lon))
+    coef = np.full((len(CELL_LAT), len(CELL_LON), N_COEF), np.nan)
+    count = np.zeros((len(CELL_LAT), len(CELL_LON)), int)
+    weight_sum = np.zeros_like(count, dtype=float)
+    bandwidth = np.full(count.shape, float(bandwidth_km))
+    for i, lat0 in enumerate(CELL_LAT):
+        for j, lon0 in enumerate(CELL_LON):
+            centre = _unit([lat0], [lon0])[0]
+            h = bandwidth_km
+            if adaptive_k:
+                kth = tree.query(centre, adaptive_k)[0][-1]
+                h = float(np.clip(EARTH_KM * 2 * np.arcsin(min(kth / 2, 1.0)), h_min, bandwidth_km))
+                bandwidth[i, j] = h
+            chord = 2 * np.sin(h / EARTH_KM / 2)
+            idx = np.asarray(tree.query_ball_point(centre, chord), int)
+            count[i, j] = len(idx)
+            if len(idx) < CLIM_MIN_PROFILES:
+                continue
+            dist = EARTH_KM * 2 * np.arcsin(np.clip(np.linalg.norm(tree.data[idx] - centre, axis=1) / 2, 0, 1))
+            w = (1 - np.clip(dist / h, 0, 1) ** 3) ** 3
+            weight_sum[i, j] = w.sum()
+            if w.sum() < CLIM_MIN_WEIGHT:
+                continue
+            X = _design(lat[idx], lon[idx], phase[idx], lat0, lon0)
+            sw = np.sqrt(w)
+            coef[i, j], *_ = np.linalg.lstsq(X * sw[:, None], y[idx] * sw, rcond=None)
+    return {"coef": coef, "count": count, "weight_sum": weight_sum, "cell_lat": CELL_LAT,
+            "cell_lon": CELL_LON, "bandwidth_km": bandwidth, "adaptive_k": np.int64(adaptive_k or 0)}
+
+
+def evaluate_climatology(clim: dict, lat, lon, phase) -> np.ndarray:
+    """Bilinear blend of the four surrounding cells' local fits, each evaluated at the point itself.
+
+    Weights are renormalised over non-empty cells; NaN where all four are empty.
+    """
+    lat, lon, phase = (np.asarray(a, float) for a in (lat, lon, phase))
+    clat, clon, coef = clim["cell_lat"], clim["cell_lon"], clim["coef"]
+    fi = np.clip((lat - clat[0]), 0, len(clat) - 1.000001)
+    fj = np.clip((lon - clon[0]), 0, len(clon) - 1.000001)
+    i0, j0 = np.floor(fi).astype(int), np.floor(fj).astype(int)
+    di, dj = fi - i0, fj - j0
+    total, wsum = np.zeros(len(lat)), np.zeros(len(lat))
+    for a, b, w in ((0, 0, (1 - di) * (1 - dj)), (1, 0, di * (1 - dj)), (0, 1, (1 - di) * dj),
+                    (1, 1, di * dj)):
+        ii, jj = np.minimum(i0 + a, len(clat) - 1), np.minimum(j0 + b, len(clon) - 1)
+        c = coef[ii, jj]
+        ok = np.isfinite(c[:, 0]) & (w > 0)
+        if not ok.any():
+            continue
+        X = _design(lat[ok], lon[ok], phase[ok], clat[ii[ok]], clon[jj[ok]])
+        total[ok] += w[ok] * np.einsum("ij,ij->i", X, c[ok])
+        wsum[ok] += w[ok]
+    return np.where(wsum > 0, total / np.where(wsum > 0, wsum, 1), np.nan)
 
 
 def write_csv_gz(frame: pd.DataFrame, path: Path) -> str:
@@ -250,11 +352,28 @@ def stage_plan() -> None:
     print(f"{len(years)} years, {12 * len(years)} monthly requests, in sequence")
 
 
+def record(name: str, entries: dict) -> None:
+    """Merge one stage's facts into a small JSON file under results/E92/, keeping earlier ones."""
+    store = Store("E92")
+    old = store.load_json(name) if (store.path / f"{name}.json").exists() else {}
+    store.save_json(name, {**old, **entries})
+
+
 def stage_land() -> None:
-    rings = crop_land(read_land(fetch(LAND_URL)))
+    t0 = time.perf_counter()
+    blob = fetch(LAND_URL)
+    seconds = time.perf_counter() - t0
+    atomic_write(LAND_ZIP, lambda f: f.write(blob))
+    rings = crop_land(read_land(blob))
     arrays = {f"ring_{i}": ring.round(4) for i, ring in enumerate(rings)}
     atomic_write(LAND_OUT, lambda f: np.savez_compressed(f, **arrays))
-    print(f"{len(rings)} rings -> {LAND_OUT} ({LAND_OUT.stat().st_size / 1e3:.0f} kB)")
+    size = LAND_OUT.stat().st_size
+    print(f"{len(rings)} rings -> {LAND_OUT} ({size / 1e3:.0f} kB)")
+    record("pilot_land", {"url": LAND_URL, "fetched": datetime.date.today().isoformat(),
+                          "zip_bytes": len(blob), "fetch_s": round(seconds, 2),
+                          "zip_sha256": hashlib.sha256(blob).hexdigest(), "rings_near_box": len(rings),
+                          "npz_bytes": size, "npz_sha256": sha256_file(LAND_OUT),
+                          "labels": "all measured"})
 
 
 def load_land() -> list[np.ndarray]:
@@ -269,9 +388,54 @@ def stage_meta(go: bool) -> None:
             continue
         print(meta_url(year))
         if go:
+            t0 = time.perf_counter()
             blob = fetch(meta_url(year))
+            seconds = time.perf_counter() - t0
+            table = read_erddap(io.BytesIO(blob))  # refuse a truncated reply before it is cached
+            missing = set(PROFILE_VARS) - set(table.columns)
+            years = table["time"].str[:4].unique().tolist()
+            if missing or not len(table) or years != [str(year)]:
+                raise ValueError(f"{year}: bad reply: missing {missing}, {len(table)} rows, {years}")
             atomic_write(path, lambda f, b=blob: f.write(gzip.compress(b, mtime=0)))
+            print(f"  {len(table)} rows, {len(blob) / 1e6:.2f} MB in {seconds:.1f} s")
+            record("pilot_meta_fetch", {str(year): {
+                "fetched": datetime.datetime.now(datetime.UTC).isoformat(timespec="seconds"),
+                "rows": len(table), "csv_bytes": len(blob), "fetch_s": round(seconds, 2)}})
             time.sleep(2)
+
+
+def summarise_year(meta: pd.DataFrame, rings: list[np.ndarray]) -> dict:
+    """What one year's metadata says, with the same filters as `stage_check` and the plan's table."""
+    good = meta[(meta["direction"] == "A") & _good(meta["position_qc"])]
+    inside = good[open_atlantic(good["latitude"], good["longitude"], rings)]
+    months = inside["time"].str[5:7].value_counts().sort_index()
+    return {
+        "rows": len(meta), "duplicate_keys": int(meta.duplicated(KEY).sum()),
+        "bad_times": int(pd.to_datetime(meta["time"], errors="coerce").isna().sum()),
+        "time_min": meta["time"].min(), "time_max": meta["time"].max(),
+        "lat_range": [float(meta["latitude"].min()), float(meta["latitude"].max())],
+        "lon_range": [float(meta["longitude"].min()), float(meta["longitude"].max())],
+        "direction": meta["direction"].value_counts().to_dict(),
+        "position_qc": meta["position_qc"].value_counts().to_dict(),
+        "ascending_good": len(good), "in_open_atlantic": len(inside),
+        "floats": inside["platform_number"].nunique(),
+        "floats_cycle_0_or_1": inside[inside["cycle_number"] <= 1]["platform_number"].nunique(),
+        "mode": inside["data_mode"].value_counts().to_dict(),
+        "by_month": {k: int(v) for k, v in months.items()},
+    }
+
+
+def stage_summary() -> None:
+    """Counts from the cached metadata, stored as small JSON. Needs no network."""
+    rings = load_land()
+    years = {str(y): summarise_year(read_erddap(RAW / f"meta_{y}.csv.gz"), rings)
+             for y in [*BASE_YEARS, *FIT_YEARS, HINDCAST_YEAR]}
+    Store("E92").save_json("pilot_meta", {
+        "labels": "all measured from metadata; a profile here need not reach 100 dbar", "years": years,
+        "gz_bytes": {y: (RAW / f"meta_{y}.csv.gz").stat().st_size for y in years}})
+    for year, s in years.items():
+        print(year, s["rows"], s["ascending_good"], s["in_open_atlantic"], s["floats"],
+              s["floats_cycle_0_or_1"], s["mode"], "dup", s["duplicate_keys"], "bad", s["bad_times"])
 
 
 def stage_pull(go: bool) -> None:
@@ -300,12 +464,131 @@ def stage_derive() -> None:
     table = pd.concat(tables).drop_duplicates(["float_id", "cycle"]).sort_values("time")
     table["lat"], table["lon"] = table["lat"].round(4), table["lon"].round(4)
     base = table["time"].str[:4].astype(int).isin(BASE_YEARS)
-    write_csv_gz(table[base], RAW / "base_years.csv.gz")  # for `climatology`; not published
-    table = table[~base]
-    digest = write_csv_gz(table, OUT)
-    print(f"{len(table)} profiles -> {OUT} ({OUT.stat().st_size / 1e6:.1f} MB), sha256 {digest}")
-    print(table.groupby(table["time"].str[:4]).size().to_string())
-    print("SHA-256 of the file on disk:", sha256_file(OUT))
+    write_csv_gz(table[base], BASE)  # for `climatology`; not published
+    write_csv_gz(table[~base], DERIVED)  # `climatology` adds the mean and writes the published table
+    years = table.groupby(table["time"].str[:4]).size()
+    print(years.to_string())
+    raw_profiles = {}
+    for path in sorted(RAW.glob("rows_*.csv.gz")):
+        rows = read_erddap(path)
+        year = path.name[5:9]
+        asc = rows[(rows["direction"] == "A") & _good(rows["position_qc"])]
+        raw_profiles[year] = raw_profiles.get(year, 0) + int(asc.groupby(KEY).ngroups)
+    record("pilot_data", {"derive": {
+        "at": datetime.datetime.now(datetime.UTC).isoformat(timespec="seconds"),
+        "profiles_by_year": {k: int(v) for k, v in years.items()},
+        "ascending_good_position_profiles_in_rows_by_year": raw_profiles,
+        "raw_files": len(list(RAW.glob("rows_*.csv.gz"))),
+        "raw_gz_bytes": sum(p.stat().st_size for p in RAW.glob("rows_*.csv.gz")),
+        "labels": "all measured"}})
+
+
+def mode_offset(table: pd.DataFrame, seed: int = 0) -> dict:
+    """R minus D+A mean anomaly within 5 x 5 degree x year cells holding at least 20 of each."""
+    t = table.assign(year=table["time"].str[:4], ci=(table["lat"] // 5).astype(int),
+                     cj=(table["lon"] // 5).astype(int), r=table["mode"].eq("R"))
+    rows = []
+    for _, g in t.groupby(["year", "ci", "cj"]):
+        n_r, n_da = int(g["r"].sum()), int((~g["r"]).sum())
+        if n_r >= 20 and n_da >= 20:
+            rows.append((g.loc[g["r"], "anom"].mean() - g.loc[~g["r"], "anom"].mean(), min(n_r, n_da)))
+    d, w = np.array(rows).T if rows else (np.array([]), np.array([]))
+    est = float(np.sum(d * w) / np.sum(w)) if len(d) else float("nan")
+    rng = np.random.default_rng(seed)
+    boots = [np.sum((d * w)[k]) / np.sum(w[k]) for k in rng.integers(0, len(d), (2000, len(d)))]
+    raw = float(t.loc[t["r"], "anom"].mean() - t.loc[~t["r"], "anom"].mean())
+    return {"difference_c": est, "bootstrap_se_c": float(np.std(boots)), "cells": len(d),
+            "raw_difference_c": raw, "n_r": int(t["r"].sum()), "n_da": int((~t["r"]).sum())}
+
+
+def gulf_stream_excess(base: pd.DataFrame) -> dict:
+    """Excess rms of base-year residual means in 2 degree cells of 30-45N, 75-45W, 100+ profiles."""
+    b = base[(base["lat"] >= 30) & (base["lat"] < 45) & (base["lon"] >= -75) & (base["lon"] < -45)]
+    g = b.assign(ci=(b["lat"] // 2).astype(int), cj=(b["lon"] // 2).astype(int)).groupby(["ci", "cj"])
+    s = g["resid"].agg(["mean", "var", "count"])
+    s = s[s["count"] >= 100]
+    excess = np.sum(s["count"] * (s["mean"] ** 2 - s["var"] / s["count"])) / s["count"].sum()
+    return {"excess_rms_c": float(np.sqrt(max(0.0, excess))), "cells": len(s),
+            "max_abs_cell_mean_c": float(s["mean"].abs().max()),
+            "rms_cell_mean_c": float(np.sqrt(np.average(s["mean"] ** 2, weights=s["count"])))}
+
+
+def _climatology_checks(base: pd.DataFrame, table: pd.DataFrame, **rule) -> tuple[dict, pd.DataFrame, dict]:
+    t0 = time.perf_counter()
+    clim = climatology(base, **rule)
+    fit_s = time.perf_counter() - t0
+    b = base.assign(clim=evaluate_climatology(clim, base["lat"], base["lon"], year_phase(base["time"])))
+    b["resid"] = b["t100"] - b["clim"]
+    t = table.assign(clim=evaluate_climatology(clim, table["lat"], table["lon"], year_phase(table["time"])))
+    t["anom"] = t["t100"] - t["clim"]
+    fit = t[t["time"].str[:4].astype(int).isin(FIT_YEARS)]
+    early = base["time"].str[:4].astype(int) <= 2020  # held-out check: fit 2015-2020, score 2021-2022
+    clim_early = climatology(base[early], **rule)
+    late = base[~early]
+    late = late.assign(resid=late["t100"] - evaluate_climatology(clim_early, late["lat"], late["lon"],
+                                                                 year_phase(late["time"])))
+    check = {
+        "rule": {k: float(v) for k, v in rule.items()}, "fit_s": round(fit_s, 1),
+        "cells_fitted": int(np.isfinite(clim["coef"][..., 0]).sum()),
+        "bandwidth_km_quantiles": np.nanquantile(np.where(np.isfinite(clim["coef"][..., 0]),
+                                                          clim["bandwidth_km"], np.nan), [0, .1, .5, .9, 1]),
+        "base_profiles": len(b), "base_missing_clim": int(b["clim"].isna().sum()),
+        "base_resid_sd_c": float(b["resid"].std()),
+        "missing_clim_by_year": t[t["clim"].isna()].groupby(t["time"].str[:4]).size().to_dict(),
+        "fit_profiles": int(fit["anom"].notna().sum()),
+        "anomaly_sd_fit_c": float(fit["anom"].std()), "anomaly_mean_fit_c": float(fit["anom"].mean()),
+        "anomaly_mean_by_year_c": t.groupby(t["time"].str[:4])["anom"].mean().to_dict(),
+        "mode_offset": mode_offset(fit.dropna(subset=["anom"])),
+        "gulf_stream": gulf_stream_excess(b.dropna(subset=["resid"])),
+        "gulf_stream_heldout_2021_2022": gulf_stream_excess(late.dropna(subset=["resid"]))}
+    print(rule, check, flush=True)
+    return clim, t, check
+
+
+def stage_climatology() -> None:
+    """Fit the base-period mean, check it against the P2 lines, write the published table.
+
+    The first two rules are gates_2026-11-03's (1,000 km, and 500 km as its fallback); both failed
+    the Gulf Stream line. The third is gates_2026-11-03b's adaptive rule, which is the one published.
+    """
+    import shutil
+
+    store = Store("E92")
+    store.load_json("gates_2026-11-03"), store.load_json("gates_2026-11-03b")  # refuse if altered
+    base, table = pd.read_csv(BASE, dtype={"float_id": str}), pd.read_csv(DERIVED, dtype={"float_id": str})
+    rules = {"fixed_1000km": dict(bandwidth_km=1000.0), "fixed_500km": dict(bandwidth_km=500.0),
+             "adaptive_400": dict(bandwidth_km=1000.0, adaptive_k=400, h_min=150.0)}
+    results = {name: _climatology_checks(base, table, **rule) for name, rule in rules.items()}
+    first = results["fixed_1000km"][2]
+    verdict_first = {"fit_profiles": first["fit_profiles"] >= 24000,
+                     "mode_offset": abs(first["mode_offset"]["difference_c"]) < 0.02,
+                     "anomaly_sd": first["anomaly_sd_fit_c"] < 1.5,
+                     "gulf_stream_mean": first["gulf_stream"]["excess_rms_c"] < 0.3}
+    clim, t, c = results["adaptive_400"]
+    verdict = {"fit_profiles": c["fit_profiles"] >= 24000,
+               "mode_offset": abs(c["mode_offset"]["difference_c"]) < 0.02,
+               "anomaly_sd": c["anomaly_sd_fit_c"] < 1.5,
+               "gulf_stream_mean": c["gulf_stream"]["excess_rms_c"] < 0.3,
+               "gulf_stream_heldout": c["gulf_stream_heldout_2021_2022"]["excess_rms_c"] < 0.4,
+               "beats_1000km_on_both": (c["gulf_stream"]["excess_rms_c"] < first["gulf_stream"]["excess_rms_c"]
+                                        and c["gulf_stream_heldout_2021_2022"]["excess_rms_c"]
+                                        < first["gulf_stream_heldout_2021_2022"]["excess_rms_c"])}
+    t = t.dropna(subset=["clim"]).copy()
+    t["clim"], t["anom"] = t["clim"].round(3), t["anom"].round(3)
+    digest = write_csv_gz(t[["float_id", "cycle", "mode", "time", "lat", "lon", "t100", "clim", "anom",
+                             "gap_dbar"]], OUT)
+    atomic_write(CLIM_OUT, lambda f: np.savez_compressed(f, **{k: np.asarray(v) for k, v in clim.items()}))
+    shutil.copyfile(LAND_OUT, DATA / LAND_OUT.name)
+    record("pilot_data", {"climatology": {
+        "gates": ["gates_2026-11-03.json P2_data", "gates_2026-11-03b.json"], "published_rule": "adaptive_400",
+        "checks": {name: r[2] for name, r in results.items()},
+        "verdict_gates_2026-11-03_fixed_1000km": verdict_first, "verdict_gates_2026-11-03b_adaptive": verdict,
+        "published_rows": len(t), "published_by_year": t.groupby(t["time"].str[:4]).size().to_dict(),
+        "table_sha256": digest, "clim_sha256": sha256_file(CLIM_OUT),
+        "land_sha256": sha256_file(DATA / LAND_OUT.name), "labels": "all measured"}})
+    print("verdict (first gates, 1000 km):", verdict_first)
+    print("verdict (gates b, adaptive):", verdict)
+    print(f"{len(t)} rows -> {OUT} ({OUT.stat().st_size / 1e6:.2f} MB), sha256 {digest}")
 
 
 def stage_check(sample_dir: Path) -> None:
@@ -334,7 +617,8 @@ def stage_check(sample_dir: Path) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("stage", choices=["plan", "check", "land", "meta", "pull", "derive"])
+    parser.add_argument("stage", choices=["plan", "check", "land", "meta", "summary", "pull",
+                                            "derive", "climatology"])
     parser.add_argument("sample_dir", nargs="?", type=Path)
     parser.add_argument("--go", action="store_true", help="without this, only print the requests")
     args = parser.parse_args()
@@ -346,10 +630,14 @@ def main() -> None:
         stage_land()
     elif args.stage == "meta":
         stage_meta(args.go)
+    elif args.stage == "summary":
+        stage_summary()
     elif args.stage == "pull":
         stage_pull(args.go)
     elif args.stage == "derive":
         stage_derive()
+    elif args.stage == "climatology":
+        stage_climatology()
 
 
 if __name__ == "__main__":

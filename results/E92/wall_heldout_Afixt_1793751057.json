@@ -1,0 +1,12 @@
+{
+  "args": [],
+  "job": "heldout_Afixt",
+  "started": "2026-11-04T00:09:56Z",
+  "vram": {
+    "device": "cuda:0",
+    "in_use_gb": 0.0,
+    "limit_gb": 16.564453125,
+    "peak_gb": 12.857187032699585
+  },
+  "wall_s": 61.56483164400561
+}

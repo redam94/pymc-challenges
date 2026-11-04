@@ -1,0 +1,11 @@
+{
+  "fetch_s": 0.2,
+  "fetched": "2026-11-01",
+  "labels": "all measured",
+  "npz_bytes": 320406,
+  "npz_sha256": "a98b2e6e8c49b2fc3709a2366e9f2407486d850969af5199c39e33e89d26bfe5",
+  "rings_near_box": 269,
+  "url": "https://naciscdn.org/naturalearth/50m/physical/ne_50m_land.zip",
+  "zip_bytes": 457183,
+  "zip_sha256": "0b8e670cf80dce9cbebe2a193bc44ba5602758c22e1fa603980553646d7ff162"
+}

@@ -145,6 +145,12 @@ SERIES = [
                "chose the tariff but Supply-Following event days were randomised, and only those days carry the "
                "estimate. A closed-form fleet carries the answer, a robust model misreads the sum on two of three "
                "bands, and four winter evenings, not a thousand homes, set the limit."),
+    dict(key="atlantic", range="E92", title="An exact Gaussian process on the Atlantic", ids=["E92"],
+         intro="Where should the next 20 Argo floats go? A stored run fitted an exact Gaussian process to 23,939 "
+               "profiles of 100 dbar temperature on one GPU and raced it against local windows, a Vecchia "
+               "approximation and an exact amplitude map on held-out floats. Vecchia matched it, its uncertainty "
+               "was wrong in the Gulf Stream, float32 could be silently wrong, and the targeted list of sites "
+               "changed with the model, so the advice is to fill the open-ocean gaps."),
     dict(key="midterms", range="E94-E95", title="Polls, fundamentals and money", ids=["E94", "E95"],
          intro="Election-eve forecasts of the 2018, 2022 and 2026 US midterms from ragged information: many national "
                "polls, some Senate polls, few district polls and fundamentals everywhere. Backtests on two known "
@@ -155,7 +161,7 @@ SERIES = [
                "interval on the margin, importance reweighting against a refit, and what each race still out decides."),
 ]
 SERIES_BY_KEY = {s["key"]: s for s in SERIES}
-RECENT = ["E95", "E94", "E90", "E88", "E91", "E87", "E89", "E86"]          # newest first, shown on the home page
+RECENT = ["E92", "E95", "E94", "E90", "E88", "E91", "E87", "E89"]          # newest first, shown on the home page
 
 
 def _link(ctx, eid, text=None):
@@ -416,7 +422,9 @@ def guide_page(ctx):
         ("Which experiment to run next", "Gaussian-process / bounded-yield surrogates and the value of information",
          f"{L('E82')}, {L('C13')}"),
         ("Where to measure next, on a map", "A marginal Gaussian process and the expected value of sample information",
-         f"{L('E89')}"),
+         f"{L('E89')}, {L('E92')}"),
+        ("Whether an exact model is worth its price, on a big map", "An exact GP against Vecchia and local windows, scored by region",
+         f"{L('E92')}"),
         ("A sum over many homes on one shared day (load, delivery)", "A closed-form fleet, event means and a day-level model",
          f"{L('E91')}"),
         ("What a big model will cost, and whether to buy it", "Timed gradients, a price table and a held-out test of each model in a ladder",

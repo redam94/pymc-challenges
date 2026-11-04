@@ -1,0 +1,17 @@
+{
+  "blas_threads": "1",
+  "chain": 2,
+  "divergences": 0,
+  "draw_steps": 13838,
+  "health": {
+    "machine_checks": 1,
+    "offline_cpus": [
+      10,
+      26
+    ]
+  },
+  "labels": "measured",
+  "n": 800,
+  "seed": 922,
+  "wall_s": 2586.8959289579943
+}

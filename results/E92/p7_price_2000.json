@@ -1,0 +1,20 @@
+{
+  "chain_wall_min_at_21000": 363.0960780981695,
+  "compile_s": 9.227551353978924,
+  "health": {
+    "machine_checks": 1,
+    "offline_cpus": [
+      10,
+      26
+    ]
+  },
+  "labels": "measured; the chain wall is extrapolated from 21,000 gradients",
+  "logp_jax": -6532.29280754533,
+  "logp_pymc": -6532.301369271203,
+  "median_ms": 1037.41736599477,
+  "min_ms": 1026.8821810022928,
+  "n": 2000,
+  "nu": 0.5,
+  "proj": "mercator",
+  "threads": "1"
+}

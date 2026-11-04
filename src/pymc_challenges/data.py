@@ -1735,6 +1735,62 @@ REGISTRY: dict[str, Dataset] = {
         "(hard_honest, hard_hindsight, hard_strata); feb16_failed and feb16_refit (500 draws each, chain by "
         "chain); dates, states, population (Destatis). `notice` holds the attribution.",
     ),
+    # ---- examples (E92) ----
+    "argo_natl_t100": Dataset(
+        "argo_natl_t100.csv.gz",
+        "https://doi.org/10.17882/42182",  # the source: this derived file ships in git
+        "Argo float data and metadata from the Global Data Assembly Centre (Argo GDAC), SEANOE, "
+        "https://doi.org/10.17882/42182, CC BY 4.0, read through the Ifremer ERDDAP mirror (dataset ArgoFloats) "
+        "on 2026-11-02. These data were collected and made freely available by the International Argo Program "
+        "and the national programs that contribute to it (https://argo.ucsd.edu, https://www.ocean-ops.org). "
+        "The Argo Program is part of the Global Ocean Observing System. Changed: reduced to one 100 dbar value "
+        "per profile and a local climatology added. DERIVED by tools/build_e92_data.py (pull, derive, "
+        "climatology) - keep the cached file; a re-pull differs, as delayed-mode corrections keep arriving.",
+        "One row per ascending profile in the open North Atlantic, 20-55N, 80W-0 (land, Mediterranean, Gulf of "
+        "St Lawrence, Caribbean and North Sea removed), 2023-2025, 40,343 rows: float_id, cycle, mode (R "
+        "real-time, A adjusted, D delayed-mode; adjusted columns for A and D, raw for R, good flags only), "
+        "time (UTC, ISO), lat, lon, t100 (C, linear interpolation to 100 dbar between the two good levels "
+        "either side, at most 20 dbar apart), clim (C, the 2015-2022 climatology of "
+        "`argo_natl_t100_climatology` at the profile's place and day), anom (t100 - clim), gap_dbar.",
+        {"dtype": {"float_id": str}},
+    ),
+    "argo_natl_t100_climatology": Dataset(
+        "argo_natl_t100_climatology.npz",
+        "https://doi.org/10.17882/42182",
+        "As `argo_natl_t100`, from the 95,990 base-year (2015-2022) profiles, which are not published. DERIVED "
+        "by tools/build_e92_data.py climatology - keep the cached file.",
+        "NumPy archive, not a table: open data.path() with np.load. coef (35 x 80 cells x 12): per 1 degree "
+        "cell (centres cell_lat, cell_lon), a tricube-weighted local fit of 1, u, v, u^2, uv, v^2 (u, v in "
+        "1,000 km east and north of the centre) and sin, cos of 1, 2, 3 cycles a year; NaN where the cell has "
+        "too few profiles. bandwidth_km per cell: the distance to the 400th nearest base profile, clipped to "
+        "150-1,000 km. count and weight_sum describe the data behind each cell. Evaluate with "
+        "tools/build_e92_data.py evaluate_climatology (bilinear blend of the four surrounding cells).",
+    ),
+    "natural_earth_50m_land_natl": Dataset(
+        "natural_earth_50m_land_natl.npz",
+        "https://naciscdn.org/naturalearth/50m/physical/ne_50m_land.zip",
+        "Natural Earth 1:50m land, version 4.1.0, public domain (https://www.naturalearthdata.com/about/"
+        "terms-of-use/, read 2026-11-01). Made with Natural Earth. Changed: cropped to rings near the North "
+        "Atlantic and rounded to 4 decimals. DERIVED by tools/build_e92_data.py land - keep the cached file.",
+        "NumPy archive, not a table: open data.path() with np.load. ring_0 ... ring_268: (lon, lat) vertex "
+        "arrays of the land polygons touching 10-65N, 95W-15E, for drawing coasts and the sea mask.",
+    ),
+    "e92_replay": Dataset(
+        "e92_replay.npz",
+        "https://doi.org/10.17882/42182",  # the source: this derived file ships in git
+        "As `argo_natl_t100`. Changed: derived results of E92's stored run on 2026-11-03/04 (tools/run_e92_full.py, "
+        "tools/score_e92.py), not data. DERIVED by tools/pack_e92.py - keep the cached file. Coastlines: Made with "
+        "Natural Earth.",
+        "NumPy archive, not a table: open data.path() with np.load. Held-out profiles (ho_*, 2,116 from 43 "
+        "floats): y, lat, lon, t, float, region (0 Gulf Stream box, 1 gyre, 2 rest), and per model (A, At, B, C, "
+        "Afix, Afixt) the predictive mean, latent variance, CRPS and 90% coverage. Maps of the latent anomaly "
+        "(map_mean, map_sd for A, map_mean_Afix, map_sd_Afix; 12 months of 2024 x 2,088 one-degree cells) and of "
+        "2025 (map2025_*; 512 two-degree cells). Design: 200 candidate sites, A's greedy picks, variance maps and "
+        "trace at its mode, gap-filling, Gulf-Stream-weighted and fixed-site picks, pick frequencies by model, "
+        "and the drift replicates (drift_lat/lon/t/valid_<rep>, 200 sites x 37 positions). Local windows "
+        "(B_centres, B_theta), Sobol points and weights, and thinned PyMC audit draws (1,000 x 10 at n = 800 "
+        "and 2,000). `notice` holds the attribution.",
+    ),
     # ---- examples (E94) ----
     "e94_races": Dataset(
         "e94_races.csv",

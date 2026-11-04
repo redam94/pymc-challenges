@@ -1,0 +1,36 @@
+{
+  "device": "scipy_cpu",
+  "health": {
+    "machine_checks": 1,
+    "offline_cpus": [
+      10,
+      26
+    ]
+  },
+  "labels": "measured; kinv is LAPACK potri (n^3 x 2/3 nominal flops) from the factor",
+  "n": 20000,
+  "ops": {
+    "chol": {
+      "best_s": 2.2390163590025622,
+      "flops": 2666666666666.6665,
+      "gflops": 1190.9991885251852,
+      "info": 0,
+      "runs_s": [
+        2.2390163590025622,
+        2.271181735006394
+      ]
+    },
+    "kinv": {
+      "best_s": 4.073476448014844,
+      "flops": 5333333333333.333,
+      "gflops": 1309.282967852303,
+      "info": 0,
+      "runs_s": [
+        4.099042361980537,
+        4.073476448014844
+      ]
+    }
+  },
+  "prec": 32,
+  "threads": "15"
+}

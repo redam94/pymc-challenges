@@ -1,0 +1,93 @@
+{
+  "eps32": 1.1920928955078125e-07,
+  "expquad": [
+    {
+      "cond_est": 11546814.696515186,
+      "f32_finite": true,
+      "logdet_err": -64.6171372512108,
+      "n": 5000,
+      "objective_err": -115220.2226976907,
+      "ratio": 1000.0,
+      "silently_wrong": true
+    },
+    {
+      "cond_est": 115468137.96515188,
+      "f32_finite": false,
+      "logdet_err": null,
+      "n": 5000,
+      "objective_err": null,
+      "ratio": 10000.0,
+      "silently_wrong": false
+    },
+    {
+      "cond_est": 1154681370.6515188,
+      "f32_finite": false,
+      "logdet_err": null,
+      "n": 5000,
+      "objective_err": null,
+      "ratio": 100000.0,
+      "silently_wrong": false
+    },
+    {
+      "cond_est": 23285753.402226955,
+      "f32_finite": true,
+      "logdet_err": -221.41709742654348,
+      "n": 10000,
+      "objective_err": -468313.9532442449,
+      "ratio": 1000.0,
+      "silently_wrong": true
+    },
+    {
+      "cond_est": 232857525.02226952,
+      "f32_finite": false,
+      "logdet_err": null,
+      "n": 10000,
+      "objective_err": null,
+      "ratio": 10000.0,
+      "silently_wrong": false
+    },
+    {
+      "cond_est": 2328575241.222695,
+      "f32_finite": false,
+      "logdet_err": null,
+      "n": 10000,
+      "objective_err": null,
+      "ratio": 100000.0,
+      "silently_wrong": false
+    },
+    {
+      "cond_est": 46499812.58114721,
+      "f32_finite": true,
+      "logdet_err": -947.5443268179952,
+      "n": 20000,
+      "objective_err": -2186652.201198482,
+      "ratio": 1000.0,
+      "silently_wrong": true
+    },
+    {
+      "cond_est": 464998116.81147206,
+      "f32_finite": false,
+      "logdet_err": null,
+      "n": 20000,
+      "objective_err": null,
+      "ratio": 10000.0,
+      "silently_wrong": false
+    },
+    {
+      "cond_est": 4649981159.11472,
+      "f32_finite": false,
+      "logdet_err": null,
+      "n": 20000,
+      "objective_err": null,
+      "ratio": 100000.0,
+      "silently_wrong": false
+    }
+  ],
+  "labels": "measured; cond_est = lambda_max x ratio (lambda_min is about the nugget): estimated",
+  "matern_full": {
+    "err": -0.059141932004422415,
+    "n": 23939,
+    "v32": -35659.74226969866,
+    "v64": -35659.68312776666
+  }
+}

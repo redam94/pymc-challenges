@@ -29,7 +29,7 @@ for every notebook, so this is optional. Later syncs drop it unless you repeat t
 
 ```
 notebooks/
-  examples/      E01-E91, E94, E95  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
+  examples/      E01-E92, E94, E95  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
   challenges/    C01-C15  your workspace. Tasks, empty cells, hints on request.
   solutions/     C01-C15  full reference solutions, executed, with commentary.
 ```
@@ -313,6 +313,14 @@ How many homes does it take to have a stated chance of a stated cut on the night
 | | Topic | Data | Key techniques |
 |---|---|---|---|
 | **E91** | The price signal and the substation: how many homes for how many kilowatts? | Low Carbon London smart meters from UK Power Networks (London Datastore, CC BY 4.0; 1,088 tariff homes as a home x event table and 200 homes hourly) and the 2013 price file | what was and was not randomised, naive group difference against a within-home closed-form fleet, a meter-clock failure, balance, placebo and benchmark checks, why a Student-t location misses a sum (quantile shift function), a Gaussian day-level model on randomised evenings with shared and own spreads, delivery curves and a planner's contour map, counting evenings instead of homes, cross-fitted targeting, ranking on earlier load, block-mean carpets, funnels and calendar rasters in plain matplotlib |
+
+#### An exact Gaussian process on the Atlantic (E92)
+
+Where should the next 20 Argo floats go? An exact Gaussian process on 23,939 profiles of 100 dbar temperature in the open North Atlantic fits one consumer GPU, and on held-out floats a 30-neighbour Vecchia approximation scores the same; the gains came from letting the variance vary, not from exactness. The stationary model's 90% intervals cover 90% overall and 68% in the Gulf Stream, float32 can finish and be wrong, and a variance-greedy list of sites changes with the drift and the model, so the advice is to fill the open-ocean gaps. The notebook replays that stored run on 2 cores and about 1.6 GB, in under 2 minutes, with no GPU. Do not rerun the heavy scripts on limited hardware: the run took 7.2 hours with a GPU.
+
+| | Topic | Data | Key techniques |
+|---|---|---|---|
+| **E92** | Where should the next Argo floats go? An exact Gaussian process that did not earn its price | Argo temperature at 100 dbar, open North Atlantic 2023-2025, 40,343 profiles as anomalies from a local 2015-2022 climatology (Argo GDAC, SEANOE, CC BY 4.0) and Natural Earth coastlines, kept as a 1.1 MB table, a 1.3 MB summary and small JSON tables of a stored run | a two-scale space-time Matern GP with westward propagation fitted exactly at n = 23,939, a blocked hand-coded gradient, Laplace with PSIS-weighted Sobol points and a NUTS audit of it in PyMC, a nugget at its prior edge, exact against local windows, Vecchia and an exact amplitude map by CRPS with a paired whole-float bootstrap, coverage by region and on a map, float32 log determinants that are silently wrong, greedy design of drifting floats with common random drift against gap-filling and random sets, stability across draws, drift and models, a natural experiment that tests the objective, a hand-made Lambert conformal map and an animation of variance draining |
 
 #### Polls, fundamentals and money (E94-E95)
 

@@ -1,0 +1,23 @@
+{
+  "health": {
+    "machine_checks": 1,
+    "offline_cpus": [
+      10,
+      26
+    ]
+  },
+  "labels": "measured",
+  "launched_2025_floats": 80,
+  "launched_2025_profiles_nonheld": 2261,
+  "matches_pilot": true,
+  "n_2025": 14288,
+  "n_2025_heldout": 993,
+  "n_test": 2116,
+  "n_train": 23939,
+  "pull_date": "2026-11-02",
+  "run_level": "full",
+  "sha256": "bc11b8fffcddb66f5a2f4be70358962c051c015974b66aea97f9868b0dad4efe",
+  "table": "argo_natl_t100.csv.gz",
+  "test_floats": 43,
+  "train_floats": 471
+}

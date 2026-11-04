@@ -1,0 +1,12 @@
+{
+  "args": [],
+  "job": "natural_experiment",
+  "started": "2026-11-04T00:21:37Z",
+  "vram": {
+    "device": "cuda:0",
+    "in_use_gb": 0.0,
+    "limit_gb": 16.564453125,
+    "peak_gb": 12.382333040237427
+  },
+  "wall_s": 89.2167336929997
+}

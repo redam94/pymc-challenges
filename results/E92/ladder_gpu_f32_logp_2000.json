@@ -1,0 +1,35 @@
+{
+  "bench_line_gib": 0.10660464477539063,
+  "best_s": 0.0012092579854652286,
+  "device": "gpu",
+  "finite": true,
+  "first_s": 0.5160776210250333,
+  "flops": 2666666666.6666665,
+  "gflops": 2205.209061026577,
+  "head": [
+    [
+      -4388.565600643855
+    ]
+  ],
+  "health": {
+    "machine_checks": 1,
+    "offline_cpus": [
+      10,
+      26
+    ]
+  },
+  "inputs_gib_before": 3.743171691894531e-05,
+  "labels": "measured; flops are nominal counts",
+  "matmul_precision": "default",
+  "matrix_gib": 0.014901161193847656,
+  "n": 2000,
+  "op": "logp",
+  "peak_gib": 0.14066290855407715,
+  "prec": 32,
+  "runs_s": [
+    0.0012522500182967633,
+    0.0012198389740660787,
+    0.0012092579854652286
+  ],
+  "threads": "2"
+}

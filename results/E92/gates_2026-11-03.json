@@ -1,0 +1,82 @@
+{
+  "P2_data": {
+    "anomaly_sd": {
+      "go": "< 1.5 C",
+      "what": "sd of 2023-2024 anomalies over the masked box"
+    },
+    "climatology": {
+      "fallback": "if the Gulf Stream line below fails, ALSO fit a 500 km bandwidth and report both; the 500 km fit may be used only with that said in the plan and the notebook",
+      "spec": "fixed before looking: base years 2015-2022 only; 1 degree cells (centres at .5); weighted least squares on base profiles within 1000 km of the centre, tricube weight in distance; local quadratic in position (6 terms) plus 3 annual harmonics (6 terms); cells with fewer than 200 base profiles inside 1000 km or effective weight sum under 50 are left empty; a profile's climatology is the bilinear blend of the four surrounding cells' local fits evaluated at the profile's own place and day, renormalised over non-empty cells"
+    },
+    "fit_profiles": {
+      "go": ">= 24000",
+      "no_go": "widen to 15-58N (needs a new pull) or add 2022 to the fit years; replan",
+      "what": "2023-2024 profiles in the masked box after reduction to one 100 dbar value, before holdout"
+    },
+    "gulf_stream_mean": {
+      "go": "excess rms < 0.3 C",
+      "no_go": "fallback bandwidth above, reported as a change",
+      "what": "base-year residual (in-sample) mean per 2 degree cell in 30-45N, 75-45W with at least 100 base profiles; excess rms = sqrt(max(0, weighted mean(cell_mean^2 - se^2))), weights n"
+    },
+    "mode_offset": {
+      "go": "|difference| < 0.02 C",
+      "no_go": "drop R rows and accept fewer profiles (plan); report the count left",
+      "what": "R minus D+A mean anomaly, 2023-2024, within 5 degree x 5 degree x calendar-year cells holding at least 20 of each, averaged with weight min(n_R, n_DA); raw difference and a bootstrap se over cells are reported beside it"
+    }
+  },
+  "P3_ladder": {
+    "cpu_f64_rate": {
+      "go": ">= 200 Gflop/s",
+      "what": "scipy or JAX CPU f64 Cholesky at n = 20000, 15 threads, best of the two"
+    },
+    "devices": "GPU f32, GPU f64, JAX CPU f32 and f64 (15 threads, cores 0-9,11-15), scipy LAPACK f32 and f64 (15 OpenBLAS threads, same cores)",
+    "gpu_f32_rate": {
+      "go": ">= 0.5 Tflop/s",
+      "what": "Cholesky flops n^3/3 over best wall time at n = 20000"
+    },
+    "gpu_peak_30k": {
+      "go": "gradient projection <= 16.5 GiB",
+      "no_go": "a blocked K^-1 (column blocks, only L held) or n = 20000 cap, whichever P3 times better",
+      "what": "least-squares line peak_GiB = a x matrix_GiB + b over the measured GPU f32 gradient peaks at n = 5000, 10000, 20000, evaluated at n = 30000; and the same for Cholesky alone"
+    },
+    "stop": "GPU fails both rate and memory AND CPU fails its rate: stop, n = 20000 cap (plan stop rule)",
+    "what": "n = 2000, 5000, 10000, 20000 real 2023-2024 locations (first n in time order of a fixed shuffle), Matern 3/2 two-scale kernel at the plan's illustrative scales; Cholesky, K^-1 from the factor, and the hand value-and-gradient; each GPU configuration in a fresh process with no previous result held; every output depends on the factor"
+  },
+  "P4_gradient": {
+    "go": "max relative difference < 1e-3 for every hyperparameter against both, where relative is |g_hand - g_ref| / max(|g_ref|, 1e-2 x max_j |g_ref_j|)",
+    "no_go": "fix before any timing is trusted",
+    "what": "hand gradient (blocked trace of (a a^T - K^-1) dK, dK by autodiff inside each row block) against full autodiff through the Cholesky and against central finite differences (step 1e-5 in log space), n = 2000, float64, at the prior median and at 2 random prior draws, every hyperparameter; Matern 1/2 and 3/2"
+  },
+  "P6_choices": {
+    "edges": "every fitted log hyperparameter inside its prior's 1%-99% quantiles; else fix the mean first",
+    "go": "an option wins only by more than 2 paired se of the summed per-float difference; otherwise take the simpler: Matern 1/2 (the exponential of Kuusela and Stein) and equirectangular",
+    "options": [
+      "Matern 1/2 or 3/2",
+      "equirectangular about 37.5N or Mercator"
+    ],
+    "prior_predictive": "95% prior interval of the total field sd sqrt(s1^2+s2^2+sn^2) inside 0.1-5 C",
+    "what": "SMALL crop 25-45N, 75-40W, year 2024 at real density; MAP fit on 90% of floats (holdout floats chosen by a fixed hash of float_id); score = joint Gaussian predictive log density of each held-out float's profiles given the training data, at the MAP; paired across floats"
+  },
+  "P7_audit_price": {
+    "line": "no pass line: it prices the audit, which the owner has accepted at n = 800 and 2,000",
+    "n400_audit": {
+      "go": "log-hyperparameter means within 0.5 posterior sd; sd ratio 0.7-1.3; max r_hat 1.01",
+      "no_go": "importance sampling from NUTS replaces Laplace at n = 2000 (plan)",
+      "what": "if time allows today: nutpie 4 chains, n = 400, against Laplace at the hand model's mode"
+    },
+    "price": "21,000 gradients a chain (plan's assumption), 4 chains in parallel, one thread each",
+    "what": "nutpie logp+dlogp of the PyMC model (pm.gp.Marginal-equivalent, same kernel and priors) on one thread at n = 400, 800, 2000, median of 50 jittered points after compile"
+  },
+  "P9_precision": {
+    "go": "max |f32 - f64| log density < 0.1 nat at n = 20000; min cosine(g32, g64) > 0.9999 at every n",
+    "no_go": "the last L-BFGS steps and the Hessian in CPU f64 (or GPU f64 where it fits)",
+    "what": "20 iterates of a float64 L-BFGS path of the MAP fit on the n = 5000 subset (stored), then f32 and f64 log density and hand gradient at those iterates on the GPU at n = 5000, 10000, 20000 (the 20000 f64 on GPU fits in memory)"
+  },
+  "deferred_to_FULL_start": {
+    "P10": "design sensitivity at SMALL; plan's line, unchanged",
+    "P8": "Vecchia m = 15, 30, 60 against exact at n = 3000; plan's line, unchanged"
+  },
+  "plan": "plans/large/E92.md, pilot checklist, with lines made exact here where the plan left them loose",
+  "safety": "before each job: /sys/devices/system/cpu/offline == '10,26' and the kernel log's machine-check count == 1; any change stops everything",
+  "written": "2026-11-03, before derive, climatology and every pilot below; no row data had been read"
+}

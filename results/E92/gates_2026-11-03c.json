@@ -1,0 +1,74 @@
+{
+  "P10_design_small": {
+    "go": "variance removed by best 5 / random 5 >= 1.25 (mean over replicates)",
+    "no_go": "recommendation 2 is likely at full scale; continue, as the race still teaches",
+    "rules": "best 5 = greedy variance removal; random 5 = mean over 50 random 5-site sets; gap 5 = greedy farthest launch site from every 2025 network profile and every chosen site",
+    "what": "SMALL crop at the P6 MAP: condition on 2024 crop profiles of training floats and on the positions of 2025 crop profiles (the network); target = 2 degree ocean cells of the crop x 4 times in 2025 (15 Feb, May, Aug, Nov), latent anomaly variance; 40 candidate sites on a fixed grid, each a float launched on a day drawn from 1-60 Jan 2025 and drifting by a real 36-cycle track (bootstrapped by region), 4 drift replicates common to all rules (seed 10)"
+  },
+  "P8_vecchia": {
+    "go": "|exact - Vecchia| / n < 0.005 nats per observation at m = 30",
+    "no_go": "C uses m = 60; if m = 60 is also over, C is reported as an approximation with the measured gap",
+    "what": "SMALL crop, 2024, the first 3,000 of a fixed shuffle (seed 8) of training floats' profiles, at the P6 MAP (Matern 1/2, Mercator); maxmin ordering and nearest previous neighbours in the metric (dx/lx1, dy/ly1, dt/lt1); response Vecchia (nugget inside each conditional); m = 15, 30, 60 against the exact log likelihood"
+  },
+  "data": {
+    "coords": "Mercator km, t in days from 2023-01-01; kernel Matern 1/2, two scales, nugget, marginalised intercept and trend (P6)",
+    "fingerprint": "table SHA-256 must equal the registry file's; else stop",
+    "test": "the held-out floats' 2023-2024 profiles (expected 43 floats, 2,116 profiles); their 2025 profiles are used only by the natural experiment",
+    "train": "2023-2024 rows of argo_natl_t100 whose float is not held out by e92_core.holdout (10% of floats by a fixed hash): expected n = 23,939"
+  },
+  "design": {
+    "decision_model": "the exact model (A, A_fix, A_fix_t) with the best mean per-float CRPS",
+    "recommendation": "2 (fill the gaps) if greedy / gap-filling variance removed < 1.10 under the decision model; else 1 (target these sites) if the recommended 20 of A and A_fix share at least 10 sites; else 3 (target a region) if their picks by region (3 latitude bands 20-32-44-55N x 2 halves at 40W) differ by total variation under 0.25; else 2",
+    "recommended_20": "the 20 sites picked most often over draws x replicates under the decision model",
+    "rules": "greedy variance removal; gap-filling (greedy farthest from network and chosen sites); random (mean of 50 sets)",
+    "variants": "at the mode: target weight on the Gulf Stream box only; fixed sites (36 cycles at the launch point); how many of the top 20 change is reported",
+    "what": "condition on training profiles and on positions of 2025 profiles of non-held floats (the network); target = 2 degree ocean cells (open_atlantic at the centre, climatology defined) x 15 Feb, May, Aug, Nov 2025, latent anomaly variance, equal weight; 200 candidate sites (a fixed quasi-uniform set of ocean points, seed 92); each float launched on a day drawn from 1-60 Jan 2025, 36 cycles of 10 days kept inside 2025 and inside the ocean, tracks bootstrapped from real 2023-2024 tracks starting within 600 km (else the 20 nearest); 4 drift replicates, common to every rule (seed 92); 20 picks"
+  },
+  "failure_runs": {
+    "line": "none; a demonstration. 'Silently wrong' = f32 Cholesky finite and |log det error| > 1 nat",
+    "what": "ExpQuad 1,500 km, 1,000 km, 200 d plus nugget at signal/nugget ratio 1e3, 1e4, 1e5 on n = 5,000, 10,000, 20,000 training locations (fixed shuffle seed 0): f32 against f64 log determinant and log density on the GPU; lambda_max by 30 power iterations; and Matern 1/2 at A's mode at the full n in f32 against f64"
+  },
+  "fit_A": {
+    "edge_action": "if any sits outside: A is kept and scored at its mode with the edge printed; the tails fix runs next (A-t: Student-t nugget, nu = 4 fixed, by scale-mixture weights updated from the exact posterior of each residual, then theta refitted, 8 rounds, warm start). If A-t's mode is inside every edge, A-t replaces A for the Hessian, the Sobol points and the design; otherwise A is used, and its Laplace sd on the edge coordinate is flagged as unreliable. No other fix is tried",
+    "edges": "every hyperparameter inside its prior's 1%-99% quantiles (log scale; c: Normal(0, 5))",
+    "optimiser": "own L-BFGS (memory 10, Armijo backtracking, pair kept only if s.y > 1e-10), every evaluation checkpointed; phase 1 GPU f32 until max|g| < 1.0 or 3 iterations in a row with relative change < 1e-8 or 60 iterations; phase 2 GPU f64 (preallocated pool) from the phase 1 point with fresh memory until max|g| < 0.02 or 25 evaluations",
+    "start": "the P6 MAP (SMALL, Matern 1/2, Mercator)"
+  },
+  "hessian": {
+    "go": "negative definite",
+    "no_go": "step 1e-3 once; then clip eigenvalues at 1e-6 of the largest and say so",
+    "what": "central differences of the f64 hand gradient, step 1e-4, symmetrised"
+  },
+  "natural_experiment": {
+    "go": "realised > 0 and the 90% float-bootstrap interval of realised minus predicted contains 0",
+    "what": "at A's mode (fit to 2023-2024), map the held-out floats' 2025 profiles with all 2025 profiles of non-held floats, and without the floats launched in 2025 (no 2023-2024 rows and first 2025 cycle <= 1); predicted reduction = mean predictive variance without minus with; realised = mean squared error without minus with"
+  },
+  "plan": "plans/large/E92.md, 'FULL rung: decided 2026-11-03', 'Failure and fix', 'Checkpoint stages'",
+  "pymc_audit": {
+    "go": "log-hyperparameter means within 0.5 posterior sd; Laplace / NUTS sd ratio 0.7-1.3; max r_hat <= 1.01",
+    "no_go": "importance sampling from NUTS replaces Laplace for the audit at n = 2,000, and the notebook says the full-scale uncertainty is approximate on the failing coordinates",
+    "what": "SMALL crop 2024, first n of the seed 7 shuffle (as at n = 400), n = 800 and 2,000; nutpie, 4 chains as 4 processes on cores 2-5, one BLAS thread each, 1,000 tune + 1,000 draws, seeds 920-923; Laplace at the hand model's mode on the same subset"
+  },
+  "racers": {
+    "A": "exact stationary GP at the mode (or A-t, by fit_A's edge action)",
+    "A_fix": "exact, K = D R D + nugget + trend: D at each point = exp of the 500 km Gaussian-weighted mean of log local signal sd sqrt(s1^2 + s2^2) over B's windows, normalised to geometric mean 1 over training points; global theta refitted from A's mode as fit_A",
+    "A_fix_t": "if tails demand it (below): A_fix with the Student-t nugget as in fit_A's edge action",
+    "B": "local GPs: window centres every 4 degrees lat (22-54N) and 8 degrees lon (76W-4W); training profiles within 1,000 km, the nearest 4,000 if more; windows with under 800 dropped; each its own MAP from A's mode, GPU f64; a held-out float is predicted by the window nearest its centroid",
+    "C": "Vecchia, m = 30 (60 if P8 fails), A's kernel, own MAP; neighbours from A's scales, refreshed once from C's own; a held-out float is conditioned on the union of each profile's m nearest"
+  },
+  "safety": "before each job and each chunk: /sys/devices/system/cpu/offline == '10,26' and the kernel log's machine-check count == 1; a detached watcher kills every E92 job on any change",
+  "scores": {
+    "A_fix_target": "90% coverage in the Gulf Stream box >= 85%",
+    "failure_1": "symptom present if A's 90% coverage over held-out profiles in the Gulf Stream box is below 80% while coverage in the gyre is above 90%; reported in full either way",
+    "per_profile": "Gaussian predictive (latent + nugget) CRPS in closed form; 90% central interval; z = (y - mean) / sd. Student-t models: CRPS and interval by 4,000 Monte Carlo draws (seed 92). Per float: mean CRPS of its profiles; joint Gaussian log score where Gaussian",
+    "regions": "Gulf Stream box 30-45N, 75-45W; gyre 20-30N, 70-20W; rest",
+    "rule": "A beats a rival only if the 90% interval of the paired whole-float bootstrap (4,000 resamples, seed 92) of mean per-float CRPS (rival minus A) excludes zero; over all held-out floats and inside the Gulf Stream box separately",
+    "tails_demand_t": "more than 1% of held-out profiles with |z| > 3 under A_fix (Gaussian: 0.27%)"
+  },
+  "sobol_A": {
+    "draws": "design draw 0 = the mode; draws 1-10 by systematic resampling (seed 92) of the PSIS weights; if k >= 0.7, draws 1-10 are the first 10 Sobol points unweighted, flagged",
+    "go": "Pareto k < 0.7",
+    "what": "64 scrambled Sobol points (seed 92) of the Gaussian approximation, f64 log density, PSIS weights"
+  },
+  "written": "2026-11-03, after the pilots and before any FULL stage: no FULL-size model had been fitted, no held-out score of any racer had been computed, no design had been run"
+}
