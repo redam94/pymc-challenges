@@ -1007,3 +1007,7 @@ print(f"total run time {time.time() - T_START:.0f} s")
 # 3. **A Bayesian model of bias against reach.** Treat the eight replays of each setting as data and fit, in PyMC,
 #    bias$(\gamma, r) = \lambda \times$ (convex threshold curve) plus noise, with one $\lambda$ per sign of
 #    $\gamma$. Is $\lambda$ above 1, as part E suggests, and does a term in $\log[r/(1-r)]$ earn its place?
+#
+# E103 takes the advice to calibrate on past holdouts literally: across a portfolio of campaigns measured by
+# propensity scores, it asks how much a few randomised holdouts and a hierarchical model of the bias improve
+# continue-or-cut decisions, and when they do not.
