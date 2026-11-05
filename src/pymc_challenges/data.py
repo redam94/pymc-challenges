@@ -2087,6 +2087,25 @@ REGISTRY: dict[str, Dataset] = {
         "products): basis_zz (arm, 91, 91), basis_zy (arm, outcome, 91), basis_cell_sum (3, 91); n_total, "
         "seed. Absolute rates are not the campaign's: Criteo down-sampled negatives non-uniformly.",
     ),
+    # ---- examples (E104) ----
+    "hotel_bookings": Dataset(
+        "hotel_bookings.csv",
+        "https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-02-11/hotels.csv",
+        "Hotel Booking Demand: Antonio, de Almeida & Nunes (2019), 'Hotel booking demand datasets', Data in "
+        "Brief 22:41-49, doi:10.1016/j.dib.2018.11.126. Licence CC BY 4.0. Booking records of two Portuguese "
+        "hotels (H1 a resort in the Algarve, H2 a city hotel in Lisbon) with arrivals between 2015-07-01 and "
+        "2017-08-31, anonymised by the authors. The file is the TidyTuesday mirror (2020-02-11) of the "
+        "paper's two CSVs stacked with a hotel column (119,390 rows, 16,855,599 bytes, md5 "
+        "5bf588c5a949443e021fb7c847d31b27); values unchanged.",
+        "One row per booking (including cancelled ones): hotel ('Resort Hotel' or 'City Hotel'), is_canceled, "
+        "lead_time (days from booking to arrival), arrival_date_year / _month (name) / _week_number / "
+        "_day_of_month, stays_in_weekend_nights, stays_in_week_nights, adults, children, babies, meal, country, "
+        "market_segment, distribution_channel, is_repeated_guest, previous_cancellations, "
+        "previous_bookings_not_canceled, reserved_room_type, assigned_room_type, booking_changes, deposit_type, "
+        "agent, company (ids or 'NULL'), days_in_waiting_list, customer_type, adr (average daily rate, EUR), "
+        "required_car_parking_spaces, total_of_special_requests, reservation_status (Check-Out, Canceled, "
+        "No-Show), reservation_status_date.",
+    ),
 }
 
 
