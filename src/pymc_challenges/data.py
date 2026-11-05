@@ -2066,6 +2066,27 @@ REGISTRY: dict[str, Dataset] = {
         "user_id (uploader).",
         {"compression": "gzip"},
     ),
+    "e101_criteo_uplift": Dataset(
+        "e101_criteo_uplift.npz",
+        "https://huggingface.co/datasets/criteo/criteo-uplift/resolve/main/criteo-research-uplift-v2.1.csv.gz",
+        "Criteo Uplift Prediction Dataset v2.1: Diemert, Betlei, Renaudin & Amini (2018), 'A Large Scale "
+        "Benchmark for Uplift Modeling', AdKDD workshop at KDD 2018. Licence CC BY-NC-SA 4.0 (non-commercial, "
+        "share-alike; this extract carries the same licence). Criteo's original link "
+        "(http://go.criteo.net/criteo-research-uplift-v2.1.csv.gz) answered 404 in November 2026; the file "
+        "came from Criteo's own Hugging Face repository (311,422,618 bytes, sha256 2716e1bf0fd157a93b5bf869"
+        "24d9088419dfbac2022c6cd90030220634f616dc). DERIVED by tools/build_e101_data.py (seed 101): the url "
+        "is the 300 MB source, not this file - keep the cached npz in data/ (md5 "
+        "9d7dee707a79e8a09bac50fafd96a299).",
+        "npz. A simple random sample of 300,000 of the 13,979,592 users in Criteo's pooled incrementality "
+        "tests (randomised holdouts; several advertisers' tests sub-sampled to one treatment ratio): X (300000, 12) float32 anonymised features f0-f11 (float64 in the source), "
+        "treatment (1 = test arm, randomised, ~85%), exposure (1 = the user was actually shown an ad; only "
+        "possible in test), visit (visited the advertiser's site), conversion, row (row in the source). "
+        "Plus EXACT full-data counts for the cells control / test-unexposed / test-exposed: cell_n, "
+        "cell_visit, cell_conversion (3,), and per-cell feature sums cell_xsum, cell_xsq (3, 12); full-data "
+        "sufficient statistics of a 91-column basis of the features' normal scores (1, r, r^2, pairwise "
+        "products): basis_zz (arm, 91, 91), basis_zy (arm, outcome, 91), basis_cell_sum (3, 91); n_total, "
+        "seed. Absolute rates are not the campaign's: Criteo down-sampled negatives non-uniformly.",
+    ),
 }
 
 

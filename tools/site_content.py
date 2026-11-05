@@ -181,9 +181,15 @@ SERIES = [
                "only where the agent drives. A Gaussian-process belief with trip effects drives UCB, Thompson "
                "sampling and a lookahead against a fixed grid: finding the hotspot and bounding the closure "
                "list turn out to need different policies."),
+    dict(key="lift", range="E101", title="Exposed versus unexposed", ids=["E101"],
+         intro="A brand lift study without a holdout compares people who saw the ads with people who did not and "
+               "corrects with propensity scores. Criteo's uplift data hold that study and the experiment that grades "
+               "it: a propensity analysis done by the book overstates the effect on conversions by two thirds "
+               "against either benchmark, and on visits by a fifth once the experiment's arm imbalance is "
+               "adjusted for; at survey size its bias stays while its intervals shrink."),
 ]
 SERIES_BY_KEY = {s["key"]: s for s in SERIES}
-RECENT = ["E100", "E99", "E98", "E97", "E96", "E92", "E95", "E94", "E90", "E88", "E91", "E87", "E89"]          # newest first, shown on the home page
+RECENT = ["E101", "E100", "E99", "E98", "E97", "E96", "E92", "E95", "E94", "E90", "E88", "E91", "E87", "E89"]          # newest first, shown on the home page
 
 
 # The figure shown on each example's card: the k-th image the notebook outputs (1-based, in notebook
@@ -199,7 +205,7 @@ CARD_FIGURE = {
     "E58": 7, "E59": 2, "E60": 7, "E61": 2, "E62": 3, "E63": 6, "E64": 12, "E65": 2, "E66": 5, "E67": 6,
     "E68": 9, "E69": 8, "E70": 6, "E71": 1, "E72": 14, "E73": 2, "E74": 8, "E75": 7, "E76": 1, "E77": 10,
     "E78": 8, "E79": 8, "E80": 10, "E81": 11, "E82": 1, "E83": 6, "E84": 4, "E85": 4, "E86": 1, "E87": 2,
-    "E88": 18, "E89": 8, "E90": 1, "E91": 10, "E92": 5, "E94": 15, "E95": "E95_election_night.gif", "E99": 11, "E100": 6,
+    "E88": 18, "E89": 8, "E90": 1, "E91": 10, "E92": 5, "E94": 15, "E95": "E95_election_night.gif", "E99": 11, "E100": 6, "E101": 3,
 }
 
 

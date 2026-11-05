@@ -29,7 +29,7 @@ for every notebook, so this is optional. Later syncs drop it unless you repeat t
 
 ```
 notebooks/
-  examples/      E01-E92, E94-E100  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
+  examples/      E01-E92, E94-E101  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
   challenges/    C01-C15  your workspace. Tasks, empty cells, hints on request.
   solutions/     C01-C15  full reference solutions, executed, with commentary.
 ```
@@ -370,6 +370,14 @@ Where is the worst radiation in a Fukushima district, and which cells must stay 
 | | Topic | Data | Key techniques |
 |---|---|---|---|
 | **E100** | Acting on a noisy belief: an adaptive radiation survey | Safecast bGeigie volunteer radiation logs around Iitate and Minamisoma, 2011-2013 (CC0), 301,693 readings | cleaning duplicated citizen-science logs, decay correction, an HSGP field with trip effects and Student-t noise, predictive checks that catch trip noise, counterfactual replay that reveals one real reading per stop, UCB, Thompson sampling and a closure-loss lookahead against a grid, finding versus bounding, when an adaptive design is not ignorable |
+
+#### Exposed versus unexposed (E101)
+
+A brand lift study without a holdout compares people who saw the ads with people who did not, and corrects the comparison with propensity scores. Criteo's uplift data hold both that study and the randomised experiment that grades it. The experiment, adjusted for a small imbalance between its arms that 14 million rows reveal, puts the effect on the exposed at 21 points for site visits and 2.8 points for conversions. A Bayesian propensity analysis done by the book (balance within 0.074, four estimators that agree) says 26 and 4.5. The conversion overstatement holds against the unadjusted experiment too (3.2); for visits it depends on the adjustment (unadjusted, 28.7, the propensity estimate would look low). Adding features converges to the wrong answer. Replayed at survey size, the experiment is noisy and centred while the propensity estimate is tight and stays biased, its coverage falling from 74% to 1% as the survey grows. Runs in about 4 minutes, about 2.2 GB.
+
+| | Topic | Data | Key techniques |
+|---|---|---|---|
+| **E101** | Propensity scores in a brand lift study, graded by the experiment inside it | Criteo Uplift Prediction Dataset v2.1 (Diemert et al. 2018, CC BY-NC-SA 4.0): a 300,000-user sample plus exact counts and sufficient statistics for all 13,979,592 users | one-sided noncompliance and the Wald estimate as a Bayesian principal-strata model, a balance check of the randomisation and regression adjustment from sufficient statistics, a Bayesian propensity model with a case-control intercept correction, overlap, calibration and balance checks, IPW, stratification, outcome regression and AIPW with a cut posterior and the Bayesian bootstrap, a feature ladder, E-values and a non-identified bias parameter, survey-sized replays, ghost ads |
 
 ### Data work (D-series)
 
