@@ -1299,3 +1299,6 @@ print(f"total run time {time.time() - T_START:.0f} s")
 #    $\delta = 0.40$, to set the prior sd for $\delta$ on the conversion KPI, and check whether the resulting
 #    interval covers the conversion benchmark. How many past campaigns would you want before trusting such a
 #    prior, given Gordon et al.'s finding that the bias varies widely between campaigns?
+#
+# E102 picks up where this leaves off: on the same users, it asks what would make the bias negative and how it
+# changes as a campaign's reach grows.

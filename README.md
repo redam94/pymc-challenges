@@ -29,7 +29,7 @@ for every notebook, so this is optional. Later syncs drop it unless you repeat t
 
 ```
 notebooks/
-  examples/      E01-E92, E94-E101  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
+  examples/      E01-E92, E94-E102  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
   challenges/    C01-C15  your workspace. Tasks, empty cells, hints on request.
   solutions/     C01-C15  full reference solutions, executed, with commentary.
 ```
@@ -371,13 +371,16 @@ Where is the worst radiation in a Fukushima district, and which cells must stay 
 |---|---|---|---|
 | **E100** | Acting on a noisy belief: an adaptive radiation survey | Safecast bGeigie volunteer radiation logs around Iitate and Minamisoma, 2011-2013 (CC0), 301,693 readings | cleaning duplicated citizen-science logs, decay correction, an HSGP field with trip effects and Student-t noise, predictive checks that catch trip noise, counterfactual replay that reveals one real reading per stop, UCB, Thompson sampling and a closure-loss lookahead against a grid, finding versus bounding, when an adaptive design is not ignorable |
 
-#### Exposed versus unexposed (E101)
+#### Exposed versus unexposed (E101-E102)
 
 A brand lift study without a holdout compares people who saw the ads with people who did not, and corrects the comparison with propensity scores. Criteo's uplift data hold both that study and the randomised experiment that grades it. The experiment, adjusted for a small imbalance between its arms that 14 million rows reveal, puts the effect on the exposed at 21 points for site visits and 2.8 points for conversions. A Bayesian propensity analysis done by the book (balance within 0.074, four estimators that agree) says 26 and 4.5. The conversion overstatement holds against the unadjusted experiment too (3.2); for visits it depends on the adjustment (unadjusted, 28.7, the propensity estimate would look low). Adding features converges to the wrong answer. Replayed at survey size, the experiment is noisy and centred while the propensity estimate is tight and stays biased, its coverage falling from 74% to 1% as the survey grows. Runs in about 4 minutes, about 2.2 GB.
+
+E102 asks which way such a study goes wrong. On the 45,100 control users, whose observed visits are their no-ad visits, it keeps the real features and visits and simulates only who sees an ad, hiding what one feature knows about visiting from the analyst; the true effect is zero, so every estimate is its bias. Delivery that leans toward the hidden engagement trait overstates the effect (+5.5 to +9.1 points at E101's 3.6% reach, E101's own error was +5.7); leaning away from it, a suppression list of engaged users, or a retarget-then-prospect plan scaled past 10% reach understates it, by up to 7.6 points. In this simulation, reach alone did not flip the AIPW bias of a fixed delivery rule (IPW's estimate did cross zero for strong retargeting at 50-80% reach), but reach changes the size: the threshold-model gap in the hidden trait is U-shaped, while the bias in points shrinks with reach under retargeting-like delivery because the visits sit in the top tail of the trait. At 95% reach each effective unexposed user stands in for 32-45 exposed ones and the imputed baseline is off by a factor of 1.75-2.4 wherever delivery used the hidden trait, so high reach is the worst case for relative lift and overlap. A full Bayesian analysis reports a campaign with a true 4.7-point effect as +0.1; balance and overlap look the same as in a mirror-image world where it reports 12.0, and a sensitivity model and E-values cannot tell the sign. E101's visit bias is positive against its adjusted experiment and would be negative against the unadjusted one. Runs in about 2.5 minutes, about 1.4 GB.
 
 | | Topic | Data | Key techniques |
 |---|---|---|---|
 | **E101** | Propensity scores in a brand lift study, graded by the experiment inside it | Criteo Uplift Prediction Dataset v2.1 (Diemert et al. 2018, CC BY-NC-SA 4.0): a 300,000-user sample plus exact counts and sufficient statistics for all 13,979,592 users | one-sided noncompliance and the Wald estimate as a Bayesian principal-strata model, a balance check of the randomisation and regression adjustment from sufficient statistics, a Bayesian propensity model with a case-control intercept correction, overlap, calibration and balance checks, IPW, stratification, outcome regression and AIPW with a cut posterior and the Bayesian bootstrap, a feature ladder, E-values and a non-identified bias parameter, survey-sized replays, ghost ads |
+| **E102** | Which way does the bias go? Hidden targeting, reach and the sign of a propensity estimate | E101's Criteo sample: the 45,100 control users' real features and no-ad visits, with simulated exposure | a placebo study on real rows, a hidden real feature as the confounder, a threshold model of ad delivery and the truncated-normal gap, retargeting, prospecting, suppression lists and ad avoiders, bias, overlap and effective sample size against reach, IPW against AIPW at high reach, a full Bayesian propensity analysis with a cut posterior and the Bayesian bootstrap, a two-world sensitivity model and E-values |
 
 ### Data work (D-series)
 
