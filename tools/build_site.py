@@ -92,7 +92,7 @@ def parse_readme() -> dict[str, dict]:
     """Topic / data / techniques (or stars) for every row of the README curriculum tables."""
     rows = {}
     for line in (ROOT / "README.md").read_text().splitlines():
-        m = re.match(r"^\| \*\*([CDE]\d\d)\*\* \|(.*)\|\s*$", line)
+        m = re.match(r"^\| \*\*([CDE]\d{2,3})\*\* \|(.*)\|\s*$", line)
         if not m:
             continue
         cells = [c.strip() for c in m.group(2).split(" | ")]
@@ -105,16 +105,21 @@ def parse_readme() -> dict[str, dict]:
     return rows
 
 
+def nb_id(stem: str) -> str:
+    """E05_gaussian_processes -> E05, E100_chasing_the_hotspot -> E100."""
+    return stem.split("_", 1)[0]
+
+
 def catalogue() -> list[Entry]:
     readme = parse_readme()
     entries = []
     for p in sorted((NB / "examples").glob("*.ipynb")):
-        e = Entry(id=p.stem[:3], kind="example", nb_path=p, **readme.get(p.stem[:3], {}))
+        e = Entry(id=nb_id(p.stem), kind="example", nb_path=p, **readme.get(nb_id(p.stem), {}))
         entries.append(e)
     for p in sorted((NB / "challenges").glob("*.ipynb")):
         sol = NB / "solutions" / f"{p.stem}_solution.ipynb"
-        e = Entry(id=p.stem[:3], kind="challenge", nb_path=p,
-                  solution_path=sol if sol.exists() else None, **readme.get(p.stem[:3], {}))
+        e = Entry(id=nb_id(p.stem), kind="challenge", nb_path=p,
+                  solution_path=sol if sol.exists() else None, **readme.get(nb_id(p.stem), {}))
         entries.append(e)
     by_id = {e.id: e for e in entries}
     for s in content.SERIES:
@@ -171,7 +176,7 @@ def cross_link(body: str, depth: int, current: str) -> str:
         elif skip or "$" in tok:
             out.append(tok)
         else:
-            out.append(re.sub(r"\b([CDE]\d\d)\b(?![-_])",
+            out.append(re.sub(r"\b([CDE]\d{2,3})\b(?![-_])",
                               lambda m: (f'<a class="xref" href="{up}{XREF_TARGETS[m.group(1)]}">{m.group(1)}</a>'
                                          if m.group(1) in XREF_TARGETS and m.group(1) != current else m.group(1)),
                               tok))
@@ -187,7 +192,7 @@ class Page:
     """Collects the HTML and side files (figures) of one rendered notebook."""
 
     def __init__(self, out_dir: Path, stem: str):
-        self.current = stem[:3]
+        self.current = nb_id(stem)
         self.out_dir = out_dir
         self.fig_dir = out_dir / "figures" / stem
         self.fig_rel = f"figures/{stem}"
