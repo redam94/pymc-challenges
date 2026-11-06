@@ -2186,6 +2186,49 @@ REGISTRY: dict[str, Dataset] = {
         "19 / 185; Western 13 / 345. Histories with zero people are omitted.",
         {"dtype": {"history": str}},
     ),
+    # ---- examples (E110) ----
+    "e110_raleigh_units": Dataset(
+        "e110_raleigh_units.csv",
+        "https://stacks.stanford.edu/file/druid:yg821jf8611/yg821jf8611_nc_raleigh_2020_04_01.csv.zip",
+        "Stanford Open Policing Project (Pierson et al. 2020, Nature Human Behaviour), Raleigh, North "
+        "Carolina city file, standardised release of 2020-04-01: 856,400 vehicular stops by the Raleigh "
+        "Police Department, 2002-2015. Open Data Commons Attribution License (ODC-By) v1.0 - attribute the "
+        "Stanford Open Policing Project. DERIVED by tools/build_e110_raleigh.py, which streams the 13.5 MB "
+        "zip (the url, not this file) - keep the cached file in data/ (md5 a7bef8d66de0721ec126a51f53b3e70a).",
+        "One row per unit and driver race (6,452 rows): level ('city', 'year' or 'officer'), unit ('Raleigh', "
+        "the year 2002-2015, or a 10-character officer_id_hash), race (black, white, hispanic, asian; 'other' "
+        "and 'unknown', 8,644 stops, dropped), stops, searches, hits (searches that found contraband), and "
+        "the searches/hits split by search basis: searches_consent / hits_consent, searches_pc / hits_pc "
+        "(probable cause), searches_other / hits_other (protective frisks, incident to arrest, ...); 528 "
+        "searches with no recorded basis count only in the totals. City totals: Black 383,628 stops / "
+        "19,395 searches / 3,198 hits; white 361,319 / 8,926 / 1,270; Hispanic 87,460 / 4,568 / 359; Asian "
+        "15,349 / 225 / 30. 1,598 officers (457 with 20 or more searches); officer x race rows with no stops "
+        "are written as zeros.",
+        {"dtype": {"unit": str}},
+    ),
+    # ---- examples (E111) ----
+    "e111_eu_mortality": Dataset(
+        "e111_eu_mortality.csv.gz",
+        "https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/demo_magec/?format=TSV&compressed=true",
+        "Eurostat (CC BY 4.0, Commission Decision 2011/833/EU), accessed 2026-11-05/06: deaths by single "
+        "year of age (demo_magec), population on 1 January by age (demo_pjan) and life expectancy at birth "
+        "(demo_mlexpec), for the EU27 plus Iceland, Norway and Switzerland, 2000-2024. DERIVED by "
+        "tools/build_e111_eurostat.py; the url is demo_magec, not this file - keep the cached file in data/ "
+        "(md5 9f5cc64c72426755e6f3b68c1de1362f).",
+        "One row per country, sex and year and single age (204,750 rows): geo (Eurostat code: AT ... SK, "
+        "IS, NO, CH; EL is Greece), sex (T total, F, M), year (2000-2024), age (0-89, and 90 meaning 90+), "
+        "deaths (float: unknown-age deaths spread pro rata), exposure (person-years: mean of the 1 January "
+        "populations of years t and t+1), pop (1 January population of year t, sex T rows only), "
+        "e0_eurostat (Eurostat's life expectancy at birth for the country, sex and year, repeated on every "
+        "age row), pop_break (1 where Eurostat flags the year's 1 January population 'b', break in "
+        "series). Exposures are as published, breaks included. Flagged breaks 2000-2025 (whole-population "
+        "step against the usual change): CZ 2021 (-1.9% vs +0.3%), PL 2021 (-2.3% vs -0.3%), DE 2011 "
+        "(-1.9% vs -0.1%), HR 2001 (-4.5%), PL 2000 and 2010, BE 2011-12, CH 2011, DE 2023, FR 2012/2014, "
+        "HU 2012, IT 2019, LU 2012/2017, SI 2008 (each under 1% beyond the usual change). NaN where Eurostat "
+        "lacks the cells: Latvia 2000-01 and Croatia 2000 (all ages), ages 85-90+ in Cyprus 2000-01, "
+        "Romania 2000, Croatia 2011-12 and Hungary 2006-11. Norway 2012 total-sex deaths are F + M.",
+        {"compression": "gzip"},
+    ),
 }
 
 

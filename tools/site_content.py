@@ -216,20 +216,26 @@ SERIES = [
                "robustness values, benchmarks, E-values, Rosenbaum bounds and PyMC sensitivity models each say how "
                "strong a hidden confounder would have to be, and where each can mislead. It ends with a tipping-point "
                "sentence and a sensitivity table for stakeholders."),
-    dict(key="public", range="E108-E109", title="Bayes in public: questions people actually ask",
-         ids=["E108", "E109"],
+    dict(key="public", range="E108-E111", title="Bayes in public: questions people actually ask",
+         ids=["E108", "E109", "E110", "E111"],
          intro="Questions you might hear at a kitchen table, a council meeting or a newsroom, each in a field "
                "this collection had not touched and each with a different kind of Bayesian model. Is my diet as "
                "bad as one day suggests? E108 separates usual salt intake from day-to-day noise in two NHANES "
                "recalls (about 86% of US adults are usually over the line, against 74% of single days). How many "
                "victims were never counted? E109 uses multiple-systems estimation on the Kosovo 1999 lists, "
                "where the answer moves with list dependence and the prior, and on the UK's modern-slavery lists one list doubles the latent-class answer. "
+               "Is the bar for a police search the same for everyone? E110 fits a latent-threshold model to "
+               "Raleigh's traffic stops: the bar is lower for Hispanic drivers under both risk shapes tried, while "
+               "for Black drivers the sign flips with the shape. How much life did the pandemic cost, and has it "
+               "come back? E111 pools Lee-Carter mortality over 30 European countries: about 1.3 years below the "
+               "path in 2021, and by 2024 17 countries likely still below and 13 too close to call. "
                "Each ends with a picture designed for people who will never read the maths: hypothetical "
-               "outcome plots, icon arrays with honest uncertainty, a frequency tree, an iceberg of the "
-               "uncounted, quantile dotplots and a swarm of possible worlds."),
+               "outcome plots, icon arrays with honest uncertainty, natural-frequency trees, an iceberg of the "
+               "uncounted, quantile dotplots, swarms of possible worlds, gradient intervals, a value-suppressing "
+               "beeswarm, graded fans on a tile map and a mortality carpet."),
 ]
 SERIES_BY_KEY = {s["key"]: s for s in SERIES}
-RECENT = ["E109", "E108", "E107", "E106", "E105", "E104", "E103", "E102", "E101", "E100", "E99", "E98", "E97", "E96", "E92", "E95", "E94", "E90", "E88", "E91", "E87", "E89"]          # newest first, shown on the home page
+RECENT = ["E111", "E110", "E109", "E108", "E107", "E106", "E105", "E104", "E103", "E102", "E101", "E100", "E99", "E98", "E97", "E96", "E92", "E95", "E94", "E90", "E88", "E91", "E87", "E89"]          # newest first, shown on the home page
 
 
 # The figure shown on each example's card: the k-th image the notebook outputs (1-based, in notebook
@@ -246,7 +252,7 @@ CARD_FIGURE = {
     "E68": 9, "E69": 8, "E70": 6, "E71": 1, "E72": 14, "E73": 2, "E74": 8, "E75": 7, "E76": 1, "E77": 10,
     "E78": 8, "E79": 8, "E80": 10, "E81": 11, "E82": 1, "E83": 6, "E84": 4, "E85": 4, "E86": 1, "E87": 2,
     "E88": 18, "E89": 8, "E90": 1, "E91": 10, "E92": 5, "E94": 15, "E95": "E95_election_night.gif", "E99": 11, "E100": 6, "E101": 3, "E102": 2, "E103": 4, "E104": 7, "E105": 5, "E106": 6, "E107": 3,
-    "E108": "E108_usual_salt_intake.gif", "E109": 1,
+    "E108": "E108_usual_salt_intake.gif", "E109": 1, "E110": 1, "E111": 1,
 }
 
 
