@@ -2106,6 +2106,28 @@ REGISTRY: dict[str, Dataset] = {
         "required_car_parking_spaces, total_of_special_requests, reservation_status (Check-Out, Canceled, "
         "No-Show), reservation_status_date.",
     ),
+    # ---- examples (E106) ----
+    "e106_film_attention": Dataset(
+        "e106_film_attention.csv.gz",
+        "https://query.wikidata.org/sparql",
+        "Wikidata (CC0 1.0; SPARQL query of 2026-11-05) for 302 films with a US release date "
+        "(P577 qualified by P291 = United States) between 2015-11-06 and 2019-12-25, a box-office value "
+        "(P2142, USD) and an English Wikipedia article; Wikimedia Foundation pageview statistics (REST API, "
+        "per-article daily views by users, all access methods; released CC0) for each article and every "
+        "redirect to it (MediaWiki API), summed by day, from 112 days before to 55 days after the release. "
+        "Wikidata mixes premieres, festival and wide dates and its box office is mostly worldwide, filled for "
+        "a minority of films: a sample tilted to big releases, not the whole calendar. DERIVED by "
+        "tools/build_e106_data.py (pull, derive); the url is the SPARQL endpoint, not this file - keep the "
+        "cached file in data/ (md5 8d4fa7764a67c6e79727a30acfabd2a2).",
+        "One row per film and day (50,736 rows): qid (Wikidata item), label, title (English Wikipedia "
+        "article), release (US release date chosen by the build script), n_us_dates, box_office_usd, "
+        "bo_scope (worldwide, us or unknown), budget_usd (production cost P2130, NaN if absent), series (part "
+        "of a series, P179), g_* genre flags (animated, horror, comedy, action, superhero, drama, scifi, family, "
+        "documentary, thriller, romance, musical), date, day (days from release, -112..55), views (daily "
+        "pageviews, article plus redirects), views_main_title (the article title alone). Attention, not "
+        "ticket sales or media spend.",
+        {"compression": "gzip", "parse_dates": ["release", "date"]},
+    ),
 }
 
 
