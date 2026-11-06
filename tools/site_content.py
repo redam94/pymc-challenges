@@ -208,9 +208,17 @@ SERIES = [
                "should spend before a release, on real Wikidata release calendars and Wikipedia attention: a "
                "cross-film model gets the timing backwards, screens are a mediator, and a joint PyMC model puts "
                "about three fifths of the budget in weeks -6 to -3 and two fifths in the last three weeks."),
+    dict(key="hiddenconf", range="E107", title="What a hidden confounder can do", ids=["E107"],
+         intro="On the job-training benchmark, where a randomised experiment gives the answer, hiding the earnings "
+               "history flips an observational estimate from about the truth to a confident loss. Confounders planted "
+               "on the real rows show the omitted-variable-bias algebra exactly and are invisible to a balance table "
+               "of the measured covariates; "
+               "robustness values, benchmarks, E-values, Rosenbaum bounds and PyMC sensitivity models each say how "
+               "strong a hidden confounder would have to be, and where each can mislead. It ends with a tipping-point "
+               "sentence and a sensitivity table for stakeholders."),
 ]
 SERIES_BY_KEY = {s["key"]: s for s in SERIES}
-RECENT = ["E106", "E105", "E104", "E103", "E102", "E101", "E100", "E99", "E98", "E97", "E96", "E92", "E95", "E94", "E90", "E88", "E91", "E87", "E89"]          # newest first, shown on the home page
+RECENT = ["E107", "E106", "E105", "E104", "E103", "E102", "E101", "E100", "E99", "E98", "E97", "E96", "E92", "E95", "E94", "E90", "E88", "E91", "E87", "E89"]          # newest first, shown on the home page
 
 
 # The figure shown on each example's card: the k-th image the notebook outputs (1-based, in notebook
@@ -226,7 +234,7 @@ CARD_FIGURE = {
     "E58": 7, "E59": 2, "E60": 7, "E61": 2, "E62": 3, "E63": 6, "E64": 12, "E65": 2, "E66": 5, "E67": 6,
     "E68": 9, "E69": 8, "E70": 6, "E71": 1, "E72": 14, "E73": 2, "E74": 8, "E75": 7, "E76": 1, "E77": 10,
     "E78": 8, "E79": 8, "E80": 10, "E81": 11, "E82": 1, "E83": 6, "E84": 4, "E85": 4, "E86": 1, "E87": 2,
-    "E88": 18, "E89": 8, "E90": 1, "E91": 10, "E92": 5, "E94": 15, "E95": "E95_election_night.gif", "E99": 11, "E100": 6, "E101": 3, "E102": 2, "E103": 4, "E104": 7, "E105": 5, "E106": 6,
+    "E88": 18, "E89": 8, "E90": 1, "E91": 10, "E92": 5, "E94": 15, "E95": "E95_election_night.gif", "E99": 11, "E100": 6, "E101": 3, "E102": 2, "E103": 4, "E104": 7, "E105": 5, "E106": 6, "E107": 3,
 }
 
 
