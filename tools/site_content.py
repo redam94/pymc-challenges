@@ -216,8 +216,9 @@ SERIES = [
                "robustness values, benchmarks, E-values, Rosenbaum bounds and PyMC sensitivity models each say how "
                "strong a hidden confounder would have to be, and where each can mislead. It ends with a tipping-point "
                "sentence and a sensitivity table for stakeholders."),
-    dict(key="public", range="E108-E115", title="Bayes in public: questions people actually ask",
-         ids=["E108", "E109", "E110", "E111", "E112", "E113", "E114", "E115"],
+    dict(key="public", range="E108-E117", title="Bayes in public: questions people actually ask",
+         ids=["E108", "E109", "E110", "E111", "E112", "E113", "E114", "E115",
+              "E116", "E117"],
          intro="Questions you might hear at a kitchen table, a council meeting or a newsroom, each in a field "
                "this collection had not touched and each with a different kind of Bayesian model. Is my diet as "
                "bad as one day suggests? E108 separates usual salt intake from day-to-day noise in two NHANES "
@@ -245,16 +246,26 @@ SERIES = [
                "effect to 74 years of the Broadbalk wheat experiment: the third bag paid in an average year "
                "(>99%), but on one plot in a given year only about 8 times in 10, and the optimum rate at "
                "cheap nitrogen is mostly the shape of the curve. "
+               "Is my toddler on track? E116 fits a two-parameter item response model to 9,537 Wordbank "
+               "checklists of 680 words, tempered for words that hang together by section, and corrects the "
+               "percentile scale with held-out children: a 50-word two-year-old is around the 10th percentile "
+               "(6th-14th) and about as likely as not (55%, medium confidence) to be in the lowest 10%, where "
+               "the uncorrected model said 21%. Would that headline finding replicate? E117 writes a "
+               "publication filter into a null/real mixture for 76 pairs from the Reproducibility Project: "
+               "Psychology: ignoring the filter expects 56 successful repeats where 26 happened; the final "
+               "model expects 28 out of sample, but scores within one standard error of each field's base rate, "
+               "and its odds are too spread out. About 65% of published findings like these are real (93% cognitive, 41% social). "
                "Each ends with a picture designed for people who will never read the maths: hypothetical "
                "outcome plots, icon arrays with honest uncertainty, natural-frequency trees, an iceberg of the "
                "uncounted, quantile dotplots, swarms of possible worlds, gradient intervals, a value-suppressing "
                "beeswarm, graded fans on a tile map, a mortality carpet, a Bayesian surprise map, \"find your "
                "county\" cards, chance-of bars over a 30-year mortgage, a flood-marks GIF, 40 possible histories "
                "per fish stock, fish-icon rows, prediction beside inference as paired quantile dotplots and "
-               "a price-dial GIF."),
+               "a price-dial GIF, \"you are here\" dotplots under a growth fan, a first-words ladder, a "
+               "forecast track record, icon shelves with partial fills and a publication-filter GIF."),
 ]
 SERIES_BY_KEY = {s["key"]: s for s in SERIES}
-RECENT = ["E115", "E114", "E113", "E112", "E111", "E110", "E109", "E108", "E107", "E106", "E105", "E104", "E103", "E102", "E101", "E100", "E99", "E98", "E97", "E96", "E92", "E95", "E94", "E90", "E88", "E91", "E87", "E89"]          # newest first, shown on the home page
+RECENT = ["E117", "E116", "E115", "E114", "E113", "E112", "E111", "E110", "E109", "E108", "E107", "E106", "E105", "E104", "E103", "E102", "E101", "E100", "E99", "E98", "E97", "E96", "E92", "E95", "E94", "E90", "E88", "E91", "E87", "E89"]          # newest first, shown on the home page
 
 
 # The figure shown on each example's card: the k-th image the notebook outputs (1-based, in notebook
@@ -272,6 +283,7 @@ CARD_FIGURE = {
     "E78": 8, "E79": 8, "E80": 10, "E81": 11, "E82": 1, "E83": 6, "E84": 4, "E85": 4, "E86": 1, "E87": 2,
     "E88": 18, "E89": 8, "E90": 1, "E91": 10, "E92": 5, "E94": 15, "E95": "E95_election_night.gif", "E99": 11, "E100": 6, "E101": 3, "E102": 2, "E103": 4, "E104": 7, "E105": 5, "E106": 6, "E107": 3,
     "E108": "E108_usual_salt_intake.gif", "E109": 1, "E110": 1, "E111": 1, "E112": 1, "E113": 1, "E114": 1, "E115": 1,
+    "E116": 1, "E117": 1,
 }
 
 

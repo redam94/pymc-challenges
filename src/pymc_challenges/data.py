@@ -2269,6 +2269,24 @@ REGISTRY: dict[str, Dataset] = {
         "have no children with poverty status; 14 counties have a direct estimate of exactly 0.",
         {"dtype": {"fips": str}},
     ),
+    # ---- examples (E116) ----
+    "e116_wordbank_ws": Dataset(
+        "e116_wordbank_ws.npz",
+        "https://langcog.github.io/wordbank-datapage/slices/responses/english_american_ws.parquet",
+        "Wordbank (Frank, Braginsky, Yurovsky & Marchman 2017, J. Child Language 44:677-694), item-by-child "
+        "responses to the MacArthur-Bates CDI Words & Sentences, English (American); retrieved 2026-11-06. "
+        "Licence CC BY 4.0: the build checks Wordbank's datasets table and stops unless every English "
+        "(American) WS dataset is CC-BY (all 18 were; Wordbank's CC BY-NC datasets are in other languages). "
+        "Attribute Wordbank and its contributors. DERIVED by tools/build_e116_wordbank.py; the url is the "
+        "3 MB parquet, not this file - keep the cached file in data/ (md5 56d2f337ee16c6c5a8d6dcb2072cd1f9).",
+        "NumPy .npz (open data.path(...) with np.load): the 9,537 checklists aged 16-30 months (the form's "
+        "normed range) x 680 words. produces_bits / answered_bits are np.packbits along words (np.unpackbits("
+        "..., axis=1, count=680) gives 0/1 'says it' and 'was on the form'; 440 checklists miss 1-2 words); "
+        "per checklist: data_id, age (months), sex (0 boy, 1 girl, -1 not reported), birth_order (1 first, "
+        "2+ later, -1), education (caregiver, 0 primary ... 6 graduate, labels in EDUCATION; -1), ethnicity "
+        "(0 non-Hispanic, 1 Hispanic, -1); per word: item_id, definition, category (22 sections), uni_lemma. "
+        "Each data_id is one administration; repeat visits of a child cannot be linked.",
+    ),
     # ---- examples (E115) ----
     "e115_broadbalk": Dataset(
         "e115_broadbalk.csv",
@@ -2309,6 +2327,26 @@ REGISTRY: dict[str, Dataset] = {
         "index of >= 15 years; 'catch_only': northern cod COD2J3KL and Peruvian anchoveta PANCHPERUNC, whose "
         "RAM survey series equals the assessment's own biomass and is dropped), resilience (FishBase), r_lo, "
         "r_hi (Froese et al. 2017 prior range of r).",
+    ),
+    # ---- examples (E117) ----
+    "e117_rpp_pairs": Dataset(
+        "e117_rpp_pairs.csv",
+        "https://osf.io/fgjvw/download",
+        "Reproducibility Project: Psychology master data file rpp_data.csv (Open Science Collaboration "
+        "2015, Science 349:aac4716), OSF project ezcuj, licence CC0 1.0 Universal (checked via the OSF API "
+        "2026-11-06). DERIVED by tools/build_e117_rpp.py; the url is the 168 x 138 master file (latin-1), "
+        "not this table - keep the cached file in data/ (md5 44dbc1c77f9727372b9159d7f7fc2eb3).",
+        "One row per study with a correlation effect size and a sample size for both the original and the "
+        "replication (97 rows): study, title, authors, journal (JPSP, PS, JEPLMC), discipline (Social or "
+        "Cognitive), then per arm (_o original, _r replication): test, df1, df2, n, n_eff (df2 + 2 for t and "
+        "F(1, df2) tests, else n), p (two-sided, recomputed by the OSC), r (correlation; r_r < 0 when the "
+        "replication went the other way), z (Fisher z), se (1 / sqrt(n_eff - 3)); se_o_p (the original's se "
+        "implied by its own recomputed p-value), p_o_reported (the p-value as the paper reported it), "
+        "marginal_o (presented as .05 < p <= .10: only study 28 among the 76 used; three with a recomputed "
+        "p just above .05 were reported as significant), single_df (both arms one-df tests: 79), "
+        "claimed_effect (original p <= "
+        ".10: all but studies 26, 89, 135), use (both: 76 pairs), success (replication p < .05 in the "
+        "original's direction: 26 of the 76), osc_replicate (the OSC's own yes/no).",
     ),
 }
 
