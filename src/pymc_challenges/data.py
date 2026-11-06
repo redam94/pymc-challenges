@@ -2229,6 +2229,46 @@ REGISTRY: dict[str, Dataset] = {
         "Romania 2000, Croatia 2011-12 and Hungary 2006-11. Norway 2012 total-sex deaths are F + M.",
         {"compression": "gzip"},
     ),
+    # ---- examples (E113) ----
+    "e113_peaks": Dataset(
+        "e113_peaks.csv",
+        "https://nwis.waterdata.usgs.gov/nwis/peak?site_no=01570500&agency_cd=USGS&format=rdb",
+        "USGS National Water Information System annual peak-flow files (US federal work, public domain), "
+        "retrieved 2026-11-06, for 12 gauges on the Susquehanna, Juniata, West Branch, Potomac and "
+        "Schuylkill, with drainage areas and coordinates from the NWIS site service. DERIVED by "
+        "tools/build_e113_peaks.py; the url is the Harrisburg file, not this table - keep the cached file "
+        "in data/. NWIS is migrating to api.waterdata.usgs.gov.",
+        "One row per recorded annual peak (1,383 rows): site_no, station, drain_sqmi, lat, lon, water_year "
+        "(October-September), peak_date, peak_cfs (cubic feet per second), gage_ht_ft, peak_cd (NWIS codes, "
+        "comma-separated), historic (code 7: a historic peak outside the systematic record), regulated "
+        "(code 5 or 6), estimate (code 2), year_last_pk ('highest since'). Harrisburg (01570500) has six "
+        "historic peaks 1786-1889 and a gapless systematic record for water years 1891-2024. Water year "
+        "2026 at Hancock is a partial, provisional year. Danville and Lewisburg have long gaps before "
+        "their continuous records.",
+        {"dtype": {"site_no": str}},
+    ),
+    # ---- examples (E112) ----
+    "e112_county_child_poverty": Dataset(
+        "e112_county_child_poverty.csv",
+        "https://www2.census.gov/programs-surveys/acs/summary_file/2023/table-based-SF/data/5YRData/"
+        "acsdt5y2023-b17020.dat",
+        "US Census Bureau American Community Survey 5-year estimates, table B17020 (poverty status by age), "
+        "2019-2023 (table-based summary file) and 2014-2018 (sequence-based summary file, sequence 0054); "
+        "Census SAIPE 2023 county estimates (est23all.txt); USDA ERS Rural-Urban Continuum Codes 2023. All "
+        "US federal works, public domain; retrieved 2026-11-06. DERIVED by tools/build_e112_saipe.py; the "
+        "url is the 2019-2023 ACS file, not this table - keep the cached file in data/ "
+        "(md5 0d1060394a050c433ddc23ee3e458997).",
+        "One row per county or county equivalent, 50 states + DC (3,144 rows; Connecticut as its nine "
+        "planning regions): fips, state, county, n_children (children under 18 with poverty status "
+        "determined, ACS 2019-23), n_poor (of them below poverty), moe_poor, moe_children (90% margins of "
+        "the sums: root sum of squares over the under-6, 6-11 and 12-17 cells), p_acs, se_acs (direct "
+        "proportion and its standard error, ACS proportion formula, SE = MOE / 1.645), rucc (1-9), pop2020, "
+        "saipe_pct, saipe_lo, saipe_hi (SAIPE 2023 model-based under-18 poverty % and 90% bounds; Kalawao HI "
+        "missing), n_children_18, n_poor_18, p_acs_18, se_acs_18 (the same from the non-overlapping ACS "
+        "2014-18 sample; missing for the CT planning regions and AK 02063/02066). Loving TX and Kalawao HI "
+        "have no children with poverty status; 14 counties have a direct estimate of exactly 0.",
+        {"dtype": {"fips": str}},
+    ),
 }
 
 
