@@ -2141,6 +2141,51 @@ REGISTRY: dict[str, Dataset] = {
         "ticket sales or media spend.",
         {"compression": "gzip", "parse_dates": ["release", "date"]},
     ),
+    # ---- examples (E108) ----
+    "e108_nhanes_recalls": Dataset(
+        "e108_nhanes_recalls.csv.gz",
+        "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2017/DataFiles/DR1TOT_J.xpt",
+        "NHANES 2017-2018 (cycle J), CDC / National Center for Health Statistics: total nutrient intakes "
+        "from the day-1 (in person) and day-2 (telephone) 24-hour dietary recalls (DR1TOT_J, DR2TOT_J) "
+        "joined to demographics (DEMO_J) and the alcohol questionnaire (ALQ_J). US federal work, public "
+        "domain. Adults aged 19+ with a reliable day-1 recall (DR1DRSTZ == 1), plus their day-2 recall "
+        "when it is reliable too. DERIVED by tools/build_e108_nhanes.py; the url is the first of the "
+        "four .xpt files, not this file - keep the cached file in data/ "
+        "(md5 6eb9b657fc13deb94a137be75dad9536).",
+        "One row per adult and reliable recall day (9,103 rows: 4,863 adults, 4,240 with day 2): seqn, day "
+        "(1 or 2), dow (1 = Sunday ... 7 = Saturday), sodium_mg, potassium_mg, alcohol_g, kcal, age "
+        "(years, top-coded 80), sex, pir (family income-to-poverty ratio, top-coded 5, NaN for 572 adults), "
+        "race_eth (RIDRETH3 code: 1 Mexican American, 2 other Hispanic, 3 NH White, 4 NH Black, 6 NH Asian, "
+        "7 other/multi), alq_ever (ALQ111 ever had a drink: 1 yes, 0 never, NaN unknown), alq_freq "
+        "(ALQ121 past-year drinking frequency code 0-10: 0 none in the past year, also set for lifetime "
+        "abstainers, 1 every day ... 10 once or twice a year, NaN refused/unknown), alq_drinks (ALQ130 "
+        "usual drinks on a drinking day, NaN refused/unknown/not asked), wt_day1 / wt_day2 (dietary day-1 "
+        "and two-day sample weights), psu, stratum (masked design variables).",
+        {"compression": "gzip"},
+    ),
+    # ---- examples (E109) ----
+    "e109_mse_lists": Dataset(
+        "e109_mse_lists.csv",
+        "https://cran.r-project.org/src/contrib/LCMCR_0.4.14.tar.gz",
+        "Capture-history counts from two CRAN packages (GPL >= 2), the data from published reports. "
+        "Kosovo: LCMCR 0.4.14 (Manrique-Vallier) `kosovo_aggregate`, 4,400 killings in Kosovo, 20 March - "
+        "22 June 1999, on four lists - EXH (exhumations), ABA (American Bar Association / CEELI "
+        "interviews), OSCE, HRW (Human Rights Watch) - analysed by Ball, Betts, Scheuren, Dudukovich & Asher "
+        "(2002, AAAS/ABA-CEELI report to the ICTY). UK 2013: SparseMSE 2.0.1 (Chan, Silverman & Vincent) "
+        "`UKdat`, 2,744 potential victims of trafficking in the National Crime Agency's 2013 strategic "
+        "assessment on six lists (LA local authorities, NG NGOs, PF police forces, GO government "
+        "organisations, GP general public, NCA National Crime Agency), the basis of the Home Office's 2014 "
+        "estimate (Silverman 2014). Also from SparseMSE: the Netherlands (`Ned`), Greater New Orleans "
+        "(`NewOrl`, anonymised lists) and a US western site (`Western`, anonymised). DERIVED by "
+        "tools/build_e109_mse.py from the two tarballs (the url is the first; SparseMSE_2.0.1.tar.gz is "
+        "the second) - keep the cached file in data/.",
+        "One row per OBSERVED capture history (the all-zero history is never observed): dataset (kosovo, "
+        "uk2013, netherlands, new_orleans, western_us), lists (list names joined by '|', in history "
+        "order), history (0/1 string, one character per list; read as a string), count (people with that "
+        "history). Kosovo 15 rows / 4,400 people; UK 25 / 2,744; Netherlands 24 / 8,234; New Orleans "
+        "19 / 185; Western 13 / 345. Histories with zero people are omitted.",
+        {"dtype": {"history": str}},
+    ),
 }
 
 
