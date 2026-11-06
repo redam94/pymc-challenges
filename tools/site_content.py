@@ -216,8 +216,8 @@ SERIES = [
                "robustness values, benchmarks, E-values, Rosenbaum bounds and PyMC sensitivity models each say how "
                "strong a hidden confounder would have to be, and where each can mislead. It ends with a tipping-point "
                "sentence and a sensitivity table for stakeholders."),
-    dict(key="public", range="E108-E113", title="Bayes in public: questions people actually ask",
-         ids=["E108", "E109", "E110", "E111", "E112", "E113"],
+    dict(key="public", range="E108-E115", title="Bayes in public: questions people actually ask",
+         ids=["E108", "E109", "E110", "E111", "E112", "E113", "E114", "E115"],
          intro="Questions you might hear at a kitchen table, a council meeting or a newsroom, each in a field "
                "this collection had not touched and each with a different kind of Bayesian model. Is my diet as "
                "bad as one day suggests? E108 separates usual salt intake from day-to-day noise in two NHANES "
@@ -236,14 +236,25 @@ SERIES = [
                "floods of 1786-1889 as censored data to a regional log-Pearson III model of 12 gauges: about "
                "11% (3-22%) at Harrisburg over 2025-2054, against the 26% the name implies, with low "
                "confidence: about 8% if the post-1950 drop is real and lasts, 14% if the river has not changed. "
+               "Is the fish on my plate being overfished? E114 fits a Schaefer state-space model to 18 RAM "
+               "Legacy stocks with life-history priors and one shared process noise: about 6 of 18 (3-9) "
+               "were below B_MSY in their last year of data, but the model is usually more optimistic than "
+               "the official assessments, calls none of the three officially overfished stocks overfished, "
+               "and from catches alone puts collapsed northern cod near twice B_MSY in 1992. "
+               "Does the last bag of fertiliser pay? E115 fits a Mitscherlich curve under a latent year "
+               "effect to 74 years of the Broadbalk wheat experiment: the third bag paid in an average year "
+               "(>99%), but on one plot in a given year only about 8 times in 10, and the optimum rate at "
+               "cheap nitrogen is mostly the shape of the curve. "
                "Each ends with a picture designed for people who will never read the maths: hypothetical "
                "outcome plots, icon arrays with honest uncertainty, natural-frequency trees, an iceberg of the "
                "uncounted, quantile dotplots, swarms of possible worlds, gradient intervals, a value-suppressing "
                "beeswarm, graded fans on a tile map, a mortality carpet, a Bayesian surprise map, \"find your "
-               "county\" cards, chance-of bars over a 30-year mortgage and a flood-marks GIF."),
+               "county\" cards, chance-of bars over a 30-year mortgage, a flood-marks GIF, 40 possible histories "
+               "per fish stock, fish-icon rows, prediction beside inference as paired quantile dotplots and "
+               "a price-dial GIF."),
 ]
 SERIES_BY_KEY = {s["key"]: s for s in SERIES}
-RECENT = ["E113", "E112", "E111", "E110", "E109", "E108", "E107", "E106", "E105", "E104", "E103", "E102", "E101", "E100", "E99", "E98", "E97", "E96", "E92", "E95", "E94", "E90", "E88", "E91", "E87", "E89"]          # newest first, shown on the home page
+RECENT = ["E115", "E114", "E113", "E112", "E111", "E110", "E109", "E108", "E107", "E106", "E105", "E104", "E103", "E102", "E101", "E100", "E99", "E98", "E97", "E96", "E92", "E95", "E94", "E90", "E88", "E91", "E87", "E89"]          # newest first, shown on the home page
 
 
 # The figure shown on each example's card: the k-th image the notebook outputs (1-based, in notebook
@@ -260,7 +271,7 @@ CARD_FIGURE = {
     "E68": 9, "E69": 8, "E70": 6, "E71": 1, "E72": 14, "E73": 2, "E74": 8, "E75": 7, "E76": 1, "E77": 10,
     "E78": 8, "E79": 8, "E80": 10, "E81": 11, "E82": 1, "E83": 6, "E84": 4, "E85": 4, "E86": 1, "E87": 2,
     "E88": 18, "E89": 8, "E90": 1, "E91": 10, "E92": 5, "E94": 15, "E95": "E95_election_night.gif", "E99": 11, "E100": 6, "E101": 3, "E102": 2, "E103": 4, "E104": 7, "E105": 5, "E106": 6, "E107": 3,
-    "E108": "E108_usual_salt_intake.gif", "E109": 1, "E110": 1, "E111": 1, "E112": 1, "E113": 1,
+    "E108": "E108_usual_salt_intake.gif", "E109": 1, "E110": 1, "E111": 1, "E112": 1, "E113": 1, "E114": 1, "E115": 1,
 }
 
 

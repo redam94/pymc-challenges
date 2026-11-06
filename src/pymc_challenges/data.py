@@ -2269,6 +2269,47 @@ REGISTRY: dict[str, Dataset] = {
         "have no children with poverty status; 14 counties have a direct estimate of exactly 0.",
         {"dtype": {"fips": str}},
     ),
+    # ---- examples (E115) ----
+    "e115_broadbalk": Dataset(
+        "e115_broadbalk.csv",
+        "https://raw.githubusercontent.com/kwstat/agridat/main/data/broadbalk.wheat.txt",
+        "Broadbalk winter wheat, Rothamsted Research (Lawes & Gilbert's records), 1852-1925, as published in "
+        "Andrews & Herzberg (1985), Data, Springer, via the agridat R package (Kevin Wright; MIT licence). "
+        "Treatments hand-coded from the e-RA (Electronic Rothamsted Archive) Broadbalk early-period factor "
+        "tables (era.rothamsted.ac.uk/Broadbalk, read 2026-11-06); attribute Rothamsted Research and the "
+        "e-RA. DERIVED by tools/build_e115_broadbalk.py; the url is the yield table, not this file - keep "
+        "the cached file in data/ (md5 141d71e678d39b87a17b1a9aade488fd).",
+        "One row per plot and year (1,258 rows, 17 plots x 74 years): year, plot (P02 = strip 2b ... P19), "
+        "grain, straw (t/ha at field moisture, about 85% dry matter), n_kg (fertiliser N for that crop, kg "
+        "N/ha: N1 48, N2 96, N3 144, N4 192), n_form (amm = ammonium salts, nit = sodium nitrate, none), "
+        "n_timing (autumn, spring, split or none: ammonium all autumn 1852-77, spring 1878-83, split 1884-1925; "
+        "strip 15 spring 1873-77 and autumn 1878-1925; nitrate in spring), p, k, na, mg (1 if applied that "
+        "year; all omitted 1915 and K 1917-19; strips 12 and 14 get the larger Na* and Mg* dressings, coded "
+        "1), fym (strip 2b, 35 t/ha, about 225 kg N), rape (strip 19, "
+        "rape cake), minerals_last_year (alternating strips 17/18 in their N year), n_last_year (kg N the "
+        "year before), use (0 for strip 9 before 1894 and strip 15 before 1873, whose halves were treated "
+        "differently, and for strip 19), note (treatment phase). Strip 16: N4 PKNaMg 1852-64, nil 1865-83, "
+        "N2* PKNaMg 1884-1925.",
+    ),
+    # ---- examples (E114) ----
+    "e114_ram_stocks": Dataset(
+        "e114_ram_stocks.csv",
+        "https://zenodo.org/records/2542919/files/RLSADB%20v4.44.zip?download=1",
+        "RAM Legacy Stock Assessment Database v4.44 (Ricard, Minto, Jensen & Baum 2012, Fish and Fisheries "
+        "13:380-398), Zenodo DOI 10.5281/zenodo.2542919, licence CC BY 4.0; retrieved 2026-11-05. Resilience "
+        "categories from FishBase species summaries (read 2026-11-06), with the CMSY r ranges of Froese et "
+        "al. (2017). DERIVED by tools/build_e114_ram.py (needs R once, to read DBdata.RData); the url is the "
+        "55 MB zip, not this table - keep the cached file in data/. A newer v4.66 (2024, DOI "
+        "10.5281/zenodo.14043031) exists.",
+        "One row per stock and year from the first to the last catch year (1,278 rows, 22 stocks): stockid, "
+        "year, catch_t (total catch TCbest, tonnes), cpue and survey (RAM's preferred abundance indices, "
+        "units in cpue_units / survey_units), bdivbmsy and udivumsy (the assessment's B/Bmsy and U/Umsy), "
+        "tb_t (assessment total biomass, tonnes); stock columns repeated per row: stocklong, commonname, "
+        "scientificname, family, region, assessorid, assessyear, role ('index': 20 finfish stocks with an "
+        "index of >= 15 years; 'catch_only': northern cod COD2J3KL and Peruvian anchoveta PANCHPERUNC, whose "
+        "RAM survey series equals the assessment's own biomass and is dropped), resilience (FishBase), r_lo, "
+        "r_hi (Froese et al. 2017 prior range of r).",
+    ),
 }
 
 
