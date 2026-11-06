@@ -2106,6 +2106,19 @@ REGISTRY: dict[str, Dataset] = {
         "required_car_parking_spaces, total_of_special_requests, reservation_status (Check-Out, Canceled, "
         "No-Show), reservation_status_date.",
     ),
+    "e105_tour_pageviews": Dataset(
+        "e105_tour_pageviews.csv",
+        "https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia/all-access/user/"
+        "Coldplay/daily/20210815/20220313",
+        "Wikimedia Foundation pageview statistics (REST API, per-article daily views by users, all access "
+        "methods), released CC0. Three English Wikipedia articles around three concert-tour announcements: "
+        "'Coldplay' (Music of the Spheres World Tour, announced 2021-10-14, general sale 2021-10-22), "
+        "'The_Eras_Tour' (announced 2022-11-01, first presale 2022-11-15; the article starts on the "
+        "announcement day) and 'Oasis_(band)' (Live '25, announced 2024-08-27, on sale 2024-08-31). The "
+        "url is the first of the three requests. DERIVED by tools/build_e105_data.py - keep the cached file.",
+        "One row per tour and day: tour, article, date, views (daily user pageviews), announced, on_sale "
+        "(public dates, the same on every row of a tour). Attention, not ticket sales.",
+    ),
     # ---- examples (E106) ----
     "e106_film_attention": Dataset(
         "e106_film_attention.csv.gz",
