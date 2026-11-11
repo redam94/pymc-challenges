@@ -2348,6 +2348,130 @@ REGISTRY: dict[str, Dataset] = {
         ".10: all but studies 26, 89, 135), use (both: 76 pairs), success (replication p < .05 in the "
         "original's direction: 26 of the 76), osc_replicate (the OSC's own yes/no).",
     ),
+    # ---- examples (E118) ----
+    "e118_ideology": Dataset(
+        "e118_ideology.csv",
+        "https://voteview.com/data",
+        "Organisational facts about the Democratic-side and Republican nominees of e94_races (2018, 2022, 2026), "
+        "each taken from a version of its source that existed BEFORE that cycle's election day: Wikipedia "
+        "revisions selected as the last one at or before the eve (CC BY-SA 4.0) and Internet Archive captures of "
+        "organisations' own pages (bluedogdems.com, newdemactionfund.com, ourrevolution.com, redtoblue.dccc.org; "
+        "facts only, pinned by capture time). First-dimension DW-NOMINATE from Voteview (Lewis, Poole, Rosenthal, "
+        "Boche, Rudkin, Sonnet, Voteview: Congressional Roll-Call Votes Database, voteview.com; cite the "
+        "authors - the site's data licence was not checked): `nominate_dim1` from Internet "
+        "Archive captures of HSall_members.csv made before the election (2022-05-05 and 2026-10-08; none exists "
+        "for 2018), `*_posthoc` from the file as downloaded on 2026-11-11. Identities (bioguide, FEC IDs, terms) "
+        "from unitedstates/congress-legislators (CC0). Changed: lists parsed, people matched through the "
+        "legislators' Wikipedia article, FEC ID and district; nobody is classified by judgment. DERIVED by "
+        "tools/build_e118_data.py - keep the cached file. No endorsement by any source is implied.",
+        "One row per cycle, race and side (D or R): cycle, office, state, race (as in e94_races), side, cand_id "
+        "(FEC), name, incumbent (e94_races), polled (the race has a poll in e94_polls), multi_cands, bioguide and "
+        "how it was found, served_before (a term in Congress began before election day), in_office_on_eve, "
+        "nominate_dim1 with nominate_congress and nominate_snapshot_utc (dated before the election; blank for "
+        "2018), nominate_dim1_posthoc, nokken_poole_dim1_posthoc, nominate_congress_posthoc (today's file: NOT "
+        "dated before the election), then one true/false column per list, BLANK where no dated list exists for "
+        "that cycle: cpc, ndc, blue_dog (caucus rosters on Wikipedia), blue_dog_site (the Blue Dog PAC's own "
+        "member page), hfc (compiled by Wikipedia from press reports; the caucus publishes no roster), rsc, rmsp, "
+        "rgg, psc, dsa_member (Wikipedia's list of DSA officeholders), jd, bnc, our_revolution, blue_dog_pac, "
+        "newdem_fund, newdem_watch, hfc_fund (endorsement lists), red_to_blue (the DCCC's programme: party "
+        "support, not ideology). A flag is true only when the dated source lists the person for that cycle; "
+        "the source line of every true flag is in e118_ideology_flags.",
+    ),
+    "e118_ideology_flags": Dataset(
+        "e118_ideology_flags.csv",
+        "https://en.wikipedia.org/wiki/Congressional_Progressive_Caucus",
+        "The evidence for every true flag in e118_ideology: the Wikipedia revision (CC BY-SA 4.0) or Internet "
+        "Archive capture, its timestamp (always before that cycle's election day) and the line that lists the "
+        "person. DERIVED by tools/build_e118_data.py - keep the cached file. No endorsement is implied.",
+        "One row per nominee and flag: cycle, race, side, cand_id, name, flag, match_basis (article = the list "
+        "links to the legislator's Wikipedia article; name, name+state, surname+district = a sitting member "
+        "found by name; race+name, race+surname (with a matching short given name), state+name = an endorsed "
+        "candidate found in the race the list names), source_title, source_revid (Wikipedia revision id or capture timestamp), "
+        "source_time_utc, source_url (a permanent link), section, line (line of the revision's wikitext, or of "
+        "the capture's visible text), text (the line).",
+    ),
+    "e118_results_2026": Dataset(
+        "e118_results_2026.csv",
+        "https://en.wikipedia.org/wiki/2026_United_States_House_of_Representatives_elections",
+        "UNCERTIFIED, INCOMPLETE counts of the November 2026 US House and Senate elections: the general-election "
+        "results tables of Wikipedia's state and race articles as they stood at 2026-11-11 22:20 UTC (CC BY-SA "
+        "4.0; each row names its revision). A race is included only when one table gives a vote count for both "
+        "the Democratic-side and the Republican nominee of e94_races; nothing is filled from race calls. Not "
+        "official results: counting was unfinished and nothing was certified. DERIVED by "
+        "tools/build_e118_data.py - keep the cached file. No endorsement is implied.",
+        "One row per race: race, office, state, d_name, r_name, d_votes, r_votes, total_votes (the table's "
+        "total row when it has one, else the sum of the candidates it lists: total_is_table_total_row), d_pct, "
+        "r_pct and margin (D minus R, points, of total_votes), margin2 (D minus R, points, of the two-party "
+        "vote), table_consistent (counts reproduce the printed percentages within half a point), "
+        "two_party_consistent (the two-party share from the counts matches the one from the printed "
+        "percentages: False marks a table whose counts are wrong or stale), d_pct_source, r_pct_source (as "
+        "printed), dem2 (two-party share), party labels in the table, pct_expected_in (blank: the source does "
+        "not give the share of the expected vote counted), polled, status, source_title, source_revid, "
+        "source_time_utc, source_url, source_section, source_line, retrieved_utc, call_winner_e95 (the latest "
+        "call in e95_calls_2026, a cross-check only).",
+    ),
+    "e118_results_2026_margins": Dataset(
+        "e118_results_2026_margins.csv",
+        "https://en.wikipedia.org/wiki/2026_United_States_House_of_Representatives_elections",
+        "UNCERTIFIED margins WITHOUT vote counts for 2026 House races within 10 points: the 'Closest races' "
+        "table of Wikipedia's '2026 United States House of Representatives elections' as it stood at 2026-11-11 "
+        "22:20 UTC (revision 1385103391, CC BY-SA 4.0). At that revision the table sat inside an HTML comment: "
+        "an editor's draft, hidden from readers. Kept apart from e118_results_2026 because it has no counts; "
+        "where both exist the builder compares them (e118_build_log). DERIVED by tools/build_e118_data.py - "
+        "keep the cached file. No endorsement is implied.",
+        "One row per race: race, office, state, winner (D or R), flip, margin_abs (points, one decimal), margin "
+        "(D minus R: signed by the winner's party; only races of e94_races with one nominee per side), polled, "
+        "hidden_in_html_comment, counts_margin (the margin in e118_results_2026 where that file has the race), "
+        "status, source_title, source_revid, source_time_utc, source_url, source_section, source_line.",
+    ),
+    "e118_party_ie": Dataset(
+        "e118_party_ie.csv.gz",
+        "https://www.fec.gov/data/browse-data/?tab=bulk-data",
+        "FEC bulk independent-expenditure files 2018, 2022, 2026 and committee master files (public domain; the "
+        "2026 file was read on 2026-11-11). The same items as e94_ie (general-election House/Senate items, prank "
+        "filers dropped, amended filings and repeats removed), with the spender and the support/oppose indicator "
+        "kept. Groups come from fixed FEC committee IDs and the committee master's own fields, not from judgment. "
+        "DERIVED by tools/build_e118_data.py - keep the cached file.",
+        "Dollars by cycle, version (eve = filings the FEC had received by 2018-11-05, 2022-11-07, 2026-11-02; "
+        "final = the file as retrieved), race, nominee (the item names a nominee of e94_races), cand_side (side "
+        "of the candidate named), sup_opp (S support, O oppose, blank), pro (side helped, E94's fold), group "
+        "(hill_committee = DCCC, DSCC, NRCC, NRSC; aligned_superpac = House Majority PAC, Senate Majority PAC, "
+        "Congressional Leadership Fund, Senate Leadership Fund; aligned_affiliate = a committee the FEC lists "
+        "with one of those four as its connected organisation; party_other = other party committees; other), "
+        "spender, affiliate_of, amt, items. The Hill committees filed no independent expenditures in 2026: "
+        "see e118_party_direct.",
+    ),
+    "e118_party_direct": Dataset(
+        "e118_party_direct.csv",
+        "https://www.fec.gov/data/browse-data/?tab=bulk-data",
+        "FEC bulk 'contributions from committees to candidates' files (pas2) 2018, 2022, 2026 and committee "
+        "master files (public domain; read on 2026-11-11, before 2026's post-general reports). Changed: party "
+        "committees only, memo entries dropped, nominees of e94_races only. DERIVED by "
+        "tools/build_e118_data.py - keep the cached file.",
+        "Dollars by cycle, version (pre_general = transactions dated up to the pre-general report's close of "
+        "books, 20 days before the election; final = up to election day), race, side, cand_id, group "
+        "(hill_committee or party_other), spender (DCCC, DSCC, NRCC, NRSC), type (coordinated = coordinated "
+        "party expenditure, FEC type 24C; contribution = 24K; in_kind = 24Z), amt, items.",
+    ),
+    "e118_sources": Dataset(
+        "e118_sources.csv",
+        "https://www.mediawiki.org/wiki/API:Revisions",
+        "The version of every source that tools/build_e118_data.py read: Wikipedia revision ids and timestamps, "
+        "Internet Archive capture times, and retrieval times of the FEC, Voteview and legislator files. Written "
+        "by the builder - keep the cached file.",
+        "One row per source: kind (wikipedia, wayback, voteview, wikipedia_results, fec_ie, fec_cm, fec_pas2, "
+        "crosswalk), cycle, key (the flag or file it feeds), title, url, version, version_time_utc, "
+        "retrieved_utc, dated_before_election (True for every ideology source), file (in the raw cache).",
+    ),
+    "e118_build_log": Dataset(
+        "e118_build_log.json",
+        "https://www.fec.gov/data/browse-data/?tab=bulk-data",
+        "Written by tools/build_e118_data.py - keep the cached file.",
+        "JSON, not a table: open data.path() with json. Cutoffs, counts and checks: per dated list the units "
+        "read, people listed, nominees flagged and every unit that matched nobody; DW-NOMINATE before the "
+        "election against today's file; 2026 result coverage by page and state; independent expenditures "
+        "against e94_ie; the sha256 of every raw file read.",
+    ),
 }
 
 

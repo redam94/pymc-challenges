@@ -1,0 +1,1514 @@
+{
+ "cutoffs": {
+  "2018": "2018-11-05",
+  "2022": "2022-11-07",
+  "2026": "2026-11-02"
+ },
+ "election_days": {
+  "2018": "2018-11-06",
+  "2022": "2022-11-08",
+  "2026": "2026-11-03"
+ },
+ "results_2026_asof_utc": "2026-11-11T22:20:00Z",
+ "checks": {
+  "e94_fec_ids_that_belong_to_someone_else": [
+   "2022 FL-26 R Diaz-Balart, Mario: H4FL20023 is Wasserman Schultz (W000797)"
+  ],
+  "bioguides_on_two_nominee_rows": [
+   "2022 P000145: CA-S D Padilla, Alex; CA-S2 D Padilla, Alex"
+  ],
+  "nominate_2022_snapshot_vs_today": {
+   "n": 403,
+   "corr": 0.9970416885384075,
+   "mean_abs_diff": 0.021568238213399503,
+   "max_abs_diff": 0.24700000000000005,
+   "moved_by_over_0.05": 48
+  },
+  "nominate_2026_snapshot_vs_today": {
+   "n": 387,
+   "corr": 0.9999991930066315,
+   "mean_abs_diff": 6.459948320413443e-05,
+   "max_abs_diff": 0.01100000000000001,
+   "moved_by_over_0.05": 0
+  },
+  "ideology_lists": {
+   "cpc_2018": {
+    "revid": 864765214,
+    "revision_time": "2018-10-19T09:35:50Z",
+    "units": 78,
+    "listed": 78,
+    "nominees_flagged": 70,
+    "units_matching_nobody": 0,
+    "unmatched": []
+   },
+   "cpc_2022": {
+    "revid": 1120193282,
+    "revision_time": "2022-11-05T17:29:01Z",
+    "units": 102,
+    "listed": 101,
+    "nominees_flagged": 88,
+    "units_matching_nobody": 1,
+    "unmatched": [
+     "L645 |colspan=\"6\"|{{center|'''Non-voting'''}}"
+    ]
+   },
+   "cpc_2026": {
+    "revid": 1381705840,
+    "revision_time": "2026-10-24T07:14:01Z",
+    "units": 101,
+    "listed": 101,
+    "nominees_flagged": 78,
+    "units_matching_nobody": 0,
+    "unmatched": []
+   },
+   "ndc_2018": {
+    "revid": 863958870,
+    "revision_time": "2018-10-14T05:48:05Z",
+    "units": 61,
+    "listed": 61,
+    "nominees_flagged": 55,
+    "units_matching_nobody": 0,
+    "unmatched": []
+   },
+   "ndc_2022": {
+    "revid": 1120556194,
+    "revision_time": "2022-11-07T16:42:41Z",
+    "units": 99,
+    "listed": 98,
+    "nominees_flagged": 84,
+    "units_matching_nobody": 1,
+    "unmatched": [
+     "L173 * [[Charlie Crist]] (FL-13) Retiring at end of 117th Congress."
+    ]
+   },
+   "ndc_2026": {
+    "revid": 1381619989,
+    "revision_time": "2026-10-23T18:39:25Z",
+    "units": 117,
+    "listed": 115,
+    "nominees_flagged": 103,
+    "units_matching_nobody": 2,
+    "unmatched": [
+     "L284 * [[David Scott (Georgia politician)|David Scott]] (GA-13), died in 2026",
+     "L348 * [[Mikie Sherrill]] (NJ-11), resigned to become [[Governor of New Jersey]]"
+    ]
+   },
+   "blue_dog_2018_List_of_members_of_the_Blue_Dog_Coalition": {
+    "revid": 854764346,
+    "revision_time": "2018-08-13T16:25:43Z",
+    "units": 18,
+    "listed": 18,
+    "nominees_flagged": 18,
+    "units_matching_nobody": 0,
+    "unmatched": []
+   },
+   "blue_dog_2022": {
+    "revid": 1120459393,
+    "revision_time": "2022-11-07T03:35:08Z",
+    "units": 18,
+    "listed": 18,
+    "nominees_flagged": 14,
+    "units_matching_nobody": 0,
+    "unmatched": []
+   },
+   "blue_dog_2026": {
+    "revid": 1383449161,
+    "revision_time": "2026-11-02T19:17:09Z",
+    "units": 10,
+    "listed": 10,
+    "nominees_flagged": 8,
+    "units_matching_nobody": 0,
+    "unmatched": []
+   },
+   "hfc_2018": {
+    "revid": 867334154,
+    "revision_time": "2018-11-05T02:29:14Z",
+    "units": 33,
+    "listed": 32,
+    "nominees_flagged": 28,
+    "units_matching_nobody": 1,
+    "unmatched": [
+     "L67 * [[Tom Garrett Jr.]] of Virginia"
+    ]
+   },
+   "hfc_2022": {
+    "revid": 1118223312,
+    "revision_time": "2022-10-25T20:02:48Z",
+    "units": 43,
+    "listed": 43,
+    "nominees_flagged": 39,
+    "units_matching_nobody": 0,
+    "unmatched": []
+   },
+   "hfc_2026": {
+    "revid": 1382708053,
+    "revision_time": "2026-10-29T22:08:47Z",
+    "units": 31,
+    "listed": 31,
+    "nominees_flagged": 24,
+    "units_matching_nobody": 0,
+    "unmatched": []
+   },
+   "rsc_2018": {
+    "revid": 863965790,
+    "revision_time": "2018-10-14T07:14:26Z",
+    "units": 154,
+    "listed": 153,
+    "nominees_flagged": 133,
+    "units_matching_nobody": 1,
+    "unmatched": [
+     "L98 * [[Ron DeSantis]] (FL-6)"
+    ]
+   },
+   "rsc_2022": {
+    "revid": 1113379269,
+    "revision_time": "2022-10-01T05:23:11Z",
+    "units": 156,
+    "listed": 156,
+    "nominees_flagged": 145,
+    "units_matching_nobody": 0,
+    "unmatched": []
+   },
+   "rsc_2026": {
+    "revid": 1376656621,
+    "revision_time": "2026-09-25T13:57:19Z",
+    "units": 151,
+    "listed": 151,
+    "nominees_flagged": 118,
+    "units_matching_nobody": 0,
+    "unmatched": []
+   },
+   "rmsp_2018": {
+    "revid": 863963697,
+    "revision_time": "2018-10-14T06:48:48Z",
+    "units": 75,
+    "listed": 74,
+    "nominees_flagged": 61,
+    "units_matching_nobody": 1,
+    "unmatched": [
+     "L89 * [[Evan Jenkins (politician)|Evan Jenkins]] (WV-3)"
+    ]
+   },
+   "rmsp_2022": {
+    "revid": 1112981003,
+    "revision_time": "2022-09-29T03:02:05Z",
+    "units": 67,
+    "listed": 67,
+    "nominees_flagged": 52,
+    "units_matching_nobody": 0,
+    "unmatched": []
+   },
+   "rmsp_2026": {
+    "revid": 1376718157,
+    "revision_time": "2026-09-25T21:16:12Z",
+    "units": 8,
+    "listed": 8,
+    "nominees_flagged": 3,
+    "units_matching_nobody": 0,
+    "unmatched": []
+   },
+   "rmsp_2026_Main_Street_Caucus": {
+    "revid": 1382340936,
+    "revision_time": "2026-10-28T04:53:02Z",
+    "units": 73,
+    "listed": 73,
+    "nominees_flagged": 64,
+    "units_matching_nobody": 0,
+    "unmatched": []
+   },
+   "rgg_2022": {
+    "revid": 1116679166,
+    "revision_time": "2022-10-17T20:01:46Z",
+    "units": 45,
+    "listed": 45,
+    "nominees_flagged": 35,
+    "units_matching_nobody": 0,
+    "unmatched": []
+   },
+   "rgg_2026": {
+    "revid": 1382519482,
+    "revision_time": "2026-10-29T02:20:23Z",
+    "units": 47,
+    "listed": 47,
+    "nominees_flagged": 37,
+    "units_matching_nobody": 0,
+    "unmatched": []
+   },
+   "psc_2022": {
+    "revid": 1119615903,
+    "revision_time": "2022-11-02T14:21:04Z",
+    "units": 57,
+    "listed": 57,
+    "nominees_flagged": 44,
+    "units_matching_nobody": 0,
+    "unmatched": []
+   },
+   "psc_2026": {
+    "revid": 1382017938,
+    "revision_time": "2026-10-26T02:00:09Z",
+    "units": 49,
+    "listed": 49,
+    "nominees_flagged": 41,
+    "units_matching_nobody": 0,
+    "unmatched": []
+   },
+   "dsa_member_2022": {
+    "revid": 1119665125,
+    "revision_time": "2022-11-02T19:41:03Z",
+    "units": 5,
+    "listed": 5,
+    "nominees_flagged": 5,
+    "units_matching_nobody": 0,
+    "unmatched": []
+   },
+   "dsa_member_2026": {
+    "revid": 1382927791,
+    "revision_time": "2026-10-31T01:20:41Z",
+    "units": 2,
+    "listed": 2,
+    "nominees_flagged": 2,
+    "units_matching_nobody": 0,
+    "unmatched": []
+   },
+   "jd_2018": {
+    "revid": 866491863,
+    "revision_time": "2018-10-30T17:33:47Z",
+    "units": 79,
+    "listed": 79,
+    "nominees_flagged": 23,
+    "units_matching_nobody": 49,
+    "unmatched": [
+     "L162 |{{sortname|Deedra|Abboud}} |Arizona |[[List of United States Senators from Arizona|U.S. Senator from Arizona]] |[[United States Senate election in Ar",
+     "L171 |{{sortname|Alison|Hartson}} |California |[[List of United States Senators from California|U.S. Senator from California]] |[[United States Senate elec",
+     "L180 |{{sortname|Kerri Evelyn|Harris}} |Delaware |[[List of United States Senators from Delaware|U.S. Senator from Delaware]] |[[United States Senate elect",
+     "L189 |{{sortname|Paula Jean|Swearengin}} |West Virginia |[[List of United States Senators from West Virginia|U.S. Senator from West Virginia]] |[[United St",
+     "L210 |{{sortname|Mary|Matiella|Mary Sally Matiella}} |Arizona |[[Arizona's 2nd congressional district]] |[[United States House of Representatives elections",
+     "L228 |rowspan=2 |{{sortname|Brianna|Westbrook}} |rowspan=2 |Arizona |rowspan=2 |[[Arizona's 8th congressional district]] |[[Arizona's 8th congressional dis",
+     "L252 |{{sortname|Roza|Calderon}} |California |[[California's 4th congressional district]] |[[United States House of Representatives elections in California",
+     "L261 |{{sortname|Dotty|Nygard}} |California |[[California's 10th congressional district]] |[[United States House of Representatives elections in California",
+     "L279 |{{sortname|Bryan|Caforio}} |California |[[California's 25th congressional district]] |[[United States House of Representatives elections in Californi",
+     "L288 |{{sortname|Laura|Oatman}} |California |[[California's 48th congressional district]] |[[United States House of Representatives elections in California",
+     "L297 |{{sortname|Doug|Applegate|Doug Applegate (California politician)}} |California |[[California's 49th congressional district]] |[[United States House o",
+     "L315 |{{sortname|Saira|Rao}} |Colorado |[[Colorado's 1st congressional district]] |[[United States House of Representatives elections in Colorado, 2018#Dis",
+     "L333 |{{sortname|Chardo|Richardson}} |Florida |[[Florida's 7th congressional district]] |[[United States House of Representatives elections in Florida, 201",
+     "L351 |{{sortname|Pam|Keith}} |Florida |[[Florida's 18th congressional district]] |[[United States House of Representatives elections in Florida, 2018#Distr",
+     "L360 |{{sortname|Michael|Hepburn|Michael Hepburn (politician)}} |Florida |[[Florida's 27th congressional district]] |[[United States House of Representativ",
+     "L378 |{{sortname|Kaniela|Ing}} |Hawaii |[[Hawaii's 1st congressional district]] |[[United States House of Representatives elections in Hawaii, 2018#Distric",
+     "L387 |{{sortname|Marie|Newman}} |Illinois |[[Illinois's 3rd congressional district]] |[[United States House of Representatives elections in Illinois, 2018#",
+     "L396 |{{sortname|Sameena|Mustafa}} |Illinois |[[Illinois's 5th congressional district]] |[[United States House of Representatives elections in Illinois, 20",
+     "L405 |{{sortname|Anthony|Clark|Anthony Clark (politician)}} |Illinois |[[Illinois's 7th congressional district]] |[[United States House of Representatives ",
+     "L414 |{{sortname|David|Gill|David Gill (politician)}} |Illinois |[[Illinois's 13th congressional district]] |[[United States House of Representatives elect",
+     "L423 |{{sortname|Dan|Canon}} |Indiana |[[Indiana's 9th congressional district]] |[[United States House of Representatives elections in Indiana, 2018#Distri",
+     "L432 |{{sortname|Courtney|Rowe}} |Iowa |[[Iowa's 1st congressional district]] |[[United States House of Representatives elections in Iowa, 2018#District 1|",
+     "L441 |{{sortname|Pete|D'Allesandro}} |Iowa |[[Iowa's 3rd congressional district]] |[[United States House of Representatives elections in Iowa, 2018#Distric",
+     "L450 |{{sortname|Brent|Welder}} |Kansas |[[Kansas's 3rd congressional district]] |[[United States House of Representatives elections in Kansas, 2018#Distri",
+     "L468 |{{sortname|Roger|Manno}} |Maryland |[[Maryland's 6th congressional district]] |[[United States House of Representatives elections in Maryland, 2018#D",
+     "L477 |{{sortname|Juana|Matias}} |Massachusetts |[[Massachusetts's 3rd congressional district]] |[[United States House of Representatives elections in Massa",
+     "L513 |{{sortname|David|Benac}} |Michigan |[[Michigan's 6th congressional district]] |[[United States House of Representatives elections in Michigan, 2018#D",
+     "L522 |{{sortname|Fayrouz|Saad}} |Michigan |[[Michigan's 11th congressional district]] |[[United States House of Representatives elections in Michigan, 2018",
+     "L555 |{{sortname|Cori|Bush}} |Missouri |[[Missouri's 1st congressional district]] |[[United States House of Representatives elections in Missouri, 2018#Dis",
+     "L573 |{{sortname|John|Heenan|John Heenan (politician)}} |Montana |[[Montana's at-large congressional district]] |[[United States House of Representatives e",
+     "L591 |{{sortname|Amy|Vilela}} |Nevada |[[Nevada's 4th congressional district]] |[[United States House of Representatives elections in Nevada, 2018#District",
+     "L600 |{{sortname|Tanzie|Youngblood}} |New Jersey |[[New Jersey's 2nd congressional district]] |[[United States House of Representatives elections in New Je",
+     "L609 |{{sortname|Peter|Jacob}} |New Jersey |[[New Jersey's 7th congressional district]] |[[United States House of Representatives elections in New Jersey, ",
+     "L618 |{{sortname|Antoinette|Sedillo Lopez}} |New Mexico |[[New Mexico's 1st congressional district]] |[[United States House of Representatives elections in",
+     "L627 |{{sortname|Michael|DeVito|Michael DeVito (politician)}} |New York |[[New York's 11th congressional district]] |[[United States House of Representativ",
+     "L645 |{{sortname|Jeff|Beals}} |New York |[[New York's 19th congressional district]] |[[United States House of Representatives elections in New York, 2018#D",
+     "L654 |{{sortname|Patrick|Nelson|Patrick Nelson (politician)}} |New York |[[New York's 21st congressional district]] |[[United States House of Representativ",
+     "L663 |{{sortname|Ian|Golden}} |New York |[[New York's 23rd congressional district]] |[[United States House of Representatives elections in New York, 2018#D",
+     "L672 |{{sortname|Jenny|Marshall}} |North Carolina |[[North Carolina's 5th congressional district]] |[[United States House of Representatives elections in N",
+     "L681 |rowspan=2 |{{sortname|John|Russell|John Russell (Ohio candidate)}} |rowspan=2 |Ohio |rowspan=2 |[[Ohio's 12th congressional district]] |[[Ohio's 12th",
+     "L696 |{{sortname|Greg|Edwards|Greg Edwards (politician)}} |Pennsylvania |[[Pennsylvania's 7th congressional district]] |[[United States House of Representa",
+     "L714 |{{sortname|J. Darnell|Jones|J. Darnell Jones (politician)}} |Texas |[[Texas's 2nd congressional district]] |[[United States House of Representatives ",
+     "L738 |rowspan=2 |{{sortname|Laura|Moser}} |rowspan=2 |Texas |rowspan=2 |[[Texas's 7th congressional district]] |[[United States House of Representatives el",
+     "L771 |{{sortname|Derrick|Crowe}} |Texas |[[Texas's 21st congressional district]] |[[United States House of Representatives elections in Texas, 2018#Distric",
+     "L780 |rowspan=2 |{{sortname|Mary|Wilson|Mary Wilson (Texas politician)}} |rowspan=2 |Texas |rowspan=2 |[[Texas's 21st congressional district]] |[[United St",
+     "L795 |rowspan=2 |{{sortname|Rick|Trevi\u00f1o}} |rowspan=2 |Texas |rowspan=2 |[[Texas's 23rd congressional district]] |[[United States House of Representatives ",
+     "L819 |{{sortname|Darlene|McDonald}} |Utah |[[Utah's 4th congressional district]] |[[United States House of Representatives elections in Utah, 2018#District",
+     "L828 |{{sortname|Dorothy|Gasque}} |Washington |[[Washington's 3rd congressional district]] |[[United States House of Representatives elections in Washingto",
+     "L845 |{{sortname|Sarah|Smith|Sarah Smith (politician)}} |Washington |[[Washington's 9th congressional district]] |[[United States House of Representatives "
+    ]
+   },
+   "jd_2022": {
+    "revid": 1120444582,
+    "revision_time": "2022-11-07T01:33:25Z",
+    "units": 17,
+    "listed": 17,
+    "nominees_flagged": 12,
+    "units_matching_nobody": 5,
+    "unmatched": [
+     "L1116 |{{sortname|Marie|Newman}} (inc.) |{{flagicon|Illinois}} Illinois |[[Illinois's 6th congressional district]] |[[2022 United States House of Representa",
+     "L1125 |{{sortname|Kina|Collins}} |{{flagicon|Illinois}} Illinois |[[Illinois's 7th congressional district]] |[[2022 United States House of Representatives e",
+     "L1170 |{{sortname|Rana|Abdelhamid}} |{{flagicon|New York}} New York |[[New York's 12th congressional district]] |[[2022 United States House of Representativ",
+     "L1215 |rowspan=\"2\"|{{sortname|Jessica|Cisneros}} |rowspan=\"2\"|{{flagicon|Texas}} Texas |rowspan=\"2\"|[[Texas's 28th congressional district]] |[[2022 United S",
+     "L1224 |[[2022 United States House of Representatives elections in Texas#District 28|{{Date table sorting|May 24 2022}}]]<br>{{small|Runoff}} |{{No|Lost}} |{"
+    ]
+   },
+   "jd_2026": {
+    "revid": 1381511369,
+    "revision_time": "2026-10-23T00:49:58Z",
+    "units": 24,
+    "listed": 24,
+    "nominees_flagged": 17,
+    "units_matching_nobody": 7,
+    "unmatched": [
+     "L1550 |[[Mai Vang]] |{{flagicon|California}} California |[[California's 7th congressional district]] |[[2026 United States House of Representatives election",
+     "L1559 |[[Saikat Chakrabarti]] |{{flagicon|California}} California |[[California's 11th congressional district]] |[[2026 United States House of Representativ",
+     "L1577 |[[Angela Gonzales-Torres]] |{{flagicon|California}} California |[[California's 34th congressional district]] |[[2026 United States House of Represent",
+     "L1604 |Junaid Ahmed |{{flagicon|Illinois}} Illinois |[[Illinois's 8th congressional district]] |[[2026 United States House of Representatives elections in I",
+     "L1613 |[[Kat Abughazaleh]] |{{flagicon|Illinois}} Illinois |[[Illinois's 9th congressional district]] |[[2026 United States House of Representatives electio",
+     "L1658 |{{sortname|Cori|Bush}} |{{flagicon|Missouri}} Missouri |[[Missouri's 1st congressional district]] |[[2026 United States House of Representatives elec",
+     "L1703 |{{sortname|Nida|Allam}} |{{flagicon|North Carolina}} North Carolina |[[North Carolina's 4th congressional district]] |[[2026 United States House of R"
+    ]
+   },
+   "bnc_2018": {
+    "revid": 864479121,
+    "revision_time": "2018-10-17T13:55:18Z",
+    "units": 31,
+    "listed": 31,
+    "nominees_flagged": 7,
+    "units_matching_nobody": 23,
+    "unmatched": [
+     "L49 |{{sortname|Robb|Ryerse}} |Arkansas |[[Republican Party (United States)|Republican]] |[[Arkansas's 3rd congressional district]] |[[United States House",
+     "L59 |{{sortname|Roza|Calderon}} |California |[[Democratic Party (United States)|Democratic]] |[[California's 4th congressional district]] |[[United States",
+     "L69 |{{sortname|Ryan|Khojasteh}} |California |Democratic |[[California's 12th congressional district]] |[[United States House of Representatives elections",
+     "L79 |{{sortname|Chardo|Richardson}} |Florida |Democratic |[[Florida's 7th congressional district]] |[[United States House of Representatives elections in ",
+     "L89 |{{sortname|Michael|Hepburn}} |Florida |Democratic |[[Florida's 27th congressional district]] |[[United States House of Representatives elections in F",
+     "L99 |{{sortname|Anthony|Clark|Anthony Clark (politician)}} |Illinois |Democratic |[[Illinois's 7th congressional district]] |[[United States House of Repr",
+     "L109 |{{sortname|David|Gill|David Gill (politician)}} |Illinois |Democratic |[[Illinois's 13th congressional district]] |[[United States House of Represent",
+     "L119 |{{sortname|Brent|Welder}} |Kansas |Democratic |[[Kansas's 3rd congressional district]] |[[United States House of Representatives elections in Kansas,",
+     "L139 |{{sortname|Zak|Ringelstein}} |Maine |Democratic |[[List of United States Senators from Maine|U.S. Senator from Maine]] |[[United States Senate electi",
+     "L159 |{{sortname|David|Benac}} |Michigan |Democratic |[[Michigan's 6th congressional district]] |[[United States House of Representatives elections in Mich",
+     "L169 |{{sortname|Cori|Bush}} |Missouri |Democratic |[[Missouri's 1st congressional district]] |[[United States House of Representatives elections in Missou",
+     "L179 |{{sortname|John|Heenan|John Heenan (politician)}} |Montana |Democratic |[[Montana's at-large congressional district|Montana's at-large congressional ",
+     "L189 |{{sortname|Amy|Vilela}} |Nevada |Democratic |[[Nevada's 4th congressional district]] |[[United States House of Representatives elections in Nevada, 2",
+     "L199 |{{sortname|Mindi|Messmer}} |New Hampshire |Democratic |[[New Hampshire's 1st congressional district]] |[[United States House of Representatives elect",
+     "L209 |{{sortname|Peter|Jacob}} |New Jersey |Democratic |[[New Jersey's 7th congressional district]] |[[United States House of Representatives elections in ",
+     "L229 |{{sortname|Richard|Watkins|Richard Watkins (politician)}} |North Carolina |Democratic |[[North Carolina's 4th congressional district]] |[[United Stat",
+     "L239 |{{sortname|Jenny|Marshall}} |North Carolina |Democratic |[[North Carolina's 5th congressional district]] |[[United States House of Representatives el",
+     "L249 |{{sortname|Marc|Whitmire}} |Tennessee |[[Independent politician|Independent]] |[[Tennessee's 2nd congressional district]] |N/A |N/A |N/A |{{Partial|T",
+     "L269 |{{sortname|J. Darnell|Jones|J. Darnell Jones (politician)}} |Texas |Democratic |[[Texas's 2nd congressional district]] |[[United States House of Repr",
+     "L299 |rowspan=2 |{{sortname|Rick|Trevi\u00f1o}} |rowspan=2 |Texas |rowspan=2 |Democratic |rowspan=2 |[[Texas's 23rd congressional district]] |[[United States Ho",
+     "L325 |{{sortname|Dorothy|Gasque}} |Washington |Democratic |[[Washington's 3rd congressional district]] |[[United States House of Representatives elections ",
+     "L335 |{{sortname|Sarah|Smith|Sarah Smith (politician)}} |Washington |Democratic |[[Washington's 9th congressional district]] |[[United States House of Repr",
+     "L345 |{{sortname|Paula Jean|Swearengin}} |West Virginia |Democratic |[[List of United States Senators from West Virginia|U.S. Senator from West Virginia]] "
+    ]
+   },
+   "bnc_2022": {
+    "revid": 1111347374,
+    "revision_time": "2022-09-20T14:42:16Z",
+    "units": 37,
+    "listed": 37,
+    "nominees_flagged": 13,
+    "units_matching_nobody": 22,
+    "unmatched": [
+     "L910 |{{sortname|Morgan|Harper|Morgan Harper (lawyer)}} |{{flagicon|Ohio}} Ohio |[[List of United States senators from Ohio|U.S. Senator from Ohio]] |[[202",
+     "L946 |{{sortname|Angelica|Due\u00f1as|nolink=1}} |{{flagicon|California}} California |[[California's 29th congressional district]] |[[2022 United States House o",
+     "L955 |{{sortname|Shervin|Aazami}} |{{flagicon|California}} California |[[California's 32nd congressional district]] |[[2022 United States House of Represen",
+     "L991 |{{sortname|Marsha|Williams|nolink=1}} |{{flagicon|Illinois}} Illinois |[[Illinois's 17th congressional district]] |[[2022 United States House of Repr",
+     "L1000 |{{sortname|Andy|Levin}} (inc.) |{{flagicon|Michigan}} Michigan |[[Michigan's 11th congressional district]] |[[2022 United States House of Representat",
+     "L1027 |{{sortname|Tom|Winter|Tom Winter (politician)}} |{{flagicon|Montana}} Montana |[[Montana's 1st congressional district]] |[[2022 United States House o",
+     "L1036 |{{sortname|Amy|Vilela}} |{{flagicon|Nevada}} Nevada |[[Nevada's 1st congressional district]] |[[2022 United States House of Representatives elections",
+     "L1045 |{{sortname|Imani|Oakley|nolink=1}} |{{flagicon|New Jersey}} New Jersey |[[New Jersey's 10th congressional district]] |[[2022 United States House of R",
+     "L1054 |{{sortname|Melanie|D'Arrigo|nolink=1}} |{{flagicon|New York}} New York |[[New York's 3rd congressional district]] |[[2022 United States House of Repr",
+     "L1063 |{{sortname|Brittany|Ramos DeBarros|nolink=1}} |{{flagicon|New York}} New York |[[New York's 11th congressional district]] |[[2022 United States House",
+     "L1072 |{{sortname|Rana|Abdelhamid}} |{{flagicon|New York}} New York |[[New York's 12th congressional district]] |[[2022 United States House of Representativ",
+     "L1099 |{{sortname|Erica|Smith|Erica D. Smith}} |{{flagicon|North Carolina}} North Carolina |[[North Carolina's 1st congressional district]] |[[2022 United S",
+     "L1108 |{{sortname|Nida|Allam|}} |{{flagicon|North Carolina}} North Carolina |[[North Carolina's 4th congressional district]] |[[2022 United States House of ",
+     "L1117 |{{sortname|Nina|Turner}} |{{flagicon|Ohio}} Ohio |[[Ohio's 11th congressional district]] |[[2022 United States House of Representatives elections in ",
+     "L1126 |{{sortname|Doyle|Canning|nolink=1}} |{{flagicon|Oregon}} Oregon |[[Oregon's 4th congressional district]] |[[2022 United States House of Representativ",
+     "L1135 |{{sortname|Jerry|Dickinson|nolink=1}} |{{flagicon|Pennsylvania}} Pennsylvania |[[Pennsylvania's 12th congressional district]] |[[2022 United States H",
+     "L1162 |[[2022 United States House of Representatives elections in Texas#District 15|May 24, 2022]]<br>{{small|Runoff}} |{{yes|Won}} |{{yes|50.1%}} |{{Pendin",
+     "L1168 |rowspan=\"2\"|{{sortname|Jessica|Cisneros}} |rowspan=\"2\"|{{flagicon|Texas}} Texas |rowspan=\"2\"|[[Texas's 28th congressional district]] |[[2022 United S",
+     "L1177 |[[2022 United States House of Representatives elections in Texas#District 28|May 24, 2022]]<br>{{small|Runoff}} |{{No|Lost}} |{{No|49.7%}} |{{No|Did ",
+     "L1183 |{{sortname|Jessica|Mason|nolink=1}} |{{flagicon|Texas}} Texas |[[Texas's 30th congressional district]] |[[2022 United States House of Representatives",
+     "L1216 |{{sortname|Rebecca|Parson|nolink=1}} |{{flagicon|Washington}} Washington |[[Washington's 6th congressional district]] |[[2022 United States House of ",
+     "L1225 |{{sortname|Stephanie|Gallardo|nolink=1}} |{{flagicon|Washington}} Washington |[[Washington's 9th congressional district]] |[[2022 United States House"
+    ]
+   },
+   "blue_dog_pac_2026": {
+    "revid": 1383449161,
+    "revision_time": "2026-11-02T19:17:09Z",
+    "units": 26,
+    "listed": 26,
+    "nominees_flagged": 21,
+    "units_matching_nobody": 5,
+    "unmatched": [
+     "L366 |Bill Hill{{efn|Hill is running as an Independent}} |{{flagicon|Alaska}} Alaska |[[Alaska's at-large congressional district]] |[[2026 US House electio",
+     "L384 |Thien Ho |{{flagicon|California}} California |[[California's 6th congressional district]] |[[2026 United States House of Representatives elections in",
+     "L393 |[[Jasmeet Bains]] |{{flagicon|California}} California |[[California's 22nd congressional district]] |[[2026 United States House of Representatives el",
+     "L420 |[[Shannon Bird]] |{{flagicon|Colorado}} Colorado |[[Colorado's 8th congressional district]] |[[2026 United States House of Representatives elections ",
+     "L501 |Zack Mullock ||{{flagicon|New Jersey}} New Jersey |[[North Carolina's 2nd congressional district]] |[[2026 United States House of Representatives ele"
+    ]
+   },
+   "hfc_fund_2026": {
+    "revid": 1382708053,
+    "revision_time": "2026-10-29T22:08:47Z",
+    "units": 8,
+    "listed": 8,
+    "nominees_flagged": 6,
+    "units_matching_nobody": 2,
+    "unmatched": [
+     "L603 |Catalina Lauf |{{flagicon|Florida}} Florida |[[Florida's 19th congressional district]] |[[2026 United States House of Representatives elections in Fl",
+     "L658 |[[Andy Ogles]] |{{flagicon|Tennessee}} Tennessee |[[Tennessee's 5th congressional district]] |[[2026 United States House of Representatives elections"
+    ]
+   },
+   "blue_dog_site_2018": {
+    "revid": "20181022062501",
+    "revision_time": "2018-10-22T06:25:01Z",
+    "units": 18,
+    "listed": 18,
+    "nominees_flagged": 18,
+    "units_matching_nobody": 0,
+    "unmatched": []
+   },
+   "blue_dog_site_2022": {
+    "revid": "20221107083124",
+    "revision_time": "2022-11-07T08:31:24Z",
+    "units": 18,
+    "listed": 18,
+    "nominees_flagged": 14,
+    "units_matching_nobody": 0,
+    "unmatched": []
+   },
+   "blue_dog_pac_2018": {
+    "revid": "20181022062501",
+    "revision_time": "2018-10-22T06:25:01Z",
+    "units": 21,
+    "listed": 21,
+    "nominees_flagged": 21,
+    "units_matching_nobody": 0,
+    "unmatched": []
+   },
+   "blue_dog_pac_2022": {
+    "revid": "20221107083124",
+    "revision_time": "2022-11-07T08:31:24Z",
+    "units": 8,
+    "listed": 8,
+    "nominees_flagged": 8,
+    "units_matching_nobody": 0,
+    "unmatched": []
+   },
+   "newdem_fund_2022": {
+    "revid": "20221106185352",
+    "revision_time": "2022-11-06T18:53:52Z",
+    "units": 39,
+    "listed": 39,
+    "nominees_flagged": 39,
+    "units_matching_nobody": 0,
+    "unmatched": []
+   },
+   "newdem_fund_2026": {
+    "revid": "20261101191604",
+    "revision_time": "2026-11-01T19:16:04Z",
+    "units": 50,
+    "listed": 50,
+    "nominees_flagged": 50,
+    "units_matching_nobody": 0,
+    "unmatched": []
+   },
+   "newdem_watch_2022": {
+    "revid": "20221106185352",
+    "revision_time": "2022-11-06T18:53:52Z",
+    "units": 5,
+    "listed": 5,
+    "nominees_flagged": 5,
+    "units_matching_nobody": 0,
+    "unmatched": []
+   },
+   "our_revolution_2018": {
+    "revid": "20181104071734",
+    "revision_time": "2018-11-04T07:17:34Z",
+    "units": 32,
+    "listed": 32,
+    "nominees_flagged": 31,
+    "units_matching_nobody": 1,
+    "unmatched": [
+     "L584 Sarah Smith | WA-9 | U.S. House of Representatives, District 9"
+    ]
+   },
+   "red_to_blue_2018": {
+    "revid": "20181030021445",
+    "revision_time": "2018-10-30T02:14:45Z",
+    "units": 92,
+    "listed": 92,
+    "nominees_flagged": 92,
+    "units_matching_nobody": 0,
+    "unmatched": []
+   },
+   "red_to_blue_2022": {
+    "revid": "20221106184002",
+    "revision_time": "2022-11-06T18:40:02Z",
+    "units": 36,
+    "listed": 36,
+    "nominees_flagged": 36,
+    "units_matching_nobody": 0,
+    "unmatched": []
+   }
+  },
+  "incumbent_nominees_linked_to_bioguide": {
+   "2018": "401/401",
+   "2022": "394/394",
+   "2026": "363/373"
+  },
+  "incumbents_without_bioguide": [
+   "2026 CA-04 D Eric Jones|Mike Thompson",
+   "2026 CA-07 D Doris Matsui|Mai Vang",
+   "2026 CA-12 D Jamie Joyce|Lateefah Simon",
+   "2026 CA-14 D Melissa Hernandez|Aisha Wahab",
+   "2026 CA-29 D Angelica Due\u00f1as|Luz Rivas",
+   "2026 CA-34 D Jimmy Gomez|Angela Gonzales-Torres",
+   "2026 CA-37 D Sydney Kamlager-Dove|Samantha Mota",
+   "2026 CA-40 R Ken Calvert|Young Kim",
+   "2026 NC-11 R Jennifer Balkcom",
+   "2026 AK-S R Gerald Heikes|Dan J. Sullivan|Dan S. Sullivan"
+  ],
+  "non_incumbent_nominees_who_served_before": {
+   "2018": [
+    "AZ-02 D Kirkpatrick, Ann",
+    "HI-01 D Case, Ed",
+    "NV-04 D Horsford, Steven A.",
+    "NV-04 R Hardy, Cresent",
+    "OH-12 R Balderson, Troy",
+    "PA-02 D Boyle, Brendan F.",
+    "TX-27 R Cloud, Michael",
+    "AZ-S D Sinema, Kyrsten",
+    "AZ-S R McSally, Martha",
+    "ND-S R Cramer, Kevin",
+    "NV-S D Rosen, Jacky",
+    "PA-S R Barletta, Lou",
+    "TN-S R Blackburn, Marsha",
+    "TX-S D O'Rourke, Beto"
+   ],
+   "2022": [
+    "AK-00 D Peltola, Mary S.",
+    "ME-02 R Poliquin, Bruce #",
+    "MN-01 R Finstad, Brad",
+    "MT-01 R Zinke, Ryan K.",
+    "NE-01 R Flood, Mike",
+    "NY-11 D Rose, Max N.",
+    "TX-34 R Flores, Mayra",
+    "FL-S D Demings, Val",
+    "NC-S R Budd, Ted",
+    "OH-S D Ryan, Tim",
+    "OK-S2 D Horn, Kendra",
+    "OK-S2 R Mullin, Markwayne",
+    "VT-S D Welch, Peter"
+   ],
+   "2026": [
+    "AL-01 R Jerry Carl",
+    "CA-38 D Hilda Solis",
+    "FL-10 D Maxwell Frost",
+    "IL-08 D Melissa Bean",
+    "MA-02 D Jim McGovern",
+    "MA-05 D Katherine Clark",
+    "MA-07 D Ayanna Pressley",
+    "TX-33 D Colin Allred",
+    "UT-01 D Ben McAdams",
+    "VA-02 D Elaine Luria",
+    "VA-05 D Tom Perriello",
+    "WI-02 D Mark Pocan",
+    "OH-S D Sherrod Brown",
+    "AL-S R Barry Moore",
+    "AK-S D Mary Peltola",
+    "GA-S R Mike Collins",
+    "IA-S R Ashley Hinson",
+    "KY-S R Andy Barr",
+    "LA-S R Julia Letlow",
+    "MI-S R Mike Rogers",
+    "NH-S D Chris Pappas",
+    "NH-S R John E. Sununu",
+    "OK-S R Kevin Hern",
+    "WY-S R Harriet Hageman"
+   ]
+  },
+  "e94_incumbent_but_not_in_office_on_the_eve": [
+   "2026 NC-11 R Jennifer Balkcom"
+  ],
+  "results_2026_vs_e95_calls": {
+   "races_with_a_call": 42,
+   "leader_agrees_with_call": 42,
+   "disagree": []
+  },
+  "results_2026_tables_omitting_candidates": [
+   "CO-03",
+   "IA-02",
+   "UT-03"
+  ],
+  "results_2026_inconsistent_tables": [
+   "AL-05: counts 124,763 D / 152,080 R of 276,843 give 45.066/54.934, the table prints 46.8/53.2",
+   "MO-03: counts 32,308 D / 149,239 R of 282,239 give 11.447/52.877, the table prints 44.39/52.88",
+   "MO-05: counts 179,256 D / 32,308 R of 257,956 give 69.491/12.525, the table prints 69.49/28.13"
+  ],
+  "results_2026_party_label_conflicts": [],
+  "results_2026_margins_listed_twice": [
+   "FL-27: R by 0.4 (line 1467)",
+   "FL-27: R by 0.7 (line 1482)"
+  ],
+  "results_2026_margins_table": {
+   "rows": 121,
+   "hidden_in_html_comment": 121,
+   "polled": 58,
+   "polled_without_counts": [
+    "AZ-01",
+    "AZ-02",
+    "AZ-06",
+    "CO-05",
+    "FL-07",
+    "FL-08",
+    "FL-09",
+    "FL-11",
+    "FL-13",
+    "FL-14",
+    "FL-16",
+    "FL-21",
+    "FL-22",
+    "FL-25",
+    "KS-02",
+    "MD-01",
+    "ME-02",
+    "MI-10",
+    "MN-08",
+    "NC-03",
+    "NE-01",
+    "NY-01",
+    "NY-17",
+    "NY-21",
+    "PA-01",
+    "PA-08",
+    "TN-05",
+    "TN-09",
+    "TX-02",
+    "TX-10",
+    "TX-23",
+    "VA-01",
+    "VA-02",
+    "VA-05",
+    "WA-03",
+    "WA-05",
+    "WI-01",
+    "WI-03",
+    "WI-06"
+   ],
+   "also_in_counts_file": 42,
+   "agree_within_half_a_point": 40,
+   "disagree": [
+    "AL-05: table -6.4, counts -9.87",
+    "MO-03: table -8.5, counts -41.43"
+   ]
+  },
+  "results_2026_pages": {
+   "2026 United States House of Representatives election in Alaska": "rev 1384977105 2026-11-11T04:37:28Z: general tables 1, with counts 0",
+   "2026 United States House of Representatives elections in Alabama": "rev 1384824070 2026-11-10T05:41:22Z: general tables 7, with counts 7",
+   "2026 United States House of Representatives elections in Arkansas": "rev 1385030232 2026-11-11T14:12:19Z: general tables 4, with counts 2",
+   "2026 United States House of Representatives elections in Arizona": "rev 1384914838 2026-11-10T19:58:09Z: general tables 9, with counts 0",
+   "2026 United States House of Representatives elections in California": "rev 1384901875 2026-11-10T18:37:58Z: general tables 0, with counts 0",
+   "2026 United States House of Representatives elections in Colorado": "rev 1384853439 2026-11-10T11:18:41Z: general tables 8, with counts 2",
+   "2026 United States House of Representatives elections in Connecticut": "rev 1384872374 2026-11-10T14:48:09Z: general tables 0, with counts 0",
+   "2026 United States House of Representatives election in Delaware": "rev 1385036231 2026-11-11T14:57:10Z: general tables 0, with counts 0",
+   "2026 United States House of Representatives elections in Florida": "rev 1385102433 2026-11-11T21:59:24Z: general tables 28, with counts 5",
+   "2026 United States House of Representatives elections in Georgia": "rev 1384776260 2026-11-10T01:46:07Z: general tables 14, with counts 2",
+   "2026 United States House of Representatives elections in Hawaii": "rev 1384444288 2026-11-08T06:54:03Z: general tables 0, with counts 0",
+   "2026 United States House of Representatives elections in Iowa": "rev 1384970694 2026-11-11T03:20:47Z: general tables 4, with counts 4",
+   "2026 United States House of Representatives elections in Idaho": "rev 1384875322 2026-11-10T15:15:45Z: general tables 2, with counts 0",
+   "2026 United States House of Representatives elections in Illinois": "rev 1384137665 2026-11-06T20:10:58Z: general tables 17, with counts 0",
+   "2026 United States House of Representatives elections in Indiana": "rev 1384946193 2026-11-10T23:44:49Z: general tables 8, with counts 8",
+   "2026 United States House of Representatives elections in Kansas": "rev 1384297878 2026-11-07T16:13:22Z: general tables 4, with counts 0",
+   "2026 United States House of Representatives elections in Kentucky": "rev 1384845425 2026-11-10T09:37:40Z: general tables 6, with counts 6",
+   "2026 United States House of Representatives elections in Louisiana": "rev 1385026318 2026-11-11T13:41:35Z: general tables 6, with counts 0",
+   "2026 United States House of Representatives elections in Massachusetts": "rev 1384691106 2026-11-09T16:31:56Z: general tables 0, with counts 0",
+   "2026 United States House of Representatives elections in Maryland": "rev 1384558242 2026-11-08T21:24:31Z: general tables 8, with counts 0",
+   "2026 United States House of Representatives elections in Maine": "rev 1384936320 2026-11-10T22:17:49Z: general tables 2, with counts 0",
+   "2026 United States House of Representatives elections in Michigan": "rev 1384895741 2026-11-10T17:58:30Z: general tables 13, with counts 13",
+   "2026 United States House of Representatives elections in Minnesota": "rev 1384953281 2026-11-11T00:43:30Z: general tables 8, with counts 8",
+   "2026 United States House of Representatives elections in Missouri": "rev 1385066171 2026-11-11T18:18:03Z: general tables 8, with counts 8",
+   "2026 United States House of Representatives elections in Mississippi": "rev 1384298086 2026-11-07T16:15:07Z: general tables 4, with counts 0",
+   "2026 United States House of Representatives elections in Montana": "rev 1384657708 2026-11-09T11:10:38Z: general tables 2, with counts 1",
+   "2026 United States House of Representatives elections in North Carolina": "rev 1385079227 2026-11-11T19:47:14Z: general tables 14, with counts 14",
+   "2026 United States House of Representatives election in North Dakota": "rev 1384064818 2026-11-06T10:35:53Z: general tables 1, with counts 1",
+   "2026 United States House of Representatives elections in Nebraska": "rev 1385058593 2026-11-11T17:32:49Z: general tables 3, with counts 1",
+   "2026 United States House of Representatives elections in New Hampshire": "rev 1384436062 2026-11-08T05:49:47Z: general tables 0, with counts 0",
+   "2026 United States House of Representatives elections in New Jersey": "rev 1384947311 2026-11-10T23:56:02Z: general tables 12, with counts 2",
+   "2026 United States House of Representatives elections in New Mexico": "rev 1384436129 2026-11-08T05:50:13Z: general tables 3, with counts 0",
+   "2026 United States House of Representatives elections in Nevada": "rev 1384634679 2026-11-09T07:06:00Z: general tables 4, with counts 0",
+   "2026 United States House of Representatives elections in New York": "rev 1384530385 2026-11-08T18:29:37Z: general tables 26, with counts 0",
+   "2026 United States House of Representatives elections in Ohio": "rev 1384866386 2026-11-10T13:52:58Z: general tables 15, with counts 15",
+   "2026 United States House of Representatives elections in Oklahoma": "rev 1384435822 2026-11-08T05:48:12Z: general tables 5, with counts 5",
+   "2026 United States House of Representatives elections in Oregon": "rev 1384868388 2026-11-10T14:11:22Z: general tables 6, with counts 0",
+   "2026 United States House of Representatives elections in Pennsylvania": "rev 1384571346 2026-11-08T22:51:46Z: general tables 17, with counts 0",
+   "2026 United States House of Representatives elections in Rhode Island": "rev 1384436897 2026-11-08T05:55:22Z: general tables 0, with counts 0",
+   "2026 United States House of Representatives elections in South Carolina": "rev 1384968105 2026-11-11T02:50:15Z: general tables 6, with counts 6",
+   "2026 United States House of Representatives election in South Dakota": "rev 1384066008 2026-11-06T10:48:32Z: general tables 1, with counts 1",
+   "2026 United States House of Representatives elections in Tennessee": "rev 1385081053 2026-11-11T19:58:55Z: general tables 0, with counts 0",
+   "2026 United States House of Representatives elections in Texas": "rev 1384728174 2026-11-09T20:54:45Z: general tables 38, with counts 1",
+   "2026 United States House of Representatives elections in Utah": "rev 1385062744 2026-11-11T17:57:20Z: general tables 4, with counts 3",
+   "2026 United States House of Representatives elections in Virginia": "rev 1384747609 2026-11-09T22:51:56Z: general tables 11, with counts 0",
+   "2026 United States House of Representatives election in Vermont": "rev 1384065058 2026-11-06T10:38:26Z: general tables 1, with counts 1",
+   "2026 United States House of Representatives elections in Washington": "rev 1385007502 2026-11-11T10:32:24Z: general tables 10, with counts 0",
+   "2026 United States House of Representatives elections in Wisconsin": "rev 1384622546 2026-11-09T05:00:02Z: general tables 0, with counts 0",
+   "2026 United States House of Representatives elections in West Virginia": "rev 1385069509 2026-11-11T18:40:15Z: general tables 2, with counts 0",
+   "2026 United States House of Representatives election in Wyoming": "rev 1385071666 2026-11-11T18:53:48Z: general tables 1, with counts 1",
+   "2026 United States House of Representatives elections in California (districts 1\u201326)": "rev 1384986316 2026-11-11T06:24:18Z: general tables 25, with counts 0",
+   "2026 United States House of Representatives elections in California (districts 27\u201352)": "rev 1384904008 2026-11-10T18:51:26Z: general tables 26, with counts 0",
+   "2026 United States Senate special election in Florida": "rev 1385051768 2026-11-11T16:48:18Z: general tables 1, with counts 1",
+   "2026 United States Senate special election in Ohio": "rev 1384940947 2026-11-10T22:53:47Z: general tables 1, with counts 1",
+   "2026 United States Senate election in Alabama": "rev 1384823901 2026-11-10T05:40:12Z: general tables 1, with counts 1",
+   "2026 United States Senate election in Alaska": "rev 1385100557 2026-11-11T21:45:42Z: general tables 0, with counts 0",
+   "2026 United States Senate election in Arkansas": "rev 1384852084 2026-11-10T11:01:45Z: general tables 1, with counts 1",
+   "2026 United States Senate election in Colorado": "rev 1384910883 2026-11-10T19:33:37Z: general tables 1, with counts 1",
+   "2026 United States Senate election in Delaware": "rev 1385101884 2026-11-11T21:55:26Z: general tables 1, with counts 1",
+   "2026 United States Senate election in Georgia": "rev 1385037480 2026-11-11T15:07:02Z: general tables 1, with counts 1",
+   "2026 United States Senate election in Idaho": "rev 1384994837 2026-11-11T08:05:34Z: general tables 1, with counts 1",
+   "2026 United States Senate election in Illinois": "rev 1384960509 2026-11-11T01:40:12Z: general tables 1, with counts 0",
+   "2026 United States Senate election in Iowa": "rev 1385032246 2026-11-11T14:26:20Z: general tables 1, with counts 1",
+   "2026 United States Senate election in Kansas": "rev 1384953381 2026-11-11T00:44:07Z: general tables 1, with counts 1",
+   "2026 United States Senate election in Kentucky": "rev 1384994044 2026-11-11T07:54:18Z: general tables 1, with counts 1",
+   "2026 United States Senate election in Louisiana": "rev 1384752807 2026-11-09T23:25:26Z: general tables 1, with counts 1",
+   "2026 United States Senate election in Maine": "rev 1385079942 2026-11-11T19:51:30Z: general tables 1, with counts 1",
+   "2026 United States Senate election in Massachusetts": "rev 1384645064 2026-11-09T09:00:04Z: general tables 1, with counts 1",
+   "2026 United States Senate election in Michigan": "rev 1385098155 2026-11-11T21:30:12Z: general tables 1, with counts 1",
+   "2026 United States Senate election in Minnesota": "rev 1384969792 2026-11-11T03:07:58Z: general tables 1, with counts 1",
+   "2026 United States Senate election in Mississippi": "rev 1385105100 2026-11-11T22:19:15Z: general tables 1, with counts 1",
+   "2026 United States Senate election in Montana": "rev 1385023860 2026-11-11T13:21:23Z: general tables 1, with counts 1",
+   "2026 United States Senate election in Nebraska": "rev 1384909774 2026-11-10T19:27:54Z: general tables 1, with counts 0",
+   "2026 United States Senate election in New Hampshire": "rev 1384645429 2026-11-09T09:04:07Z: general tables 1, with counts 1",
+   "2026 United States Senate election in New Jersey": "rev 1385083556 2026-11-11T20:14:58Z: general tables 1, with counts 0",
+   "2026 United States Senate election in New Mexico": "rev 1384619358 2026-11-09T04:34:19Z: general tables 1, with counts 1",
+   "2026 United States Senate election in North Carolina": "rev 1385053268 2026-11-11T16:59:59Z: general tables 1, with counts 1",
+   "2026 United States Senate election in Oklahoma": "rev 1385085787 2026-11-11T20:27:12Z: general tables 1, with counts 1",
+   "2026 United States Senate election in Oregon": "rev 1384978505 2026-11-11T04:52:57Z: general tables 1, with counts 0",
+   "2026 United States Senate election in Rhode Island": "rev 1385084038 2026-11-11T20:17:49Z: general tables 1, with counts 1",
+   "2026 United States Senate election in South Carolina": "rev 1385069277 2026-11-11T18:38:53Z: general tables 1, with counts 1",
+   "2026 United States Senate election in South Dakota": "rev 1385015094 2026-11-11T11:53:17Z: general tables 1, with counts 1",
+   "2026 United States Senate election in Tennessee": "rev 1384810159 2026-11-10T04:08:15Z: general tables 1, with counts 1",
+   "2026 United States Senate election in Texas": "rev 1385096264 2026-11-11T21:21:16Z: general tables 1, with counts 1",
+   "2026 United States Senate election in Virginia": "rev 1385036570 2026-11-11T14:59:53Z: general tables 1, with counts 1",
+   "2026 United States Senate election in West Virginia": "rev 1384646252 2026-11-09T09:12:44Z: general tables 1, with counts 1",
+   "2026 United States Senate election in Wyoming": "rev 1384945979 2026-11-10T23:42:18Z: general tables 1, with counts 1"
+  },
+  "results_2026_coverage": {
+   "H": {
+    "contested_races": 410,
+    "with_counts": 108,
+    "polled_races": 97,
+    "polled_with_counts": 30,
+    "polled_missing": [
+     "AZ-01",
+     "AZ-02",
+     "AZ-06",
+     "CO-05",
+     "CO-08",
+     "CT-02",
+     "CT-05",
+     "FL-07",
+     "FL-08",
+     "FL-09",
+     "FL-11",
+     "FL-13",
+     "FL-14",
+     "FL-16",
+     "FL-21",
+     "FL-22",
+     "FL-25",
+     "FL-27",
+     "GA-03",
+     "GA-07",
+     "GA-11",
+     "ID-01",
+     "ID-02",
+     "KS-02",
+     "MD-01",
+     "ME-01",
+     "ME-02",
+     "MI-10",
+     "MN-08",
+     "NC-03",
+     "NE-01",
+     "NH-01",
+     "NH-02",
+     "NJ-07",
+     "NM-01",
+     "NM-02",
+     "NM-03",
+     "NV-03",
+     "NY-01",
+     "NY-17",
+     "NY-18",
+     "NY-21",
+     "NY-23",
+     "PA-01",
+     "PA-07",
+     "PA-08",
+     "PA-10",
+     "RI-02",
+     "TN-05",
+     "TN-09",
+     "TX-02",
+     "TX-10",
+     "TX-15",
+     "TX-23",
+     "TX-28",
+     "TX-34",
+     "TX-35",
+     "UT-04",
+     "VA-01",
+     "VA-02",
+     "VA-05",
+     "VA-06",
+     "WA-03",
+     "WA-05",
+     "WI-01",
+     "WI-03",
+     "WI-06"
+    ]
+   },
+   "S": {
+    "contested_races": 33,
+    "with_counts": 29,
+    "polled_races": 23,
+    "polled_with_counts": 21,
+    "polled_missing": [
+     "IL-S",
+     "NE-S"
+    ]
+   }
+  },
+  "results_2026_states_with_no_counts": [
+   "AK",
+   "AZ",
+   "CA",
+   "CT",
+   "HI",
+   "ID",
+   "IL",
+   "MD",
+   "NV",
+   "NY",
+   "OR",
+   "PA",
+   "WA",
+   "WI"
+  ],
+  "results_2026_states_partly_counted": {
+   "AL": "7/8",
+   "AR": "2/5",
+   "CO": "3/9",
+   "DE": "1/2",
+   "FL": "6/28",
+   "GA": "2/15",
+   "IN": "8/9",
+   "KS": "1/5",
+   "KY": "6/7",
+   "MA": "1/6",
+   "ME": "1/3",
+   "MI": "13/14",
+   "MN": "8/9",
+   "MS": "1/5",
+   "MT": "2/3",
+   "NC": "14/15",
+   "NE": "1/4",
+   "NH": "1/3",
+   "NJ": "1/12",
+   "NM": "1/4",
+   "OH": "15/16",
+   "RI": "1/3",
+   "SC": "7/8",
+   "TN": "1/10",
+   "TX": "2/39",
+   "UT": "3/4",
+   "VA": "1/12",
+   "WV": "1/3"
+  },
+  "ie_2018_prank_spenders": {
+   "spenders": 0,
+   "rows": 0,
+   "dollars": 0.0,
+   "names": []
+  },
+  "ie_2018_aligned_affiliates": [],
+  "ie_2018_largest_other_spenders_eve": [
+   "C90016098 | Majority Forward | 40227431",
+   "C00532705 | Independence USA PAC | 37491838",
+   "C00544544 | NEW REPUBLICAN PAC | 30495313",
+   "C00637512 | AMERICA FIRST ACTION, INC. | 25914275",
+   "C00495861 | Priorities USA Action | 23631950",
+   "C00473918 | Women Vote! | 20758404",
+   "C00668301 | DEFENDARIZONA | 17835582",
+   "C00486845 | LCV Victory Fund | 16149075",
+   "C00573261 | End Citizens United | 12122166",
+   "C00418897 | VoteVets | 9767219",
+   "C00488742 | National Association of Realtors Congressional Fund | 9747099",
+   "C00683599 | CHANGE NOW | 7855056",
+   "C00680926 | PATIENTS FOR AFFORDABLE DRUGS ACTION | 7798104",
+   "C90013285 | Americans for Prosperity | 7688173",
+   "C00625533 | New American Jobs Fund | 7575443"
+  ],
+  "ie_2018_nominee_cells_vs_e94_ie": {
+   "eve": {
+    "cells": 362,
+    "differing_by_over_1_dollar": 0,
+    "max_abs_difference": 0.0
+   },
+   "final": {
+    "cells": 367,
+    "differing_by_over_1_dollar": 0,
+    "max_abs_difference": 0.0
+   }
+  },
+  "ie_2018_vs_e94_ie": {
+   "eve": {
+    "e118_total": 1046707570.16,
+    "e94_total": 1046707570.16,
+    "cells": 583,
+    "cells_differing_by_over_1_dollar": 56,
+    "max_abs_cell_difference": 964873.1199999999
+   },
+   "final": {
+    "e118_total": 1048919409.33,
+    "e94_total": 1048919409.3299999,
+    "cells": 600,
+    "cells_differing_by_over_1_dollar": 56,
+    "max_abs_cell_difference": 583160.18
+   }
+  },
+  "ie_2022_prank_spenders": {
+   "spenders": 1,
+   "rows": 2,
+   "dollars": 19999999998.0,
+   "names": [
+    "COMMITTEE 300"
+   ]
+  },
+  "ie_2022_aligned_affiliates": [
+   "C00763193 GEORGIA HONOR (connected organisation: Senate Majority PAC (SMP))"
+  ],
+  "ie_2022_largest_other_spenders_eve": [
+   "C00687103 | Americans for Prosperity Action, Inc. | 50474487",
+   "C00487470 | CLUB FOR GROWTH ACTION | 30654003",
+   "C00486845 | LCV Victory Fund | 27289286",
+   "C00473918 | Women Vote! | 23133836",
+   "C00418897 | VoteVets | 19363224",
+   "C00804104 | WISCONSIN TRUTH PAC | 17365173",
+   "C00495861 | Priorities USA Action | 15335127",
+   "C00825851 | MAKE AMERICA GREAT AGAIN INC. | 15030850",
+   "C00794891 | AMERICAN LEADERSHIP ACTION | 14052061",
+   "C00669259 | FF PAC | 13521128",
+   "C00777185 | SAVING ARIZONA PAC | 12747595",
+   "C00811166 | The Sentinel Action Fund | 12527383",
+   "C00750182 | OPPORTUNITY MATTERS FUND, INC. | 9224774",
+   "C00744920 | Family Friendly Action PAC | 8901586",
+   "C00488742 | National Association of Realtors Congressional Fund | 8501465"
+  ],
+  "ie_2022_nominee_cells_vs_e94_ie": {
+   "eve": {
+    "cells": 390,
+    "differing_by_over_1_dollar": 2,
+    "max_abs_difference": 10000.0
+   },
+   "final": {
+    "cells": 394,
+    "differing_by_over_1_dollar": 0,
+    "max_abs_difference": 0.0
+   }
+  },
+  "ie_2022_vs_e94_ie": {
+   "eve": {
+    "e118_total": 1612599142.36,
+    "e94_total": 1612599142.3600001,
+    "cells": 602,
+    "cells_differing_by_over_1_dollar": 83,
+    "max_abs_cell_difference": 256302.52000000002
+   },
+   "final": {
+    "e118_total": 1622535525.77,
+    "e94_total": 1622535525.77,
+    "cells": 601,
+    "cells_differing_by_over_1_dollar": 75,
+    "max_abs_cell_difference": 373875.0
+   }
+  },
+  "ie_2026_prank_spenders": {
+   "spenders": 2,
+   "rows": 10,
+   "dollars": 14001000300.0,
+   "names": [
+    "SHAWN BETTIS",
+    "WARREN BUFFET",
+    "WARREN BUFFET APPLE INC.",
+    "Warren Buffet"
+   ]
+  },
+  "ie_2026_aligned_affiliates": [
+   "C00865444 WINSENATE (connected organisation: Senate Majority PAC (SMP))",
+   "C00953398 THE GEORGIA WAY (connected organisation: Senate Majority PAC (SMP))",
+   "C00957522 NORTH STAR (connected organisation: Senate Majority PAC (SMP))",
+   "C00962308 TEXAS FOREVER (connected organisation: Senate Majority PAC (SMP))"
+  ],
+  "ie_2026_largest_other_spenders_eve": [
+   "C00960435 | NO GOING BACK PAC INC. | 246455725",
+   "C00960211 | TEXAS PAC | 181850225",
+   "C00687103 | Americans for Prosperity Action, Inc. (AFP Action) DBA CVA Action and DBA LIBRE Action | 91244213",
+   "C00879510 | America PAC | 85935937",
+   "C00961276 | Lower Costs Now | 76097363",
+   "C00836221 | DEFEND AMERICAN JOBS | 72461444",
+   "C00960443 | SAFETY & AFFORDABILITY PAC INC. | 63209520",
+   "C00492140 | AB PAC | 46406887",
+   "C00486845 | LCV Victory Fund | 43273329",
+   "C00892471 | MAGA INC. | 41285630",
+   "C00918268 | Lone Star Rising PAC | 35670145",
+   "C00915595 | Government That Works PAC | 32487727",
+   "C00744920 | CFFE PAC | 31270547",
+   "C00688655 | EVERYTOWN FOR GUN SAFETY VICTORY FUND (EVERYTOWN VICTORY FUND) | 29911604",
+   "C00894709 | PINE TREE RESULTS PAC | 27026785"
+  ],
+  "ie_2026_nominee_cells_vs_e94_ie": {
+   "eve": {
+    "cells": 417,
+    "differing_by_over_1_dollar": 6,
+    "max_abs_difference": 1954.72
+   },
+   "final": {
+    "cells": 421,
+    "differing_by_over_1_dollar": 117,
+    "max_abs_difference": 1990535.24
+   }
+  },
+  "ie_2026_vs_e94_ie": {
+   "eve": {
+    "e118_total": 3171364201.4900002,
+    "e94_total": 3171359984.59,
+    "cells": 603,
+    "cells_differing_by_over_1_dollar": 66,
+    "max_abs_cell_difference": 994042.0500000007
+   },
+   "final": {
+    "e118_total": 3174833356.5299997,
+    "e94_total": 3171366286.59,
+    "cells": 611,
+    "cells_differing_by_over_1_dollar": 204,
+    "max_abs_cell_difference": 3598048.0100000002
+   }
+  },
+  "dating_rule": {
+   "2018": {
+    "sources": 12,
+    "latest_version_time_utc": "2018-11-05T02:29:14Z",
+    "election_day": "2018-11-06",
+    "latest_source": "Freedom Caucus"
+   },
+   "2022": {
+    "sources": 17,
+    "latest_version_time_utc": "2022-11-07T16:42:41Z",
+    "election_day": "2022-11-08",
+    "latest_source": "New Democrat Coalition"
+   },
+   "2026": {
+    "sources": 15,
+    "latest_version_time_utc": "2026-11-02T19:17:09Z",
+    "election_day": "2026-11-03",
+    "latest_source": "Blue Dog Coalition"
+   }
+  }
+ },
+ "counts": {
+  "ideology_rows": {
+   "2018_H_D": 432,
+   "2018_H_R": 396,
+   "2018_S_D": 35,
+   "2018_S_R": 34,
+   "2022_H_D": 418,
+   "2022_H_R": 421,
+   "2022_S_D": 36,
+   "2022_S_R": 36,
+   "2026_H_D": 434,
+   "2026_H_R": 417,
+   "2026_S_D": 35,
+   "2026_S_R": 35
+  },
+  "ideology_flags": {
+   "2018_blue_dog": 18,
+   "2018_blue_dog_pac": 21,
+   "2018_blue_dog_site": 18,
+   "2018_bnc": 7,
+   "2018_cpc": 70,
+   "2018_hfc": 28,
+   "2018_jd": 23,
+   "2018_ndc": 55,
+   "2018_our_revolution": 31,
+   "2018_red_to_blue": 92,
+   "2018_rmsp": 61,
+   "2018_rsc": 133,
+   "2022_blue_dog": 14,
+   "2022_blue_dog_pac": 8,
+   "2022_blue_dog_site": 14,
+   "2022_bnc": 13,
+   "2022_cpc": 88,
+   "2022_dsa_member": 5,
+   "2022_hfc": 39,
+   "2022_jd": 12,
+   "2022_ndc": 84,
+   "2022_newdem_fund": 39,
+   "2022_newdem_watch": 5,
+   "2022_psc": 44,
+   "2022_red_to_blue": 36,
+   "2022_rgg": 35,
+   "2022_rmsp": 52,
+   "2022_rsc": 145,
+   "2026_blue_dog": 8,
+   "2026_blue_dog_pac": 21,
+   "2026_cpc": 78,
+   "2026_dsa_member": 2,
+   "2026_hfc": 24,
+   "2026_hfc_fund": 6,
+   "2026_jd": 17,
+   "2026_ndc": 103,
+   "2026_newdem_fund": 50,
+   "2026_psc": 41,
+   "2026_rgg": 37,
+   "2026_rmsp": 67,
+   "2026_rsc": 118
+  },
+  "results_2026": {
+   "rows": 137,
+   "inconsistent_tables": 3,
+   "no_printed_percentages": 1
+  },
+  "ie_2018_last_receipt_in_file": "2020-10-28",
+  "ie_2018": {
+   "rows_raw": 45039,
+   "items_final": 25778,
+   "total_final": 1048919409.3299999,
+   "items_eve": 24415,
+   "total_eve": 1046707570.1600001
+  },
+  "ie_2022_last_receipt_in_file": "2025-01-13",
+  "ie_2022": {
+   "rows_raw": 61779,
+   "items_final": 27852,
+   "total_final": 1622535525.77,
+   "items_eve": 27277,
+   "total_eve": 1612599142.3600001
+  },
+  "ie_2026_last_receipt_in_file": "2026-11-10",
+  "ie_2026": {
+   "rows_raw": 51221,
+   "items_final": 32105,
+   "total_final": 3174833356.53,
+   "items_eve": 31295,
+   "total_eve": 3171364201.49
+  },
+  "party_ie_rows": {
+   "2018_eve": 1183,
+   "2018_final": 1197,
+   "2022_eve": 1097,
+   "2022_final": 1101,
+   "2026_eve": 1066,
+   "2026_final": 1072
+  },
+  "party_ie_dollars_eve_by_group": {
+   "2018": {
+    "aligned_superpac": 359214958,
+    "hill_committee": 195937454,
+    "other": 488191767,
+    "party_other": 3363391
+   },
+   "2022": {
+    "aligned_affiliate": 38468219,
+    "aligned_superpac": 714055913,
+    "hill_committee": 263642491,
+    "other": 595637553,
+    "party_other": 794966
+   },
+   "2026": {
+    "aligned_affiliate": 330563842,
+    "aligned_superpac": 826053868,
+    "other": 2014533545,
+    "party_other": 212946
+   }
+  },
+  "party_direct_2018": {
+   "pre_general_close_of_books": "2018-10-17",
+   "rows_with_dates_outside_the_cycle_dropped": 0,
+   "dollars_all_party_committees_by_type": {
+    "coordinated": 37405364,
+    "contribution": 2409133,
+    "in_kind": 181482
+   },
+   "dollars_to_nominees_by_type_final": {
+    "contribution": 1992919,
+    "coordinated": 33535688,
+    "in_kind": 146783
+   },
+   "hill_committee_coordinated_final": {
+    "DCCC": 6197035,
+    "DSCC": 9986270,
+    "NRCC": 4727531,
+    "NRSC": 8433068
+   },
+   "last_transaction_date": "2018-11-06"
+  },
+  "party_direct_2022": {
+   "pre_general_close_of_books": "2022-10-19",
+   "rows_with_dates_outside_the_cycle_dropped": 0,
+   "dollars_all_party_committees_by_type": {
+    "coordinated": 42296706,
+    "contribution": 3251977,
+    "in_kind": 301714
+   },
+   "dollars_to_nominees_by_type_final": {
+    "contribution": 3035688,
+    "coordinated": 40206327,
+    "in_kind": 291127
+   },
+   "hill_committee_coordinated_final": {
+    "DCCC": 5636241,
+    "DSCC": 7140679,
+    "NRCC": 7850033,
+    "NRSC": 15561610
+   },
+   "last_transaction_date": "2022-11-08"
+  },
+  "party_direct_2026": {
+   "pre_general_close_of_books": "2026-10-14",
+   "rows_with_dates_outside_the_cycle_dropped": 1,
+   "dollars_all_party_committees_by_type": {
+    "coordinated": 325698653,
+    "contribution": 3173407,
+    "in_kind": 56295
+   },
+   "dollars_to_nominees_by_type_final": {
+    "contribution": 2725758,
+    "coordinated": 299211718,
+    "in_kind": 53274
+   },
+   "hill_committee_coordinated_final": {
+    "DCCC": 60513348,
+    "DSCC": 38190700,
+    "NRCC": 82536107,
+    "NRSC": 86953584
+   },
+   "last_transaction_date": "2026-10-14"
+  }
+ },
+ "notes": {},
+ "ideology_flag_cycles": {
+  "cpc": [
+   2018,
+   2022,
+   2026
+  ],
+  "ndc": [
+   2018,
+   2022,
+   2026
+  ],
+  "blue_dog": [
+   2018,
+   2022,
+   2026
+  ],
+  "hfc": [
+   2018,
+   2022,
+   2026
+  ],
+  "rsc": [
+   2018,
+   2022,
+   2026
+  ],
+  "rmsp": [
+   2018,
+   2022,
+   2026
+  ],
+  "rgg": [
+   2022,
+   2026
+  ],
+  "psc": [
+   2022,
+   2026
+  ],
+  "dsa_member": [
+   2022,
+   2026
+  ],
+  "jd": [
+   2018,
+   2022,
+   2026
+  ],
+  "bnc": [
+   2018,
+   2022
+  ],
+  "blue_dog_pac": [
+   2026,
+   2018,
+   2022
+  ],
+  "hfc_fund": [
+   2026
+  ],
+  "blue_dog_site": [
+   2018,
+   2022
+  ],
+  "newdem_fund": [
+   2022,
+   2026
+  ],
+  "newdem_watch": [
+   2022
+  ],
+  "our_revolution": [
+   2018
+  ],
+  "red_to_blue": [
+   2018,
+   2022
+  ]
+ },
+ "raw_files_sha256": {
+  "legislators/legislators-current.json": "ae8cb9477c48715df71a7d860854229d799dc90a254d61badc1efb770f892b2c",
+  "legislators/legislators-historical.json": "25187633f3215a096fe9d14d8a40db1fb0841ab1d24c6da52da3a80c93698cbc",
+  "voteview/HSall_members__current.csv": "43bc4374431b5245e9c58456340df5d7e8745bc0fc5fbe099c22a2512276c9cb",
+  "voteview/HSall_members__wayback_20220505045700.csv": "a06b6c464250436ad093bf1d1de6b0ace7e4a134f5d12a74587129d71d5a15b3",
+  "voteview/HSall_members__wayback_20261008235105.csv": "d78f55120b59534e99f30541469325059f953b210f0ddb6ebb54601c9303c0f6",
+  "wikipedia/Congressional_Progressive_Caucus__asof_20181105__rev864765214.wikitext": "3763c537bbbb3146cec0eccf103a7583e74e0ce809fdc0b784d7dea52e807096",
+  "wikipedia/Congressional_Progressive_Caucus__asof_20221107__rev1120193282.wikitext": "3991b6526c3f907ec35b530c1135b83ac688a8a3f8eb01aaed6f516fc615ac0a",
+  "wikipedia/Congressional_Progressive_Caucus__asof_20261102__rev1381705840.wikitext": "151f3e387184b55e0eda7023b8543294daedccb3fbc4df7e97baa503fe43e31c",
+  "wikipedia/New_Democrat_Coalition__asof_20181105__rev863958870.wikitext": "5dc5e63abaa9bea8077c07b331268c56902a828cdcbb8ed3dd81ac10f5b0f02e",
+  "wikipedia/New_Democrat_Coalition__asof_20221107__rev1120556194.wikitext": "ba75db75ffcc3afb9a98978d8db45b232e523024281791315a1b365d82a5f00c",
+  "wikipedia/New_Democrat_Coalition__asof_20261102__rev1381619989.wikitext": "05a0233f9f7992fa4ab8a6f5e7d910ce99ae0d251b808a2ee25ec0dd7d1a0442",
+  "wikipedia/List_of_members_of_the_Blue_Dog_Coalition__asof_20181105__rev854764346.wikitext": "1d63a329be6cda403d0e0ff576b1c8b6203c3b5209be4116629f3638de574248",
+  "wikipedia/Blue_Dog_Coalition__asof_20221107__rev1120459393.wikitext": "14da0675a329d6b8368ae025073c9fbbe39bee90bad40d5bf3fb3933e9e4a51b",
+  "wikipedia/Blue_Dog_Coalition__asof_20261102__rev1383449161.wikitext": "954ac2f9e5ff7883647c9495b96697c8f2ce54d6aa2297c5d7b67e5ea8643b09",
+  "wikipedia/Freedom_Caucus__asof_20181105__rev867334154.wikitext": "69d11302c625af8aac88c32575ecf066d5595b3d8f8aa780f3eb02c739bc101b",
+  "wikipedia/Freedom_Caucus__asof_20221107__rev1118223312.wikitext": "b9635684c53aa0fd46dde01c2b9d80812c350af2fa1cae7c31267cd0a486088a",
+  "wikipedia/Freedom_Caucus__asof_20261102__rev1382708053.wikitext": "1a7fd740ddb5ebd70b767928c47fdd6355194f9ad04636ddc07f98a8a9524008",
+  "wikipedia/Republican_Study_Committee__asof_20181105__rev863965790.wikitext": "d6713eefc3b59d742a822aa7e3fa670f3c9878ee6ce11c0a118f889410e214ff",
+  "wikipedia/Republican_Study_Committee__asof_20221107__rev1113379269.wikitext": "d95e86a45d6d3826987caec66ad57863928e5bb2e78272e93b02daf682b4f64b",
+  "wikipedia/Republican_Study_Committee__asof_20261102__rev1376656621.wikitext": "77a3dd2f85340764565dea9ed1c983053d75b51825b0e061ae64480af99284e7",
+  "wikipedia/Republican_Main_Street_Partnership__asof_20181105__rev863963697.wikitext": "c5fae4304c7157354957b7506a5bdf87f90e31e6ac8f6006db1cc3c12bdddc4c",
+  "wikipedia/Republican_Main_Street_Partnership__asof_20221107__rev1112981003.wikitext": "f4c4c5e45f92bb8d156ebcbdcdf6e141933d359a96bbd17d4b98c44052f37ee8",
+  "wikipedia/Republican_Main_Street_Partnership__asof_20261102__rev1376718157.wikitext": "13e14078aa4549bc464cb7c3dc602a735a6b28d2b7616f43add46d1986539b40",
+  "wikipedia/Main_Street_Caucus__asof_20261102__rev1382340936.wikitext": "f9cac46034a97b99e9cc30ddda778014ea2adca9d4f1c65e44540cd7e9456fcb",
+  "wikipedia/Republican_Governance_Group__asof_20221107__rev1116679166.wikitext": "7e926a79c5bdd280d5b7639da1c0da85d881ac51b4b33da2357c21f741eadffa",
+  "wikipedia/Republican_Governance_Group__asof_20261102__rev1382519482.wikitext": "9f62427b4d2c1e5fa6f23c019442ae17727cba73dce3d58efa2b0f5a8499e69c",
+  "wikipedia/Problem_Solvers_Caucus__asof_20221107__rev1119615903.wikitext": "826fd41e3aff6bdf42cb7c6a7249cf7ddc07bc3ac5f76f7ae495e0f0f3c0bbc9",
+  "wikipedia/Problem_Solvers_Caucus__asof_20261102__rev1382017938.wikitext": "81d11edbe45dc75273c8832a239d16ea39ce33327381ccb5bdb054571c2155b7",
+  "wikipedia/List_of_Democratic_Socialists_of_America_public_officeholders__asof_20221107__rev1119665125.wikitext": "a14e179c26ff8d91293d3109785d954d17dcea36aa0348aabcc6255d912ce93b",
+  "wikipedia/List_of_Democratic_Socialists_of_America_public_officeholders__asof_20261102__rev1382927791.wikitext": "7b356288e05d6c6fe426d308754eada7380c92420b8887221be2e383cf6d65f6",
+  "wikipedia/Justice_Democrats__asof_20181105__rev866491863.wikitext": "2fbb5510b124e2d722f63b88d8bd501f7d1de5ff7d2a447b388cd5884fed16d0",
+  "wikipedia/Justice_Democrats__asof_20221107__rev1120444582.wikitext": "1ca6c836db2960092a2c9d6a0e7fb9a06b898bc2ea187a32e0c7bd08731425e4",
+  "wikipedia/Justice_Democrats__asof_20261102__rev1381511369.wikitext": "b5e2f312317add0d13f5cca6672fa0c1cc622a2c34eae9a5e768f3d3f064f74b",
+  "wikipedia/Brand_New_Congress__asof_20181105__rev864479121.wikitext": "9263ab5cbb8c448d76353d7694437ad9cbcf04d48db992dc4b8702100407b72c",
+  "wikipedia/Brand_New_Congress__asof_20221107__rev1111347374.wikitext": "d791966e0010e2656868890a2a3ce48db41778767bf5976f067cb8db0f12ba06",
+  "wayback/bluedogdems.com___20181022062501.html": "b231f56385c08ab2b6a599b3a2473d50248acc9ea055884bfa32918bbd9fedb7",
+  "wayback/bluedogdems.com___20221107083124.html": "1c6827d7a16fd764f8f64ca8d374edd8fef705c97b9cb1f95eb9944596dd9095",
+  "wayback/newdemactionfund.com_candidates__20221106185352.html": "70f7916a0506031f17c01d3301cd242f0d540d1a2efe7afedffd0860b192c033",
+  "wayback/newdemactionfund.com_candidates__20261101191604.html": "57a32b930b7804f88b16d0729b5f4fb0a0ceec65323ac5625e6e471277638e47",
+  "wayback/ourrevolution.com_candidates___20181104071734.html": "0583d8fb3a1d35ff84ddcf046ee7a19a2392576229308f84c54a152ec42bafe4",
+  "wayback/redtoblue.dccc.org___20181030021445.html": "1610af54e5b7ab22e7468600018b715bc1d62ba77d198d67eadfa5dc4c3443e0",
+  "wayback/redtoblue.dccc.org___20221106184002.html": "d2011d7b9ef6d1b48c81b01fb386c15ba007a9832d43ecedc0f3d76730cd5420",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_election_in_Alaska__asof_202611112220__rev1384977105.wikitext": "3dff8746b9ac0c66f424c84be6f3dbdd124e5c89e002516cc95eefbe5abe6abe",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Alabama__asof_202611112220__rev1384824070.wikitext": "f9100f026f9137e050bad4a260fe54ad846e927712db73cc979e09ec5f750af8",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Arkansas__asof_202611112220__rev1385030232.wikitext": "af446310ded06c8a49ddfef48ab664fd1a9e2ec76a2d7ab196b95e931071811c",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Arizona__asof_202611112220__rev1384914838.wikitext": "1756ec6d225a1dcef0955a5a9b52bd3aff07fdc914ebbed77caa4d41518755f0",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_California__asof_202611112220__rev1384901875.wikitext": "acd75809d86210c9de8c0c6b4c0576c3214fa7ec2f4347c22c9042948d5d14d8",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Colorado__asof_202611112220__rev1384853439.wikitext": "3fe4769690b69c98869d727fdc15d127bdae5f1bee4a674864908e1b51b9d687",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Connecticut__asof_202611112220__rev1384872374.wikitext": "89ee4380d737a38c43af90e7f135be110498d7af0515889aaf2e61d8843b174e",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_election_in_Delaware__asof_202611112220__rev1385036231.wikitext": "a1bd2072dc197c1a846ffd4673a7f19a8e6986a9e30df56a8078a37e17aae7ca",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Florida__asof_202611112220__rev1385102433.wikitext": "ce87a00a5eac9f0c90e80a5dd6bf9dc85cdef3d5b0fb7a1a24b94d30a807a79e",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Georgia__asof_202611112220__rev1384776260.wikitext": "eb8454123003d7915aa5b7185b06a083f7668911b38b04cb255993b7be7b209b",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Hawaii__asof_202611112220__rev1384444288.wikitext": "369a3b6f6f3dd0ed9ab47cb1aee07bc9f39981beddf2acb9bf5958b1643bc17f",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Iowa__asof_202611112220__rev1384970694.wikitext": "3d101c9cbdb489945a9ea53752cefd08db5ef7d6d44ae442229effdc9ca169ca",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Idaho__asof_202611112220__rev1384875322.wikitext": "87f1f3759dfa9311c46fa4818f850591ca0746af44b59931e66711c7bb8ba87e",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Illinois__asof_202611112220__rev1384137665.wikitext": "19f5fc4562c5a9107e6d7114b5d47861b0530afd82981f2fc7d21feb0f652314",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Indiana__asof_202611112220__rev1384946193.wikitext": "042813f60b6f22f8ef3de26f28d4a450b93472d7fbbf7bad4529319144db23e7",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Kansas__asof_202611112220__rev1384297878.wikitext": "78a23923c3b61e5645db19568af174fee523a2d652b471bcaa16621905d82b1c",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Kentucky__asof_202611112220__rev1384845425.wikitext": "6f23e94aafc10ec48bfb5c70b0e2290c2c3eeaebcd6730fb23a2ce316ecfac7d",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Louisiana__asof_202611112220__rev1385026318.wikitext": "d2c804ba0d42f06e16d010fefe857c9bf5852d325db8817fc7b6e8a7f260d8c4",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Massachusetts__asof_202611112220__rev1384691106.wikitext": "e86e8dcdb7c7da4ce4d5e62bc6c092ee6562c3afb3de334c263de49a00d9ee8a",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Maryland__asof_202611112220__rev1384558242.wikitext": "b7ac9d63f48ace61633427a27684739d43afa2781a506983e0f2cd86686e838f",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Maine__asof_202611112220__rev1384936320.wikitext": "08874bd658611c25c14b88a45485dfc2b8d1e2e188d32e094de69ff056923b1b",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Michigan__asof_202611112220__rev1384895741.wikitext": "b964a86451d4c6332c99e2d35f5307399ebf59ed8a8a421aff14f463baad86f1",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Minnesota__asof_202611112220__rev1384953281.wikitext": "95dc6de1d37c19b3490519ecd7e6b48640aabde8f86fd2eb46a3264b9499fbce",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Missouri__asof_202611112220__rev1385066171.wikitext": "b8a554a72e2e0e6633acfcd99e13acd42e0f5bde9ae0d8406be4410037b9d174",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Mississippi__asof_202611112220__rev1384298086.wikitext": "79522f0f921807f0540eb7c668e0e3b41fdc1811af5d997947040c12ca4a99e4",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Montana__asof_202611112220__rev1384657708.wikitext": "33d67c1a3910676f793f89ba434e83fbbe5c25cdeb92680f004dcc1d2ba4ac1d",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_North_Carolina__asof_202611112220__rev1385079227.wikitext": "bb53fc0cca17d78d138160aab662747177b0b99c1fc9c1fc5e2ccc11b0ecc0d2",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_election_in_North_Dakota__asof_202611112220__rev1384064818.wikitext": "05c44d1a54b9acfd3dbdac935f276b3ee53dcc71d678eab37bd2aaa41639da8c",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Nebraska__asof_202611112220__rev1385058593.wikitext": "b5fe51555117139ec469a0d891bf88ce2ceffe5f384112a13b3e3ce6fe0483bc",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_New_Hampshire__asof_202611112220__rev1384436062.wikitext": "d3d314e4c30bd9665920a54103a8a84363e76fb99e49e69fe07a26a4717efeea",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_New_Jersey__asof_202611112220__rev1384947311.wikitext": "2937a99b51d6ff7e6c2e6514eb6b91817a049c2793294ae02427d25ce31ef56c",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_New_Mexico__asof_202611112220__rev1384436129.wikitext": "bca539e57be044ab3377e0b2f256335aa3edaa92f5cfe430b61de77d0362e482",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Nevada__asof_202611112220__rev1384634679.wikitext": "a3adb8a3520c121269b7cbb90d77a33271dd6214f0f8c503cdafda7da0ffef38",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_New_York__asof_202611112220__rev1384530385.wikitext": "13f38f62b10eb7c73609fa634312af8eed30bfc1078857a1e8e38439cbad593e",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Ohio__asof_202611112220__rev1384866386.wikitext": "e7b32e1e543b2fe219d1c349322f180b9d32d7d446cf26b1aa80e92cb7d189a5",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Oklahoma__asof_202611112220__rev1384435822.wikitext": "bc0ab8781aa44fb0f038bd81683f372fa531b9005fe43c13f1fb91be30bf5d62",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Oregon__asof_202611112220__rev1384868388.wikitext": "bb2b140fc39a2c538e38b3371588869cef71207511b0cc9f390fed40c13b64c9",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Pennsylvania__asof_202611112220__rev1384571346.wikitext": "c60ecacae112e71673342c69eeec5d4037bf0802f340bae3c244b74316e7dc7b",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Rhode_Island__asof_202611112220__rev1384436897.wikitext": "8e89b875ca58105c46692f1af0738bbca04131eee95a3126a98dbdbc661a2608",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_South_Carolina__asof_202611112220__rev1384968105.wikitext": "0dc63afa7521105d7270fd00cac80d26b12eba8dd6b6c19e4e13a78ca36743fd",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_election_in_South_Dakota__asof_202611112220__rev1384066008.wikitext": "127c74e6b9bf6001c92c55411d36a4157f3edcc4f9f4a7d122c67ef719d5f54b",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Tennessee__asof_202611112220__rev1385081053.wikitext": "23a7c48f56294102b15ca6a5bd9161717895a40ecd757965dffbfa57d834be3f",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Texas__asof_202611112220__rev1384728174.wikitext": "c7a4a39cbd65f9fa09da5b6cc26e7566809b97b02199159ea6d38197c197a958",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Utah__asof_202611112220__rev1385062744.wikitext": "d3e0ad381ae51b923cad4f8b7873d9cc10b80fce49f365ea204714e628ccf582",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Virginia__asof_202611112220__rev1384747609.wikitext": "81aee72da7bdce42a6fe676b5280d29c01b1c3880e8c77e4927e8eab672fe67d",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_election_in_Vermont__asof_202611112220__rev1384065058.wikitext": "5ce6125c1161eb27841c90e4358a59c20c91b2da4e78e2ba262d03cbb9981be5",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Washington__asof_202611112220__rev1385007502.wikitext": "d08553a794602f1f8199968f49e4cff418ddaa523ace95ad55a20651a6d0ccdc",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_Wisconsin__asof_202611112220__rev1384622546.wikitext": "65ab1ad28cb116d98e9d1b07a95f1f8815c8540e7151e52164c17cbc9d9150d6",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_West_Virginia__asof_202611112220__rev1385069509.wikitext": "8539fb8940ea1ab737e6e58679566070bbddeab0e010640e579623a69b307e44",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_election_in_Wyoming__asof_202611112220__rev1385071666.wikitext": "f8eff316b17e52d5139fcce5ab4cde344a3ce3e9b434b348a9ceac65d2fcc1d3",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_California__districts_1_26___asof_202611112220__rev1384986316.wikitext": "cdcad2a057963171c3a6fe38e6e6284718219ac43d804811932ee919f3f243b2",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections_in_California__districts_27_52___asof_202611112220__rev1384904008.wikitext": "70cbba8956ae8372493154fae743f849ad4ee3ef7c871493e4cd86d730d7c258",
+  "wikipedia_results_2026/2026_United_States_Senate_special_election_in_Florida__asof_202611112220__rev1385051768.wikitext": "51b4c7f937d237e68ce8b054df098a37d92da16b70b21340760cf5748dff1a8e",
+  "wikipedia_results_2026/2026_United_States_Senate_special_election_in_Ohio__asof_202611112220__rev1384940947.wikitext": "2bbb33771e4ebce5fdb967445880d28b3b5941f5a17c64b88ff65da315b07855",
+  "wikipedia_results_2026/2026_United_States_Senate_election_in_Alabama__asof_202611112220__rev1384823901.wikitext": "853f32259cada6e3fab632b183995d982b62f3a22ec241dd406c8bd067c4d8e7",
+  "wikipedia_results_2026/2026_United_States_Senate_election_in_Alaska__asof_202611112220__rev1385100557.wikitext": "cce8e77eb37a041ba8ab3bc45e2415847eb7abd07ec4172b4768eba5a5e85baa",
+  "wikipedia_results_2026/2026_United_States_Senate_election_in_Arkansas__asof_202611112220__rev1384852084.wikitext": "cdc0c7f89775df04a083c5c2450dc1c6db94a7ffeaf1284c6c6c3dfd849bb65f",
+  "wikipedia_results_2026/2026_United_States_Senate_election_in_Colorado__asof_202611112220__rev1384910883.wikitext": "11c198c3e3a672de0396166c9eb0cc6a550662385e739b51d5716388d9ce9bd6",
+  "wikipedia_results_2026/2026_United_States_Senate_election_in_Delaware__asof_202611112220__rev1385101884.wikitext": "b4d3b15e45e35561db7d58b7a45f89e6a276d96296e40fff529e24c0d45af799",
+  "wikipedia_results_2026/2026_United_States_Senate_election_in_Georgia__asof_202611112220__rev1385037480.wikitext": "be305d5f04549581dd59d207f74938baf7982425e597fca0cea57d91e116d091",
+  "wikipedia_results_2026/2026_United_States_Senate_election_in_Idaho__asof_202611112220__rev1384994837.wikitext": "ace1d05d4e834f761144589d3c4f2cbec9171a5d270788f330b1f550788ad7eb",
+  "wikipedia_results_2026/2026_United_States_Senate_election_in_Illinois__asof_202611112220__rev1384960509.wikitext": "e449ac74ac11837faeb064005342a5ab5f0ae208baadfa9353ab1c9f629c7a2b",
+  "wikipedia_results_2026/2026_United_States_Senate_election_in_Iowa__asof_202611112220__rev1385032246.wikitext": "a41eed3dad3f257bec1fee0e3274dbe91ed947ba09e3fdeb0eca74f3ee7e6eac",
+  "wikipedia_results_2026/2026_United_States_Senate_election_in_Kansas__asof_202611112220__rev1384953381.wikitext": "3a44a035e368734814447eaec3dce407ed2f8527d87457f23470e9f665b68546",
+  "wikipedia_results_2026/2026_United_States_Senate_election_in_Kentucky__asof_202611112220__rev1384994044.wikitext": "4fcbef3b8d4f6a3dd27b1ae5276965dc5de01957e23d754b73610913e5e9c4af",
+  "wikipedia_results_2026/2026_United_States_Senate_election_in_Louisiana__asof_202611112220__rev1384752807.wikitext": "56262f41d9811ad2aa4a95a274788b4cec2b7e428c3da800a6eeda86d4c60029",
+  "wikipedia_results_2026/2026_United_States_Senate_election_in_Maine__asof_202611112220__rev1385079942.wikitext": "d8234e7ea15834d6dcd8e6a0a3876e402229c170f563d7b8430c729a17bc360b",
+  "wikipedia_results_2026/2026_United_States_Senate_election_in_Massachusetts__asof_202611112220__rev1384645064.wikitext": "64833c744c0abb82c9054d6d544d1fa24c62605235700f364a01e3797d035376",
+  "wikipedia_results_2026/2026_United_States_Senate_election_in_Michigan__asof_202611112220__rev1385098155.wikitext": "691e8df9e745f03fa53cd93022b261a97179255e88ee0d56c6b97a8d2e78f9c1",
+  "wikipedia_results_2026/2026_United_States_Senate_election_in_Minnesota__asof_202611112220__rev1384969792.wikitext": "d754c5fb4c4ea60b7cadc7029218369a555a73426e112e352cdcdcc8e01b9efc",
+  "wikipedia_results_2026/2026_United_States_Senate_election_in_Mississippi__asof_202611112220__rev1385105100.wikitext": "f3fbea7e43f72d96f44c85a65c2669d86fc8b10d614214ad9110a9742d66e344",
+  "wikipedia_results_2026/2026_United_States_Senate_election_in_Montana__asof_202611112220__rev1385023860.wikitext": "12f42ed180b1ff2b186dbc3174320b4c4751fbe77a601ada8e70df92f52d929d",
+  "wikipedia_results_2026/2026_United_States_Senate_election_in_Nebraska__asof_202611112220__rev1384909774.wikitext": "d31b3a8ca3d904f1ceccc05f19e164a35d667235c72e7a5f2ab10ccf66a7424e",
+  "wikipedia_results_2026/2026_United_States_Senate_election_in_New_Hampshire__asof_202611112220__rev1384645429.wikitext": "3aed8f6a8d3042d4f2534c996980c3c3e967e774b2917be10948a335708c9faf",
+  "wikipedia_results_2026/2026_United_States_Senate_election_in_New_Jersey__asof_202611112220__rev1385083556.wikitext": "752fffbef42589c8dfa0afff69f560a2e47d2c1742033bb81fcfcc06dc61b57c",
+  "wikipedia_results_2026/2026_United_States_Senate_election_in_New_Mexico__asof_202611112220__rev1384619358.wikitext": "bc977c9f6ff0a77a98cce5078e1a10a8b7f2c9deaf6bc1a53bdbeb00f4005d79",
+  "wikipedia_results_2026/2026_United_States_Senate_election_in_North_Carolina__asof_202611112220__rev1385053268.wikitext": "db08dfcbf34f7730e11964f6b0b7897af37d75ecd32cb5f12bca163b52894f39",
+  "wikipedia_results_2026/2026_United_States_Senate_election_in_Oklahoma__asof_202611112220__rev1385085787.wikitext": "1f2a5e0f6913a92d0995ae9185322c20b986192e74abe09716bc2b6bdc4f6115",
+  "wikipedia_results_2026/2026_United_States_Senate_election_in_Oregon__asof_202611112220__rev1384978505.wikitext": "63d4d45e58e40a9ce686c6ceeb0a77ce3368b8971566175ae317f039abfe0e6d",
+  "wikipedia_results_2026/2026_United_States_Senate_election_in_Rhode_Island__asof_202611112220__rev1385084038.wikitext": "9c454d5b3fbb23f6fd8f917f1f0b27929ed6e48398a792f6dd1ffa8937b90120",
+  "wikipedia_results_2026/2026_United_States_Senate_election_in_South_Carolina__asof_202611112220__rev1385069277.wikitext": "611c9dfc6aa231a431bef49b8bea1ab3d2ba8e9e2b6a960f8fbe0e1036e8ed04",
+  "wikipedia_results_2026/2026_United_States_Senate_election_in_South_Dakota__asof_202611112220__rev1385015094.wikitext": "77f811b09230ae787244ec0466e1a5f3d5ef310a468e7ebb22d4eb6b4fe5aca3",
+  "wikipedia_results_2026/2026_United_States_Senate_election_in_Tennessee__asof_202611112220__rev1384810159.wikitext": "f628581b1ff99b2899905ed79b7aaf6961a98f57baa1b6bfb3f8dc4634edf281",
+  "wikipedia_results_2026/2026_United_States_Senate_election_in_Texas__asof_202611112220__rev1385096264.wikitext": "b0a670808bb6baf3fa5855feda71e9b5dab1a0f3c695c9eda27f0cfe394ce143",
+  "wikipedia_results_2026/2026_United_States_Senate_election_in_Virginia__asof_202611112220__rev1385036570.wikitext": "dca8c63b4e6e507596c20b56c892c612b3b5ea098104d5772dc72df5b275063e",
+  "wikipedia_results_2026/2026_United_States_Senate_election_in_West_Virginia__asof_202611112220__rev1384646252.wikitext": "49d2ba56cb0c575ae3d748e5dde3fb038d7e4b4e32740099dd88e1be3d3dc564",
+  "wikipedia_results_2026/2026_United_States_Senate_election_in_Wyoming__asof_202611112220__rev1384945979.wikitext": "bff4995c098c7b6a33f4279a8b13e175dc05e1f0fa7fb734c95a3eb9c8982272",
+  "wikipedia_results_2026/2026_United_States_House_of_Representatives_elections__asof_202611112220__rev1385103391.wikitext": "cc729898b56d79f46dfd1c4c8ec2bf53c138ba9c1d5238e951b8904a2ad1f241",
+  "fec_ie/independent_expenditure_2018.csv": "80710719166f3f74f34a57cca1f7484204f20c05642035a8abd49e0398bbda27",
+  "fec_cm/cm18.zip": "66a7aada4013c7e3d4229b865ad506609298e45a31dd8c4f676184003bb878d0",
+  "fec_ie/independent_expenditure_2022.csv": "f57cc2d85ce193c1db65cd98a5be1cf77dfff18b36e7bc2db10185f6f5362e59",
+  "fec_cm/cm22.zip": "25840cb47a1c52503673deba151c3fdfe275140d681e4cb66e5769d32828edff",
+  "fec_ie/independent_expenditure_2026.csv": "57c6dae25049f1140bfe504d7f8fb00d569c30d2d54c9088212bd2151e674c61",
+  "fec_cm/cm26.zip": "d5682ba98cb37525a43fefde31536897aff170441313907953bae8ec94f2ce61",
+  "fec_pas2/pas218.zip": "5fee204a918b4546ba04d9f05e608a8fc734d2d6b42c9625215a1b1c2932fdd0",
+  "fec_pas2/pas222.zip": "69518d49c8ef0847bf8307a9ba4b41d932c1582a06f155bbcfce19d8f44fb0fc",
+  "fec_pas2/pas226.zip": "d72503cffb0ec17ff4c53acb0a7d16e39f4b5c43c91af232c6cb8d9cb9d811d5"
+ }
+}
