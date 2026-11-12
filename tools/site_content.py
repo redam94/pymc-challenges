@@ -151,7 +151,7 @@ SERIES = [
                "approximation and an exact amplitude map on held-out floats. Vecchia matched it, its uncertainty "
                "was wrong in the Gulf Stream, float32 could be silently wrong, and the targeted list of sites "
                "changed with the model, so the advice is to fill the open-ocean gaps."),
-    dict(key="midterms", range="E94-E95, E118", title="Polls, fundamentals and money", ids=["E94", "E95", "E118"],
+    dict(key="midterms", range="E94-E95, E118-E119", title="Polls, fundamentals and money", ids=["E94", "E95", "E118", "E119"],
          intro="Election-eve forecasts of the 2018, 2022 and 2026 US midterms from ragged information: many national "
                "polls, some Senate polls, few district polls and fundamentals everywhere. Backtests on two known "
                "cycles, Jacobson's spending paradox and Levitt's rematches, a nowcast of campaign spending from "
@@ -165,7 +165,11 @@ SERIES = [
                "incumbency, district lean and poll sponsors matter more than the list, party money predicts nothing, "
                "25 definitions give either sign and never an interval that excludes zero, and labelling a dozen "
                "unlabelled candidates after the count manufactures the effect. A provisional section on uncertified "
-               "2026 counts reruns itself when certified results exist."),
+               "2026 counts reruns itself when certified results exist. E119 asks the question E118 leaves open, "
+               "whether a more centrist or more progressive nominee would have won more votes, and finds the data "
+               "cannot answer it: no primary results or losing candidates, and a lean-adjusted centre edge of about "
+               "+1 point that a modest hidden confounder erases. A close-primary design would need about 200 close "
+               "centre-against-left primaries to detect a 5-point effect."),
     dict(key="snowpack", range="E96", title="The snow pillow died in February", ids=["E96"],
          intro="A Colorado snow pillow fails in February: how much snow is there on April 1? A weekly snow budget "
                "in PyMC fuses the pillow, a depth sensor, a precipitation gauge and a manual snow course through a "
@@ -272,7 +276,7 @@ SERIES = [
                "forecast track record, icon shelves with partial fills and a publication-filter GIF."),
 ]
 SERIES_BY_KEY = {s["key"]: s for s in SERIES}
-RECENT = ["E118", "E117", "E116", "E115", "E114", "E113", "E112", "E111", "E110", "E109", "E108", "E107", "E106", "E105", "E104", "E103", "E102", "E101", "E100", "E99", "E98", "E97", "E96", "E92", "E95", "E94", "E90", "E88", "E91", "E87", "E89"]          # newest first, shown on the home page
+RECENT = ["E119", "E118", "E117", "E116", "E115", "E114", "E113", "E112", "E111", "E110", "E109", "E108", "E107", "E106", "E105", "E104", "E103", "E102", "E101", "E100", "E99", "E98", "E97", "E96", "E92", "E95", "E94", "E90", "E88", "E91", "E87", "E89"]          # newest first, shown on the home page
 
 
 # The figure shown on each example's card: the k-th image the notebook outputs (1-based, in notebook
@@ -290,7 +294,7 @@ CARD_FIGURE = {
     "E78": 8, "E79": 8, "E80": 10, "E81": 11, "E82": 1, "E83": 6, "E84": 4, "E85": 4, "E86": 1, "E87": 2,
     "E88": 18, "E89": 8, "E90": 1, "E91": 10, "E92": 5, "E94": 15, "E95": "E95_election_night.gif", "E99": 11, "E100": 6, "E101": 3, "E102": 2, "E103": 4, "E104": 7, "E105": 5, "E106": 6, "E107": 3,
     "E108": "E108_usual_salt_intake.gif", "E109": 1, "E110": 1, "E111": 1, "E112": 1, "E113": 1, "E114": 1, "E115": 1,
-    "E116": 1, "E117": 1, "E118": 9,
+    "E116": 1, "E117": 1, "E118": 9, "E119": 4,
 }
 
 
