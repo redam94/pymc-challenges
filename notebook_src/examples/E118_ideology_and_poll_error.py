@@ -1447,7 +1447,7 @@ fig.suptitle("An ideology effect made from labels: who gets called what, after t
 # standard deviation of 1.5 points, so buckets of 22 and 38 produce a gap of 2 points or more, in one
 # direction or the other, in about one world in five. That is the noise a commentator can mine without
 # touching a label. With a tenth of the open nominees relabelled the median gap is +1.8 and it exceeds +2 in
-# about 45% of worlds; with a fifth relabelled it is +3.1 and exceeds +2 in about four worlds in five.
+# 44% of worlds; with a fifth relabelled it is +3.1 and exceeds +2 in about four worlds in five.
 #
 # An apparent ideology effect of 2 to 3 points therefore needs no ideology. In these data it needs a dozen
 # or two of 184 candidates to be described after the count.
