@@ -530,6 +530,18 @@ notebooks or the site sources (set *Settings -> Pages -> Source* to **GitHub Act
 lives in `tools/site_content.py`, styles and scripts in `tools/site_assets/`; per-notebook titles,
 data and techniques are read from the curriculum tables above, so keep those up to date.
 
+The site shares the look of [redam94.github.io](https://redam94.github.io/): white, mist and black
+surfaces, one olive accent, system type. `tools/site_assets/figures.js` draws the interactive figures
+on the home page (a live HMC sampler, a posterior that updates, the workflow track); `site.js` holds
+the smaller enhancements (theme, code toggle, example filter, reading progress). Every page still
+reads with scripting off.
+
+The photographs and icons in `tools/site_assets/img/` were generated with fal (`fal-ai/nano-banana-2`)
+and converted with `cwebp`: `backdrop-<name>-2000.webp` and `-1100.webp` sit behind the black sections,
+and `icon-<series key>.webp` (512 px, object on pure black) is the icon of one series in
+`site_content.SERIES`. A new series without an icon gets a blank black tile, so add
+`icon-<key>.webp` when you add the series.
+
 ## Data
 
 All data is real and public; sources and citations are in

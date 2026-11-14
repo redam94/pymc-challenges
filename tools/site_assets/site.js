@@ -54,6 +54,65 @@
     plots.forEach(function (s) { var el = document.getElementById(s.dataset.plotly); if (el) io.observe(el); });
   }
 
+  // reading progress under the navigation bar (notebook pages)
+  var bar = document.querySelector(".read-progress");
+  if (bar) {
+    var onProgress = function () {
+      var max = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.transform = "scaleX(" + (max > 0 ? Math.min(1, window.scrollY / max) : 0) + ")";
+    };
+    window.addEventListener("scroll", onProgress, { passive: true });
+    window.addEventListener("resize", onProgress);
+    onProgress();
+  }
+
+  // examples page: filter the cards by any words in their title, data or techniques
+  var filter = document.querySelector("[data-filter]");
+  if (filter) {
+    var input = filter.querySelector("input"), count = filter.querySelector(".filter-count");
+    var cards = Array.prototype.slice.call(document.querySelectorAll(".series .card"));
+    var sections = Array.prototype.slice.call(document.querySelectorAll(".series"));
+    var haystack = cards.map(function (c) { return c.textContent.toLowerCase(); });
+    var applyFilter = function () {
+      var terms = input.value.toLowerCase().split(/\s+/).filter(Boolean), shown = 0;
+      cards.forEach(function (c, i) {
+        var ok = terms.every(function (t) { return haystack[i].indexOf(t) >= 0; });
+        c.hidden = !ok;
+        if (ok) shown++;
+      });
+      sections.forEach(function (s) { s.hidden = !s.querySelector(".card:not([hidden])"); });
+      count.textContent = !terms.length ? cards.length + " examples in " + sections.length + " series"
+        : shown ? shown + " of " + cards.length + " examples match"
+        : "No example matches. Try fewer or shorter words.";
+    };
+    filter.hidden = false;
+    input.addEventListener("input", applyFilter);
+    applyFilter();
+  }
+
+  // a sideways rail of cards gets previous and next buttons
+  document.querySelectorAll("[data-rail]").forEach(function (rail) {
+    var track = rail.querySelector(".rail-track");
+    var nav = document.createElement("div");
+    nav.className = "rail-nav";
+    var buttons = [["Previous", "←", -1], ["Next", "→", 1]].map(function (spec) {
+      var b = document.createElement("button");
+      b.type = "button"; b.textContent = spec[1]; b.setAttribute("aria-label", spec[0]);
+      b.addEventListener("click", function () {
+        track.scrollBy({ left: spec[2] * track.clientWidth * 0.85, behavior: "smooth" });
+      });
+      nav.appendChild(b);
+      return b;
+    });
+    var sync = function () {
+      buttons[0].disabled = track.scrollLeft < 4;
+      buttons[1].disabled = track.scrollLeft > track.scrollWidth - track.clientWidth - 4;
+    };
+    track.addEventListener("scroll", sync, { passive: true });
+    rail.appendChild(nav);
+    sync();
+  });
+
   // table of contents: highlight the current section
   var links = Array.prototype.slice.call(document.querySelectorAll(".toc a"));
   if (links.length) {

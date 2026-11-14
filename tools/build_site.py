@@ -334,11 +334,23 @@ def headings_and_ids(body: str) -> tuple[str, list[tuple[str, str]]]:
 # --------------------------------------------------------------------------- page shell
 
 
+BRAND_MARK = ('<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 24.5 C9 24.5 11 8 16 8 S23 24.5 28 24.5" '
+              'fill="none" stroke="#c3cf8f" stroke-width="2.6" stroke-linecap="round"/></svg>')
+FIGURES = '<script defer src="assets/figures.js"></script>'
+REPO_URL: str | None = None  # set by build(), linked from the footer
+
+
 def shell(*, title: str, body: str, depth: int, active: str, description: str = "",
-          head_extra: str = "", toc: list | None = None, page_class: str = "") -> str:
+          head_extra: str = "", toc: list | None = None, page_class: str = "",
+          head: str = "", bands: bool = False) -> str:
+    """The page around `body`.
+
+    `bands` pages (the index pages) are a stack of full-width sections that bring their own
+    backgrounds. Every other page is a black `head` band over one white reading surface.
+    """
     up = "../" * depth
     nav = "".join(
-        f'<a href="{up}{href}"{" aria-current=page" if key == active else ""}>{label}</a>'
+        f'<li><a href="{up}{href}"{" aria-current=page" if key == active else ""}>{label}</a></li>'
         for key, href, label in [("examples", "examples.html", "Examples"),
                                  ("challenges", "challenges.html", "Challenges"),
                                  ("guide", "guide.html", "Guide"),
@@ -350,6 +362,13 @@ def shell(*, title: str, body: str, depth: int, active: str, description: str = 
         toc_html = (f'<nav class="toc" aria-label="On this page"><details open><summary>On this page</summary>'
                     f"<ol>{items}</ol></details></nav>")
     desc = html.escape(description or content.TAGLINE, quote=True)
+    if bands:
+        main = f'<main id="main">\n{body}\n</main>'
+    else:
+        main = (f'{head}\n<div class="surface bg-white on-light">\n<div class="layout{" with-toc" if toc else ""}">\n'
+                f'{toc_html}\n<main id="main">\n{body}\n</main>\n</div>\n</div>')
+    progress = '\n  <div class="read-progress" aria-hidden="true"></div>' if toc else ""
+    source = f'<p><a href="{REPO_URL}">Source on GitHub</a></p>' if REPO_URL else ""
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -357,36 +376,50 @@ def shell(*, title: str, body: str, depth: int, active: str, description: str = 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{html.escape(title)}</title>
 <meta name="description" content="{desc}">
+<meta name="theme-color" content="#000000">
 <link rel="icon" href="{up}assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{up}assets/style.css">
-<script>try{{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t;if(localStorage.getItem("hideCode")==="1")document.documentElement.classList.add("hide-code")}}catch(e){{}}</script>
+<script>document.documentElement.classList.add("js");try{{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t;if(localStorage.getItem("hideCode")==="1")document.documentElement.classList.add("hide-code")}}catch(e){{}}</script>
 {head_extra}
 </head>
 <body class="{page_class}">
 <a class="skip" href="#main">Skip to content</a>
-<header class="site-header">
-  <div class="bar">
-    <a class="brand" href="{up}index.html"><span class="brand-mark" aria-hidden="true">p(θ|y)</span> {content.SITE_NAME}</a>
-    <nav class="site-nav" aria-label="Main">{nav}</nav>
+<header class="nav">
+  <nav class="nav-inner" aria-label="Main">
+    <a class="nav-brand" href="{up}index.html" aria-label="{content.SITE_NAME}, home">{BRAND_MARK}<span>{content.SITE_NAME}</span></a>
+    <ul class="nav-links">{nav}</ul>
     <button class="theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode">◐</button>
-  </div>
+  </nav>{progress}
 </header>
-<div class="layout{' with-toc' if toc else ''}">
-{toc_html}
-<main id="main">
-{body}
-</main>
-</div>
-<footer class="site-footer">
-  <p>{content.FOOTER}</p>
+{main}
+<footer class="footer on-dark bg-black">
+  <div class="wrap">
+    <p>{content.FOOTER}</p>
+    {source}
+  </div>
 </footer>
 <script src="{up}assets/site.js"></script>
 </body>
 </html>
 """
+
+
+def page_head(crumbs: str, title: str, extra: str = "", art: str = "", backdrop: str = "") -> str:
+    """The black band at the top of a notebook page: where you are, the title, and the header table."""
+    cls = "page-head on-dark bg-black" + (f" backdrop-{backdrop}" if backdrop else "")
+    return (f'<header class="{cls}">{art}<div class="wrap"><p class="crumbs">{crumbs}</p>'
+            f"<h1>{title}</h1>{extra}</div></header>")
+
+
+def series_icon(key: str, up: str = "", cls: str = "series-icon", size: int = 76) -> str:
+    """The generated icon of a series (tools/site_assets/img/icon-<key>.webp), or a blank tile."""
+    if not (ASSETS / "img" / f"icon-{key}.webp").exists():
+        return f'<span class="{cls}"></span>' if cls != "head-art" else ""
+    lazy = "" if cls == "head-art" else ' loading="lazy" decoding="async"'
+    return f'<img class="{cls}" src="{up}assets/img/icon-{key}.webp" alt="" width="{size}" height="{size}"{lazy}>'
 
 
 def meta_block(meta: list[tuple[str, str]]) -> str:
@@ -403,7 +436,7 @@ def pager(prev: Entry | None, nxt: Entry | None, depth: int) -> str:
             return "<span></span>"
         return (f'<a class="pager-{rel}" href="{up}{e.url}"><small>{label}</small>'
                 f"<span>{e.id} · {html.escape(e.title)}</span></a>")
-    return f'<nav class="pager">{link(prev, "prev", "← Previous")}{link(nxt, "next", "Next →")}</nav>'
+    return f'<nav class="pager" aria-label="Previous and next">{link(prev, "prev", "Previous")}{link(nxt, "next", "Next")}</nav>'
 
 
 def repo_links(e: Entry, repo_url: str | None, path: Path) -> str:
@@ -412,7 +445,7 @@ def repo_links(e: Entry, repo_url: str | None, path: Path) -> str:
         rel = path.relative_to(ROOT).as_posix()
         links.append(f'<a href="{repo_url}/blob/main/{rel}">View notebook on GitHub</a>')
         links.append(f'<a href="https://nbviewer.org/github/{repo_url.split("github.com/")[-1]}/blob/main/{rel}">nbviewer</a>')
-    links.append('<button type="button" class="code-toggle">Hide code</button>')
+    links.append('<button type="button" class="code-toggle pill">Hide code</button>')
     return '<div class="page-actions">' + "".join(links) + "</div>"
 
 
@@ -430,14 +463,14 @@ def render_example(e: Entry, out: Path, prev, nxt, repo_url) -> None:
             page.code_cell(cell)
     series = content.SERIES_BY_KEY.get(e.series, {})
     body, toc = headings_and_ids("\n".join(page.parts))
-    header = (f'<header class="page-head"><p class="eyebrow"><a href="../examples.html#{e.series}">'
-              f'{html.escape(series.get("title", "Examples"))}</a> · {e.id}</p>'
-              f"<h1>{md_inline(title.split('·', 1)[-1].strip())}</h1>{meta_block(meta)}"
-              f"{repo_links(e, repo_url, e.nb_path)}</header>")
+    header = page_head(f'<a href="../examples.html#{e.series}">{html.escape(series.get("title", "Examples"))}</a> / {e.id}',
+                       md_inline(title.split("·", 1)[-1].strip()),
+                       meta_block(meta) + repo_links(e, repo_url, e.nb_path),
+                       art=series_icon(e.series, "../", "head-art", 512) if e.series else "")
     head = MATHJAX + (PLOTLY if page.needs_plotly else "")
     html_doc = shell(title=f"{e.id} · {re.sub('<[^>]+>', '', md_inline(e.title))} — {content.SITE_NAME}",
-                     body=header + f'<article class="notebook">{body}</article>' + pager(prev, nxt, 1),
-                     depth=1, active="examples", head_extra=head, toc=toc,
+                     body=f'<article class="notebook">{body}</article>' + pager(prev, nxt, 1),
+                     depth=1, active="examples", head_extra=head, toc=toc, head=header,
                      description=re.sub("<[^>]+>|`", "", e.techniques)[:300])
     (out / "examples" / f"{e.slug}.html").write_text(html_doc)
     for f in e.nb_path.parent.glob(f"{e.slug}*.gif"):  # animations the notebook saved beside itself
@@ -499,15 +532,15 @@ def render_challenge(e: Entry, out: Path, prev, nxt, repo_url) -> None:
         sol = (f'<section class="solution-cta"><h2 id="reference-solution">Reference solution</h2>'
                f"<p>A complete, executed solution with commentary on every task — including the "
                f"ways the obvious model fails. Try the hint ladder first.</p>"
-               f'<a class="button" href="../{e.solution_url}">Open the worked solution →</a></section>')
+               f'<a class="btn" href="../{e.solution_url}">Open the worked solution</a></section>')
         toc.append(("reference-solution", "Reference solution"))
-    header = (f'<header class="page-head"><p class="eyebrow"><a href="../challenges.html">Challenges</a> · {e.id} · '
-              f'<span class="stars" title="difficulty {e.stars} of 5">{stars}</span></p>'
-              f"<h1>{md_inline(title.split('·', 1)[-1].strip())}</h1>{meta_block(meta)}"
-              f"{repo_links(e, repo_url, e.nb_path)}</header>")
+    header = page_head(f'<a href="../challenges.html">Challenges</a> / {e.id} / '
+                       f'<span class="stars" title="difficulty {e.stars} of 5">{stars}</span>',
+                       md_inline(title.split("·", 1)[-1].strip()),
+                       meta_block(meta) + repo_links(e, repo_url, e.nb_path), backdrop="rock")
     html_doc = shell(title=f"{e.id} · {re.sub('<[^>]+>', '', md_inline(e.title))} — {content.SITE_NAME}",
-                     body=header + f'<article class="notebook">{body}{sol}</article>' + pager(prev, nxt, 1),
-                     depth=1, active="challenges", head_extra=MATHJAX, toc=toc,
+                     body=f'<article class="notebook">{body}{sol}</article>' + pager(prev, nxt, 1),
+                     depth=1, active="challenges", head_extra=MATHJAX, toc=toc, head=header,
                      description=re.sub("<[^>]+>|`", "", e.techniques)[:300])
     (out / "challenges" / f"{e.slug}.html").write_text(html_doc)
 
@@ -526,16 +559,15 @@ def render_solution(e: Entry, out: Path, repo_url) -> None:
                 continue
             page.code_cell(cell)
     body, toc = headings_and_ids("\n".join(page.parts))
-    header = (f'<header class="page-head"><p class="eyebrow"><a href="../challenges.html">Challenges</a> · '
-              f'<a href="../{e.url}">{e.id}</a> · Solution</p>'
-              f"<h1>{md_inline(title.split('·', 1)[-1].strip())}</h1>"
-              f'<p class="spoiler">Spoilers. This is the reference solution to <a href="../{e.url}">{e.id}</a>; '
-              f"the challenge page has the brief and a ladder of hints.</p>"
-              f"{repo_links(e, repo_url, e.solution_path)}</header>")
+    header = page_head(f'<a href="../challenges.html">Challenges</a> / <a href="../{e.url}">{e.id}</a> / Solution',
+                       md_inline(title.split("·", 1)[-1].strip()),
+                       f'<p class="spoiler">Spoilers. This is the reference solution to <a href="../{e.url}">{e.id}</a>; '
+                       f"the challenge page has the brief and a ladder of hints.</p>"
+                       + repo_links(e, repo_url, e.solution_path), backdrop="rock")
     html_doc = shell(title=f"{e.id} solution · {re.sub('<[^>]+>', '', md_inline(e.title))} — {content.SITE_NAME}",
-                     body=header + f'<article class="notebook">{body}</article>',
+                     body=f'<article class="notebook">{body}</article>',
                      depth=1, active="challenges", head_extra=MATHJAX + (PLOTLY if page.needs_plotly else ""),
-                     toc=toc)
+                     toc=toc, head=header)
     (out / "solutions" / f"{e.solution_path.stem}.html").write_text(html_doc)
 
 
@@ -608,13 +640,27 @@ def series_sections(examples: list[Entry]) -> str:
         es = [by_id[i] for i in s["ids"] if i in by_id]
         if not es:
             continue
-        out.append(f'<section class="series" id="{s["key"]}"><div class="series-head"><p class="eyebrow">{s["range"]}</p>'
-                   f'<h2>{s["title"]}</h2><p>{s["intro"]}</p></div>'
+        out.append(f'<section class="series" id="{s["key"]}"><div class="series-head">{series_icon(s["key"])}'
+                   f'<h2>{s["title"]} <small>{s["range"]}</small></h2><p>{s["intro"]}</p></div>'
                    f'<div class="cards">{"".join(card(e) for e in es)}</div></section>')
     return "\n".join(out)
 
 
+def series_index(examples: list[Entry]) -> str:
+    """Every series as a small tile with its icon, linking to its section of the examples page."""
+    have = {e.id for e in examples}
+    items = []
+    for s in content.SERIES:
+        n = sum(i in have for i in s["ids"])
+        if n:
+            items.append(f'<li><a class="series-chip" href="#{s["key"]}">{series_icon(s["key"], cls="no-icon", size=44)}'
+                         f'<span><b>{s["title"]}</b><small>{n} example{"s" if n != 1 else ""}</small></span></a></li>')
+    return f'<ul class="series-index">{"".join(items)}</ul>'
+
+
 def build(out: Path, repo_url: str | None, only: list[str] | None) -> None:
+    global REPO_URL
+    REPO_URL = repo_url
     entries = catalogue()
     examples = [e for e in entries if e.kind == "example"]
     challenges = [e for e in entries if e.kind == "challenge"]
@@ -627,7 +673,10 @@ def build(out: Path, repo_url: str | None, only: list[str] | None) -> None:
     for d in ("examples", "challenges", "solutions", "assets"):
         (out / d).mkdir(parents=True, exist_ok=True)
     for f in ASSETS.iterdir():
-        shutil.copy(f, out / "assets" / f.name)
+        if f.is_dir():  # img/: the generated backdrops and series icons
+            shutil.copytree(f, out / "assets" / f.name, dirs_exist_ok=True)
+        else:
+            shutil.copy(f, out / "assets" / f.name)
     (out / ".nojekyll").write_text("")
     card_images(examples, out)
 
@@ -648,12 +697,13 @@ def build(out: Path, repo_url: str | None, only: list[str] | None) -> None:
                 render_solution(e, out, repo_url)
 
     ctx = dict(examples=examples, challenges=challenges, by_id={e.id: e for e in entries},
-               series_sections=series_sections(examples), challenge_table=challenge_rows(challenges),
+               series_sections=series_sections(examples), series_index=series_index(examples),
+               challenge_table=challenge_rows(challenges),
                card=card, repo_url=repo_url)
     for name, (title, active, body, desc) in content.pages(ctx).items():
         (out / name).write_text(shell(title=title, body=body, depth=0, active=active,
-                                      description=desc, page_class=f"page-{name[:-5]}",
-                                      head_extra=MATHJAX if "$" in body else ""))
+                                      description=desc, page_class=f"page-{name[:-5]}", bands=True,
+                                      head_extra=(MATHJAX if "$" in body else "") + FIGURES))
     size = sum(f.stat().st_size for f in out.rglob("*") if f.is_file()) / 1e6
     print(f"wrote {out.relative_to(ROOT) if out.is_relative_to(ROOT) else out}  ({size:.0f} MB)")
 

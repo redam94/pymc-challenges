@@ -4,12 +4,14 @@ Per-notebook titles, datasets and techniques come from the README tables; this f
 the series grouping and the prose of the index, guide, challenges and about pages.
 """
 
+import re
 from html import escape
+from itertools import cycle
 
 SITE_NAME = "Bayesian Modelling in Practice"
 TAGLINE = ("Worked examples and real-data challenges in Bayesian data analysis with PyMC: "
            "from the first prior predictive check to decisions made under uncertainty.")
-FOOTER = ("Worked examples and challenges in Bayesian data analysis with PyMC 6 · ArviZ 1 · PyTensor 3. "
+FOOTER = ("Worked examples and challenges in Bayesian data analysis with PyMC 6, ArviZ 1 and PyTensor 3. "
           "Datasets are real and public, sources cited in each notebook; the few simulated systems say so.")
 
 
@@ -307,175 +309,253 @@ def _link(ctx, eid, text=None):
 
 # --------------------------------------------------------------------------- workflow figure
 
+# name, what happens, the example that shows it, whether the step is a check that can send you back
 WORKFLOW_STEPS = [
-    ("Question", "What decision or claim will the model inform?", "E01"),
-    ("Generative model", "A story of how the data came to be, written as distributions.", "E01"),
-    ("Prior predictive", "Simulate before fitting: do the priors claim anything absurd?", "D03"),
-    ("Inference", "Sample the posterior, or approximate it with care.", "E12"),
-    ("Diagnostics", "Did the computation work? Divergences, R-hat, effective sample size.", "E02"),
-    ("Posterior predictive", "Can the fitted model reproduce the features of the data you care about?", "E03"),
-    ("Decision", "Carry the whole posterior through to the quantity someone acts on.", "E33"),
+    ("Question", "What decision or claim will the model inform?", "E01", False),
+    ("Generative model", "A story of how the data came to be, written as distributions.", "E01", False),
+    ("Prior predictive", "Simulate before fitting: do the priors claim anything absurd?", "D03", True),
+    ("Inference", "Sample the posterior, or approximate it with care.", "E12", False),
+    ("Diagnostics", "Did the computation work? Divergences, R-hat, effective sample size.", "E02", True),
+    ("Posterior predictive", "Can the fitted model reproduce the features of the data you care about?", "E03", True),
+    ("Decision", "Carry the whole posterior through to the quantity someone acts on.", "E33", False),
 ]
 
 
-def workflow_svg() -> str:
-    """A loop of seven steps with a return arrow from the checks back to the model."""
-    n, w, gap, h, y = len(WORKFLOW_STEPS), 128, 16, 58, 26
-    total = n * w + (n - 1) * gap
-    parts = [f'<svg class="workflow" viewBox="0 0 {total + 4} 150" role="img" '
-             f'aria-label="The Bayesian workflow: question, generative model, prior predictive check, inference, '
-             f'diagnostics, posterior predictive check, decision - with a loop back to revise the model.">',
-             '<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" '
-             'orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>']
-    for i, (name, _, _) in enumerate(WORKFLOW_STEPS):
-        x = 2 + i * (w + gap)
-        cls = "wf-box wf-check" if name in ("Prior predictive", "Diagnostics", "Posterior predictive") else "wf-box"
-        parts.append(f'<rect class="{cls}" x="{x}" y="{y}" width="{w}" height="{h}" rx="6"/>')
-        words = name.split(" ")
-        lines = [" ".join(words)] if len(name) < 15 else [words[0], " ".join(words[1:])]
-        for j, line in enumerate(lines):
-            ty = y + h / 2 + (j - (len(lines) - 1) / 2) * 17 + 5
-            parts.append(f'<text class="wf-label" x="{x + w / 2}" y="{ty}" text-anchor="middle">{line}</text>')
-        if i < n - 1:
-            parts.append(f'<line class="wf-arrow" x1="{x + w + 2}" y1="{y + h / 2}" x2="{x + w + gap - 2}" '
-                         f'y2="{y + h / 2}" marker-end="url(#arr)"/>')
-    # revise loop: from posterior predictive (index 5) back to generative model (index 1)
-    x_from = 2 + 5 * (w + gap) + w / 2
-    x_to = 2 + 1 * (w + gap) + w / 2
-    yb = y + h
-    parts.append(f'<path class="wf-loop" d="M{x_from} {yb + 2} V{yb + 38} H{x_to} V{yb + 6}" marker-end="url(#arr)"/>')
-    parts.append(f'<text class="wf-note" x="{(x_from + x_to) / 2}" y="{yb + 56}" text-anchor="middle">'
-                 f"a check fails → revise the model, and say so</text>")
-    parts.append("</svg>")
-    return "".join(parts)
+def workflow(ctx) -> str:
+    """The seven steps as a list; assets/figures.js turns it into a track you can step through."""
+    items = "".join(
+        f'<li class="flow-panel"{" data-check" if check else ""}><h3>{name}</h3><p>{desc}</p>'
+        f"<p>See {_link(ctx, eid)}.</p></li>"
+        for name, desc, eid, check in WORKFLOW_STEPS
+    )
+    return f'<div class="flow" data-flow><ol class="flow-panels">{items}</ol></div>'
+
+
+# Small line figures for the tiles; they draw themselves when scrolled into view (.fig[data-reveal]).
+TREE_FIG = (
+    '<svg class="fig" data-reveal viewBox="0 0 360 150" role="img" '
+    'aria-label="One question about your data branching to three candidate models, one of them picked out.">'
+    '<path class="f-muted" data-draw pathLength="1" d="M40 75 H120"/>'
+    '<path class="f-muted" data-draw pathLength="1" style="--d:1" d="M120 75 C170 75 170 30 220 30 H300"/>'
+    '<path class="f-accent" data-draw pathLength="1" style="--d:2" d="M120 75 H300"/>'
+    '<path class="f-muted" data-draw pathLength="1" style="--d:3" d="M120 75 C170 75 170 120 220 120 H300"/>'
+    '<circle class="f-fill-line" cx="40" cy="75" r="6"/>'
+    '<circle class="f-fill-muted" data-pop style="--d:1" cx="306" cy="30" r="5"/>'
+    '<circle class="f-fill-accent" data-pop style="--d:2" cx="308" cy="75" r="7"/>'
+    '<circle class="f-fill-muted" data-pop style="--d:3" cx="306" cy="120" r="5"/></svg>'
+)
+LADDER_FIG = (
+    '<svg class="fig" data-reveal viewBox="0 0 360 150" role="img" '
+    'aria-label="Three hints as rising steps: a nudge, an approach, then a skeleton.">'
+    '<path class="f-accent" data-draw pathLength="1" d="M36 126 H132 V86 H228 V46 H324"/>'
+    '<text class="f-text f-text-muted" data-pop x="36" y="114">Nudge</text>'
+    '<text class="f-text f-text-muted" data-pop style="--d:2" x="132" y="74">Approach</text>'
+    '<text class="f-text" data-pop style="--d:4" x="228" y="34">Skeleton</text></svg>'
+)
 
 
 # --------------------------------------------------------------------------- pages
 
 
+def _bands(body: str) -> str:
+    """Turn each <section class="essay ..."> into a full-width band, alternating white and mist."""
+    tones = cycle(["bg-white", "bg-mist"])
+
+    def band(m):
+        inner = f'<div class="{m.group(1).strip()}">{m.group(2)}</div>' if m.group(1).strip() else m.group(2)
+        return f'<section class="group {next(tones)} on-light"><div class="wrap">{inner}</div></section>'
+
+    return re.sub(r'<section class="essay([^"]*)">(.*?)</section>', band, body, flags=re.S)
+
+
 def home(ctx):
     n_ex, n_ch = len(ctx["examples"]), len(ctx["challenges"])
     L = lambda i, t=None: _link(ctx, i, t)  # noqa: E731
-    steps = "".join(
-        f"<li><strong>{name}.</strong> {desc} <span class=\"muted\">See {L(eid)}.</span></li>"
-        for name, desc, eid in WORKFLOW_STEPS
-    )
+    first = ctx["by_id"]["E01"].url
     featured = "".join(ctx["card"](ctx["by_id"][i]) for i in ("E10", "E37", "E40", "E16") if i in ctx["by_id"])
     recent = "".join(ctx["card"](ctx["by_id"][i]) for i in RECENT if i in ctx["by_id"])
     body = f"""
-<section class="hero">
-  <p class="eyebrow">A course in applied Bayesian statistics, built from real data</p>
-  <h1>Learn Bayesian data analysis the way it is actually done: one real problem at a time.</h1>
-  <p class="lede">{n_ex} worked examples and {n_ch} challenges, each a complete analysis in PyMC, almost all
-  of public datasets. Every page shows the model, the code, the checks that passed and the ones that did not, and
-  what the posterior means for the question that was asked.</p>
-  <div class="hero-actions">
-    <a class="button" href="{ctx['by_id']['E01'].url}">Start with the workflow</a>
-    <a class="button button-quiet" href="guide.html">Find a model for your problem</a>
-    <a class="button button-quiet" href="challenges.html">Test yourself</a>
+<section class="hero on-dark bg-black">
+  <div class="wrap hero-copy">
+    <h1>Bayesian data analysis, one real problem at a time.</h1>
+    <p class="hero-lede">{n_ex} worked examples and {n_ch} challenges, each a complete analysis in PyMC, almost all
+    of public datasets. Every page shows the model, the code, the checks that passed and the ones that did not, and
+    what the posterior means for the question that was asked.</p>
+    <p class="actions">
+      <a class="btn" href="{first}">Start with the workflow</a>
+      <a class="link" href="guide.html">Find a model for your problem</a>
+      <a class="link" href="challenges.html">Test yourself</a>
+    </p>
   </div>
+  <figure class="wrap sampler" data-sampler>
+    <p class="sampler-readout" data-readout aria-live="off">Four chains of Hamiltonian Monte Carlo</p>
+    <canvas role="img" aria-label="Four Markov chains exploring a curved, banana-shaped posterior. A histogram of
+    their draws along the top fills in toward the exact marginal density."></canvas>
+    <figcaption>
+      <span>Four chains of Hamiltonian Monte Carlo explore a curved posterior. Along the top, a histogram of their
+      draws fills in toward the exact marginal, dashed. Click the plot to start all four chains from that point.</span>
+      <button type="button" class="pill" data-restart>Restart the chains</button>
+    </figcaption>
+  </figure>
 </section>
 
-<section class="facts" aria-label="At a glance">
-  <div><strong>{n_ex}</strong><span>worked examples, executed and narrated</span></div>
-  <div><strong>{n_ch}</strong><span>challenges with tiered hints and reference solutions</span></div>
-  <div><strong>Real</strong><span>public datasets, from supernovae to election polls; the few simulated systems are labelled</span></div>
-  <div><strong>Every</strong><span>failure kept in: divergent chains, miscalibrated intervals, wrong answers</span></div>
-</section>
-
-<section class="essay">
-  <h2 id="why">Why model this way</h2>
-  <div class="three">
-    <div>
-      <h3>Uncertainty is the result</h3>
-      <p>A Bayesian analysis returns a distribution over everything unknown, $p(\\theta \\mid y) \\propto
-      p(y \\mid \\theta)\\,p(\\theta)$. Any quantity you compute from the parameters &mdash; a forecast, a
-      ranking, a probability that a threshold is crossed &mdash; comes with its uncertainty attached,
-      without a separate derivation.</p>
+<section class="flagship bg-mist on-light" id="why">
+  <div class="wrap">
+    <h2>Why model this way</h2>
+    <p class="flagship-tag">A Bayesian analysis returns a distribution over everything unknown, and each
+    observation sharpens it.</p>
+    <div class="updater" data-updater>
+      <svg viewBox="0 0 720 300" role="img" aria-label="A prior distribution for an unknown rate narrowing into a
+      posterior as observations arrive, with its 50 and 94 percent intervals shaded."></svg>
+      <p class="updater-readout" data-readout aria-live="polite">An unknown rate starts from a prior and is updated
+      by every success and failure observed.</p>
+      <p class="updater-controls">
+        <button type="button" class="pill pill-accent" data-act="success">Observe a success</button>
+        <button type="button" class="pill" data-act="failure">Observe a failure</button>
+        <button type="button" class="pill" data-act="ten">Add 10 at random</button>
+        <button type="button" class="pill" data-act="reset">Start over</button>
+      </p>
     </div>
-    <div>
-      <h3>A model is a story about the data</h3>
-      <p>Instead of choosing a test from a menu, you write down how the data could have been generated:
-      censoring, missingness, measurement error, groups, space, time, physics. The same language covers
-      a regression and a gravitational-wave ringdown, so you learn one way of thinking, not a list of
-      procedures.</p>
-    </div>
-    <div>
-      <h3>Checking is part of the method</h3>
-      <p>Priors are simulated before they are trusted, samplers are diagnosed, and fitted models are asked
-      to reproduce the data. When a model fails, these pages say so and show the repair. Seeing the
-      failures is how you learn to spot them in your own work.</p>
-    </div>
-  </div>
-</section>
-
-<section class="essay">
-  <h2 id="workflow">The workflow every page follows</h2>
-  <p class="narrow">The examples are not a tour of an API. Each one is a complete iteration of the Bayesian
-  workflow of Gelman et al. (2020): a question, a generative model, checks before and after fitting,
-  and a conclusion stated on the scale the question was asked in.</p>
-  <figure class="figure-wide">{workflow_svg()}</figure>
-  <ol class="workflow-list">{steps}</ol>
-</section>
-
-<section class="essay">
-  <h2 id="paths">Three ways in</h2>
-  <div class="paths">
-    <div class="path">
-      <h3>New to Bayesian modelling</h3>
-      <p>Read the foundations in order. They assume some Python and some regression, nothing more.</p>
-      <ol>
-        <li>{L('E01', 'E01 · The Bayesian workflow')}</li>
-        <li>{L('E02', 'E02 · Hierarchical models')}</li>
-        <li>{L('E03', 'E03 · GLMs and model comparison')}</li>
-        <li>{L('D03', 'D03 · An analysis end to end')}</li>
-      </ol>
-    </div>
-    <div class="path">
-      <h3>A practitioner with a problem</h3>
-      <p>Start from your data, not from a method. The guide maps outcome types, dependence structures and
-      questions to the example that treats them.</p>
-      <p><a href="guide.html">Choosing a model →</a></p>
-    </div>
-    <div class="path">
-      <h3>Ready to test yourself</h3>
-      <p>Eleven open-ended problems on real data. The brief says what to deliver, never how; the first
-      model you try will break, and finding out why is the exercise.</p>
-      <p><a href="challenges.html">The challenges →</a></p>
+    <div class="features">
+      <div>
+        <h3>Uncertainty is the result</h3>
+        <p>A Bayesian analysis returns a distribution over everything unknown, $p(\\theta \\mid y) \\propto
+        p(y \\mid \\theta)\\,p(\\theta)$. Any quantity you compute from the parameters &mdash; a forecast, a
+        ranking, a probability that a threshold is crossed &mdash; comes with its uncertainty attached,
+        without a separate derivation.</p>
+      </div>
+      <div>
+        <h3>A model is a story about the data</h3>
+        <p>Instead of choosing a test from a menu, you write down how the data could have been generated:
+        censoring, missingness, measurement error, groups, space, time, physics. The same language covers
+        a regression and a gravitational-wave ringdown, so you learn one way of thinking, not a list of
+        procedures.</p>
+      </div>
+      <div>
+        <h3>Checking is part of the method</h3>
+        <p>Priors are simulated before they are trusted, samplers are diagnosed, and fitted models are asked
+        to reproduce the data. When a model fails, these pages say so and show the repair. Seeing the
+        failures is how you learn to spot them in your own work.</p>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="essay">
-  <h2 id="recent">Recently added</h2>
-  <p class="narrow">Chaos and how to fit, forecast and control it; regime detection with hidden Markov models;
-  jump-diffusion SDEs for market crashes; reaction-diffusion in cell biology; optimal placement of heaters and
-  sensors for the heat equation; and a flexible response curve for media models, written in JAX.</p>
-  <div class="cards">{recent}</div>
+<section class="group bg-white on-light" id="workflow">
+  <div class="wrap">
+    <h2 class="group-title">The workflow every page follows</h2>
+    <p class="group-lede">The examples are not a tour of an API. Each one is a complete iteration of the Bayesian
+    workflow of Gelman et al. (2020): a question, a generative model, checks before and after fitting,
+    and a conclusion stated on the scale the question was asked in.</p>
+    {workflow(ctx)}
+  </div>
 </section>
 
-<section class="essay">
-  <h2 id="featured">A few of the case studies</h2>
-  <div class="cards">{featured}</div>
-  <p><a href="examples.html">All {n_ex} examples →</a></p>
+<section class="statement on-dark bg-black">
+  <div class="wrap">
+    <p>Every failure is kept in: divergent chains, miscalibrated intervals, wrong answers.</p>
+  </div>
+</section>
+
+<section class="group bg-mist on-light" id="paths">
+  <div class="wrap">
+    <h2 class="group-title">Three ways in</h2>
+    <div class="tiles">
+      <div class="tile bg-white on-light">
+        <div class="tile-copy">
+          <h3>New to Bayesian modelling</h3>
+          <p class="tile-desc">Read the foundations in order. They assume some Python and some regression,
+          nothing more.</p>
+          <ol>
+            <li>{L('E01', 'The Bayesian workflow')}</li>
+            <li>{L('E02', 'Hierarchical models')}</li>
+            <li>{L('E03', 'GLMs and model comparison')}</li>
+            <li>{L('D03', 'An analysis end to end')}</li>
+          </ol>
+        </div>
+      </div>
+      <div class="tile on-dark bg-black">
+        <div class="tile-copy">
+          <h3>A practitioner with a problem</h3>
+          <p class="tile-desc">Start from your data, not from a method. The guide maps outcome types, dependence
+          structures and questions to the example that treats them.</p>
+          <p class="actions"><a class="link" href="guide.html">Choose a model</a></p>
+        </div>
+        {TREE_FIG}
+      </div>
+      <div class="tile bg-white on-light">
+        <div class="tile-copy">
+          <h3>Ready to test yourself</h3>
+          <p class="tile-desc">{n_ch} open-ended problems on real data. The brief says what to deliver, never how;
+          the first model you try will break, and finding out why is the exercise.</p>
+          <p class="actions"><a class="link" href="challenges.html">See the challenges</a></p>
+        </div>
+        {LADDER_FIG}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="group bg-white on-light" id="recent">
+  <div class="wrap">
+    <h2 class="group-title">Recently added</h2>
+    <p class="group-lede">Chaos and how to fit, forecast and control it; regime detection with hidden Markov models;
+    jump-diffusion SDEs for market crashes; reaction-diffusion in cell biology; optimal placement of heaters and
+    sensors for the heat equation; and a flexible response curve for media models, written in JAX.</p>
+    <div class="rail" data-rail><div class="cards rail-track">{recent}</div></div>
+  </div>
+</section>
+
+<section class="group bg-mist on-light" id="featured">
+  <div class="wrap">
+    <h2 class="group-title">A few of the case studies</h2>
+    <div class="cards">{featured}</div>
+    <p class="group-more"><a href="examples.html">All {n_ex} examples</a></p>
+  </div>
+</section>
+
+<section class="closing on-dark bg-black">
+  <div class="wrap">
+    <h2>Start with one question.</h2>
+    <p class="closing-lede">The first example walks through the whole workflow once. Every page after it reuses
+    the same steps.</p>
+    <p class="actions">
+      <a class="btn" href="{first}">Open the first example</a>
+      <a class="link" href="examples.html">Browse all {n_ex} examples</a>
+    </p>
+  </div>
 </section>
 """
     return (SITE_NAME, "home", body, TAGLINE)
 
 
 def examples_page(ctx):
-    jump = "".join(f'<li><a href="#{s["key"]}">{s["title"]}</a> <span class="muted">{s["range"]}</span></li>'
-                   for s in SERIES)
     body = f"""
-<header class="page-head">
-  <p class="eyebrow">Examples</p>
-  <h1>Worked examples</h1>
-  <p class="lede">Each example is a narrated, executed notebook: the question, the data, the model written
-  in mathematics and in PyMC, every check, and what the result means. Read them in the browser, then run
-  and modify them locally. The foundations come first; after that, each series stands on its own.</p>
+<header class="page-head on-dark bg-black backdrop-archive">
+  <div class="wrap">
+    <h1>Worked examples</h1>
+    <p class="lede">Each example is a narrated, executed notebook: the question, the data, the model written
+    in mathematics and in PyMC, every check, and what the result means. Read them in the browser, then run
+    and modify them locally.</p>
+  </div>
 </header>
-<nav class="jump" aria-label="Series"><ol>{jump}</ol></nav>
-{ctx['series_sections']}
+<section class="group bg-mist on-light">
+  <div class="wrap">
+    <h2 class="group-title">Browse by series</h2>
+    <p class="group-lede">The foundations come first; after that, each series stands on its own.</p>
+    {ctx['series_index']}
+  </div>
+</section>
+<section class="group bg-white on-light">
+  <div class="wrap">
+    <div class="filter" data-filter role="search" hidden>
+      <input type="search" aria-label="Filter examples" placeholder="Filter by topic, data or technique"
+             autocomplete="off" spellcheck="false">
+      <p class="filter-count" aria-live="polite"></p>
+    </div>
+    {ctx['series_sections']}
+  </div>
+</section>
 """
     return (f"Examples — {SITE_NAME}", "examples", body,
             "Worked, executed examples of Bayesian models in PyMC on real data.")
@@ -483,17 +563,18 @@ def examples_page(ctx):
 
 def challenges_page(ctx):
     body = f"""
-<header class="page-head">
-  <p class="eyebrow">Challenges</p>
-  <h1>Challenges</h1>
-  <p class="lede">Eleven problems on real data, each ending in a decision someone actually has to make. In every
-  one, the obvious first model breaks in a way you have to diagnose. The brief tells you what to deliver,
-  never how.</p>
+<header class="page-head on-dark bg-black backdrop-rock">
+  <div class="wrap">
+    <h1>Challenges</h1>
+    <p class="lede">{len(ctx['challenges'])} problems on real data, each ending in a decision someone actually has
+    to make. In every one, the obvious first model breaks in a way you have to diagnose. The brief tells you what
+    to deliver, never how.</p>
+  </div>
 </header>
 
 <section class="essay">
   <h2 id="how">How a challenge works</h2>
-  <div class="three">
+  <div class="features">
     <div><h3>A brief and a set of tasks</h3><p>Each challenge page describes the setting, the data and a
     sequence of tasks with concrete deliverables &mdash; a plot, a number, a recommendation. Download the
     notebook and work in the empty cells.</p></div>
@@ -523,7 +604,7 @@ h.progress()                    # hints used, checks passed</code></pre></div>
   <p class="narrow">See <a href="about.html#run">About</a> for setting up the environment.</p>
 </section>
 """
-    return (f"Challenges — {SITE_NAME}", "challenges", body,
+    return (f"Challenges — {SITE_NAME}", "challenges", _bands(body),
             "Real-data Bayesian modelling challenges with tiered hints and reference solutions.")
 
 
@@ -683,12 +764,13 @@ def guide_page(ctx):
                 f"<th>Consider</th><th>Worked in</th></tr></thead><tbody>{body}</tbody></table></div></section>")
 
     body = f"""
-<header class="page-head">
-  <p class="eyebrow">Guide</p>
+<header class="page-head on-dark bg-black backdrop-compass">
+  <div class="wrap">
   <h1>From your problem to a model</h1>
   <p class="lede">Bayesian models are built, not selected. The questions below are the ones to ask of
   your own data, in roughly the order they matter. Each row points to a worked example where that
   modelling decision is made, checked and, sometimes, got wrong first.</p>
+  </div>
 </header>
 
 <section class="essay">
@@ -722,7 +804,7 @@ def guide_page(ctx):
 {table("4 · What form does the relationship take?", "form", "From a known equation to a flexible function, the choice is how much structure you are willing to assume.", form)}
 {table("5 · Is the question causal, or a decision?", "causal", "Posterior draws propagate straight into counterfactuals and expected utilities &mdash; if the assumptions that make them causal hold.", causal)}
 """
-    return (f"Choosing a model — {SITE_NAME}", "guide", body,
+    return (f"Choosing a model — {SITE_NAME}", "guide", _bands(body),
             "A practitioner's guide from the shape of your data to a Bayesian model, with worked examples.")
 
 
@@ -730,11 +812,12 @@ def about_page(ctx):
     repo = ctx.get("repo_url")
     clone = f"git clone {repo}.git\ncd {repo.rsplit('/', 1)[-1]}\n" if repo else ""
     body = f"""
-<header class="page-head">
-  <p class="eyebrow">About</p>
-  <h1>About these notes</h1>
-  <p class="lede">A self-study curriculum in applied Bayesian statistics, written as executable notebooks
-  for the current PyMC stack and published here as readable pages.</p>
+<header class="page-head on-dark bg-black backdrop-notebook">
+  <div class="wrap">
+    <h1>About these notes</h1>
+    <p class="lede">A self-study curriculum in applied Bayesian statistics, written as executable notebooks
+    for the current PyMC stack and published here as readable pages.</p>
+  </div>
 </header>
 <section class="essay prose narrow">
   <h2 id="principles">Principles</h2>
@@ -771,7 +854,8 @@ uv run jupyter lab notebooks</code></pre></div>
   </ul>
 </section>
 """
-    return (f"About — {SITE_NAME}", "about", body, "About this Bayesian modelling curriculum and how to run it.")
+    return (f"About — {SITE_NAME}", "about", _bands(body),
+            "About this Bayesian modelling curriculum and how to run it.")
 
 
 def pages(ctx):
