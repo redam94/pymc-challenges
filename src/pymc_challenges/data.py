@@ -2472,6 +2472,25 @@ REGISTRY: dict[str, Dataset] = {
         "election against today's file; 2026 result coverage by page and state; independent expenditures "
         "against e94_ie; the sha256 of every raw file read.",
     ),
+    # ---- examples (E120) ----
+    "e120_calls": Dataset(
+        "e120_calls.csv.gz",
+        "https://see-center.iem.technion.ac.il/databases/AnonymousBank/Data/AnonymousBank.rar",
+        "'Anonymous Bank' call-centre data, Technion SEE Center: every call to an Israeli bank's telephone "
+        "centre in 1999, documented by Guedj and Mandelbaum (2000) and analysed in Brown et al. (2005, JASA "
+        "100:36-50). Terms: 'The data is free for use. If used, please notify Avi Mandelbaum, at "
+        "avim@ie.technion.ac.il and do acknowledge the data source in any of your work.' DERIVED by "
+        "tools/build_e120_calls.py; the url is the 10.6 MB RAR archive of twelve monthly files, not this "
+        "table - keep the cached file in data/ (md5 b490ac2ab70f1f0d7dd55d097e163ec1).",
+        "One row per call in order of arrival (440,849 rows; the 3,599 PHANTOM records are dropped, customer "
+        "ids are dropped and agents' names are replaced by codes): date, vru_entry_s (second of the day the "
+        "call entered the voice response unit), vru_time (s), q_start_s (second of the day it joined the "
+        "agents' queue; empty if it never queued), q_time (s in the queue), outcome (AGENT served, HANG hung "
+        "up), ser_start_s (second of the day service began; empty if not served), ser_time (s of service), "
+        "type (PS regular, PE English, IN internet, NE stock exchange, NW prospective customer, TT returned "
+        "call), priority (2 = priority customer, moved up the queue by 90 s), identified (gave a customer "
+        "id), agent (A01-A52; empty if none).",
+    ),
 }
 
 
