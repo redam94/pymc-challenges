@@ -278,7 +278,42 @@ SERIES = [
                "forecast track record, icon shelves with partial fills and a publication-filter GIF."),
 ]
 SERIES_BY_KEY = {s["key"]: s for s in SERIES}
-RECENT = ["E119", "E118", "E117", "E116", "E115", "E114", "E113", "E112", "E111", "E110", "E109", "E108", "E107", "E106", "E105", "E104", "E103", "E102", "E101", "E100", "E99", "E98", "E97", "E96", "E92", "E95", "E94", "E90", "E88", "E91", "E87", "E89"]          # newest first, shown on the home page
+# The examples under "Recently added" on the home page, newest first. Put a new example at the front.
+# recent_ids() adds any example numbered above everything listed here, so the section cannot fall
+# behind, and recent_intro() writes the sentence above the cards: there is no copy to keep in step.
+RECENT = ["E119", "E118", "E117", "E116", "E115", "E114", "E113", "E112", "E111", "E110", "E109", "E108", "E107", "E106", "E105", "E104", "E103", "E102", "E101", "E100", "E99", "E98", "E97", "E96", "E92", "E95", "E94", "E90", "E88", "E91", "E87", "E89"]
+
+
+def _number(eid: str) -> int:
+    return int(eid[1:])
+
+
+def recent_ids(ctx) -> list[str]:
+    """RECENT, led by every E example numbered above everything in it (highest first)."""
+    newest = max(_number(i) for i in RECENT)
+    unlisted = sorted((e.id for e in ctx["examples"] if e.id.startswith("E") and _number(e.id) > newest),
+                      key=_number, reverse=True)
+    if unlisted:
+        print(f"  note: {', '.join(unlisted)} not in site_content.RECENT; shown first under 'Recently added'. "
+              "Put every id named here at the front of RECENT.")
+    return unlisted + RECENT
+
+
+def recent_intro(ctx, ids: list[str]) -> str:
+    """One sentence naming the three series the newest examples belong to, each linked to its section."""
+    keys = []
+    for i in ids:
+        e = ctx["by_id"].get(i)
+        if e and e.series and e.series not in keys:
+            keys.append(e.series)
+        if len(keys) == 3:
+            break
+    links = [f'<a href="examples.html#{k}">{SERIES_BY_KEY[k]["title"]}</a>' for k in keys]
+    if not links:
+        return "Newest first."
+    # series titles contain commas, so the list is separated by semicolons
+    listed = links[0] if len(links) == 1 else "; ".join(links[:-1]) + "; and " + links[-1]
+    return f"Newest first. The latest additions are in {listed}."
 
 
 # The figure shown on each example's card: the k-th image the notebook outputs (1-based, in notebook
@@ -373,7 +408,8 @@ def home(ctx):
     L = lambda i, t=None: _link(ctx, i, t)  # noqa: E731
     first = ctx["by_id"]["E01"].url
     featured = "".join(ctx["card"](ctx["by_id"][i]) for i in ("E10", "E37", "E40", "E16") if i in ctx["by_id"])
-    recent = "".join(ctx["card"](ctx["by_id"][i]) for i in RECENT if i in ctx["by_id"])
+    recent_list = recent_ids(ctx)
+    recent = "".join(ctx["card"](ctx["by_id"][i]) for i in recent_list if i in ctx["by_id"])
     body = f"""
 <section class="hero on-dark bg-black">
   <div class="wrap hero-copy">
@@ -499,9 +535,7 @@ def home(ctx):
 <section class="group bg-white on-light" id="recent">
   <div class="wrap">
     <h2 class="group-title">Recently added</h2>
-    <p class="group-lede">Chaos and how to fit, forecast and control it; regime detection with hidden Markov models;
-    jump-diffusion SDEs for market crashes; reaction-diffusion in cell biology; optimal placement of heaters and
-    sensors for the heat equation; and a flexible response curve for media models, written in JAX.</p>
+    <p class="group-lede">{recent_intro(ctx, recent_list)}</p>
     <div class="rail" data-rail><div class="cards rail-track">{recent}</div></div>
   </div>
 </section>

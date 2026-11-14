@@ -529,6 +529,8 @@ python -m http.server -d _site         # preview at http://localhost:8000
 notebooks or the site sources (set *Settings -> Pages -> Source* to **GitHub Actions**). Site prose
 lives in `tools/site_content.py`, styles and scripts in `tools/site_assets/`; per-notebook titles,
 data and techniques are read from the curriculum tables above, so keep those up to date.
+[AUTHORING.md](AUTHORING.md) lists what to register for a new notebook, including the home page's
+"Recently added" section, which always leads with the newest examples.
 
 The site shares the look of [redam94.github.io](https://redam94.github.io/): white, mist and black
 surfaces, one olive accent, system type. `tools/site_assets/figures.js` draws the interactive figures

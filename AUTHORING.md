@@ -201,6 +201,24 @@ Ranges must be generous enough to pass with any reasonable priors and a differen
 yet tight enough to catch a wrong model or wrong units. Set them from the executed
 solution. Every check must be exercised by an `assert h.check(...)` in a solution cell.
 
+## Registering a notebook on the website
+
+`tools/build_site.py` picks up every notebook in `notebooks/`, but four things are written by hand.
+Do them in the same commit as the notebook, then run `uv run python tools/build_site.py` and look
+at the home page and the notebook's own page.
+
+- **README curriculum table.** Add the `| **E120** | topic | data | techniques |` row: the site
+  reads each card's title, data and techniques from it.
+- **Series.** Add the id to a series in `SERIES` in `tools/site_content.py`, or add a new series
+  (with `tools/site_assets/img/icon-<key>.webp`, see the README; a missing icon is a blank tile).
+- **Card figure.** Add the id to `CARD_FIGURE` if the automatic pick (the largest landscape
+  figure) is not the one that explains the notebook.
+- **Recently added: every new example goes first.** Put the new id at the front of `RECENT` in
+  `tools/site_content.py`, newest first. This is the only edit that section needs: the sentence
+  above the cards is generated from the series of the first entries, so never write that copy by
+  hand. If the build prints `note: E120 not in site_content.RECENT`, it has shown the example
+  first anyway; add it to the list so the order is the one you mean.
+
 ## Conventions
 
 - Standard first code cell: imports, `RANDOM_SEED`, `rng`, `az.style.use("arviz-variat")`,
