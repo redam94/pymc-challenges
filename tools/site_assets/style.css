@@ -1288,7 +1288,8 @@ html:not(.js) .updater-controls {
 }
 
 .group-title,
-.group > .wrap > h2 {
+.group > .wrap > h2,
+.group [data-needs-js] > h2 {
   font-size: clamp(32px, 4.6vw, 48px);
   line-height: 1.08;
   letter-spacing: -0.025em;
@@ -1329,7 +1330,8 @@ html:not(.js) .updater-controls {
   max-width: var(--measure);
 }
 
-.group > .wrap > p {
+.group > .wrap > p,
+.group [data-needs-js] > p {
   margin: 14px 0 0;
 }
 
@@ -1489,7 +1491,7 @@ html:not(.js) .updater-controls {
 .flow.is-live .flow-track {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--steps, 7), minmax(0, 1fr));
   margin: 0;
   padding: 0;
   list-style: none;
@@ -1501,18 +1503,18 @@ html:not(.js) .updater-controls {
   content: "";
   position: absolute;
   top: 17px;
-  left: calc(100% / 14);
+  left: calc(50% / var(--steps, 7));
   height: 2px;
   border-radius: 2px;
 }
 
 .flow.is-live .flow-track::before {
-  right: calc(100% / 14);
+  right: calc(50% / var(--steps, 7));
   background: var(--rule);
 }
 
 .flow.is-live .flow-track::after {
-  width: calc((100% - 100% / 7) * var(--progress, 0));
+  width: calc((100% - 100% / var(--steps, 7)) * var(--progress, 0));
   background: var(--accent);
   transition: width 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
@@ -2007,6 +2009,410 @@ html:not(.js) .updater-controls {
   margin: 0 0 0.8rem;
 }
 
+/* ---------- Search ----------
+   One dialog for the whole site. It opens from the navigation bar, from a search bar on a page,
+   or with the "/" key, and searches assets/search.json. */
+
+html:not(.js) [data-search-open],
+html:not(.js) [data-needs-js] {
+  display: none;
+}
+
+.nav-search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  height: 28px;
+  padding: 0 11px;
+  border: 0;
+  border-radius: 980px;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(245, 245, 247, 0.8);
+  font: inherit;
+  font-size: 12px;
+  letter-spacing: 0;
+  cursor: pointer;
+}
+
+.nav-search:hover {
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+}
+
+.nav-search svg {
+  width: 13px;
+  height: 13px;
+}
+
+/* A button that reads as a search field: it opens the dialog. */
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: min(100%, 34rem);
+  height: 50px;
+  margin-top: 28px;
+  padding: 0 14px 0 20px;
+  border: 1px solid var(--rule);
+  border-radius: 980px;
+  background: rgba(22, 22, 23, 0.72);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  color: var(--fg-2);
+  font: inherit;
+  text-align: left;
+  cursor: text;
+  transition: border-color 0.15s ease;
+}
+
+.search-bar:hover {
+  border-color: var(--fg-2);
+}
+
+.search-bar svg {
+  flex: none;
+  width: 17px;
+  height: 17px;
+}
+
+.search-bar span {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+kbd {
+  padding: 2px 8px;
+  border: 1px solid var(--rule);
+  border-radius: 7px;
+  color: var(--fg-2);
+  font: 12px var(--mono);
+}
+
+.search-dialog {
+  width: min(100% - 24px, 700px);
+  max-height: min(78vh, 640px);
+  margin: 11vh auto auto;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 22px;
+  background: var(--paper);
+  color: var(--fg);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.5);
+}
+
+.search-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+.search-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.55);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+.search-field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 20px;
+  border-bottom: 1px solid var(--rule);
+  color: var(--fg-2);
+}
+
+.search-field svg {
+  flex: none;
+  width: 18px;
+  height: 18px;
+}
+
+.search-field input {
+  flex: 1;
+  min-width: 0;
+  height: 54px;
+  border: 0;
+  outline: 0;
+  background: none;
+  color: var(--fg);
+  font: inherit;
+  font-size: 19px;
+}
+
+.search-results {
+  flex: 1;
+  margin: 0;
+  padding: 8px;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.search-results:empty {
+  display: none;
+}
+
+.search-hit {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  align-items: center;
+  gap: 2px 14px;
+  padding: 9px 12px;
+  border-radius: 13px;
+  text-decoration: none;
+}
+
+.search-hit img,
+.search-hit .hit-stars {
+  grid-row: span 2;
+  width: 72px;
+  height: 44px;
+  border-radius: 7px;
+  background: #ffffff;
+  object-fit: contain;
+}
+
+/* Challenges have no figure: their difficulty stands in for it. */
+.search-hit .hit-stars {
+  display: grid;
+  place-items: center;
+  background: var(--fig-soft);
+  color: var(--accent);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+}
+
+.search-hit b {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.search-hit .hit-id {
+  margin-right: 8px;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.search-hit small {
+  overflow: hidden;
+  color: var(--fg-2);
+  font-size: 13px;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search-results li.is-active .search-hit,
+.search-hit:hover {
+  background: var(--paper-2);
+}
+
+.search-note {
+  margin: 0;
+  padding: 13px 20px;
+  color: var(--fg-2);
+  font-size: 14px;
+}
+
+.search-results:not(:empty) + .search-note {
+  border-top: 1px solid var(--rule);
+}
+
+/* ---------- Guide: the model finder ---------- */
+
+.finder {
+  margin-top: clamp(28px, 4vw, 44px);
+}
+
+.finder .flow {
+  margin-top: 0;
+}
+
+.finder-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 20.5rem;
+  align-items: start;
+  gap: clamp(24px, 4vw, 48px);
+  margin-top: 36px;
+}
+
+.finder-question h3 {
+  font-size: clamp(24px, 3vw, 32px);
+  line-height: 1.12;
+  letter-spacing: -0.022em;
+}
+
+.finder-question > p {
+  max-width: 36em;
+  margin: 8px 0 0;
+  color: var(--fg-2);
+}
+
+.finder-narrow {
+  width: min(100%, 22rem);
+  height: 40px;
+  margin-top: 18px;
+  padding: 0 18px;
+  border: 1px solid var(--rule);
+  border-radius: 980px;
+  background: var(--paper);
+  color: var(--fg);
+  font: inherit;
+  font-size: 15px;
+}
+
+.finder-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14.5rem), 1fr));
+  gap: 10px;
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.finder-options li[hidden] {
+  display: none;
+}
+
+.finder-option {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  height: 100%;
+  padding: 10px 14px 10px 10px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--tile, var(--paper-2));
+  color: var(--fg);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.3;
+  text-align: left;
+  cursor: pointer;
+  transition: box-shadow 0.15s ease;
+}
+
+.finder-option:hover {
+  box-shadow: inset 0 0 0 1px var(--fig-muted);
+}
+
+.finder-option[aria-pressed="true"] {
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.glyph {
+  display: block;
+  width: 44px;
+  height: 44px;
+  border-radius: 11px;
+  background: var(--paper);
+}
+
+.finder-option[aria-pressed="true"] .glyph {
+  background: var(--fig-soft);
+}
+
+.finder-skip {
+  margin: 20px 0 0;
+}
+
+.finder-result {
+  position: sticky;
+  top: 68px;
+  padding: 24px;
+  border-radius: 22px;
+  background: var(--tile, var(--paper-2));
+}
+
+.finder-result h3 {
+  font-size: 19px;
+  line-height: 1.26;
+  letter-spacing: -0.014em;
+}
+
+.finder-empty {
+  margin: 10px 0 0;
+  color: var(--fg-2);
+  font-size: 14px;
+}
+
+.finder-picks {
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.finder-picks li {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 4px 12px;
+  padding: 14px 0;
+  border-top: 1px solid var(--rule);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.finder-picks .glyph {
+  grid-row: span 3;
+}
+
+.finder-picks small {
+  color: var(--fg-2);
+  font-size: 12px;
+}
+
+.finder-picks b {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.finder-picks p {
+  grid-column: 2;
+  margin: 0;
+  color: var(--fg-2);
+}
+
+.finder-picks a {
+  color: var(--accent);
+}
+
+.link-btn {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.link-btn:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.finder-result > .link-btn {
+  margin-top: 6px;
+}
+
+.finder-reading {
+  margin-top: clamp(32px, 5vw, 56px);
+}
+
+.finder-reading h3 {
+  margin-bottom: 20px;
+}
+
+.finder-reading[hidden] {
+  display: none;
+}
+
 /* ---------- Closing and footer ---------- */
 
 .closing {
@@ -2106,6 +2512,14 @@ html:not(.js) .updater-controls {
   .flow-panels {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .finder-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .finder-result {
+    position: static;
+  }
 }
 
 @media (max-width: 800px) {
@@ -2142,8 +2556,13 @@ html:not(.js) .updater-controls {
 }
 
 @media (max-width: 640px) {
-  .nav-brand span {
+  .nav-brand span,
+  .nav-search span {
     display: none;
+  }
+
+  .nav-search {
+    padding: 0 8px;
   }
 
   .nav-links {

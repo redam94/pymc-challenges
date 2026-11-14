@@ -534,15 +534,21 @@ data and techniques are read from the curriculum tables above, so keep those up 
 
 The site shares the look of [redam94.github.io](https://redam94.github.io/): white, mist and black
 surfaces, one olive accent, system type. `tools/site_assets/figures.js` draws the interactive figures
-on the home page (a live HMC sampler, a posterior that updates, the workflow track); `site.js` holds
-the smaller enhancements (theme, code toggle, example filter, reading progress). Every page still
-reads with scripting off.
+on the home page (a live HMC sampler, a posterior that updates, the workflow track) and the guide's
+model finder; `site.js` holds the smaller enhancements (search, theme, code toggle, example filter,
+reading progress). Every page still reads with scripting off.
+
+Examples are grouped into the fifteen clusters of `site_content.SERIES`, by what the reader is trying
+to do; every example sits in exactly one. Search (the button in the navigation bar, the bar on the
+guide, or the `/` key) covers every example and challenge from `assets/search.json`, which the build
+writes from the README tables. The guide's model finder is generated from the guide's own tables in
+`site_content.guide_page`, so a new row there appears in the finder too.
 
 The photographs and icons in `tools/site_assets/img/` were generated with fal (`fal-ai/nano-banana-2`)
 and converted with `cwebp`: `backdrop-<name>-2000.webp` and `-1100.webp` sit behind the black sections,
-and `icon-<series key>.webp` (512 px, object on pure black) is the icon of one series in
-`site_content.SERIES`. A new series without an icon gets a blank black tile, so add
-`icon-<key>.webp` when you add the series.
+and `icon-<series key>.webp` (512 px, object on pure black) is the icon of one cluster in
+`site_content.SERIES`. A new cluster without an icon gets a blank black tile, so add
+`icon-<key>.webp` when you add one.
 
 ## Data
 

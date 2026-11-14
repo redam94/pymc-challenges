@@ -391,6 +391,7 @@ def shell(*, title: str, body: str, depth: int, active: str, description: str = 
   <nav class="nav-inner" aria-label="Main">
     <a class="nav-brand" href="{up}index.html" aria-label="{content.SITE_NAME}, home">{BRAND_MARK}<span>{content.SITE_NAME}</span></a>
     <ul class="nav-links">{nav}</ul>
+    <button class="nav-search" type="button" data-search-open aria-label="Search examples and challenges">{content.SEARCH_MARK}<span>Search</span></button>
     <button class="theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode">◐</button>
   </nav>{progress}
 </header>
@@ -641,7 +642,7 @@ def series_sections(examples: list[Entry]) -> str:
         if not es:
             continue
         out.append(f'<section class="series" id="{s["key"]}"><div class="series-head">{series_icon(s["key"])}'
-                   f'<h2>{s["title"]} <small>{s["range"]}</small></h2><p>{s["intro"]}</p></div>'
+                   f'<h2>{s["title"]} <small>{len(es)} examples</small></h2><p>{s["intro"]}</p></div>'
                    f'<div class="cards">{"".join(card(e) for e in es)}</div></section>')
     return "\n".join(out)
 
@@ -658,6 +659,21 @@ def series_index(examples: list[Entry]) -> str:
     return f'<ul class="series-index">{"".join(items)}</ul>'
 
 
+def plain(text: str) -> str:
+    """Markdown from the README tables as plain text."""
+    return html.unescape(re.sub(r"<[^>]+>", "", md_inline(text))).strip()
+
+
+def search_index(entries: list[Entry]) -> str:
+    """assets/search.json: what the search box and the guide's model finder know about each notebook."""
+    items = []
+    for e in entries:
+        series = content.SERIES_BY_KEY.get(e.series, {}).get("title", "")
+        items.append(dict(id=e.id, kind=e.kind, title=plain(e.title), data=plain(e.data), tech=plain(e.techniques),
+                          url=e.url, img=e.card_img, series=series, stars=e.stars))
+    return json.dumps(items, ensure_ascii=False, separators=(",", ":"))
+
+
 def build(out: Path, repo_url: str | None, only: list[str] | None) -> None:
     global REPO_URL
     REPO_URL = repo_url
@@ -665,8 +681,8 @@ def build(out: Path, repo_url: str | None, only: list[str] | None) -> None:
     examples = [e for e in entries if e.kind == "example"]
     challenges = [e for e in entries if e.kind == "challenge"]
     XREF_TARGETS.update({e.id: e.url for e in entries})
-    order = {i: n for n, s in enumerate(content.SERIES) for i in s["ids"]}
-    examples.sort(key=lambda e: (order.get(e.id, 99), e.id))
+    order = {i: (n, k) for n, s in enumerate(content.SERIES) for k, i in enumerate(s["ids"])}
+    examples.sort(key=lambda e: order.get(e.id, (len(content.SERIES), 0)) + (e.id,))
 
     if out.exists() and not only:
         shutil.rmtree(out)
@@ -679,6 +695,7 @@ def build(out: Path, repo_url: str | None, only: list[str] | None) -> None:
             shutil.copy(f, out / "assets" / f.name)
     (out / ".nojekyll").write_text("")
     card_images(examples, out)
+    (out / "assets" / "search.json").write_text(search_index(examples + challenges))
 
     def wanted(e):
         return not only or e.id in only

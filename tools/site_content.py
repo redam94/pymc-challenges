@@ -15,267 +15,103 @@ FOOTER = ("Worked examples and challenges in Bayesian data analysis with PyMC 6,
           "Datasets are real and public, sources cited in each notebook; the few simulated systems say so.")
 
 
-def _ids(prefix, a, b):
-    return [f"{prefix}{i:02d}" for i in range(a, b + 1)]
+SEARCH_MARK = ('<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6.8" cy="6.8" r="4.6" fill="none" '
+               'stroke="currentColor" stroke-width="1.5"/><path d="M10.3 10.3 14 14" stroke="currentColor" '
+               'stroke-width="1.5" stroke-linecap="round"/></svg>')
 
-
+# Fifteen clusters, by what the reader is trying to do. Every example sits in exactly one; a series
+# shows its examples in the order of `ids`. Each key has an icon, tools/site_assets/img/icon-<key>.webp.
 SERIES = [
-    dict(key="foundations", range="E01–E06", title="Foundations", ids=_ids("E", 1, 6),
-         intro="The core of applied Bayesian work: writing a model down, checking what the priors "
-               "claim, reading a posterior, pooling information across groups, comparing models "
-               "and handling censored data. Every challenge assumes these."),
-    dict(key="data-work", range="D01–D03", title="Data work", ids=_ids("D", 1, 3),
-         intro="Most models that refuse to sample are data problems in disguise. These cover the craft "
-               "around the model: preparing arrays, treating missingness and measurement error as part "
-               "of the model, and carrying an analysis through to a report."),
-    dict(key="science", range="E07–E10, E46–E51, E78–E80", title="Mechanistic and scientific models",
-         ids=_ids("E", 7, 10) + _ids("E", 46, 51) + _ids("E", 78, 80),
-         intro="When theory supplies the regression function. Earthquakes as a point process in space "
-               "and time, the expansion of the universe from supernovae, differential equations with "
-               "JAX gradients, a black-hole ringdown in real LIGO strain, chaotic dynamics (fitting, forecasting "
-               "and controlling systems that amplify every error, from blowflies to Lorenz's toy atmospheres), "
-               "jump-diffusion SDEs for market crashes, and reaction-diffusion PDEs for cell invasion and "
-               "signaling gradients, designing heaters, insulation and sensors for a heat-equation plate, and "
-               "finding planets in Kepler light curves and proving an interstellar comet is unbound; and cosmology "
-               "from whole images: every pixel of a Planck CMB patch, and a Hubble Einstein ring modelled pixel by pixel."),
-    dict(key="biology", range="E52–E61", title="Cell biology and biophysics", ids=_ids("E", 52, 61),
+    dict(key="foundations", title="Foundations",
+         ids=["E01", "E02", "E03", "E04", "E05", "E06"],
+         intro="The core of applied Bayesian work: writing a model down, checking what the priors claim, reading"
+               " a posterior, pooling information across groups, comparing models and handling censored data. "
+               "Every challenge assumes these."),
+    dict(key="data-work", title="Data, posteriors and reporting",
+         ids=["D01", "D02", "D03", "E16", "E42", "E43", "E44"],
+         intro="Most models that refuse to sample are data problems in disguise. These cover the craft around "
+               "the model: preparing arrays, treating missingness and measurement error as part of the model, "
+               "working with posteriors as labelled arrays, and showing uncertainty so that a reader can act on "
+               "it."),
+    dict(key="inference", title="Inference and computation",
+         ids=["E09", "E12", "E14", "E62", "E86"],
+         intro="What to do when plain NUTS is not enough: your own JAX code with gradients inside a model, "
+               "samplers and approximations beyond the default, inference without a likelihood, ensembles on a "
+               "GPU, and how to tell when a model cannot answer the question at all."),
+    dict(key="regression", title="Flexible regression",
+         ids=["E15", "E17", "E25", "E27", "E29", "E83"],
+         intro="Regression when a straight line and a handful of predictors will not do: additive trees, neural "
+               "networks, priors that pick a few predictors out of many, quantiles in place of means, studies "
+               "pooled by meta-analysis, and repeated measurements modelled jointly with survival."),
+    dict(key="outcomes", title="Rankings, choices and other unusual outcomes",
+         ids=["E22", "E67", "E68", "E70", "E71", "E81"],
+         intro="Likelihoods for data that are not a plain number: head-to-head results, choices among "
+               "alternatives, shares of a whole, response times, directions on a circle, and many outcomes that "
+               "move together."),
+    dict(key="latent", title="Latent groups, topics and partitions",
+         ids=["E24", "E26", "E28", "E30", "E31", "E69", "E72", "E73"],
+         intro="Models where the structure itself is unobserved: hidden states, mixtures with an unknown number "
+               "of components, random partitions and binary features, topics, raters with no gold standard, and "
+               "animals that were present but never detected."),
+    dict(key="dependence", title="Dependence in space, time and graphs",
+         ids=["E07", "E13", "E18", "E19", "E21", "E23", "E65", "E96", "E97", "E98"],
+         intro="Observations that are not independent because of where, when or how they are connected: maps and"
+               " areal neighbours, state-space models, self-exciting events, networks, phylogenies, and several "
+               "imperfect instruments fused into one estimate."),
+    dict(key="causal", title="Causal inference",
+         ids=["E20", "E34", "E35", "E63", "E66", "E101", "E102", "E103", "E107"],
+         intro="From association to what would have happened otherwise: quasi-experiments, synthetic control, "
+               "mediation, causal discovery, online experiments, propensity scores graded against an experiment,"
+               " and how much a hidden confounder could change the answer."),
+    dict(key="decisions", title="Decisions, design and value of information",
+         ids=["E51", "E64", "E82", "E87", "E89", "E90", "E91", "E92", "E99", "E100"],
+         intro="The posterior as the input to a choice: which experiment to run next, where to put the next "
+               "sensor, what dose to give, whether a bigger model is worth its price, and when acting now beats "
+               "waiting for better data."),
+    dict(key="physics", title="Physics, astronomy and dynamical systems",
+         ids=["E08", "E10", "E11", "E46", "E47", "E48", "E49", "E78", "E79", "E80"],
+         intro="When theory supplies the equations: the expansion of the universe from supernovae, a black-hole "
+               "ringdown in real LIGO strain, planets in Kepler light curves, the cosmic microwave background "
+               "and a gravitational lens fitted pixel by pixel, a neural network inside a differential equation,"
+               " chaotic dynamics, and jump-diffusions for market crashes."),
+    dict(key="colour", title="Colour, light and images",
+         ids=["E74", "E75", "E76", "E77"],
+         intro="When the estimate is a colour, a spectrum, a region or a word. How the dyes of Japanese "
+               "woodblock prints fade, and what a 1766 Harunobu print looked like when new; why two paints can "
+               "match in the shop and differ at home (metamers), inverted from colour to spectrum with a prior "
+               "learned from 1,269 Munsell chips; segmenting photographs with an unknown number of regions and "
+               "checking the result, and its confidence, against the people who outlined them; and how 110 "
+               "languages divide colour space, speaker by speaker - each with uncertainty displays that still "
+               "work when colour cannot be used to show the uncertainty."),
+    dict(key='biology', title='Cell biology and biophysics',
+         ids=['E50', 'E52', 'E53', 'E54', 'E55', 'E56', 'E57', 'E58', 'E59', 'E60', 'E61', 'E88'],
          intro="Mechanistic models of living cells, fitted to what biologists measure: signals that travel "
                "through the membrane and the cytosol, the fluctuation test that showed mutations arise before "
                "selection, why a neuron fires (conductance models fitted to real patch-clamp recordings), "
                "transcriptional bursting read from allele-resolved single-cell RNA counts, and how bacteria "
-               "control their size, measured through noisy segmentation, and single molecules tracked in "
-               "living nuclei, and super-resolution (STORM) microscopy: localising, detecting and counting "
-               "single blinking molecules below the diffraction limit, and kinesin's steps counted from "
-               "MINFLUX traces, the forces cells exert on their substrate (traction force microscopy), and "
-               "decisions from dynamics: Turing patterns and kinetic proofreading in T cells. See also E50 (reaction-diffusion in tissues)."),
-    dict(key="failure", range="E62", title="When the model cannot answer", ids=["E62"],
-         intro="Most failed analyses do not crash: they answer a question nobody asked, report numbers the "
-               "prior chose, or never finish. Three real problems fail in these ways - an MMM that cannot "
-               "split credit between channels, a Gaussian process too large to fit, a trial whose hazard "
-               "ratio is not the clinic's question - and each is followed by the pivot: a question the data "
-               "can answer, a cheaper model checked against the exact one, and an answer audit."),
-    dict(key="decisions", range="E63–E66", title="Causal designs, doses, cascades and experiments",
-         ids=_ids("E", 63, 66),
-         intro="Workhorse models from four fields, each carried through to a decision. Difference-in-"
-               "differences, regression discontinuity and instrumental variables on classic natural "
-               "experiments, with each identifying assumption written as a prior; population "
-               "pharmacokinetics from theophylline and warfarin to a patient's dose after two monitoring "
-               "samples; Hawkes and ETAS aftershock forecasts for the 2019 Ridgecrest sequence; and "
-               "thousands of real headline A/B tests: winner's curse, peeking, and bandits."),
-    dict(key="outcomes", range="E67–E73", title="Rankings, choices, raters, compositions, topics and decisions",
-         ids=_ids("E", 67, 73),
-         intro="Outcomes that are not one number on a line. Skills estimated from who beat whom in tennis and "
-               "from whole Formula 1 finishing orders; what people will pay for, from a panel of stated "
-               "choices, with a market simulator; the true label when pathologists or anaesthetists "
-               "disagree and nobody knows the answer; data that are parts of a whole; and quick decisions, "
-               "where a drift diffusion model explains both the choice and how long it took, and says "
-               "how cautious a person should be; and topic models for anything that comes as a bag of "
-               "features: the stories behind Upworthy's headlines, the palettes of a century of posters, the "
-               "intents behind web visits and the missions behind shopping baskets - and the newer topic models "
-               "built for LDA's problems, tested on the same data."),
-    dict(key="colour", range="E74–E77", title="Colour, light and images", ids=_ids("E", 74, 77),
-         intro="When the estimate is a colour, a spectrum, a region or a word. How the dyes of Japanese woodblock "
-               "prints fade, and what a 1766 Harunobu print looked like when new; why two paints can match in "
-               "the shop and differ at home (metamers), inverted from colour to spectrum with a prior learned "
-               "from 1,269 Munsell chips; segmenting photographs with an unknown number of regions and checking "
-               "the result, and its confidence, against the people who outlined them; and how 110 languages "
-               "divide colour space, speaker by speaker - each with uncertainty displays that still work when "
-               "colour cannot be used to show the uncertainty."),
-    dict(key="gaps", range="E81–E83", title="Directions, experiments and quantiles", ids=_ids("E", 81, 83),
-         intro="Three model families that need their own tricks. Angles wrap around, so means, priors and links "
-               "that work on a line break on a circle (wind at Santa Barbara, ocelots and their prey); Bayesian "
-               "optimisation chooses the next reaction on a fully measured chemistry screen and is scored "
-               "against 50 real chemists; and quantile regression for birth weights shows why the asymmetric "
-               "Laplace posterior is too sure of itself, and how to fix it."),
-    dict(key="frontier", range="E11–E17", title="At the research frontier", ids=_ids("E", 11, 17),
-         intro="Neural networks inside differential equations, inference beyond plain NUTS, state-space "
-               "models, likelihood-free inference, BART, the display of uncertainty and privacy-preserving "
-               "meta-analysis. Expect honest negative results next to the successes."),
-    dict(key="graphs", range="E18–E23", title="Correlation structures and graphs", ids=_ids("E", 18, 23),
-         intro="Dependence that lives on a map, a network or a tree: areal models, learning graphs and "
-               "causal structure from data, network outcomes, many correlated outcomes at once, and "
-               "regression along a phylogeny."),
-    dict(key="families", range="E24–E29", title="More model families", ids=_ids("E", 24, 29),
-         intro="Hidden Markov models, joint longitudinal and survival models, Dirichlet-process mixtures, "
-               "sparse regression, imperfect detection in ecology and Bayesian neural networks."),
-    dict(key="partitions", range="E30–E31", title="Random partitions and random features", ids=_ids("E", 30, 31),
-         intro="Exchangeable partitions and latent binary features: Pólya urns, Pitman–Yor processes and "
-               "unseen species, and the Indian buffet process."),
-    dict(key="media", range="E32–E35, E45, E84–E85", title="Media measurement and market structure",
-         ids=_ids("E", 32, 35) + ["E45", "E84", "E85"],
-         intro="One open multi-brand e-commerce dataset and five questions a marketing team actually asks: "
-               "a custom likelihood for spend that chases demand, a hierarchical marketing-mix model with a "
-               "budget decision, a synthetic control, causal mediation, and which shape of response curve "
-               "the data support (a Weibull transform written in JAX). Plus market structure from household "
-               "panels: which margarines compete, read off a Bayesian choice map, and what that means for a "
-               "merger screen; and the same question from the 6-month purchase-incidence tables and partial "
-               "demographics most studies actually get."),
-    dict(key="everyone", range="E36–E41", title="State of the art, explained for everyone", ids=_ids("E", 36, 41),
-         intro="Six model families used in practice today, each with a plain-language opening and a closing "
-               "section of uncertainty displays for readers with no statistics: MRP, extreme-event attribution, "
-               "epidemic nowcasting, radiocarbon chronologies, election forecasting and growth charts."),
-    dict(key="xarray", range="E42–E44", title="Posteriors as labelled arrays", ids=_ids("E", 42, 44),
-         intro="A posterior is a labelled array with named chain, draw and model dimensions. These notebooks do "
-               "all their data and posterior work by name, and use it for derived quantities, time "
-               "aggregation, binning and unusual plots."),
-    dict(key="gpu", range="E86", title="GPU ensemble sampling", ids=["E86"],
-         intro="What a GPU actually speeds up in Bayesian sampling, measured on a 24,810-parameter spatial model of "
-               "a tropical forest: ChEES-HMC and MEADS against a well-configured NUTS baseline, by chain count, "
-               "problem size and precision, with the failures that an ensemble of chains can hide."),
-    dict(key="pricing", range="E87", title="Pricing a model before you buy it", ids=["E87"],
-         intro="A contractor quotes two hours on a GPU for a row-level model of 14 million rows of US flights. Stored "
-               "GPU timings and a CPU run on 2 cores test that quote, and held-out forecasts on one unnamed carrier ask "
-               "whether a bigger model changes a watch list. It teaches how to write a price someone can check."),
-    dict(key="localiser", range="E88", title="A neural localiser, tried and failed", ids=["E88"],
-         intro="Would a neural network change how many frames a dSTORM movie needs? A stored run trained one on simulation "
-               "and judged it on two full real recordings, with pass marks written first. It failed, and the answer stays the "
-               "classical one. The replay is light, and it teaches checks that need no ground truth and a calibration "
-               "certificate for a trained network."),
-    dict(key="voi", range="E89", title="Value of information on a map", ids=["E89"],
-         intro="Where should the next air monitors go? A marginal Gaussian process over real EPA PM2.5 data, exact "
-               "county conditionals and closed-form value of information show that a map of uncertainty and a map "
-               "of decision value are different maps, on one 19-state crop, with a band of sites rather than a "
-               "fixed list."),
-    dict(key="thresholds", range="E90", title="Hospital thresholds and decision curves", ids=["E90"],
-         intro="Call it today or wait? German states tied measures to a hospitalisation incidence whose first "
-               "published value later grew by a median of 83%. A stored run of 227 daily GPU fits of a 16-state "
-               "nowcast is judged where a ministry acts, at the thresholds: decision curves, lateness and release "
-               "rules against a simple correction factor. The nowcast is the better number, and the better alarm at "
-               "most cost ratios, and its probabilities are not calibrated."),
-    dict(key="price-signal", range="E91", title="A price signal and a substation", ids=["E91"],
-         intro="How many homes for how many kilowatts, on the night? Real London smart meters from a trial where homes "
-               "chose the tariff but Supply-Following event days were randomised, and only those days carry the "
-               "estimate. A closed-form fleet carries the answer, a robust model misreads the sum on two of three "
-               "bands, and four winter evenings, not a thousand homes, set the limit."),
-    dict(key="atlantic", range="E92", title="An exact Gaussian process on the Atlantic", ids=["E92"],
-         intro="Where should the next 20 Argo floats go? A stored run fitted an exact Gaussian process to 23,939 "
-               "profiles of 100 dbar temperature on one GPU and raced it against local windows, a Vecchia "
-               "approximation and an exact amplitude map on held-out floats. Vecchia matched it, its uncertainty "
-               "was wrong in the Gulf Stream, float32 could be silently wrong, and the targeted list of sites "
-               "changed with the model, so the advice is to fill the open-ocean gaps."),
-    dict(key="midterms", range="E94-E95, E118-E119", title="Polls, fundamentals and money", ids=["E94", "E95", "E118", "E119"],
-         intro="Election-eve forecasts of the 2018, 2022 and 2026 US midterms from ragged information: many national "
-               "polls, some Senate polls, few district polls and fundamentals everywhere. Backtests on two known "
-               "cycles, Jacobson's spending paradox and Levitt's rematches, a nowcast of campaign spending from "
-               "lagged FEC filings, and a 2026 forecast frozen before the polls closed, with the code that will "
-               "score it, an animated map of its predictive draws, and how far it moves if Democrats fall short of "
-               "their polls. E95 updates the frozen forecast on election night as the races are called: a call as an "
-               "interval on the margin, importance reweighting against a refit, and what each race still out decides. "
-               "E118 tests a claim made after every election, that moderate Democrats beat their polls and the left "
-               "fell short of theirs because of ideology, on 184 races of 2018 and 2022 with labels dated before each "
-               "election. Dated labels show no gap (centre minus left about -1.0 points, -3.3 to +1.3), opponent "
-               "incumbency, district lean and poll sponsors matter more than the list, party money predicts nothing, "
-               "25 definitions give either sign and never an interval that excludes zero, and labelling a dozen "
-               "unlabelled candidates after the count manufactures the effect. A provisional section on uncertified "
-               "2026 counts reruns itself when certified results exist. E119 asks the question E118 leaves open, "
-               "whether a more centrist or more progressive nominee would have won more votes, and finds the data "
-               "cannot answer it: no primary results or losing candidates, and a lean-adjusted centre edge of about "
-               "+1 point that a modest hidden confounder erases. A close-primary design would need about 200 close "
-               "centre-against-left primaries to detect a 5-point effect."),
-    dict(key="snowpack", range="E96", title="The snow pillow died in February", ids=["E96"],
-         intro="A Colorado snow pillow fails in February: how much snow is there on April 1? A weekly snow budget "
-               "in PyMC fuses the pillow, a depth sensor, a precipitation gauge and a manual snow course through a "
-               "Kalman filter, and a backtest over 19 real seasons beats every quick fix on the drought call."),
-    dict(key="sealevel", range="E97", title="Is the sea rising or is the city sinking?", ids=["E97"],
-         intro="Galveston's tide gauge sees the sea minus the land, satellites see the ocean, GPS sees the land. "
-               "One state-space model gives each instrument its own view and shows the ocean-land split moving "
-               "from prior to measurement as each one arrives, then picks a 2050 planning scenario."),
-    dict(key="recession", range="E98", title="Was 2022 a recession?", ids=["E98"],
-         intro="GDP fell for two quarters in 2022 while GDI, payrolls and output kept growing. Six noisy sensors "
-               "of one monthly economy, fitted to the data as known on six real dates, give a contraction "
-               "probability that stays low while GDP alone swings with every revision."),
-    dict(key="beacons", range="E99", title="Which beacon to ping", ids=["E99"],
-         intro="A robot may ask one radio beacon for a range every two seconds: which one? Real UWB logs from a campus "
-               "plaza calibrate the ranges in PyMC on one drive, and a particle filter replays another, revealing only "
-               "the range each rule chooses. Belief-driven rules find the robot two to three times as fast as "
-               "round-robin, a cheap spread rule matches expected information gain, and the nearest beacon is a trap."),
-    dict(key="hotspot", range="E100", title="Chasing the hotspot", ids=["E100"],
-         intro="A survey team near Fukushima gets 40 radiation readings, each a real Safecast reading revealed "
-               "only where the agent drives. A Gaussian-process belief with trip effects drives UCB, Thompson "
-               "sampling and a lookahead against a fixed grid: finding the hotspot and bounding the closure "
-               "list turn out to need different policies."),
-    dict(key="lift", range="E101-E103", title="Exposed versus unexposed", ids=["E101", "E102", "E103"],
-         intro="A brand lift study without a holdout compares people who saw the ads with people who did not and "
-               "corrects with propensity scores. Criteo's uplift data hold that study and the experiment that grades "
-               "it: a propensity analysis done by the book overstates the effect on conversions by two thirds "
-               "against either benchmark, and on visits by a fifth once the experiment's arm imbalance is "
-               "adjusted for; at survey size its bias stays while its intervals shrink. E102 simulates delivery on "
-               "the real control users to show when the bias turns negative (suppression lists, prospecting, ad "
-               "avoiders) and how it moves with reach, and why no diagnostic can tell the sign. E103 gives a portfolio of "
-               "campaigns a few holdouts and a hierarchical model of the bias: when the bias follows the targeting "
-               "type, eight calibrated holdouts of forty beat deciding from the experiments alone; when it does not, "
-               "they mostly teach the model to ignore the propensity numbers."),
-    dict(key="sellout", range="E104-E106", title="Spend before the sell-out", ids=["E104", "E105", "E106"],
-         intro="Media for capacity-limited events, on real hotel bookings with simulated spend and a known effect. "
-               "Stopping spend at sell-out doubles the estimated effect, random intercepts read event size as "
-               "return on spend until a Mundlak term goes in, and brand spend that is the same for every event "
-               "is not identified. A censored negative-binomial model in PyMC recovers the effect; the naive "
-               "model would send the next unit of spend to events that sell out anyway. E105 adds the on-sale "
-               "rush, with its shape taken from real Wikipedia attention around three tours: lining events up by "
-               "lead time reads the rush as media, instant sell-outs say nothing about media and need a queue "
-               "signal for their demand, and rescue budgets flip the random-intercept trap. Observational timing "
-               "estimates were biased in a world where slow sellers walk up late and get the rescue and pacing "
-               "money; only the experiment that randomised budget as well as timing recovered the response by "
-               "lead time, and pre-sale money has to be planned before the queue that would guide it exists."
-               " E106 asks when a film studio "
-               "should spend before a release, on real Wikidata release calendars and Wikipedia attention: a "
-               "cross-film model gets the timing backwards, screens are a mediator, and a joint PyMC model puts "
-               "about three fifths of the budget in weeks -6 to -3 and two fifths in the last three weeks."),
-    dict(key="hiddenconf", range="E107", title="What a hidden confounder can do", ids=["E107"],
-         intro="On the job-training benchmark, where a randomised experiment gives the answer, hiding the earnings "
-               "history flips an observational estimate from about the truth to a confident loss. Confounders planted "
-               "on the real rows show the omitted-variable-bias algebra exactly and are invisible to a balance table "
-               "of the measured covariates; "
-               "robustness values, benchmarks, E-values, Rosenbaum bounds and PyMC sensitivity models each say how "
-               "strong a hidden confounder would have to be, and where each can mislead. It ends with a tipping-point "
-               "sentence and a sensitivity table for stakeholders."),
-    dict(key="public", range="E108-E117", title="Bayes in public: questions people actually ask",
-         ids=["E108", "E109", "E110", "E111", "E112", "E113", "E114", "E115",
-              "E116", "E117"],
-         intro="Questions you might hear at a kitchen table, a council meeting or a newsroom, each in a field "
-               "this collection had not touched and each with a different kind of Bayesian model. Is my diet as "
-               "bad as one day suggests? E108 separates usual salt intake from day-to-day noise in two NHANES "
-               "recalls (about 86% of US adults are usually over the line, against 74% of single days). How many "
-               "victims were never counted? E109 uses multiple-systems estimation on the Kosovo 1999 lists, "
-               "where the answer moves with list dependence and the prior, and on the UK's modern-slavery lists one list doubles the latent-class answer. "
-               "Is the bar for a police search the same for everyone? E110 fits a latent-threshold model to "
-               "Raleigh's traffic stops: the bar is lower for Hispanic drivers under both risk shapes tried, while "
-               "for Black drivers the sign flips with the shape. How much life did the pandemic cost, and has it "
-               "come back? E111 pools Lee-Carter mortality over 30 European countries: about 1.3 years below the "
-               "path in 2021, and by 2024 17 countries likely still below and 13 too close to call. "
-               "Is my county's child-poverty number real? E112 fits Fay-Herriot small areas to 3,142 US "
-               "counties with two independent ACS samples, which show margins of error understating small "
-               "surveys' misses about elevenfold; only the second survey tells a bad survey from a truly poor "
-               "reservation county. Will the river beat the 100-year line during my mortgage? E113 adds the "
-               "floods of 1786-1889 as censored data to a regional log-Pearson III model of 12 gauges: about "
-               "11% (3-22%) at Harrisburg over 2025-2054, against the 26% the name implies, with low "
-               "confidence: about 8% if the post-1950 drop is real and lasts, 14% if the river has not changed. "
-               "Is the fish on my plate being overfished? E114 fits a Schaefer state-space model to 18 RAM "
-               "Legacy stocks with life-history priors and one shared process noise: about 6 of 18 (3-9) "
-               "were below B_MSY in their last year of data, but the model is usually more optimistic than "
-               "the official assessments, calls none of the three officially overfished stocks overfished, "
-               "and from catches alone puts collapsed northern cod near twice B_MSY in 1992. "
-               "Does the last bag of fertiliser pay? E115 fits a Mitscherlich curve under a latent year "
-               "effect to 74 years of the Broadbalk wheat experiment: the third bag paid in an average year "
-               "(>99%), but on one plot in a given year only about 8 times in 10, and the optimum rate at "
-               "cheap nitrogen is mostly the shape of the curve. "
-               "Is my toddler on track? E116 fits a two-parameter item response model to 9,537 Wordbank "
-               "checklists of 680 words, tempered for words that hang together by section, and corrects the "
-               "percentile scale with held-out children: a 50-word two-year-old is around the 10th percentile "
-               "(6th-14th) and about as likely as not (55%, medium confidence) to be in the lowest 10%, where "
-               "the uncorrected model said 21%. Would that headline finding replicate? E117 writes a "
-               "publication filter into a null/real mixture for 76 pairs from the Reproducibility Project: "
-               "Psychology: ignoring the filter expects 56 successful repeats where 26 happened; the final "
-               "model expects 28 out of sample, but scores within one standard error of each field's base rate, "
-               "and its odds are too spread out. About 65% of published findings like these are real (93% cognitive, 41% social). "
-               "Each ends with a picture designed for people who will never read the maths: hypothetical "
-               "outcome plots, icon arrays with honest uncertainty, natural-frequency trees, an iceberg of the "
-               "uncounted, quantile dotplots, swarms of possible worlds, gradient intervals, a value-suppressing "
-               "beeswarm, graded fans on a tile map, a mortality carpet, a Bayesian surprise map, \"find your "
-               "county\" cards, chance-of bars over a 30-year mortgage, a flood-marks GIF, 40 possible histories "
-               "per fish stock, fish-icon rows, prediction beside inference as paired quantile dotplots and "
-               "a price-dial GIF, \"you are here\" dotplots under a growth fan, a first-words ladder, a "
-               "forecast track record, icon shelves with partial fills and a publication-filter GIF."),
+               "control their size, measured through noisy segmentation, and single molecules tracked in living "
+               "nuclei, and super-resolution (STORM) microscopy: localising, detecting and counting single "
+               "blinking molecules below the diffraction limit, and kinesin's steps counted from MINFLUX traces,"
+               " the forces cells exert on their substrate (traction force microscopy), and decisions from "
+               "dynamics: Turing patterns and kinetic proofreading in T cells. See also E50 (reaction-diffusion "
+               "in tissues). Also here: cell invasion in a scratch assay, and a neural localiser tried on a full"
+               " super-resolution movie."),
+    dict(key="media", title="Marketing and media",
+         ids=["E32", "E33", "E45", "E84", "E85", "E104", "E105", "E106"],
+         intro="Measurement for marketing decisions: a custom likelihood for spend that chases demand, "
+               "hierarchical media mix models and a budget choice under uncertainty, one family for every "
+               "response curve, who competes with whom, and when to spend before a sell-out or a release."),
+    dict(key="elections", title="Elections and public opinion",
+         ids=["E36", "E40", "E94", "E95", "E118", "E119"],
+         intro="Polls as noisy, partial and sometimes biased measurements: poststratifying an unrepresentative "
+               "survey, aggregating polls into a forecast, combining polls with fundamentals and money in the US"
+               " midterms, updating on election night, and what the data can and cannot say about ideology."),
+    dict(key="public", title="Questions people actually ask",
+         ids=["E37", "E38", "E39", "E41", "E108", "E109", "E110", "E111", "E112", "E113", "E114", "E115", "E116", "E117"],
+         intro="Current methods explained from the question down: did warming load the dice for this heatwave, "
+               "is the epidemic growing right now, how old is this object, is my child on track, is the 100-year"
+               " flood still a 100-year flood. Each starts from something a newspaper reader would ask and "
+               "answers it in their terms."),
 ]
 SERIES_BY_KEY = {s["key"]: s for s in SERIES}
 # The examples under "Recently added" on the home page, newest first. Put a new example at the front.
@@ -642,11 +478,43 @@ h.progress()                    # hints used, checks passed</code></pre></div>
             "Real-data Bayesian modelling challenges with tiered hints and reference solutions.")
 
 
+# The small drawing beside each option of the guide's model finder: the first pattern found in the
+# row's first cell wins, and a row that matches none gets its table's default. The drawings
+# themselves are GLYPHS in assets/figures.js.
+GLYPH_RULES = [
+    ("binary", r"yes/no|0/1|two-way"),
+    ("ordinal", r"ordered categories|number of steps"),
+    ("survival", r"time until|waiting times"),
+    ("tail", r"largest value|jackpot|odds of an event"),
+    ("compass", r"directions"),
+    ("network", r"network of ties|causal graph"),
+    ("ranking", r"who beat|variant wins|few matter"),
+    ("map", r"\bmap\b|points in space|spread and react|actuators and sensors"),
+    ("parts", r"shares of a whole|partition|subgroups|many features per item"),
+    ("image", r"image|colour|spectr|how many sources"),
+    ("tree", r"in groups|lineages|patients who differ"),
+    ("series", r"series in time|still arriving|chaotic|jumps|trajectories|trigger more events|spiking|move together"),
+    ("gaps", r"missing|missed|known error|measured with error|disagree|unrepresentative|published summaries|"
+             r"polls in some|cannot answer"),
+    ("dag", r"without the intervention|mediator|policy changed|cause the outcome"),
+    ("fork", r"choice among|purchases|which experiment|what should we do|worth its price|whether to buy|better alarm"),
+    ("counts", r"counts|a sum over"),
+    ("curve", r"equation|smooth surface|non-linear|response curve|inverse problem|simulate|likelihood fits|centile|"
+              r"compartments"),
+    ("bell", r"continuous|error bars"),
+]
+
+
+def _glyph(situation: str, default: str) -> str:
+    text = situation.lower()
+    return next((name for name, pattern in GLYPH_RULES if re.search(pattern, text)), default)
+
+
 def guide_page(ctx):
     L = lambda i, t=None: _link(ctx, i, t)  # noqa: E731
+    n_ex, n_ch = len(ctx["examples"]), len(ctx["challenges"])
 
-    def rows(items):
-        return "".join(f"<tr><td>{a}</td><td>{b}</td><td>{c}</td></tr>" for a, b, c in items)
+    rows = list  # each table is a list of (situation, what to consider, worked in)
 
     outcomes = rows([
         ("A continuous measurement", "Normal; Student-t if there are outliers; skew-normal or a distributional "
@@ -792,10 +660,14 @@ def guide_page(ctx):
          f"{L('E62')}"),
     ])
 
-    def table(title, anchor, lead, body):
+    def table(title, anchor, lead, items, step, default):
+        """One question as a table. `step` and each row's data-g feed the model finder above the tables."""
+        body = "".join(f'<tr data-g="{_glyph(a, default)}"><td>{a}</td><td>{b}</td><td>{c}</td></tr>'
+                       for a, b, c in items)
         return (f'<section class="essay"><h2 id="{anchor}">{title}</h2><p class="narrow">{lead}</p>'
-                f'<div class="table-wrap"><table class="guide-table"><thead><tr><th>If your data or question is…</th>'
-                f"<th>Consider</th><th>Worked in</th></tr></thead><tbody>{body}</tbody></table></div></section>")
+                f'<div class="table-wrap"><table class="guide-table" data-step="{step}"><thead><tr>'
+                f"<th>If your data or question is…</th><th>Consider</th><th>Worked in</th></tr></thead>"
+                f"<tbody>{body}</tbody></table></div></section>")
 
     body = f"""
 <header class="page-head on-dark bg-black backdrop-compass">
@@ -804,8 +676,19 @@ def guide_page(ctx):
   <p class="lede">Bayesian models are built, not selected. The questions below are the ones to ask of
   your own data, in roughly the order they matter. Each row points to a worked example where that
   modelling decision is made, checked and, sometimes, got wrong first.</p>
+  <button type="button" class="search-bar" data-search-open>{SEARCH_MARK}<span>Search {n_ex} examples and
+  {n_ch} challenges</span><kbd>/</kbd></button>
   </div>
 </header>
+
+<section class="essay">
+  <div data-needs-js>
+    <h2 id="finder">Build a model from your answers</h2>
+    <p class="narrow">Five questions, in the order they matter. Answer the ones you can: each answer adds a piece
+    to the model and the worked examples that show it. The tables further down list the same options in full.</p>
+    <div class="finder" data-finder></div>
+  </div>
+</section>
 
 <section class="essay">
   <h2 id="recipe">A recipe for a first model</h2>
@@ -832,11 +715,11 @@ def guide_page(ctx):
     and show it in a way the reader can act on. ({L('E16')})</li>
   </ol>
 </section>
-{table("1 · What kind of outcome?", "outcome", "The support and the data-generating process of the outcome choose the likelihood.", outcomes)}
-{table("2 · How are the observations related?", "structure", "Dependence between observations is where hierarchical and structured priors earn their keep.", structure)}
-{table("3 · Is the data imperfect?", "imperfect", "Imperfections are part of the generative story, and modelling them is often the difference between a biased and an honest answer.", imperfect)}
-{table("4 · What form does the relationship take?", "form", "From a known equation to a flexible function, the choice is how much structure you are willing to assume.", form)}
-{table("5 · Is the question causal, or a decision?", "causal", "Posterior draws propagate straight into counterfactuals and expected utilities &mdash; if the assumptions that make them causal hold.", causal)}
+{table("1 · What kind of outcome?", "outcome", "The support and the data-generating process of the outcome choose the likelihood.", outcomes, "Outcome", "bell")}
+{table("2 · How are the observations related?", "structure", "Dependence between observations is where hierarchical and structured priors earn their keep.", structure, "Structure", "tree")}
+{table("3 · Is the data imperfect?", "imperfect", "Imperfections are part of the generative story, and modelling them is often the difference between a biased and an honest answer.", imperfect, "Imperfect data", "gaps")}
+{table("4 · What form does the relationship take?", "form", "From a known equation to a flexible function, the choice is how much structure you are willing to assume.", form, "Form", "curve")}
+{table("5 · Is the question causal, or a decision?", "causal", "Posterior draws propagate straight into counterfactuals and expected utilities &mdash; if the assumptions that make them causal hold.", causal, "Causal question", "dag")}
 """
     return (f"Choosing a model — {SITE_NAME}", "guide", _bands(body),
             "A practitioner's guide from the shape of your data to a Bayesian model, with worked examples.")

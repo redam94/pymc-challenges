@@ -1,4 +1,4 @@
-// Bayesian Modelling in Practice - the interactive figures on the index pages.
+// Bayesian Modelling in Practice - the interactive figures on the index pages, and the guide's model finder.
 // Each one enhances markup that already reads without it.
 (function () {
   "use strict";
@@ -478,7 +478,188 @@
     select(0, "");
   }
 
+
+  /* ------------------------------------------------------------------
+     4. Guide: build a model from five answers. The questions and options are read from the
+     guide's own tables (table[data-step], tr[data-g]), so the tables stay the single source.
+     ------------------------------------------------------------------ */
+  var GLYPHS = {
+    bell: '<path class="f-muted" d="M5 39H43"/><path class="f-accent" d="M5 37C14 37 16 10 24 10S34 37 43 37"/>',
+    binary: '<path class="f-muted" d="M5 39H43"/><rect class="f-fill-muted" x="11" y="24" width="10" height="15" rx="2"/><rect class="f-fill-accent" x="27" y="10" width="10" height="29" rx="2"/>',
+    counts: '<path class="f-muted" d="M5 39H43"/><rect class="f-fill-muted" x="7" y="27" width="5" height="12"/><rect class="f-fill-accent" x="14.5" y="12" width="5" height="27"/><rect class="f-fill-accent" x="22" y="18" width="5" height="21"/><rect class="f-fill-muted" x="29.5" y="28" width="5" height="11"/><rect class="f-fill-muted" x="37" y="34" width="5" height="5"/>',
+    ordinal: '<path class="f-accent" d="M6 38H16V30H26V22H36V14H43"/>',
+    survival: '<path class="f-muted" d="M6 8V39H43"/><path class="f-accent" d="M6 12H15V19H23V27H32V33H42"/><path class="f-line" d="M27 24V30M38 30V36"/>',
+    tail: '<path class="f-muted" d="M5 39H43"/><path class="f-accent" d="M5 38C9 38 9 11 14 11S21 33 43 37"/><circle class="f-fill-accent" cx="38" cy="30" r="3"/>',
+    compass: '<circle class="f-muted" cx="24" cy="24" r="16"/><path class="f-accent" d="M24 24L34 13"/><circle class="f-fill-line" cx="24" cy="24" r="2.5"/>',
+    network: '<path class="f-muted" d="M12 14L24 25L37 12M24 25L11 36M24 25L38 36M12 14L11 36"/><circle class="f-fill-muted" cx="12" cy="14" r="3.5"/><circle class="f-fill-muted" cx="37" cy="12" r="3.5"/><circle class="f-fill-muted" cx="11" cy="36" r="3.5"/><circle class="f-fill-muted" cx="38" cy="36" r="3.5"/><circle class="f-fill-accent" cx="24" cy="25" r="4.5"/>',
+    ranking: '<rect class="f-fill-accent" x="7" y="8" width="34" height="6" rx="2"/><rect class="f-fill-muted" x="7" y="17.5" width="25" height="6" rx="2"/><rect class="f-fill-muted" x="7" y="27" width="16" height="6" rx="2"/><rect class="f-fill-muted" x="7" y="36.5" width="9" height="6" rx="2"/>',
+    map: '<path class="f-muted" d="M8 8H40V40H8ZM8 18.7H40M8 29.3H40M18.7 8V40M29.3 8V40"/><circle class="f-fill-accent" cx="34.6" cy="13.4" r="4"/>',
+    parts: '<path class="f-soft" d="M24 24V8A16 16 0 0 1 37.9 32Z"/><circle class="f-muted" cx="24" cy="24" r="16"/><path class="f-accent" d="M24 8V24L37.9 32"/><path class="f-muted" d="M24 24L10.1 32"/>',
+    image: '<rect class="f-fill-muted" x="8" y="8" width="9" height="9"/><rect class="f-fill-accent" x="19.5" y="8" width="9" height="9"/><rect class="f-fill-accent" x="31" y="8" width="9" height="9"/><rect class="f-fill-muted" x="8" y="19.5" width="9" height="9"/><rect class="f-fill-muted" x="19.5" y="19.5" width="9" height="9"/><rect class="f-fill-accent" x="31" y="19.5" width="9" height="9"/><rect class="f-fill-muted" x="8" y="31" width="9" height="9"/><rect class="f-fill-muted" x="19.5" y="31" width="9" height="9"/><rect class="f-fill-muted" x="31" y="31" width="9" height="9"/>',
+    tree: '<path class="f-muted" d="M24 12L10 35M24 12V35M24 12L38 35"/><circle class="f-fill-accent" cx="24" cy="12" r="4.5"/><circle class="f-fill-muted" cx="10" cy="35" r="3.5"/><circle class="f-fill-muted" cx="24" cy="35" r="3.5"/><circle class="f-fill-muted" cx="38" cy="35" r="3.5"/>',
+    series: '<path class="f-muted" d="M5 39H43"/><path class="f-accent" d="M5 30L12 23L18 28L26 14L32 21L38 11L43 16"/>',
+    gaps: '<circle class="f-fill-accent" cx="9" cy="17" r="3.5"/><circle class="f-fill-accent" cx="19" cy="17" r="3.5"/><circle class="f-muted" cx="29" cy="17" r="3.5"/><circle class="f-fill-accent" cx="39" cy="17" r="3.5"/><circle class="f-muted" cx="9" cy="31" r="3.5"/><circle class="f-fill-accent" cx="19" cy="31" r="3.5"/><circle class="f-fill-accent" cx="29" cy="31" r="3.5"/><circle class="f-muted" cx="39" cy="31" r="3.5"/>',
+    dag: '<path class="f-muted" d="M24 12L11 33M24 12L37 33"/><path class="f-accent" d="M15 35H31M27 31L32 35L27 39"/><circle class="f-fill-muted" cx="24" cy="12" r="4"/><circle class="f-fill-line" cx="11" cy="35" r="4"/><circle class="f-fill-accent" cx="37" cy="35" r="4"/>',
+    fork: '<path class="f-muted" d="M6 24H17C25 24 24 10 33 10H42M17 24C25 24 24 38 33 38H42"/><path class="f-accent" d="M6 24H42"/><circle class="f-fill-accent" cx="42" cy="24" r="3"/>',
+    curve: '<path class="f-muted" d="M7 7V40H43"/><path class="f-accent" d="M7 36C20 36 22 13 42 11"/>'
+  };
+
+  function glyph(name) {
+    return '<svg class="glyph" viewBox="0 0 48 48" aria-hidden="true">' + (GLYPHS[name] || GLYPHS.curve) + "</svg>";
+  }
+
+  function finder(host) {
+    var steps = Array.prototype.map.call(document.querySelectorAll("table[data-step]"), function (table) {
+      var section = table.closest("section"), h2 = section.querySelector("h2"), lead = section.querySelector("p");
+      return {
+        label: table.getAttribute("data-step"),
+        question: h2.textContent.replace(/^#?\s*\d+\s*·\s*/, ""),
+        lead: lead ? lead.textContent : "",
+        options: Array.prototype.map.call(table.querySelectorAll("tbody tr"), function (tr) {
+          return {
+            g: tr.getAttribute("data-g"), text: tr.cells[0].textContent, consider: tr.cells[1].innerHTML,
+            links: tr.cells[2].innerHTML,
+            ids: Array.prototype.map.call(tr.cells[2].querySelectorAll("a"), function (a) { return a.textContent; })
+          };
+        })
+      };
+    });
+    if (!steps.length) return;
+    var picks = steps.map(function () { return -1; }), active = 0, catalogue = null;
+
+    var flowBox = html("div", "flow is-live", "", host);
+    flowBox.style.setProperty("--steps", steps.length);
+    var track = html("ol", "flow-track", "", flowBox);
+    var buttons = steps.map(function (st, i) {
+      var b = html("button", "flow-step", "", html("li", "", "", track));
+      b.type = "button";
+      html("b", "", String(i + 1), html("span", "flow-dot", "", b));
+      html("span", "", st.label, b);
+      b.addEventListener("click", function () { active = i; render(); });
+      return b;
+    });
+    var body = html("div", "finder-body", "", host);
+    var question = html("div", "finder-question", "", body);
+    var result = html("aside", "finder-result", "", body);
+    result.setAttribute("aria-live", "polite");
+    var reading = html("div", "finder-reading", "", host);
+
+    function card(id) {
+      var it = catalogue && catalogue[id];
+      var a = html("a", "card", "");
+      a.href = window.BMP.root + (it ? it.url : "examples.html");
+      if (it && it.img) {
+        var img = document.createElement("img");
+        img.src = window.BMP.root + it.img; img.alt = ""; img.loading = "lazy";
+        html("span", "card-img", "", a).appendChild(img);
+      }
+      html("span", "card-id", id, a);
+      html("span", "card-title", it ? it.title : id, a);
+      if (it) html("span", "card-data", it.kind === "challenge" ? "Challenge, difficulty " + it.stars + " of 5" : it.data, a);
+      return a;
+    }
+
+    function render() {
+      var st = steps[active], answered = picks.filter(function (p) { return p >= 0; }).length;
+      buttons.forEach(function (b, i) {
+        b.classList.toggle("is-active", i === active);
+        b.classList.toggle("is-done", picks[i] >= 0 && i !== active);
+        b.setAttribute("aria-label", "Question " + (i + 1) + ": " + steps[i].label + (picks[i] >= 0 ? ", answered" : ""));
+        if (i === active) b.setAttribute("aria-current", "step"); else b.removeAttribute("aria-current");
+      });
+      flowBox.style.setProperty("--progress", active / (steps.length - 1));
+
+      // the question and its options
+      question.textContent = "";
+      html("h3", "", st.question, question);
+      html("p", "", st.lead, question);
+      var list = html("ul", "finder-options", "");
+      if (st.options.length > 10) {
+        var narrow = html("input", "finder-narrow", "", question);
+        narrow.type = "search"; narrow.placeholder = "Narrow these " + st.options.length + " options";
+        narrow.setAttribute("aria-label", "Narrow these options");
+        narrow.addEventListener("input", function () {
+          var terms = narrow.value.toLowerCase().split(/\s+/).filter(Boolean);
+          Array.prototype.forEach.call(list.children, function (li, k) {
+            var text = (st.options[k].text + " " + li.getAttribute("data-consider")).toLowerCase();
+            li.hidden = !terms.every(function (t) { return text.indexOf(t) >= 0; });
+          });
+        });
+      }
+      st.options.forEach(function (op, k) {
+        var li = html("li", "", "", list), b = html("button", "finder-option", "", li);
+        var tmp = document.createElement("div");
+        tmp.innerHTML = op.consider;
+        li.setAttribute("data-consider", tmp.textContent);
+        b.type = "button";
+        b.innerHTML = glyph(op.g);
+        html("span", "", op.text, b);
+        b.setAttribute("aria-pressed", picks[active] === k ? "true" : "false");
+        b.addEventListener("click", function () {
+          picks[active] = picks[active] === k ? -1 : k;
+          // move on to the next question that has no answer yet
+          if (picks[active] >= 0) {
+            for (var n = 1; n <= steps.length; n++) {
+              var j = (active + n) % steps.length;
+              if (picks[j] < 0) { active = j; break; }
+            }
+          }
+          render();
+        });
+      });
+      question.appendChild(list);
+      if (active < steps.length - 1) {
+        var skip = html("button", "pill", "Skip this question", html("p", "finder-skip", "", question));
+        skip.type = "button";
+        skip.addEventListener("click", function () { active += 1; render(); });
+      }
+
+      // the model so far
+      result.textContent = "";
+      html("h3", "", "Your model so far", result);
+      if (!answered) html("p", "finder-empty", "Nothing chosen yet. Pick the option that looks most like your data.", result);
+      var ol = html("ol", "finder-picks", "", result), ids = [];
+      picks.forEach(function (k, i) {
+        if (k < 0) return;
+        var op = steps[i].options[k], li = html("li", "", "", ol);
+        li.innerHTML = glyph(op.g);
+        html("small", "", steps[i].label, li);
+        html("b", "", op.text, li);
+        html("p", "", "", li).innerHTML = op.consider;
+        html("p", "", "", li).innerHTML = "Worked in " + op.links;
+        var change = html("button", "link-btn", "Change", html("p", "", "", li));
+        change.type = "button";
+        change.addEventListener("click", function () { active = i; render(); });
+        op.ids.forEach(function (id) { if (ids.indexOf(id) < 0) ids.push(id); });
+      });
+      if (answered) {
+        var reset = html("button", "link-btn", "Start over", result);
+        reset.type = "button";
+        reset.addEventListener("click", function () { picks = picks.map(function () { return -1; }); active = 0; render(); });
+      }
+
+      // what to read
+      reading.hidden = !ids.length;
+      reading.textContent = "";
+      if (ids.length) {
+        html("h3", "", ids.length === 1 ? "Read this first" : "Read these first", reading);
+        var cards = html("div", "cards", "", reading);
+        ids.slice(0, 6).forEach(function (id) { cards.appendChild(card(id)); });
+        if (!catalogue && window.BMP) {
+          window.BMP.index().then(function (items) {
+            if (catalogue || !items.length) return;
+            catalogue = {};
+            items.forEach(function (it) { catalogue[it.id] = it; });
+            render();
+          });
+        }
+      }
+    }
+    render();
+  }
+
   function init() {
+    document.querySelectorAll("[data-finder]").forEach(finder);
     document.querySelectorAll("[data-sampler]").forEach(sampler);
     document.querySelectorAll("[data-updater]").forEach(updater);
     document.querySelectorAll("[data-flow]").forEach(flow);

@@ -209,8 +209,14 @@ at the home page and the notebook's own page.
 
 - **README curriculum table.** Add the `| **E120** | topic | data | techniques |` row: the site
   reads each card's title, data and techniques from it.
-- **Series.** Add the id to a series in `SERIES` in `tools/site_content.py`, or add a new series
-  (with `tools/site_assets/img/icon-<key>.webp`, see the README; a missing icon is a blank tile).
+- **Cluster.** Add the id to exactly one of the fifteen clusters in `SERIES` in
+  `tools/site_content.py`, the one a reader with that problem would open. Add a cluster only when
+  several notebooks need it, never for a single notebook (it then needs
+  `tools/site_assets/img/icon-<key>.webp`, see the README; a missing icon is a blank tile).
+- **Guide.** If the notebook answers a kind of question the guide does not list yet, add a row to
+  the matching table in `guide_page` (what the data or question looks like, what to consider, the
+  id). The model finder at the top of the guide is built from those rows; a row whose first cell
+  matches none of `GLYPH_RULES` gets its table's default drawing.
 - **Card figure.** Add the id to `CARD_FIGURE` if the automatic pick (the largest landscape
   figure) is not the one that explains the notebook.
 - **Recently added: every new example goes first.** Put the new id at the front of `RECENT` in
