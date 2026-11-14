@@ -207,7 +207,7 @@ solution. Every check must be exercised by an `assert h.check(...)` in a solutio
 Do them in the same commit as the notebook, then run `uv run python tools/build_site.py` and look
 at the home page and the notebook's own page.
 
-- **README curriculum table.** Add the `| **E120** | topic | data | techniques |` row: the site
+- **README curriculum table.** Add the `| **E121** | topic | data | techniques |` row: the site
   reads each card's title, data and techniques from it.
 - **Cluster.** Add the id to exactly one of the fifteen clusters in `SERIES` in
   `tools/site_content.py`, the one a reader with that problem would open. Add a cluster only when
@@ -222,7 +222,7 @@ at the home page and the notebook's own page.
 - **Recently added: every new example goes first.** Put the new id at the front of `RECENT` in
   `tools/site_content.py`, newest first. This is the only edit that section needs: the sentence
   above the cards is generated from the series of the first entries, so never write that copy by
-  hand. If the build prints `note: E120 not in site_content.RECENT`, it has shown the example
+  hand. If the build prints `note: E121 not in site_content.RECENT`, it has shown the example
   first anyway; add it to the list so the order is the one you mean.
 
 ## Conventions
@@ -1068,6 +1068,21 @@ doubt run `uv run python -c "..."` to check:
     heavy-tailed predictions, not only the marginals. Leakage: filter FiveThirtyEight polls by `created_at`, not end
     date, and FEC filings by receipt date. The FEC report bulk file holds current versions only (an amendment after
     the eve drops a report from "known by the eve"); the IE files hold prank filers with $10^{10}$ items.
+  - **Queues, big tables and chained models (E120).** `az.extract(idata, num_samples=...)` returns a
+    Dataset when the posterior has several variables and a bare DataArray when it has one, so
+    `az.extract(idata)["x"]` raises `KeyError` on a one-variable model: pass `var_names="x"`. For
+    hundreds of thousands of rows with few distinct values, count identical rows and put
+    `pm.Potential("loglik", (n * logp).sum())` in the model (317,000 calls became 12,000 rows and a
+    7 s fit); there is then no `observed`, so no `pm.sample_posterior_predictive` and no LOO: do
+    predictive checks in NumPy. A day effect on every row of a (day, hour) table mixes badly when
+    non-centred (the data pin each day): write it centred, with `pm.ZeroSumNormal` for the fixed
+    profiles. Numba is installed (a dependency of the stack, not declared): `@njit` without
+    `cache=True` in a notebook, since a kernel has no file to cache next to. A percent-format source
+    with only `print` outputs runs as a plain script (`MPLBACKEND=Agg python notebook_src/...py`),
+    which is the quick way to read numbers before a real build. Validating a chain of models: replay
+    real days through the assembled simulator and look at the error by month and by hour, because a
+    component can pass every check of its own and still be the reason the whole fails (the service
+    model here was blind to the calendar and the clock).
 - Available and worth using where they fit: `pm.ZeroSumNormal`, `pm.Censored`,
   `pm.Truncated`, `pm.CustomDist`, `pm.Mixture`, `pm.NormalMixture`, `pm.OrderedLogistic`,
   `pm.LKJCholeskyCov`, `pm.GaussianRandomWalk`, `pm.AR`, `pm.gp.HSGP`, `pm.gp.HSGPPeriodic`,
