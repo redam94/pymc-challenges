@@ -2611,6 +2611,40 @@ REGISTRY: dict[str, Dataset] = {
         "facility recorded with this item on this date). Up to 31 October 2011, the end of the hair-growth "
         "period in the article, the items are 106 deer, 14 beaver and 121 geese.",
     ),
+    # ---- examples (E124) ----
+    "e124_abt": Dataset(
+        "e124_abt.csv",
+        "https://dbs.uni-leipzig.de/files/datasets/Abt-Buy.zip",
+        "Abt-Buy entity-resolution benchmark, Database Group of the University of Leipzig (Köpcke, Thor and "
+        "Rahm 2010, PVLDB 3(1)), https://dbs.uni-leipzig.de/research/projects/benchmark-datasets-for-entity-"
+        "resolution. Licence, as read on that page on 2026-11-14: 'These datasets are made available by the "
+        "database group of Prof. Erhard Rahm under the Creative Commons license. To give proper credit please "
+        "refer to this website and the VLDB2010 paper', the words 'Creative Commons license' linking to "
+        "https://creativecommons.org/licenses/by/4.0/ (CC BY 4.0). DERIVED by tools/build_e124_abt_buy.py; "
+        "the url is the zip archive, not this table - keep the cached file in data/ "
+        "(md5 1706d855f536d0f900b5f8e5a8abd730).",
+        "The 1,081 product listings of abt.com in the benchmark: id, name (the listing's title, which usually "
+        "ends with a model code), price (US dollars; present for 418). The long description column of the "
+        "source is dropped.",
+    ),
+    "e124_buy": Dataset(
+        "e124_buy.csv",
+        "https://dbs.uni-leipzig.de/files/datasets/Abt-Buy.zip",
+        "Abt-Buy entity-resolution benchmark, Database Group of the University of Leipzig (Köpcke, Thor and "
+        "Rahm 2010, PVLDB 3(1)); CC BY 4.0, source page and licence sentence as for e124_abt. DERIVED by "
+        "tools/build_e124_abt_buy.py - keep the cached file in data/ (md5 3adb093672078d2cf6195920cc09ead1).",
+        "The 1,092 product listings of buy.com in the benchmark: id, name, manufacturer, price (US dollars; "
+        "present for 590). The description column of the source is dropped.",
+    ),
+    "e124_links": Dataset(
+        "e124_links.csv",
+        "https://dbs.uni-leipzig.de/files/datasets/Abt-Buy.zip",
+        "Abt-Buy entity-resolution benchmark, Database Group of the University of Leipzig (Köpcke, Thor and "
+        "Rahm 2010, PVLDB 3(1)); CC BY 4.0, source page and licence sentence as for e124_abt. DERIVED by "
+        "tools/build_e124_abt_buy.py - keep the cached file in data/ (md5 8b755c069394fe7c216d5c8890437ee6).",
+        "The benchmark's 'perfect mapping': 1,097 pairs (id_abt, id_buy) that are the same product. Almost "
+        "one-to-one: 16 Abt ids and 5 Buy ids appear in two pairs. 226 pairs have a price in both shops.",
+    ),
 }
 
 
