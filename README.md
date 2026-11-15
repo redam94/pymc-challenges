@@ -29,7 +29,7 @@ for every notebook, so this is optional. Later syncs drop it unless you repeat t
 
 ```
 notebooks/
-  examples/      E01-E92, E94-E123  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
+  examples/      E01-E92, E94-E124  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
   challenges/    C01-C15  your workspace. Tasks, empty cells, hints on request.
   solutions/     C01-C15  full reference solutions, executed, with commentary.
 ```
@@ -497,6 +497,14 @@ What did a wolf eat, if all you have is its hair? E123 chains four models on a c
 | | Topic | Data | Key techniques |
 |---|---|---|---|
 | **E123** | What did the wolf eat? Four models between a tuft of hair and a diet, tested on wolves whose meals were written down | Captive feeding trial of ten gray wolves (Derbridge et al. 2015, PLoS ONE 10(3): e0119940, CC BY): 48 hair samples, 71 prey tissue samples, the feeding record | stable-isotope mixing model with nuisance parameters carried through, replicate-based Student-t measurement model, hierarchical source signatures (batches partly pooled), exact posterior on a simplex grid against NUTS, a nested prior flat on the question vs the flat Dirichlet, blind test against a known diet, calibration fitted jointly vs passed as a summary, preposterior simulation of a third tracer, isotope-space maps, ternary posterior densities, specification curve over 144 analyses |
+
+#### Same product twice? (E124)
+
+Which listing in one shop is the same product as which listing in another, and what does the answer do to a price comparison that needs the link? E124 chains three models on the Abt-Buy benchmark (1,081 and 1,092 listings, true links held out as a test): a latent-class mixture on agreement patterns (two classes find brands, a cap on the match share does not help, three classes do), a posterior over one-to-one linkages sampled with Gibbs and Metropolis moves (1,511 links at 59% true become 955 at 98%), and a regression of one shop's price on the other's. The notebook starts from a suspicion, that thresholded links bias the slope toward zero and that sampling whole linkages cures it, and finds it half right: after the one-to-one step a threshold does no harm, and it is the sampled linkages, each taken as true, that are biased. The repair is a likelihood that sums over each listing's candidate partners. A route map, a choice box at every step and a specification curve over 18 analysis paths show which choices mattered.
+
+| | Topic | Data | Key techniques |
+|---|---|---|---|
+| **E124** | Same product twice? Linking two shops' catalogues, and what the links do to a price comparison | Abt-Buy entity-resolution benchmark, Database Group of the University of Leipzig (Köpcke, Thor & Rahm 2010; CC BY 4.0): 1,081 + 1,092 product listings, 1,097 true links held out | Fellegi-Sunter latent-class mixtures on 39 agreement patterns via pm.Potential, a three-class fix for conditional dependence, a Numba Gibbs and Metropolis sampler over one-to-one matchings (after Sadinle 2017), calibration against held-out links, regression with links marginalised inside the likelihood, a model compiled once and refilled 300 times, a specification curve over 18 analysis paths |
 
 ### Data work (D-series)
 

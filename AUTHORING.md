@@ -207,7 +207,7 @@ solution. Every check must be exercised by an `assert h.check(...)` in a solutio
 Do them in the same commit as the notebook, then run `uv run python tools/build_site.py` and look
 at the home page and the notebook's own page.
 
-- **README curriculum table.** Add the `| **E121** | topic | data | techniques |` row: the site
+- **README curriculum table.** Add the `| **E125** | topic | data | techniques |` row: the site
   reads each card's title, data and techniques from it.
 - **Cluster.** Add the id to exactly one of the fifteen clusters in `SERIES` in
   `tools/site_content.py`, the one a reader with that problem would open. Add a cluster only when
@@ -222,7 +222,7 @@ at the home page and the notebook's own page.
 - **Recently added: every new example goes first.** Put the new id at the front of `RECENT` in
   `tools/site_content.py`, newest first. This is the only edit that section needs: the sentence
   above the cards is generated from the series of the first entries, so never write that copy by
-  hand. If the build prints `note: E121 not in site_content.RECENT`, it has shown the example
+  hand. If the build prints `note: E125 not in site_content.RECENT`, it has shown the example
   first anyway; add it to the list so the order is the one you mean.
 
 ## Conventions
@@ -1121,6 +1121,24 @@ doubt run `uv run python -c "..."` to check:
     `zipfile` and `xml.etree` (Excel day numbers count from 1899-12-30; test missing cells with
     `pd.isna`). The MixSIAR wolves consumer table is reconstructed and its lake example is
     simulated: neither is real data.
+  - **Linkage, matchings and many small fits (E124).** `az.rhat(trace.posterior)` on a nutpie
+    DataTree returns a DataTree with no `.to_array()`: use
+    `az.rhat(trace.posterior["b"].to_numpy())`. For hundreds of small fits of one model, call
+    `nutpie.compile_pymc_model` once and refill it with `compiled.with_data(...)` on `pm.Data`
+    padded to a fixed size (a padded row that adds log-probability 0 changes nothing): 100
+    regressions took about 7 s, where recompiling costs seconds each. A latent-class mixture on
+    pattern counts (`pm.Potential` with counts as weights) over a million pairs has a ridge:
+    `Dirichlet(1, ...)` priors gave 14 to 36 divergences and ESS near 100 to 250,
+    `Dirichlet(2, ...)` with `tune=1000` and `target_accept=0.95` gave ESS 1,340; class order
+    needs `initvals`, which nutpie honours. A single-site Gibbs sampler over matchings can show
+    r_hat 1.00 on the number of links while chains disagree completely on individual links:
+    compare link frequencies between chains and add exchange and move proposals. Under the
+    `arviz-variat` style (constrained layout) `gridspec_kw` top/bottom are ignored and anchored
+    figure legends overlap panels: `fig.legend(loc="outside lower center")` works.
+    `@njit(cache=True)` fails when a source is run through `exec` outside a kernel ("no locator
+    available"); plain `@njit` works in both. A two-class Fellegi-Sunter mixture on all pairs of
+    a product catalogue finds brands, not matches: check the implied number of matches against
+    the size of the smaller file.
 - Available and worth using where they fit: `pm.ZeroSumNormal`, `pm.Censored`,
   `pm.Truncated`, `pm.CustomDist`, `pm.Mixture`, `pm.NormalMixture`, `pm.OrderedLogistic`,
   `pm.LKJCholeskyCov`, `pm.GaussianRandomWalk`, `pm.AR`, `pm.gp.HSGP`, `pm.gp.HSGPPeriodic`,

@@ -49,7 +49,7 @@ SERIES = [
                "alternatives, shares of a whole, response times, directions on a circle, and many outcomes that "
                "move together."),
     dict(key="latent", title="Latent groups, topics and partitions",
-         ids=["E24", "E26", "E28", "E30", "E31", "E69", "E72", "E73"],
+         ids=["E24", "E26", "E28", "E30", "E31", "E69", "E72", "E73", "E124"],
          intro="Models where the structure itself is unobserved: hidden states, mixtures with an unknown number "
                "of components, random partitions and binary features, topics, raters with no gold standard, and "
                "animals that were present but never detected."),
@@ -117,7 +117,7 @@ SERIES_BY_KEY = {s["key"]: s for s in SERIES}
 # The examples under "Recently added" on the home page, newest first. Put a new example at the front.
 # recent_ids() adds any example numbered above everything listed here, so the section cannot fall
 # behind, and recent_intro() writes the sentence above the cards: there is no copy to keep in step.
-RECENT = ["E123", "E122", "E121", "E120","E119", "E118", "E117", "E116", "E115", "E114", "E113", "E112", "E111", "E110", "E109", "E108", "E107", "E106", "E105", "E104", "E103", "E102", "E101", "E100", "E99", "E98", "E97", "E96", "E92", "E95", "E94", "E90", "E88", "E91", "E87", "E89"]
+RECENT = ["E124", "E123","E122", "E121", "E120","E119", "E118", "E117", "E116", "E115", "E114", "E113", "E112", "E111", "E110", "E109", "E108", "E107", "E106", "E105", "E104", "E103", "E102", "E101", "E100", "E99", "E98", "E97", "E96", "E92", "E95", "E94", "E90", "E88", "E91", "E87", "E89"]
 
 
 def _number(eid: str) -> int:
@@ -168,7 +168,7 @@ CARD_FIGURE = {
     "E88": 18, "E89": 8, "E90": 1, "E91": 10, "E92": 5, "E94": 15, "E95": "E95_election_night.gif", "E99": 11, "E100": 6, "E101": 3, "E102": 2, "E103": 4, "E104": 7, "E105": 5, "E106": 6, "E107": 3,
     "E108": "E108_usual_salt_intake.gif", "E109": 1, "E110": 1, "E111": 1, "E112": 1, "E113": 1, "E114": 1, "E115": 1,
     "E116": 1, "E117": 1, "E118": 9, "E119": 4, "E120": 10,
-    "E121": 8, "E122": 2, "E123": 9,
+    "E121": 8, "E122": 2, "E123": 9, "E124": 5,
 }
 
 
@@ -592,6 +592,9 @@ def guide_page(ctx):
         ("Measurements carry known error", "Measurement-error model; the error is data", f"{L('D02')}, {L('E17')}"),
         ("Species or cases can be missed", "Occupancy, N-mixture and capture–recapture models", f"{L('E28')}"),
         ("Raters disagree and there is no gold standard", "Latent class and Dawid-Skene models", f"{L('E69')}"),
+        ("Two files with no shared key: which records are the same thing?",
+         "An agreement-pattern mixture, a posterior over one-to-one linkages, and a regression that sums over candidate links",
+         f"{L('E124')}"),
         ("Recent data are still arriving", "Nowcasting the reporting delay", f"{L('E38')}, {L('E90')}, {L('E94')}"),
         ("Polls in some races, none in most", "Fundamentals learned on earlier cycles, polls where they exist, a shared error",
          f"{L('E40')}, {L('E94')}"),
