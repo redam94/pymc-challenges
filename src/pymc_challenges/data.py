@@ -2539,6 +2539,38 @@ REGISTRY: dict[str, Dataset] = {
         "half-move: 0 quiet, 1 capture, 2 check, 3 capture with check).",
         {"dtype": {"flags": str, "white": str, "black": str, "evals": str}, "keep_default_na": False},
     ),
+    # ---- examples (E122) ----
+    "e122_bus_events": Dataset(
+        "e122_bus_events.csv.gz",
+        "https://www.arcgis.com/sharing/rest/content/items/96c77138c3144906bce93d0257531b6a/data",
+        "'MBTA Bus Arrival Departure Times 2024', open-data portal of the Massachusetts Bay Transportation "
+        "Authority (mbta-massdot.opendata.arcgis.com). Licence field of the item: 'CC0'. Its notice: 'Due to "
+        "data collection issues, data is not guaranteed to be complete for any stop or date.' and 'MassDOT/MBTA "
+        "shall not be held liable for any errors in this data.' DERIVED by tools/build_e122_buses.py; the url is "
+        "the 315 MB zip of twelve monthly files for every route, not this table - keep the cached file in data/ "
+        "(md5 1c45bdc9c872536414dff53d0f14ce64).",
+        "Bus route 111 (Woodlawn - Haymarket), 1 September to 30 November 2024, one row per bus and TIMEPOINT "
+        "(326,250 rows, 32,625 one-way trips, ten timepoints each): date (service date), direction (Inbound = "
+        "towards Haymarket), trip (the agency's half_trip_id), seq (order of the timepoint, 1-10), timepoint "
+        "(its code: woodc, garfi, smore, wacry, belsq, thche, tobin, ruthf, cacom, hayms inbound), stop_id, "
+        "standard (Headway or Schedule), sched_s and actual_s (scheduled and actual DEPARTURE from the timepoint, "
+        "arrival at the last one, in seconds after local midnight, above 86,400 after midnight; actual_s is empty "
+        "for 3.9% of rows), sched_headway and headway (the agency's scheduled and actual gap to the previous trip "
+        "at that timepoint, s). One clock reading per timepoint: the time spent standing at stops is not recorded "
+        "separately, and there are no passenger counts per bus.",
+    ),
+    "e122_bus_ridership": Dataset(
+        "e122_bus_ridership.csv.gz",
+        "https://www.arcgis.com/sharing/rest/content/items/8daf4a33925a4df59183f860826d29ee/data",
+        "'MBTA Bus Ridership by Trip, Season, Route, Line, and Stop', open-data portal of the Massachusetts Bay "
+        "Transportation Authority. Licence field of the item: 'CC0'; same liability notice as e122_bus_events. "
+        "DERIVED by tools/build_e122_buses.py from the Fall 2024 file; the url is the 73 MB zip of all seasons "
+        "and routes - keep the cached file in data/ (md5 7c5826c6ead270a07b7625dc1b99cc78).",
+        "Route 111, weekdays of Fall 2024, one row per scheduled trip and stop (10,318 rows): direction, "
+        "trip_start (scheduled start, s after midnight), stop_seq, stop_id, stop_name, boardings, alightings and "
+        "load (season averages per trip from the automatic passenger counters; load = on board when leaving the "
+        "stop), n_trips (counted trips behind the average). Averages over a season, not counts for any one bus.",
+    ),
 }
 
 
