@@ -2571,6 +2571,46 @@ REGISTRY: dict[str, Dataset] = {
         "load (season averages per trip from the automatic passenger counters; load = on board when leaving the "
         "stop), n_trips (counted trips behind the average). Averages over a season, not counts for any one bus.",
     ),
+    # ---- examples (E123) ----
+    "e123_wolf_hair": Dataset(
+        "e123_wolf_hair.csv",
+        "https://journals.plos.org/plosone/article/file?type=supplementary&id=10.1371/journal.pone.0119940.s001",
+        "Captive feeding trial of ten gray wolves, Wildlife Science Center, Forest Lake, Minnesota, 2011-2012: "
+        "S1 Table of Derbridge, Merkle, Bucci, Callahan, Koprowski, Polfus and Krausman (2015), PLoS ONE "
+        "10(3): e0119940, https://doi.org/10.1371/journal.pone.0119940. Licence, from the article: 'This is "
+        "an open access article distributed under the terms of the Creative Commons Attribution License, "
+        "which permits unrestricted use, distribution, and reproduction in any medium, provided the original "
+        "author and source are credited' (CC BY 4.0). DERIVED by tools/build_e123_wolf_trial.py from the "
+        "workbook's sheet 'Wolf'; the url is the workbook, not this table - keep the cached file in data/ "
+        "(md5 77202e8635bf304e846d6ed5854fe96e). Measured values, not summary statistics.",
+        "One row per hair sample (48 rows, 10 wolves): wolf (the animal's number), pair (shared by the "
+        "shoulder and the rump sample taken from one wolf on one day), sample_id, site (shoulder or rump), "
+        "date collected, d13C and d15N in permil.",
+    ),
+    "e123_prey_tissue": Dataset(
+        "e123_prey_tissue.csv",
+        "https://journals.plos.org/plosone/article/file?type=supplementary&id=10.1371/journal.pone.0119940.s001",
+        "Same source and licence as e123_wolf_hair (Derbridge et al. 2015, PLoS ONE 10(3): e0119940, CC BY "
+        "4.0). DERIVED by tools/build_e123_wolf_trial.py from the sheets 'Muscle' and 'Hair'; the three deer "
+        "whose muscle value is NA are dropped from the muscle rows (md5 80834db3be05e70220c0b6a41f2c8962). "
+        "Measured values; their means and SDs reproduce Table 1 of the article.",
+        "One row per tissue sample of a food item (71 rows): animal (the item's label: D deer, B beaver, G "
+        "goose), species, tissue (muscle for 20 deer, 13 beaver and 15 geese; hair for 23 deer), date in the "
+        "workbook's sample_date column, d13C and d15N in permil.",
+    ),
+    "e123_wolf_feeding": Dataset(
+        "e123_wolf_feeding.csv",
+        "https://journals.plos.org/plosone/article/file?type=supplementary&id=10.1371/journal.pone.0119940.s001",
+        "Same source and licence as e123_wolf_hair (Derbridge et al. 2015, PLoS ONE 10(3): e0119940, CC BY "
+        "4.0). DERIVED by tools/build_e123_wolf_trial.py from the sheet 'diet_summary': the rows of the ten "
+        "wolves that have hair samples (md5 392e8eb704cb6068c626834b508e003c). A record of what was fed, not "
+        "a measurement of what was eaten.",
+        "One row per wolf and food item (3,010 rows, 7 June 2011 to 31 May 2012): wolf, date (the sheet's "
+        "'Tissue Sample' date, read as the day the item was fed; empty for 10 rows), item (label of the "
+        "carcass), species (deer, beaver, goose, and one sheep), shared_by (number of animals of the "
+        "facility recorded with this item on this date). Up to 31 October 2011, the end of the hair-growth "
+        "period in the article, the items are 106 deer, 14 beaver and 121 geese.",
+    ),
 }
 
 
