@@ -29,7 +29,7 @@ for every notebook, so this is optional. Later syncs drop it unless you repeat t
 
 ```
 notebooks/
-  examples/      E01-E92, E94-E120  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
+  examples/      E01-E92, E94-E123  modelling techniques; D01-D03 data preparation and analysis. Worked, narrated, executed.
   challenges/    C01-C15  your workspace. Tasks, empty cells, hints on request.
   solutions/     C01-C15  full reference solutions, executed, with commentary.
 ```
@@ -473,6 +473,30 @@ How many agents should a bank put on the phones in each hour of a working day? N
 | | Topic | Data | Key techniques |
 |---|---|---|---|
 | **E120** | How many agents on the phones? Five models, one staffing decision, and the path between them | "Anonymous Bank" call-centre data, Technion SEE Center (Guedj & Mandelbaum 2000; free to use with acknowledgement): 440,849 calls of 1999 | a ladder of count models judged by purpose-built predictive checks, day effects and day tilts, a weighted-likelihood lognormal mixture on 317,000 calls, censored survival with a piecewise hazard, a Numba discrete-event queue simulator replayed on real days, calibration on one half-year and test on the other, square-root staffing, Erlang C and Erlang A as rivals, a specification curve over 32 analysis paths |
+
+#### Did they cheat? (E121)
+
+An account on a chess site plays too well: did they cheat? E121 answers with a chain of five models on real Lichess blitz games of 2014, with the platform's own terms-of-service marks as imperfect labels: a random-walk rating fitted in PyMC on 250 accounts and extended to 2,541 by a Newton smoother, a model of how often a player of that strength slips in a given position, a surprise score per game, a two-group mixture with the population base rate, and a threshold set by the cost of a false accusation. With a stale rating, a plain z-score puts 55% of under-rated honest newcomers above three sigma, and 81% of the accounts it flags carry no mark. The chain sends seven of 1,000 held-out accounts to human review, six of them marked, and accuses nobody, because no score lifts the probability of a mark above about 0.9. A closing specification curve reruns the decision for 32 analysts: the dangerous ones combine two assumptions that are harmless apart. No account is named: the tables carry codes, and the text speaks of patterns, not people.
+
+| | Topic | Data | Key techniques |
+|---|---|---|---|
+| **E121** | Did they cheat? Five models between a chess game and an accusation | Lichess open database (CC0): rated blitz games of July-December 2014 with Stockfish evaluations; 2,541 coded accounts (all 541 marked for a terms-of-service violation, 2,000 others), 1.48 million results, 56,540 analysed games | chained models, random-walk rating in PyMC on a subset plus a batched Newton smoother, held-out log scores against the platform's rating, binomial move-quality regression on counted cells with position difficulty, a game-level check that sends the analysis back, a game effect that fails its own check and a fitted spread, accuracy fingerprints, case-control sampling and base rates, a two-group mixture with a ceiling, accusation cost curves with posterior bands, a test on 1,000 held-out accounts, a specification curve over 32 analyses |
+
+#### Why do three buses arrive together? (E122)
+
+You wait twelve minutes for a bus that should come every six, and then three arrive together. E122 asks why on one real route, the MBTA's 111 from Chelsea to Haymarket, with the agency's record of every bus at ten timepoints in autumn 2024. Four models feed one another: travel times with traffic that successive buses share, dwell inferred through the gap to the bus ahead (the records hold one clock reading per timepoint, so dwell is not in them), a simulator of the whole day replayed on a month it has not seen, and a holding rule judged in rider time. The proposal that independent segments can never bunch is tested and found half right: they bunch by accident, 10% where the street has 22%. The first simulator fails because buses do not leave the terminal evenly, which sends the analysis back to the data. Holding at the terminal gives each rider back three quarters of a minute; the same rule in mid-route costs more riding than it saves waiting, and across 24 planners the rule depends on whose minutes are counted, not on the model of the dynamics.
+
+| | Topic | Data | Key techniques |
+|---|---|---|---|
+| **E122** | Why do three buses arrive together? Four models, one holding rule, and the path between them | MBTA open data (CC0): every recorded pass of route 111 at ten timepoints, Sep-Nov 2024 (326,250 readings), and Fall 2024 average boardings per stop | lognormal run times with noise tied to the bus ahead (a correlation that fades with the gap), a natural experiment on segments with and without boarding, dwell as seconds per boarding rider with bunches sharing riders, a Numba simulator of coupled headways replayed on an unseen month, time-space (Marey) diagrams with posterior ribbons, a headway phase portrait, a holding rule in rider time, a specification curve over 24 analysis paths |
+
+#### What did the wolf eat? (E123)
+
+What did a wolf eat, if all you have is its hair? E123 chains four models on a captive feeding trial of ten gray wolves in which every carcass was written down, so the answer is known: a measurement model built on replicate hair samples (the laboratory's precision fails, one tuft is five times noisier in carbon), prey signatures with batches partly pooled (which deer count moves the answer from 72% to 50%), a discrimination factor borrowed from foxes, and a Dirichlet mixing model fitted with NUTS and checked against an exact grid over the simplex. The analysis is run blind and then tested: it says 70% deer (50 to 95), the wolves were fed 94%, and the textbook model says 54% (41 to 69). A calibration on wolves recovers the diet when it is fitted jointly with the mixing model (95%, 83 to 100) and not when it is passed on as a mean and a standard deviation. Simulated packs show that a third tracer is worth a great deal or nothing, depending on what it separates. The path is shown as it was walked: a route map with dead ends, a choice box at every step, isotope-space maps with ellipses, ternary posterior densities, and a closing figure of 144 analyses in which a "flat" Dirichlet prior never once holds the truth.
+
+| | Topic | Data | Key techniques |
+|---|---|---|---|
+| **E123** | What did the wolf eat? Four models between a tuft of hair and a diet, tested on wolves whose meals were written down | Captive feeding trial of ten gray wolves (Derbridge et al. 2015, PLoS ONE 10(3): e0119940, CC BY): 48 hair samples, 71 prey tissue samples, the feeding record | stable-isotope mixing model with nuisance parameters carried through, replicate-based Student-t measurement model, hierarchical source signatures (batches partly pooled), exact posterior on a simplex grid against NUTS, a nested prior flat on the question vs the flat Dirichlet, blind test against a known diet, calibration fitted jointly vs passed as a summary, preposterior simulation of a third tracer, isotope-space maps, ternary posterior densities, specification curve over 144 analyses |
 
 ### Data work (D-series)
 

@@ -1083,6 +1083,44 @@ doubt run `uv run python -c "..."` to check:
     real days through the assembled simulator and look at the error by month and by hour, because a
     component can pass every check of its own and still be the reason the whole fails (the service
     model here was blind to the calendar and the clock).
+  - **Many latent paths, scores and base rates (E121).** A variable named like a coordinate raises
+    `ValueError: Variable name 'phase' conflicts with an existing dimension name`: give the coord
+    another name. A random walk with 33,000 latent strengths and a stored `Deterministic` path ran
+    over six minutes and past 3 GB under nutpie: fit the hyperparameters on a subset (250 units),
+    then smooth every unit with batched Newton steps (`np.linalg.solve` on an (A, P, P) stack, steps
+    clipped; unclipped Newton diverged). Random-walk steps with a shared scale and many empty
+    unit-periods: centred steps gave ESS 31 and r_hat 1.13 for the scale,
+    `start + tau * cumsum(Normal(0, 1))` gave ESS 320 to 500. An overdispersion repair can match the
+    overall sd of z-scores and still have the wrong shape: plot the sd against the amount of
+    information per unit before keeping it. With a case-control sample, carry a `weight` column and
+    put the population base rate in the model, not the sample's share. Lichess dumps: `[%eval]` is
+    on 0.4% of games in 2013-01 and about 15% from mid-2014; `Termination "Rules infraction"` is not
+    a cheat label in 2014; the API hides `tosViolation` on closed accounts. `tools/inspect_nb.py`
+    cuts long stream lines: read the notebook JSON for wide tables. pandas 3: `df.sum(1)` puts a
+    `Pandas4Warning` in the output, write `sum(axis=1)`.
+  - **Interacting trajectories and remote archives (E122).** MBTA "Arrival Departure Times" stamps
+    (`1900-01-01T10:06:00Z`) are local time plus five hours all year and run past 24 h: check
+    against a known timetable time. The file holds one clock reading per timepoint, so dwell is not
+    observed. A remote zip that accepts HTTP Range can be read member by member: a small
+    `io.RawIOBase` reader under `zipfile.ZipFile(io.BufferedReader(..., 4 << 20))` kept a 315 MB
+    archive to a 10 MB cache. A likelihood conditional on another row's residual works under
+    nutpie: index the residual expression with a constant integer array, `(log_run - log_med)[lead]`,
+    and mask rows without a leader. A phase portrait of mean movement in (gap ahead, gap behind) is
+    dominated by the boundary at zero: subtract a noise-only simulation to see the drift;
+    `quiver(angles="xy", scale_units="xy", scale=1)` draws movements to scale. A simulator started
+    from an idealised initial condition (departures on schedule) can hide half of the effect: start
+    the replay from the recorded one.
+  - **Mixing models and simplexes (E123).** `az.summary` with a low-dimensional variable listed
+    before a higher-dimensional one that shares a dim mislabels rows (ArviZ 1.3.0): one call per
+    variable. A three-source mixing model with normal nuisance parameters has an exact posterior on
+    a grid over the simplex, which is the check for NUTS; `matplotlib.tri.Triangulation` with
+    `tricontourf` draws the ternary density. `Dirichlet(1, ..., 1)` on K sources is `Beta(1, K-1)`
+    on each share, not flat on the question: two `pm.Uniform` variables give a prior flat on the
+    main share. `pm.MvNormal(...).reshape((3, 2))` works under nutpie; a batch sd estimated from
+    nine batches needed `target_accept=0.99`. An `.xlsx` can be read without openpyxl through
+    `zipfile` and `xml.etree` (Excel day numbers count from 1899-12-30; test missing cells with
+    `pd.isna`). The MixSIAR wolves consumer table is reconstructed and its lake example is
+    simulated: neither is real data.
 - Available and worth using where they fit: `pm.ZeroSumNormal`, `pm.Censored`,
   `pm.Truncated`, `pm.CustomDist`, `pm.Mixture`, `pm.NormalMixture`, `pm.OrderedLogistic`,
   `pm.LKJCholeskyCov`, `pm.GaussianRandomWalk`, `pm.AR`, `pm.gp.HSGP`, `pm.gp.HSGPPeriodic`,
