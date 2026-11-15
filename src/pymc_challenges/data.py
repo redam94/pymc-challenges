@@ -2491,6 +2491,54 @@ REGISTRY: dict[str, Dataset] = {
         "call), priority (2 = priority customer, moved up the queue by 90 s), identified (gave a customer "
         "id), agent (A01-A52; empty if none).",
     ),
+    # ---- examples (E121) ----
+    "e121_chess_accounts": Dataset(
+        "e121_chess_accounts.csv.gz",
+        "https://database.lichess.org/",
+        "Lichess open database, rated standard games of July to December 2014 (six monthly .pgn.zst files, "
+        "1.27 GB, 6,732,559 games, each checked against the sha256 Lichess publishes). Licence, as read on "
+        "the page on 2026-11-14: 'Database exports are released under the Creative Commons CC0 license. Use "
+        "them for research, commercial purpose, publication, anything you like. You can download, modify "
+        "and redistribute them, without asking for permission.' The column `marked` comes from the public "
+        "Lichess API (POST https://lichess.org/api/users, field tosViolation, fetched 2026-11-14). DERIVED "
+        "by tools/build_e121_chess.py, which names no account; the url is the database page, not this table - "
+        "keep the cached file "
+        "in data/ (md5 89238c5c9dddd6c1bf8391731d64c23e).",
+        "One row per sampled account, names replaced by codes (2,541 rows). Eligible: at least 60 rated blitz "
+        "games in the six months, at least 16 of them analysed games with engine evaluations, and not closed "
+        "today (8,886 eligible, 1,246 closed and left out). ALL 541 eligible accounts that the API reports as "
+        "marked are kept, with a random 2,000 of the 7,099 others: a case-control sample. Columns: account "
+        "(A0001...), marked (1 if the API reports the account as marked for a terms-of-service violation, which "
+        "the Lichess source sets for engine assistance or boosting; as of 2026, not 2014), weight (eligible "
+        "accounts of that kind per sampled account: 1 for marked, 3.5495 for the others), n_blitz (rated "
+        "blitz games in the window), n_analysed (usable analysed games among them), elo_first (published "
+        "blitz rating before the first game of the window), elo_last (after the last).",
+    ),
+    "e121_chess_results": Dataset(
+        "e121_chess_results.csv.gz",
+        "https://database.lichess.org/",
+        "Lichess open database (CC0), as e121_chess_accounts. DERIVED by tools/build_e121_chess.py - keep the "
+        "cached file in data/ (md5 695b8ab1f8c7b7f3a07210104024d7ff).",
+        "Results of ALL rated blitz games of the 2,541 sampled accounts, July to December 2014, counted in "
+        "cells (196,743 rows, 1,479,778 games counted once per sampled player): account, period (0..12, "
+        "two-week periods from 1 July 2014; the last runs to 31 December), opp_elo (the opponent's published "
+        "rating before the game, rounded to 50), own_elo (the account's own published rating before the "
+        "game, averaged over the cell), n (games), wins, draws.",
+    ),
+    "e121_chess_games": Dataset(
+        "e121_chess_games.csv.gz",
+        "https://database.lichess.org/",
+        "Lichess open database (CC0), as e121_chess_accounts. DERIVED by tools/build_e121_chess.py - keep the "
+        "cached file in data/ (md5 dc78acb52fdd2a8cf22e191360a0f27c).",
+        "One row per sampled analysed blitz game (56,540 rows; at most 24 drawn at random for each sampled "
+        "account; no game address, clock time, opening or moves): game (G00001...), period (0..12), white, "
+        "black (account codes; empty when that player is not a sampled account), white_elo, black_elo "
+        "(published blitz ratings before the game), result, plies (half-moves played), evals (the Stockfish "
+        "evaluation after each of the first 100 half-moves, centipawns from White's side, space-separated; "
+        "M / -M = forced mate for White / Black; empty for a final mating move), flags (one character per "
+        "half-move: 0 quiet, 1 capture, 2 check, 3 capture with check).",
+        {"dtype": {"flags": str, "white": str, "black": str, "evals": str}, "keep_default_na": False},
+    ),
 }
 
 
